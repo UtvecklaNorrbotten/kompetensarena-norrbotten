@@ -52,6 +52,7 @@ export function TimeSeriesChart({ data, unit, ariaLabel }: TimeSeriesChartProps)
             <Line
               type="monotone"
               dataKey="value"
+              isAnimationActive={false}
               stroke="var(--chart-1)"
               strokeWidth={2.5}
               dot={{ r: 3, fill: "var(--chart-1)" }}
