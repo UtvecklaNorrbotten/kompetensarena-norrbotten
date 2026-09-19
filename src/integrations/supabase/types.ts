@@ -14,16 +14,287 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      data_source_runs: {
+        Row: {
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          indicator_id: string | null
+          rows_affected: number | null
+          source: string
+          started_at: string
+          status: Database["public"]["Enums"]["run_status"]
+        }
+        Insert: {
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          indicator_id?: string | null
+          rows_affected?: number | null
+          source: string
+          started_at?: string
+          status: Database["public"]["Enums"]["run_status"]
+        }
+        Update: {
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          indicator_id?: string | null
+          rows_affected?: number | null
+          source?: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["run_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_source_runs_indicator_id_fkey"
+            columns: ["indicator_id"]
+            isOneToOne: false
+            referencedRelation: "indicators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          created_at: string
+          doc_type: string | null
+          id: string
+          indicator_id: string | null
+          storage_path: string
+          title: string
+          uploaded_by: string | null
+          visibility: Database["public"]["Enums"]["visibility_level"]
+        }
+        Insert: {
+          created_at?: string
+          doc_type?: string | null
+          id?: string
+          indicator_id?: string | null
+          storage_path: string
+          title: string
+          uploaded_by?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_level"]
+        }
+        Update: {
+          created_at?: string
+          doc_type?: string | null
+          id?: string
+          indicator_id?: string | null
+          storage_path?: string
+          title?: string
+          uploaded_by?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_level"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_indicator_id_fkey"
+            columns: ["indicator_id"]
+            isOneToOne: false
+            referencedRelation: "indicators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      geographies: {
+        Row: {
+          code: string
+          level: Database["public"]["Enums"]["geo_level"]
+          name: string
+          parent_code: string | null
+        }
+        Insert: {
+          code: string
+          level: Database["public"]["Enums"]["geo_level"]
+          name: string
+          parent_code?: string | null
+        }
+        Update: {
+          code?: string
+          level?: Database["public"]["Enums"]["geo_level"]
+          name?: string
+          parent_code?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "geographies_parent_code_fkey"
+            columns: ["parent_code"]
+            isOneToOne: false
+            referencedRelation: "geographies"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
+      indicator_metadata: {
+        Row: {
+          hamtad_datum: string | null
+          indicator_id: string
+          kalla: string
+          kalla_uppdaterad_datum: string | null
+          note: string | null
+          period: string | null
+          styrande_kalla: string
+          tillganglighetsdatum: string | null
+          updated_at: string
+        }
+        Insert: {
+          hamtad_datum?: string | null
+          indicator_id: string
+          kalla: string
+          kalla_uppdaterad_datum?: string | null
+          note?: string | null
+          period?: string | null
+          styrande_kalla: string
+          tillganglighetsdatum?: string | null
+          updated_at?: string
+        }
+        Update: {
+          hamtad_datum?: string | null
+          indicator_id?: string
+          kalla?: string
+          kalla_uppdaterad_datum?: string | null
+          note?: string | null
+          period?: string | null
+          styrande_kalla?: string
+          tillganglighetsdatum?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "indicator_metadata_indicator_id_fkey"
+            columns: ["indicator_id"]
+            isOneToOne: true
+            referencedRelation: "indicators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      indicators: {
+        Row: {
+          created_at: string
+          description: string
+          frequency: string | null
+          id: string
+          is_example: boolean
+          name: string
+          source_table_id: string | null
+          styrande_kalla: string
+          unit: string
+          visibility: Database["public"]["Enums"]["visibility_level"]
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          frequency?: string | null
+          id: string
+          is_example?: boolean
+          name: string
+          source_table_id?: string | null
+          styrande_kalla: string
+          unit?: string
+          visibility?: Database["public"]["Enums"]["visibility_level"]
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          frequency?: string | null
+          id?: string
+          is_example?: boolean
+          name?: string
+          source_table_id?: string | null
+          styrande_kalla?: string
+          unit?: string
+          visibility?: Database["public"]["Enums"]["visibility_level"]
+        }
+        Relationships: []
+      }
+      observations: {
+        Row: {
+          dimensions: Json
+          geo_code: string
+          id: string
+          indicator_id: string
+          period: string
+          value: number | null
+        }
+        Insert: {
+          dimensions?: Json
+          geo_code: string
+          id?: string
+          indicator_id: string
+          period: string
+          value?: number | null
+        }
+        Update: {
+          dimensions?: Json
+          geo_code?: string
+          id?: string
+          indicator_id?: string
+          period?: string
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "observations_geo_code_fkey"
+            columns: ["geo_code"]
+            isOneToOne: false
+            referencedRelation: "geographies"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "observations_indicator_id_fkey"
+            columns: ["indicator_id"]
+            isOneToOne: false
+            referencedRelation: "indicators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      publish_indicator: {
+        Args: {
+          p_indicator_id: string
+          p_kalla_uppdaterad_datum?: string
+          p_observations: Json
+          p_rows_affected?: number
+        }
+        Returns: Json
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "editor" | "registered"
+      geo_level: "riket" | "län" | "kommun"
+      run_status: "started" | "no_change" | "succeeded" | "failed"
+      visibility_level: "publik" | "inloggad" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +421,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "editor", "registered"],
+      geo_level: ["riket", "län", "kommun"],
+      run_status: ["started", "no_change", "succeeded", "failed"],
+      visibility_level: ["publik", "inloggad", "admin"],
+    },
   },
 } as const
