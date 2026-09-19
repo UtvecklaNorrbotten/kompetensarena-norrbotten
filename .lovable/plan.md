@@ -1,139 +1,134 @@
-# Arkitektur: backend, datalagring och automatiska datauppdateringar (v2)
+# Arkitektur: backend, datalagring och automatiska datauppdateringar (v3 — godkänd i huvudsak)
 
-Arkitekturplan efter teknisk granskning. Inget implementeras förrän du godkänner.
+Arkitekturplan. Inget implementeras förrän ni startar första byggsteget.
 
-## Förändring mot första förslaget
+## Grundprinciper (fastställda)
 
-**Största ändringen:** ETL-flödet rekommenderas nu köras i **GitHub Actions med era befintliga R-skript**, som skriver direkt till Lovable Cloud Postgres. Se jämförelsen nedan — era fungerande R-flöden är den tydliga vinsten. pg_cron-varianten beskrivs som alternativ.
+- **Databas:** Lovable Cloud Postgres, region **Europa** (väljs vid aktivering, kan inte ändras efteråt).
+- **Fillagring:** Lovable Cloud Storage (publik + skyddad bucket). Profilgrafik/ikoner ligger kvar i `src/assets`.
+- **ETL/scheduler:** GitHub Actions som kör era befintliga R-skript mot SCB/Kolada/Trafikanalys och skriver till Postgres.
+- **Frontend/backend i appen:** TanStack Start i befintligt repo; server functions för läsning/appintern logik, server routes endast för framtida webhooks/triggers.
+- **Autentisering:** Lovable Cloud Auth + separat `user_roles`-tabell med `has_role()`; roller aldrig på profilen.
+- **AI:** eget serverlager (`AIService`) mellan chatt och provider — providern är utbytbar.
+- **GitHub:** kod, R-skript, migrationer, workflows, dokumentation. Ingen driftdata, inga hemligheter.
 
-## Rekommenderad arkitektur (efter granskning)
+## Förtydliganden som styr designen
 
-- **Databas:** Lovable Cloud (Postgres). Statistik, metadata, dokumentregister, roller, uppdateringshistorik.
-- **Fillagring:** Lovable Cloud Storage för PDF/Excel/bilder/analyser. Profilgrafik och ikoner ligger kvar i `src/assets` i repot.
-- **ETL/scheduler:** GitHub Actions (morgonjobb) som kör era R-skript mot SCB/Kolada/Trafikanalys och skriver till Postgres. Jobbnyckel och databasanslutning som GitHub Actions-secrets.
-- **Backend i appen:** TanStack server functions för läsning och appintern logik; server routes under `/api/public/*` endast för framtida webhooks/triggers.
-- **Autentisering:** Lovable Cloud Auth + separat `user_roles`-tabell (`admin`, `editor`, `registered`) med `has_role()`-funktion; roller aldrig på profilen.
-- **AI/RAG:** Lovable AI (chatt + embeddings) med pgvector i samma databas; chattverktyg gör exakta SQL-uppslag mot statistiktabellerna.
-- **GitHub:** all kod, R-skript, migrationsfiler, GitHub Actions-workflows, dokumentation. Inga hemligheter eller data.
+### 1. Dedikerad ETL-databasroll med minsta möjliga behörighet
 
-## Svar på granskningsfrågorna
+GitHub Actions ansluter **inte** med en fullprivilegierad nyckel. Vi skapar i Postgres:
 
-### Portabilitet
+- En dedikerad databasroll, t.ex. `etl_writer`, med eget lösenord (lagras som GitHub Actions-secret).
+- Behörigheter begränsade till exakt det som behövs:
+  - `SELECT, INSERT, UPDATE` på `observations`, `indicator_metadata`, `data_source_runs` (och motsvarande ETL-tabeller).
+  - `SELECT` på `indicators`, `geographies` (läs av nycklar/definitioner).
+  - **Inga** rättigheter till `user_roles`, auth-tabeller, dokumentregister eller adminfunktioner.
+  - **Inget** `DELETE` om det inte behövs — upsert-strategi i stället.
+  - Ingen rätt att skapa/ändra tabeller (DDL görs bara via migrationer).
+- Rot-/service-nycklar används aldrig av ETL och finns aldrig i GitHub.
 
-Ja. Databasen kan exporteras (schema + data) från Cloud → Advanced settings och är kompatibel med vanlig Postgres — den kan flyttas till en annan Supabase/Postgres-miljö utan applikationsombyggnad. Eftersom appen är vanlig React/Vite och databaskoden går via standardklienten är det i praktiken en ny anslutningssträng som skiljer. Undantag: filer i Storage, eventuella hemligheter och körda migrationers historik hanteras separat. Exportgräns: upp till 15 GB data.
+### 2. Metadatamodell enligt era RUS-konventioner
 
-### Backup
+Ingen parallell begreppsmodell. Tabellen för indikatormetadata använder era fält:
 
-Automatiska dagliga backuper, cirka 14 dagars retention, återställning via Cloud-inställningarna. **Ingen point-in-time recovery** — återställning sker till senaste dagliga ögonblicksbild och skriver över allt efter det. Konsekvens för oss: statistik kan alltid återskapas via ETL-omkörning (källan är SCB m.fl.), men uppladdade dokument och redaktionellt innehåll är det enda som inte kan återskapas — därför bör kritiska originalfiler även speglas utanför (t.ex. GitHub eller organisationens egen lagring) om de är svårersättliga.
+- `kalla_uppdaterad_datum` — när källan publicerade nytt data.
+- `hamtad_datum` — när vi hämtade datat.
+- `tillganglighetsdatum` — beräknat fält: `coalesce(kalla_uppdaterad_datum, hamtad_datum)`.
+- `styrande_kalla` — den källa som styr indikatorn.
 
-### Datalokalisering
+Övriga metadatafält (källans namn, tabell-id, frekvens, anmärkning) kompletterar, inte ersätter, dessa. Samma fält används i UI-metadata (källa, senast uppdaterad) så att begreppen är identiska genom hela kedjan.
 
-Region väljs när Cloud aktiveras (Americas / Europe / Asia Pacific) och kan **inte ändras i efterhand**. Vi väljer Europa vid aktivering. Regionvalet gäller databas, Auth och Storage. På Business/Enterprise kan organisationen tvinga EU som standard. Detta bör dokumenteras mot Region Norrbottens informationssäkerhetskrav innan inloggning/personuppgifter slås på.
+### 3. Automatisk publicering från säkra källor — atomiskt
 
-### Miljöer
-
-Lovable har **en** Cloud-miljö per projekt — ingen automatisk separation dev/staging/prod med egna databaser. Utveckling sker mot samma databas som sedan publiceras. Vill vi ha isolerad testmiljö blir det ett separat Lovable-projekt (egen databas, egen storage). Pragmatisk modell för oss: testmarkör på data (`isExample`/körningslogg) och försiktighet med migrationsordning, hellre än dubbla projekt i detta skede. GitHub Actions-jobben kan riktas mot samma databas oavsett.
-
-### Migrationer
-
-Schemaändringar görs som SQL-migrationer som ligger i repot och versionshanteras via tvåvägssynken med GitHub — samma katalogstruktur, reproducerbara från tomt schema. Det uppfyller kravet att allt strukturellt ska kunna återskapas från GitHub.
-
-### Schemaläggning — två alternativ jämförda
-
-**Alternativ A (rekommenderas): GitHub Actions + era R-skript**
+För betrodda källor (SCB m.fl.) finns **ingen manuell godkännandefas**:
 
 ```text
-GitHub Actions (cron 05:00)
-  -> R-skript: hämta metadata från SCB
-  -> jämför mot senast publicerat i tabellen indicator_metadata
-  -> vid ändring: full hämtning -> validering -> transformation (befintlig R-kod)
-  -> skriv till Lovable Cloud Postgres (direkt DB-anslutning)
-  -> logga körning i data_source_runs
-Webbplatsen läser alltid från Postgres vid sidladdning — aldrig externa API:er.
+metadatakontroll -> ny data? -> hämta -> teknisk validering -> publicera automatiskt
 ```
 
-- Återanvänder era fungerande transformationer; ingen omskrivning till TypeScript.
-- Ingen tidsgräns att oroa sig för: Actions-jobb kan köra länge, R har mogna SCB-/pxweb-bibliotek.
-- Nycklar (databas-URL, ev. API-nycklar) ligger som GitHub Actions-secrets — aldrig i repot.
-- Kräver att repot är kopplat (vilket ni redan gjort/påbörjat).
+Krav på flödet:
 
-**Alternativ B: pg_cron -> server route i appen**
+- Hämtning + validering sker på rådata i minnet/staging — inget skrivs till publicerade tabeller förrän valideringen godkänts.
+- Publicering sker **atomiskt i en transaktion**: nya observationer ersätter gamla per indikator/period via upsert + delete av överflödiga rader, allt eller inget.
+- Vid fel i hämtning eller validering: transaktionen rullas tillbaka, befintlig publicerad data ligger kvar orörd, felet loggas i `data_source_runs` med status `failed` och felmeddelande. Inget halvfärdigt dataset kan bli synligt.
+- Statusvärden i körningsloggen: `started`, `no_change`, `succeeded`, `failed`.
 
-pg_cron i databasen anropar varje morgon en nyckelskyddad endpoint (`/api/public/jobs/scb-refresh`). Nyckeln lagras som hemlighet i Lovable (inte i repot), endpointen verifierar den innan något körs, och obehöriga anrop avvisas med 401. Nackdelar som väger tungt här: all transformationslogik måste skrivas om i TypeScript, serverkoden körs i en edge-miljö med begränsad körtid (se nedan), och stora SCB-hämtningar måste styckevis delas upp.
+### 4. Tre behörighetsnivåer för data — skyddade i databasen
 
-**Rekommendation:** Alternativ A, särskilt med många indikatorer och flera källor. Alternativ B blir aktuellt först om ni vill konsolidera allt i Lovable och är beredda att skriva om R-flödena — det finns ingen teknisk vinst som motiverar det nu.
+Varje indikator (och senare varje dokument) får en synlighetsnivå: `publik`, `inloggad`, `admin`.
 
-### Retries, samtidighet, idempotens
+- Skyddet ligger i **RLS-policies i databasen + server-side filtrering**, inte i frontend. Frontend visar bara det servern levererar.
+- `publik`: läsbar av alla (policy `TO anon`).
+- `inloggad`: kräver autentiserad session.
+- `admin`: kräver rollen `admin` via `has_role()` — kontrolleras server-side, aldrig via klientlagring.
+- Diagram-/tabellkomponenterna behöver ingen behörighetslogik — de får bara den data anroparen får se.
 
-Gäller oavsett alternativ:
+### 5. Utbytbart AI-lager
 
-- **Körningslogg:** varje körning skapar en rad i `data_source_runs` (status: started/succeeded/failed/no_change, antal rader, felmeddelande).
-- **Låsning:** körningen markerar indikatorn som "pågår" och avböjer om en körning redan pågår (databasvillkor/advisory lock) — förhindrar dubbla samtidiga körningar.
-- **Idempotens:** skrivning per indikator+period ersätter/upsert:ar, aldrig blidirar — en omkörning ger samma sluttillstånd.
-- **Retry:** misslyckad körning lämnar befintlig publicerad data orörd; nästa morgonjobb försöker igen automatiskt. Vid fel i valideringen sparas inget. Manuell omkörning möjlig (workflow_dispatch i GitHub Actions).
-- **Timeout:** Actions-jobb får generös tidsgräns; i alternativ B hade stora hämtningar behövt delas per indikator/år.
+Arkitekturen isolerar providern:
 
-### Serverbegränsningar i Lovable (relevant för webbplatsen)
+```text
+Chat UI (AI Elements) -> vår server route/server function -> AIService (eget gränssnitt) -> provider
+```
 
-Serverfunktioner/server routes körs i en serverless edge-miljö:
+- `AIService` är en intern modul med ett litet gränssnitt: `chat(messages, tools)`, `embed(text)`. Lovable AI är första implementationen.
+- Chattens verktyg (SQL-uppslag mot statistik, vektorsök i dokument) är providerneutrala — de returnerar data, providern formulerar svaret.
+- Byte till t.ex. OpenAI direkt-API innebär en ny implementation av `AIService` — chatten, verktygen, lagringen och UI:t är oförändrade.
+- Embeddings lagras med modellbeteckning i databasen så att en framtida ominbäddning är möjlig vid providerbyte.
+- Källhänvisningar: verktygen returnerar källa + `tillganglighetsdatum` per siffra/dokument; systeminstruktionen kräver att svaren citerar dessa.
 
-- Ingen långvarig process; buffrade anrop som inte skickar data på ~2 minuter bryts — därför streamas AI-anrop.
-- Inga tunga Node-specifika bibliotek (ingen child_process, inga nativa binärer) — Excel/PDF-tolkning i appen måste använda webbanpassade bibliotek eller göras i ETL-steget.
-- Tillstånd sparas i databasen, inte i minnet.
+## Datamodell (uppdaterad)
 
-Konsekvens: appen läser färdiglagd data snabbt (kort levetid per anrop är inget problem); allt tungt arbete ligger i GitHub Actions/Postgres.
+- `indicators` — id, namn, beskrivning, enhet, `styrande_kalla`, källtabell-id, frekvens, **synlighetsnivå**.
+- `geographies` — kod, namn, nivå (riket/län/kommun), överordnad kod.
+- `observations` — indikator, geografi, period, värde, dimensioner (kön/ålder/bransch) som nyckelvärden.
+- `indicator_metadata` — `kalla_uppdaterad_datum`, `hamtad_datum`, `tillganglighetsdatum` (genererad kolumn), `styrande_kalla`, källa, anmärkning.
+- `data_source_runs` — källa, indikator, starttid, sluttid, status (`started`/`no_change`/`succeeded`/`failed`), antal rader, felmeddelande.
+- `documents` — titel, typ, filreferens (Storage), kopplad indikator, uppladdare, **synlighetsnivå**.
+- `user_roles` — `admin`, `editor`, `registered` (separat tabell enligt säkerhetsmönstret).
+- Senare: `document_chunks` med pgvector-embeddings + modellbeteckning.
 
-### AI: vad "Lovable AI" faktiskt innebär
+Databasroller: `etl_writer` (ovan), appens vanliga användarroller via RLS, service-roll endast för migrations- och adminjobb.
 
-- Server-side AI-gateway: nyckeln ligger bara på servern, aldrig i webbläsaren.
-- Chatt: standard är en modern resonerande modell; svaren streamas och kan visa tankeprocess. Modellen kan bytas per funktion.
-- Embeddings: standardmodell ger 3072-dimensionella vektorer som lagras i pgvector i samma Postgres; dokumentstyckas (500–1500 tecken) och indexeras för semantisk sökning.
-- Kostnad: förbrukas som credits per anrop (tokens); övervakas i projektets AI-panel. Innan AI-chatten byggs gör vi en konkret kostnadsuppskattning.
-- Källhänvisningar säkerställs genom design: chatten får verktyg som gör exakta SQL-uppslag (siffror gissas aldrig) och RAG-svar citerar dokument/indikator med källa och datum från metadatafälten.
-
-### GitHub Actions som ETL — slutbedömning
-
-Med era omfattande R-flöden är hybriden överlägsen: omräkningen av transformationer till TypeScript är en ren kostnad utan funktionell vinst, och Actions ger längre körtider, mognare statistikbibliotek och enkel manuell omkörning. Lovable-delen begränsas till det den är bäst på: lagring, webbplats, auth, AI.
-
-## Uppdaterat dataflöde
+## Dataflöde (fastställt)
 
 ```text
   SCB / Kolada / Trafikanalys
             |
             v
-  GitHub Actions 05:00 (R-skript, i repot)
+  GitHub Actions 05:00 (R-skript, ansluter som etl_writer)
    - metadatakontroll mot indicator_metadata
    - ingen ändring -> logga no_change, klart
             | ändring
             v
-  full hämtning -> validering -> transformation (R)
+  hämta -> teknisk validering (R)     [fel -> rulla tillbaka, logga, gamla data kvar]
             |
             v
-  Lovable Cloud Postgres (indikatorer, observationer, metadata, körningslogg)
+  atomisk publicering (transaktion/upsert) + uppdatera hamtad_datum
             |
             v
-  TanStack-webbplats: route loaders läser Postgres
+  Lovable Cloud Postgres (RLS styr publik/inloggad/admin)
             |
-            +--> diagram, tabeller, kartor
-            +--> AI-chatt (SQL + pgvector mot samma databas)
+            v
+  TanStack-webbplats: server functions läser Postgres
+            |
+            +--> diagram, tabeller, kartor (efter behörighet)
+            +--> Chat UI -> serverfunktion -> AIService -> Lovable AI
+                       (verktyg: SQL-uppslag + pgvector-sök, med källhänvisning)
 ```
 
-## Slutlig rekommendation
+## Robusthet och drift (sammanfattning)
 
-| Område | Rekommendation |
-| --- | --- |
-| Databas | Lovable Cloud Postgres (region: Europa vid aktivering) |
-| Fillagring | Lovable Cloud Storage (publik + skyddad bucket) |
-| Scheduler/ETL | GitHub Actions + befintliga R-skript, skriver till Postgres |
-| Autentisering | Lovable Cloud Auth + separat `user_roles`-tabell |
-| Backendfunktioner | TanStack server functions / server routes i appen |
-| AI/RAG | Lovable AI + pgvector i samma databas; källhänvisning via metadata |
-| GitHub | Kod, R-skript, migrationer, workflows, dokumentation |
+- Dagliga databasbackuper ~14 dagar (ingen point-in-time recovery). Statistik kan alltid återskapas via ETL-omkörning; svårersättliga uppladdade original speglas vid behov utanför.
+- Låsning mot samtidiga körningar: advisory lock per indikator; körning som redan pågår avböjer ny start.
+- Retry: misslyckad körning provas igen av nästa schemalagda jobb; manuell omkörning via `workflow_dispatch`.
+- En Cloud-miljö per projekt — exempel/testdata markeras (`isExample`), inga separata staging-databaser i detta skede.
+- Migrationer i repot, reproducerbara från tomt schema.
 
 ## Byggordning
 
-1. Aktivera Lovable Cloud (region Europa), skapa datamodellen, flytta exempelindikatorn dit.
-2. GitHub Actions-workflow: metadatakontroll + full hämtning för en SCB-indikator, körningslogg.
-3. Statussida i webbplatsen som visar senaste körningar per indikator.
-4. Inloggning/roller, sedan dokumentuppladdning (Storage).
-5. AI-chatt med RAG — efter separat genomgång av kostnad, GDPR och förvaltning.
+1. Aktivera Lovable Cloud (region Europa). Migration: datamodell + `etl_writer`-roll + RLS-policies + flytta exempelindikatorn.
+2. GitHub Actions-workflow + R-skript: metadatakontroll, validering, atomisk publicering, körningslogg — för en första SCB-indikator.
+3. Statussida i webbplatsen: senaste körningar, tillgänglighetsdatum och källa per indikator.
+4. Inloggning + roller (`user_roles`), synlighetsnivåer i UI, därefter dokumentuppladdning (Storage).
+5. AI-chatt: `AIService`-gränssnitt + Lovable AI som första provider, RAG med källhänvisning — efter separat genomgång av kostnad, GDPR och förvaltning.
