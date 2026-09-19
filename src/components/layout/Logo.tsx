@@ -1,11 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { site } from "@/config/site";
-import logo from "@/assets/logo/kompetensarena-placeholder.svg";
+
+const logo =
+  "/__l5e/assets-v1/2013717c-364e-4945-a2dd-20e5fd7174f7/utveckla-norrbotten-vit-bakgrund.jpg";
 
 /**
- * Logotypen behandlas som grafisk asset (SVG), inte som text.
- * Filen i src/assets/logo/ är en PLACEHOLDER och ska bytas mot den riktiga
- * logotypen från Utveckla Norrbotten.
+ * Huvudlogotypen använder Utveckla Norrbottens vita variant från Lovables
+ * asset-lagring.
  */
 export function Logo() {
   return (
