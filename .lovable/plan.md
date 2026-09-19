@@ -20,11 +20,17 @@ GitHub Actions ansluter **inte** med en fullprivilegierad nyckel. Vi skapar i Po
 
 - En dedikerad databasroll, t.ex. `etl_writer`, med eget lösenord (lagras som GitHub Actions-secret).
 - Behörigheter begränsade till exakt det som behövs:
-  - `SELECT, INSERT, UPDATE` på `observations`, `indicator_metadata`, `data_source_runs` (och motsvarande ETL-tabeller).
   - `SELECT` på `indicators`, `geographies` (läs av nycklar/definitioner).
+  - `INSERT, UPDATE` på `indicator_metadata`, `data_source_runs` (körningslogg och hämtstatus).
+  - **Ingen direkt behörighet alls** på `observations` — varken INSERT, UPDATE eller DELETE.
   - **Inga** rättigheter till `user_roles`, auth-tabeller, dokumentregister eller adminfunktioner.
-  - **Inget** `DELETE` om det inte behövs — upsert-strategi i stället.
   - Ingen rätt att skapa/ändra tabeller (DDL görs bara via migrationer).
+- **Atomisk publicering via låst databasfunktion.** Eftersom källors tabeller förändras (perioder/rader kan försvinna) räcker inte ren upsert — men ETL-rollen ska heller inte kunna utföra godtyckliga DELETE. Lösningen är en RPC i Postgres, t.ex. `publish_indicator(indikator_id, observationer jsonb, metadata jsonb)`, som:
+  - är `SECURITY DEFINER` (ägs av migrationsrollen) och därmed får ersätta data — men **endast** inom funktionens fasta logik,
+  - i en enda transaktion: tar advisory lock per indikator, raderar befintliga observationer **för just den indikatorn**, sätter in det nya, validerade datasetet, uppdaterar `indicator_metadata` (`hamtad_datum`, `kalla_uppdaterad_datum`) och skriver körningsloggrad — allt eller inget,
+  - avvisar anrop för indikator som inte finns eller där anropet saknar obligatoriska fält,
+  - aldrig kan röra andra indikatorer, andra tabeller eller utföra fria DELETE-operationer.
+- `etl_writer` får exakt en rättighet mot observationsdata: `EXECUTE` på `publish_indicator`. Revokera `EXECUTE` från `PUBLIC` och ge den bara till `etl_writer`.
 - Rot-/service-nycklar används aldrig av ETL och finns aldrig i GitHub.
 
 ### 2. Metadatamodell enligt era RUS-konventioner
@@ -49,7 +55,7 @@ metadatakontroll -> ny data? -> hämta -> teknisk validering -> publicera automa
 Krav på flödet:
 
 - Hämtning + validering sker på rådata i minnet/staging — inget skrivs till publicerade tabeller förrän valideringen godkänts.
-- Publicering sker **atomiskt i en transaktion**: nya observationer ersätter gamla per indikator/period via upsert + delete av överflödiga rader, allt eller inget.
+- Publicering sker **atomiskt i en transaktion** via den låsta RPC-funktionen `publish_indicator` (se avsnittet om ETL-rollen): gamla observationer för indikatorn ersätts av det nya datasetet — allt eller inget. ETL-rollen kan aldrig utföra fria DELETE eller påverka andra indikatorer.
 - Vid fel i hämtning eller validering: transaktionen rullas tillbaka, befintlig publicerad data ligger kvar orörd, felet loggas i `data_source_runs` med status `failed` och felmeddelande. Inget halvfärdigt dataset kan bli synligt.
 - Statusvärden i körningsloggen: `started`, `no_change`, `succeeded`, `failed`.
 
