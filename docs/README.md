@@ -22,7 +22,7 @@ Här samlas vägledning för den som ska utveckla eller vidareförvalta plattfor
 - **Designsystem:** `src/styles.css` — alla färger, typografi, spacing, radier och fokusmarkeringar.
 - **Meny:** `src/config/navigation.ts` — placeholder-menyn som enkelt byts ut.
 - **Sidinställningar:** `src/config/site.ts` — namn, tagline, kontaktmail.
-- **Data och indikatorer:** `src/lib/indicators.ts` (datalager) och `src/data/` (typer + exempeldata).
+- **Data och indikatorer:** `src/lib/indicators.ts` (datalager), `src/lib/indicators.functions.ts` (serverfunktioner mot databasen) och `src/data/` (delade typer). Databasen skapas via migrationer i repot.
 - **Sidor:** `src/routes/` — filbaserad routing för TanStack Start.
 - **Grafik:** `src/assets/` — logotyp, ikoner, illustrationer, figurer och bilder.
 
@@ -32,7 +32,7 @@ Följande är platshållare och ska bytas ut i kommande iterationer:
 
 - Logotypen i `src/assets/logo/kompetensarena-placeholder.svg`.
 - Menystrukturen i `src/config/navigation.ts`.
-- Exempelindikatorn i `src/data/example-indicators.ts`.
+- Exempelindikatorn (lagrad i databasen, märkt `is_example`).
 - Sidan `/kommer-senare` som fångar upp ännu obyggda menyposter.
 
 ## Designfilosofi

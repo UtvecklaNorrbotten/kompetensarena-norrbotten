@@ -2,7 +2,7 @@
 
 Kunskaps- och analysportal för statistik, analyser och kunskap om kompetensförsörjning i Norrbotten. En del av Utveckla Norrbotten.
 
-Projektet utvecklas stegvis. Den här versionen (iteration 1) innehåller den visuella och tekniska grunden: grafisk profil, navigation, responsiv layout, ett fåtal sidor och ett enda statistikexempel.
+Projektet utvecklas stegvis. Nuvarande version innehåller den visuella och tekniska grunden (grafisk profil, navigation, responsiv layout) samt en databasbackad indikatormodell: statistik lagras i Lovable Cloud (Postgres) och webbplatsen läser alltid från egen lagring — aldrig direkt från externa API:er.
 
 ## Kom igång
 
@@ -13,7 +13,7 @@ bun run dev   # startar utvecklingsserver
 
 Öppna sedan [http://localhost:8080](http://localhost:8080).
 
-> Inga externa tjänser används i denna version: ingen databas, ingen inloggning, ingen analystjänst, inga AI-anrop. Koden är vanlig React/Vite och kan klonas, byggas och vidareutvecklas via GitHub utan Lovable.
+> Statistik läses från projektets databas (Lovable Cloud). Ingen inloggning krävs för publikt innehåll; behörighet styrs i databasen (RLS) med nivåerna publik / inloggad / admin. Koden är vanlig React/Vite och kan klonas, byggas och vidareutvecklas via GitHub.
 
 ## Läs mer
 
@@ -42,8 +42,8 @@ src/
     ui/            små återanvändbara byggstenar (PageHeader, MetadataList m.m.)
     charts/        visualiseringar (TimeSeriesChart, IndicatorPanel)
   config/          navigation.ts (menyn), site.ts (namn, kontakt, texter)
-  data/            typer och exempeldata
-  lib/             datalager (indicators.ts) och hjälpfunktioner
+  data/            delade typer för indikatorer och tidsserier
+  lib/             datalager (indicators.ts) + serverfunktioner (indicators.functions.ts)
   assets/          grafiska resurser, se src/assets/README.md
   styles.css       designsystem: färger, typografi, spacing, radier, states
 ```
@@ -62,7 +62,9 @@ Hårdkoda aldrig hex-värden i komponenter – använd klasser som `bg-brand-lig
 
 ## Data
 
-`src/lib/indicators.ts` är ett tunt datalager. Idag returnerar det exempeldata från `src/data/example-indicators.ts`. När riktiga källor tillkommer (filimport, API, databas) byts implementationen där – sidor och komponenter är oförändrade eftersom de bara anropar `listIndicators()` / `getIndicator()`.
+`src/lib/indicators.ts` är ett tunt datalager som läser från databasen via serverfunktionerna i `src/lib/indicators.functions.ts`. Sidor och komponenter anropar bara `listIndicators()` / `getIndicator()` och vet inget om var data kommer ifrån.
+
+Datamodellen i databasen: `indicators`, `observations` (tidsseriepunkter per geografi och period), `geographies`, `indicator_metadata` (RUS-fälten `kalla_uppdaterad_datum`, `hamtad_datum`, `tillganglighetsdatum`, `styrande_kalla`), `data_source_runs` (ETL-körningslogg) och `documents`. Publicering av ny data sker atomiskt via databasfunktionen `publish_indicator`. Scheman versionhanteras som migrationer i repot.
 
 Alla indikatorer beskrivs med samma typer (`src/data/types.ts`): metadata om källa, uppdateringsdatum, geografisk nivå och period plus datapunkter.
 
@@ -76,12 +78,13 @@ Se [`docs/utveckla.md`](docs/utveckla.md) för steg-för-steg-instruktioner.
 
 - Logotypen i `src/assets/logo/` är en platshållare.
 - Menystrukturen är exempel.
-- All statistik är påhittad exempeldata och märkt "Exempeldata".
+- All statistik är påhittad exempeldata (lagrad i databasen) och märkt "Exempeldata".
 - Sidan `/kommer-senare` fångar upp ännu obyggda menyposter.
 
 ## Nästa steg
 
 1. Fastställ informationsarkitektur och byt ut menyn.
 2. Lägg in riktig logotyp samt valda figurer och illustrationer.
-3. Definiera de första riktiga indikatorerna och deras datamodell.
-4. Diskutera behov av databas, inloggning, AI och webbstatistik – med alternativ, kostnad, GDPR och förvaltning – innan något implementeras.
+3. Definiera de första riktiga indikatorerna och koppla på ETL-flödet (GitHub Actions + R-skript) mot SCB.
+4. Inloggning och roller, därefter dokumentuppladdning.
+5. AI-chatt med källhänvisning – efter separat genomgång av kostnad, GDPR och förvaltning.
