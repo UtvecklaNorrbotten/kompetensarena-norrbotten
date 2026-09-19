@@ -30,8 +30,8 @@ src/
     ui/            PageHeader, MetadataList, ExampleBadge
     charts/        TimeSeriesChart, IndicatorPanel
   config/          navigation.ts (meny), site.ts (namn, kontakt)
-  data/            typer och exempeldata
-  lib/             datalager (indicators.ts) och hjälpfunktioner
+  data/            delade typer för indikatorer och tidsserier
+  lib/             datalager (indicators.ts) + serverfunktioner (indicators.functions.ts)
   assets/          logotyp, ikoner, illustrationer, figurer, bilder
   styles.css       designsystem: färger, typografi, spacing, radier, states
 ```
@@ -69,5 +69,6 @@ Lovable har tvåvägs-synk med GitHub:
 1. Fastställ informationsarkitektur och byt ut placeholder-menyn i `src/config/navigation.ts`.
 2. Byt ut `src/assets/logo/kompetensarena-placeholder.svg` mot riktig logotyp.
 3. Lägg in valda figurer och illustrationer från presentationsmaterialet i `src/assets/`.
-4. Definiera de första riktiga indikatorerna och ersätt exempeldata i `src/data/example-indicators.ts`.
-5. Diskutera behov av databas, inloggning, AI och webbstatistik — med alternativ, kostnad, GDPR och förvaltning — innan något implementeras.
+4. Definiera de första riktiga indikatorerna (ersätt exempelindikatorn i databasen) och koppla på ETL-flödet (GitHub Actions + R-skript) mot SCB.
+5. Bygg inloggning och roller, därefter dokumentuppladdning.
+6. AI-chatt med källhänvisning — efter separat genomgång av kostnad, GDPR och förvaltning.
