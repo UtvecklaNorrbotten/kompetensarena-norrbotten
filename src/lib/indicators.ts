@@ -1,19 +1,19 @@
-import { exampleIndicators } from "@/data/example-indicators";
+import { getIndicatorFn, listIndicatorsFn } from "@/lib/indicators.functions";
 import type { Indicator } from "@/data/types";
 
 /**
  * Tunt datalager.
  *
- * Idag läses indikatorer från lokala exempelfiler. När riktiga datakällor
- * (filimport, API, databas) tillkommer byts implementationen här — sidor och
- * komponenter behöver inte ändras eftersom de bara använder funktionerna nedan.
- * Funktionerna är async redan nu just för att kunna bli nätverksanrop senare.
+ * Indikatorer läses från databasen via serverfunktioner (RLS styr synlighet).
+ * Webbplatsen anropar aldrig externa datakällor vid sidladdning — allt data
+ * kommer från vår egen lagring, som ETL-flödet (GitHub Actions + R) fyller på.
+ * Funktionerna är async och kan byta implementation utan att sidorna ändras.
  */
 
 export async function listIndicators(): Promise<Indicator[]> {
-  return exampleIndicators;
+  return listIndicatorsFn();
 }
 
 export async function getIndicator(id: string): Promise<Indicator | undefined> {
-  return exampleIndicators.find((indicator) => indicator.id === id);
+  return getIndicatorFn({ data: { id } });
 }
