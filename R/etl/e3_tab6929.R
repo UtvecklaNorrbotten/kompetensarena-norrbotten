@@ -29,8 +29,36 @@ tabell_id <- "TAB6929"
 indikator_id <- "e3-matchning-utbildning"
 kalla <- "SCB"
 
-# ---- Hämta metadata och kontrollera uppdatering ----
+# ---- Kontrollera metadata före datahämtning ----
 
+state <- etl_get_state(indikator_id)
+senast_lyckad <- state$last_successful_at %||% NA_character_
+
+if (!is.na(senast_lyckad) && nzchar(senast_lyckad)) {
+  senast_lyckad_utc <- format(
+    as.POSIXct(senast_lyckad, tz = "UTC"),
+    "%Y-%m-%dT%H:%M:%SZ",
+    tz = "UTC"
+  )
+
+  behov_av_uppdatering <- pxweb2_table_needs_update(
+    table = tabell_id,
+    reference_datetime = senast_lyckad_utc
+  )
+
+  if (isFALSE(behov_av_uppdatering)) {
+    etl_log_no_change(indikator_id, kalla)
+    message("TAB6929 har inte uppdaterats sedan senaste lyckade publicering.")
+    quit(save = "no", status = 0)
+  }
+
+  if (is.na(behov_av_uppdatering)) {
+    warning("SCB saknar användbar updated-timestamp för TAB6929; data hämtas för säkerhets skull.")
+  }
+}
+
+# Första körningen, eller när SCB är nyare än vår senaste lyckade publicering:
+# hämta metadata en gång och återanvänd den i datahämtningen.
 meta <- pxweb2_get_metadata(tabell_id)
 kalla_uppdaterad <- pxweb2_table_updated(meta)
 
@@ -38,20 +66,6 @@ kalla_uppdaterad_datum <- if (!is.na(kalla_uppdaterad) && nzchar(kalla_uppdatera
   substr(kalla_uppdaterad, 1, 10)
 } else {
   NA_character_
-}
-
-state <- etl_get_state(indikator_id)
-senast_publicerad <- state$kalla_uppdaterad_datum %||% NA_character_
-
-if (
-  !is.na(kalla_uppdaterad_datum) &&
-  !is.na(senast_publicerad) &&
-  nzchar(senast_publicerad) &&
-  as.Date(kalla_uppdaterad_datum) <= as.Date(senast_publicerad)
-) {
-  etl_log_no_change(indikator_id, kalla)
-  message("TAB6929 har inte uppdaterats sedan senaste publicering.")
-  quit(save = "no", status = 0)
 }
 
 # ---- Hämta data från SCB ----
