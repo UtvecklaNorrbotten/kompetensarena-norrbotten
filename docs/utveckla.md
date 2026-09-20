@@ -18,7 +18,7 @@ bun run dev
 # öppna http://localhost:8080
 ```
 
-> Just nu används inga externa API:er, databaser eller inloggning. Inga miljövariabler behövs för att köra projektet lokalt.
+> Projektet använder Lovable Cloud/Postgres för indikatorer och metadata. Lokal utveckling av databasanslutna sidor kräver motsvarande Supabase/Lovable-miljövariabler. Externa statistik-API:er anropas däremot aldrig vid sidladdning.
 
 ## Filstruktur
 
@@ -41,7 +41,7 @@ src/
 1. **Designsystem i en fil.** Alla färger, radier, spacing och typografi finns i `src/styles.css`. Hårdkoda aldrig hex-värden i komponenter — använd klasser som `bg-brand-light`, `text-brand-dark`, `text-ink-muted`.
 2. **Menyn är konfiguration.** Alla menytexter och länkar ligger i `src/config/navigation.ts`. Komponenterna läser den filen.
 3. **Data via tunt lager.** Komponenter hämtar inte data själva. Använd `listIndicators()` / `getIndicator(id)` från `src/lib/indicators.ts`. När riktiga datakällor tillkommer byts implementationen där.
-4. **Logotyp som asset.** Logotypen importeras som SVG från `src/assets/logo/`. Byt filen, inte komponenten.
+4. **Logotyp som asset.** Huvudlogotypen använder den uppladdade vita Utveckla Norrbotten-logotypen via Lovables asset-lagring. Övrig profilgrafik hålls samlad under `src/assets/`.
 5. **Inga stora monolitiska komponenter.** Dela upp i små, namngivna komponenter som beskrivs i `docs/komponenter.md`.
 
 ## GitHub-arbetsflöde
@@ -66,10 +66,10 @@ Lovable har tvåvägs-synk med GitHub:
 
 ## Nästa utvecklingssteg
 
-1. Fastställ informationsarkitektur och byt ut placeholder-menyn i `src/config/navigation.ts`.
-2. Byt ut `src/assets/logo/kompetensarena-placeholder.svg` mot riktig logotyp.
-3. Lägg in valda figurer och illustrationer från presentationsmaterialet i `src/assets/`.
-4. Definiera de första riktiga indikatorerna (ersätt exempelindikatorn i databasen) och koppla på ETL-flödet (GitHub Actions + R-skript) mot SCB.
+1. Koppla den första riktiga indikatorn, E3 från SCB TAB6929, till ETL-flödet.
+2. Generalisera GitHub Actions + R-flödet för fler indikatorer och datakällor.
+3. Bygg statussida för datauppdateringar och metadata.
+4. Fastställ informationsarkitektur och byt ut kvarvarande placeholder-innehåll.
 5. Bygg inloggning och roller, därefter dokumentuppladdning.
 6. AI-chatt med källhänvisning — efter separat genomgång av kostnad, GDPR och förvaltning.
 
