@@ -228,7 +228,7 @@ export async function handleBatchAbort(request: Request): Promise<Response> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data, error } = await supabaseAdmin.rpc("etl_abort_batch", {
     p_batch_id: body.data.batch_id,
-    p_reason: body.data.reason ?? undefined,
+    ...(body.data.reason ? { p_reason: body.data.reason } : {}),
   });
 
   if (error) {
