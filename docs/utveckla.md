@@ -190,3 +190,23 @@ rullas allt tillbaka och tidigare publicerad data ligger kvar oförändrad.
   inloggade användare — inga rättigheter utöver serverns, RLS på utan policies.
 - Städning av övergivna batcher sker med databasfunktionen `etl_cleanup_batches(interval)`
   (standard 48 timmar). Inget schemalagt jobb är kopplat ännu.
+
+
+## GitHub Actions för E3
+
+Repo:t innehåller nu ett R-baserat pilotflöde för E3:
+
+- `R/etl/e3_tab6929.R` — SCB/PxWeb2-hämtning, metadata-kontroll, teknisk validering och publicering.
+- `R/etl/etl_api.R` — gemensam klient för ETL-endpoints.
+- `.github/workflows/etl-e3-tab6929.yml` — daglig körning cirka 05:00 svensk tid samt manuell `workflow_dispatch`.
+
+Workflowet använder `pxweb2r` och den exakta TAB6929-queryn för län. Det använder den chunkade batch-endpointen och publicerar först efter lyckad validering.
+
+Följande GitHub Actions Secrets måste sättas innan workflowet kan köras:
+
+- `ETL_BASE_URL` — webbplatsens publika basadress, utan avslutande snedstreck.
+- `ETL_PUBLISH_KEY` — samma ETL-nyckel som finns som Lovable-secret.
+
+SCB kräver ingen API-nyckel.
+
+Vid oförändrat källdatum hämtas ingen statistikdata. Jobbet loggar då `no_change` via den nyckelskyddade endpointen `/api/public/jobs/etl-no-change`.
