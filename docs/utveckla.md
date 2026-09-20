@@ -72,3 +72,32 @@ Lovable har tvåvägs-synk med GitHub:
 4. Definiera de första riktiga indikatorerna (ersätt exempelindikatorn i databasen) och koppla på ETL-flödet (GitHub Actions + R-skript) mot SCB.
 5. Bygg inloggning och roller, därefter dokumentuppladdning.
 6. AI-chatt med källhänvisning — efter separat genomgång av kostnad, GDPR och förvaltning.
+
+## ETL-endpoint: publicering av indikatordata
+
+`POST /api/public/jobs/publish-indicator`
+
+- **Autentisering:** `Authorization: Bearer <ETL_PUBLISH_KEY>`. Nyckeln lagras som
+  hemlighet i Lovable och i GitHub Actions Secrets — aldrig i repot, aldrig i frontend
+  och den loggas aldrig. Vid nyckelbyte kan `ETL_PUBLISH_KEY_PREVIOUS` sättas tillfälligt.
+- **Payload (strikt validerad med zod):**
+
+```json
+{
+  "indicator_id": "exempel-arbetsloshet",
+  "source": "SCB",
+  "kalla_uppdaterad_datum": "2026-09-01",
+  "observations": [{ "geo_code": "25", "period": "2020", "value": 7.9, "dimensions": {} }]
+}
+```
+
+- **Svarskoder:** 200 lyckad publicering, 400 felaktig payload, 401 saknad nyckel,
+  403 fel nyckel, 404 okänd indikator, 413 för stor payload, 422 publicering avvisad av
+  databasen, 429 för många anrop.
+- **Begränsningar:** endpointen kan bara anropa `publish_indicator` för angiven indikator.
+  Ingen generell databasåtkomst och inga adminfunktioner exponeras. Publiceringen är
+  atomisk — misslyckas något ligger befintlig data kvar orörd.
+- **Loggning:** varje anrop skrivs till `data_source_runs` (`started` →
+  `succeeded`/`failed` med radantal och felmeddelande). Hemligheten loggas aldrig.
+- **Takbegränsning:** max 12 anrop per minut och serverinstans; samtidiga publiceringar av
+  samma indikator serialiseras dessutom av advisory lock i databasfunktionen.
