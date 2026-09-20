@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as KommerSenareRouteImport } from './routes/kommer-senare'
 import { Route as OmRouteImport } from './routes/om'
 import { Route as StatistikRouteImport } from './routes/statistik'
+import { Route as ApiPublicJobsPublishIndicatorRouteImport } from './routes/api/public/jobs/publish-indicator'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +35,26 @@ const StatistikRoute = StatistikRouteImport.update({
   path: '/statistik',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicJobsPublishIndicatorRoute =
+  ApiPublicJobsPublishIndicatorRouteImport.update({
+    id: '/api/public/jobs/publish-indicator',
+    path: '/api/public/jobs/publish-indicator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/kommer-senare': typeof KommerSenareRoute
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
+  '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/kommer-senare': typeof KommerSenareRoute
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
+  '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +62,30 @@ export interface FileRoutesById {
   '/kommer-senare': typeof KommerSenareRoute
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
+  '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/kommer-senare' | '/om' | '/statistik'
+  fullPaths:
+    | '/'
+    | '/kommer-senare'
+    | '/om'
+    | '/statistik'
+    | '/api/public/jobs/publish-indicator'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/kommer-senare' | '/om' | '/statistik'
-  id: '__root__' | '/' | '/kommer-senare' | '/om' | '/statistik'
+  to:
+    | '/'
+    | '/kommer-senare'
+    | '/om'
+    | '/statistik'
+    | '/api/public/jobs/publish-indicator'
+  id:
+    | '__root__'
+    | '/'
+    | '/kommer-senare'
+    | '/om'
+    | '/statistik'
+    | '/api/public/jobs/publish-indicator'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +93,7 @@ export interface RootRouteChildren {
   KommerSenareRoute: typeof KommerSenareRoute
   OmRoute: typeof OmRoute
   StatistikRoute: typeof StatistikRoute
+  ApiPublicJobsPublishIndicatorRoute: typeof ApiPublicJobsPublishIndicatorRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +126,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StatistikRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/publish-indicator': {
+      id: '/api/public/jobs/publish-indicator'
+      path: '/api/public/jobs/publish-indicator'
+      fullPath: '/api/public/jobs/publish-indicator'
+      preLoaderRoute: typeof ApiPublicJobsPublishIndicatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +141,7 @@ const rootRouteChildren: RootRouteChildren = {
   KommerSenareRoute: KommerSenareRoute,
   OmRoute: OmRoute,
   StatistikRoute: StatistikRoute,
+  ApiPublicJobsPublishIndicatorRoute: ApiPublicJobsPublishIndicatorRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
