@@ -140,9 +140,9 @@ export async function handleBatchStart(request: Request): Promise<Response> {
     p_indicator_id: payload.indicator_id,
     p_source: payload.source,
     p_expected_chunks: payload.expected_chunks,
-    p_expected_rows: payload.expected_rows ?? undefined,
-    p_kalla_uppdaterad_datum: payload.kalla_uppdaterad_datum ?? undefined,
-    p_run_id: run?.id ?? undefined,
+    ...(payload.expected_rows !== undefined ? { p_expected_rows: payload.expected_rows } : {}),
+    ...(payload.kalla_uppdaterad_datum ? { p_kalla_uppdaterad_datum: payload.kalla_uppdaterad_datum } : {}),
+    ...(run?.id ? { p_run_id: run.id } : {}),
   });
 
   if (error) {
