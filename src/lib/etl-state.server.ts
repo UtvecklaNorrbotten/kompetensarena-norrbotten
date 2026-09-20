@@ -62,7 +62,9 @@ export async function handleEtlState(request: Request): Promise<Response> {
       kalla_uppdaterad_datum: metadata?.kalla_uppdaterad_datum ?? null,
       hamtad_datum: metadata?.hamtad_datum ?? null,
       tillganglighetsdatum: metadata?.tillganglighetsdatum ?? null,
-      last_successful_at: latestSuccessfulRun?.finished_at ?? null,
+      last_successful_at: latestSuccessfulRun?.finished_at
+        ? new Date(latestSuccessfulRun.finished_at).toISOString().replace(/\.\d{3}Z$/, "Z")
+        : null,
     },
     200,
   );
