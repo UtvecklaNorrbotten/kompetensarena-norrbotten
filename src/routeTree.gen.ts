@@ -14,6 +14,7 @@ import { Route as KommerSenareRouteImport } from './routes/kommer-senare'
 import { Route as OmRouteImport } from './routes/om'
 import { Route as StatistikRouteImport } from './routes/statistik'
 import { Route as ApiPublicJobsPublishIndicatorRouteImport } from './routes/api/public/jobs/publish-indicator'
+import { Route as ApiPublicJobsEtlBatchChunkRouteImport } from './routes/api/public/jobs/etl-batch/chunk'
 import { Route as ApiPublicJobsEtlBatchStartRouteImport } from './routes/api/public/jobs/etl-batch/start'
 
 const IndexRoute = IndexRouteImport.update({
@@ -42,6 +43,12 @@ const ApiPublicJobsPublishIndicatorRoute =
     path: '/api/public/jobs/publish-indicator',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicJobsEtlBatchChunkRoute =
+  ApiPublicJobsEtlBatchChunkRouteImport.update({
+    id: '/api/public/jobs/etl-batch/chunk',
+    path: '/api/public/jobs/etl-batch/chunk',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicJobsEtlBatchStartRoute =
   ApiPublicJobsEtlBatchStartRouteImport.update({
     id: '/api/public/jobs/etl-batch/start',
@@ -55,6 +62,7 @@ export interface FileRoutesByFullPath {
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
+  '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
   '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
 }
 export interface FileRoutesByTo {
@@ -63,6 +71,7 @@ export interface FileRoutesByTo {
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
+  '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
   '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
 }
 export interface FileRoutesById {
@@ -72,6 +81,7 @@ export interface FileRoutesById {
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
+  '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
   '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
 }
 export interface FileRouteTypes {
@@ -82,6 +92,7 @@ export interface FileRouteTypes {
     | '/om'
     | '/statistik'
     | '/api/public/jobs/publish-indicator'
+    | '/api/public/jobs/etl-batch/chunk'
     | '/api/public/jobs/etl-batch/start'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -90,6 +101,7 @@ export interface FileRouteTypes {
     | '/om'
     | '/statistik'
     | '/api/public/jobs/publish-indicator'
+    | '/api/public/jobs/etl-batch/chunk'
     | '/api/public/jobs/etl-batch/start'
   id:
     | '__root__'
@@ -98,6 +110,7 @@ export interface FileRouteTypes {
     | '/om'
     | '/statistik'
     | '/api/public/jobs/publish-indicator'
+    | '/api/public/jobs/etl-batch/chunk'
     | '/api/public/jobs/etl-batch/start'
   fileRoutesById: FileRoutesById
 }
@@ -107,6 +120,7 @@ export interface RootRouteChildren {
   OmRoute: typeof OmRoute
   StatistikRoute: typeof StatistikRoute
   ApiPublicJobsPublishIndicatorRoute: typeof ApiPublicJobsPublishIndicatorRoute
+  ApiPublicJobsEtlBatchChunkRoute: typeof ApiPublicJobsEtlBatchChunkRoute
   ApiPublicJobsEtlBatchStartRoute: typeof ApiPublicJobsEtlBatchStartRoute
 }
 
@@ -147,6 +161,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicJobsPublishIndicatorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/etl-batch/chunk': {
+      id: '/api/public/jobs/etl-batch/chunk'
+      path: '/api/public/jobs/etl-batch/chunk'
+      fullPath: '/api/public/jobs/etl-batch/chunk'
+      preLoaderRoute: typeof ApiPublicJobsEtlBatchChunkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/jobs/etl-batch/start': {
       id: '/api/public/jobs/etl-batch/start'
       path: '/api/public/jobs/etl-batch/start'
@@ -163,6 +184,7 @@ const rootRouteChildren: RootRouteChildren = {
   OmRoute: OmRoute,
   StatistikRoute: StatistikRoute,
   ApiPublicJobsPublishIndicatorRoute: ApiPublicJobsPublishIndicatorRoute,
+  ApiPublicJobsEtlBatchChunkRoute: ApiPublicJobsEtlBatchChunkRoute,
   ApiPublicJobsEtlBatchStartRoute: ApiPublicJobsEtlBatchStartRoute,
 }
 export const routeTree = rootRouteImport
