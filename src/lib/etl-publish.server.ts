@@ -38,46 +38,7 @@ export type EtlPayload = z.infer<typeof payloadSchema>;
 
 // Enkel takbegränsning per serverinstans (best effort — den riktiga
 // samtidighetsspärren är advisory lock per indikator i publish_indicator).
-const hits: number[] = [];
-function rateLimited(): boolean {
-  const now = Date.now();
-  while (hits.length && now - hits[0]! > RATE_LIMIT_WINDOW_MS) hits.shift();
-  if (hits.length >= RATE_LIMIT_MAX) return true;
-  hits.push(now);
-  return false;
-}
-
-function json(body: unknown, status: number): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { "content-type": "application/json; charset=utf-8" },
-  });
-}
-
-async function authorize(request: Request): Promise<Response | null> {
-  const current = process.env["ETL_PUBLISH_KEY"];
-  const previous = process.env["ETL_PUBLISH_KEY_PREVIOUS"];
-
-  if (!current) {
-    console.error("[etl] ETL_PUBLISH_KEY saknas i miljön");
-    return json({ error: "Server configuration error" }, 500);
-  }
-
-  const header = request.headers.get("authorization") ?? "";
-  const token = /^Bearer ([^\s,]+)$/.exec(header)?.[1];
-  if (!token) return json({ error: "Unauthorized" }, 401);
-
-  const { createHash, timingSafeEqual } = await import("node:crypto");
-  const digest = (v: string) => createHash("sha256").update(v, "utf8").digest();
-  const provided = digest(token);
-  const ok =
-    timingSafeEqual(provided, digest(current)) ||
-    timingSafeEqual(provided, digest(previous ?? current));
-
-  // Loggar aldrig nyckeln eller det inskickade värdet.
-  if (!ok) return json({ error: "Forbidden" }, 403);
-  return null;
-}
+const rateLimited = createRateLimiter(RATE_LIMIT_MAX);
 
 export async function handleEtlPublish(request: Request): Promise<Response> {
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
