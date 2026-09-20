@@ -24,6 +24,6 @@ src/assets/
 
 ## Status
 
-Mapparna är avsiktligt nästan tomma. `logo/kompetensarena-placeholder.svg` är en
-platshållare och ska bytas mot den riktiga logotypen från Utveckla Norrbotten.
-Figurer från presentationsmaterialet läggs in när vi valt vilka som ska återanvändas.
+Mapparna är avsiktligt nästan tomma. Huvudlogotypen är nu den uppladdade vita
+Utveckla Norrbotten-logotypen i Lovables asset-lagring. Figurer från
+presentationsmaterialet läggs in när vi valt vilka som ska återanvändas.
