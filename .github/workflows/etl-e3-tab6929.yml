@@ -1,0 +1,70 @@
+name: ETL - E3 SCB TAB6929
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Två UTC-tider behövs för att alltid träffa 05:00 i Europe/Stockholm
+    # över både sommar- och vintertid. Första steget nedan gör den andra körningen till no-op.
+    - cron: "0 3,4 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: etl-e3-tab6929
+  cancel-in-progress: false
+
+jobs:
+  e3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Kontrollera lokal körtid
+        id: local-time
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          elif [ "$(TZ=Europe/Stockholm date +%H)" = "05" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checka ut repo
+        if: steps.local-time.outputs.run == 'true'
+        uses: actions/checkout@v4
+
+      - name: Installera R
+        if: steps.local-time.outputs.run == 'true'
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Installera R-beroenden
+        if: steps.local-time.outputs.run == 'true'
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::dplyr
+            any::httr2
+            any::jsonlite
+            any::purrr
+            any::tibble
+            any::remotes
+
+      - name: Installera pxweb2r
+        if: steps.local-time.outputs.run == 'true'
+        shell: Rscript {0}
+        run: |
+          remotes::install_github("FaluPeppe/pxweb2r", upgrade = "never")
+
+      - name: Kör E3
+        if: steps.local-time.outputs.run == 'true'
+        env:
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+        shell: Rscript {0}
+        run: |
+          source("R/etl/e3_tab6929.R")
