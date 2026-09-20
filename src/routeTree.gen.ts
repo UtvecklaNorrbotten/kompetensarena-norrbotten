@@ -14,6 +14,7 @@ import { Route as KommerSenareRouteImport } from './routes/kommer-senare'
 import { Route as OmRouteImport } from './routes/om'
 import { Route as StatistikRouteImport } from './routes/statistik'
 import { Route as ApiPublicJobsPublishIndicatorRouteImport } from './routes/api/public/jobs/publish-indicator'
+import { Route as ApiPublicJobsEtlBatchStartRouteImport } from './routes/api/public/jobs/etl-batch/start'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -41,6 +42,12 @@ const ApiPublicJobsPublishIndicatorRoute =
     path: '/api/public/jobs/publish-indicator',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicJobsEtlBatchStartRoute =
+  ApiPublicJobsEtlBatchStartRouteImport.update({
+    id: '/api/public/jobs/etl-batch/start',
+    path: '/api/public/jobs/etl-batch/start',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -48,6 +55,7 @@ export interface FileRoutesByFullPath {
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
+  '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -55,6 +63,7 @@ export interface FileRoutesByTo {
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
+  '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -63,6 +72,7 @@ export interface FileRoutesById {
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
+  '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -72,6 +82,7 @@ export interface FileRouteTypes {
     | '/om'
     | '/statistik'
     | '/api/public/jobs/publish-indicator'
+    | '/api/public/jobs/etl-batch/start'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -79,6 +90,7 @@ export interface FileRouteTypes {
     | '/om'
     | '/statistik'
     | '/api/public/jobs/publish-indicator'
+    | '/api/public/jobs/etl-batch/start'
   id:
     | '__root__'
     | '/'
@@ -86,6 +98,7 @@ export interface FileRouteTypes {
     | '/om'
     | '/statistik'
     | '/api/public/jobs/publish-indicator'
+    | '/api/public/jobs/etl-batch/start'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -94,6 +107,7 @@ export interface RootRouteChildren {
   OmRoute: typeof OmRoute
   StatistikRoute: typeof StatistikRoute
   ApiPublicJobsPublishIndicatorRoute: typeof ApiPublicJobsPublishIndicatorRoute
+  ApiPublicJobsEtlBatchStartRoute: typeof ApiPublicJobsEtlBatchStartRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -133,6 +147,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicJobsPublishIndicatorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/etl-batch/start': {
+      id: '/api/public/jobs/etl-batch/start'
+      path: '/api/public/jobs/etl-batch/start'
+      fullPath: '/api/public/jobs/etl-batch/start'
+      preLoaderRoute: typeof ApiPublicJobsEtlBatchStartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -142,6 +163,7 @@ const rootRouteChildren: RootRouteChildren = {
   OmRoute: OmRoute,
   StatistikRoute: StatistikRoute,
   ApiPublicJobsPublishIndicatorRoute: ApiPublicJobsPublishIndicatorRoute,
+  ApiPublicJobsEtlBatchStartRoute: ApiPublicJobsEtlBatchStartRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
