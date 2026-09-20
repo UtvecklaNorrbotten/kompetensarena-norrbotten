@@ -39,6 +39,21 @@ export async function handleEtlState(request: Request): Promise<Response> {
     return json({ error: "Lookup failed" }, 500);
   }
 
+  const { data: latestSuccessfulRun, error: runError } = await supabaseAdmin
+    .from("data_source_runs")
+    .select("finished_at")
+    .eq("indicator_id", parsed.data)
+    .eq("status", "succeeded")
+    .not("finished_at", "is", null)
+    .order("finished_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (runError) {
+    console.error("[etl-state] uppslag av senaste lyckade körning misslyckades:", runError.message);
+    return json({ error: "Lookup failed" }, 500);
+  }
+
   return json(
     {
       indicator_id: indicator.id,
@@ -47,6 +62,7 @@ export async function handleEtlState(request: Request): Promise<Response> {
       kalla_uppdaterad_datum: metadata?.kalla_uppdaterad_datum ?? null,
       hamtad_datum: metadata?.hamtad_datum ?? null,
       tillganglighetsdatum: metadata?.tillganglighetsdatum ?? null,
+      last_successful_at: latestSuccessfulRun?.finished_at ?? null,
     },
     200,
   );
