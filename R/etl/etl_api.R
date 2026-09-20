@@ -1,0 +1,151 @@
+# Gemensam klient för Kompetensarenas ETL-endpoints.
+# Används av GitHub Actions och R-skript. Hemligheter läses endast från miljön.
+
+suppressPackageStartupMessages({
+  library(httr2)
+  library(jsonlite)
+})
+
+etl_base_url <- function() {
+  x <- Sys.getenv("ETL_BASE_URL", unset = "")
+  if (!nzchar(x)) stop("ETL_BASE_URL saknas")
+  sub("/+$", "", x)
+}
+
+etl_key <- function() {
+  x <- Sys.getenv("ETL_PUBLISH_KEY", unset = "")
+  if (!nzchar(x)) stop("ETL_PUBLISH_KEY saknas")
+  x
+}
+
+etl_request <- function(path) {
+  request(paste0(etl_base_url(), path)) |>
+    req_auth_bearer_token(etl_key()) |>
+    req_headers("Accept" = "application/json")
+}
+
+etl_perform_json <- function(req) {
+  resp <- req |>
+    req_retry(max_tries = 5) |>
+    req_error(is_error = function(resp) FALSE) |>
+    req_perform()
+
+  status <- resp_status(resp)
+  body <- tryCatch(
+    resp_body_json(resp, simplifyVector = TRUE),
+    error = function(e) list(error = resp_body_string(resp))
+  )
+
+  if (status < 200 || status >= 300) {
+    msg <- body$message %||% body$error %||% paste("HTTP", status)
+    stop(sprintf("ETL-anrop misslyckades (%s): %s", status, msg), call. = FALSE)
+  }
+
+  body
+}
+
+`%||%` <- function(x, y) {
+  if (is.null(x) || length(x) == 0 || (length(x) == 1 && is.na(x))) y else x
+}
+
+etl_get_state <- function(indicator_id) {
+  etl_request("/api/public/jobs/etl-state") |>
+    req_url_query(indicator_id = indicator_id) |>
+    etl_perform_json()
+}
+
+etl_log_no_change <- function(indicator_id, source) {
+  etl_request("/api/public/jobs/etl-no-change") |>
+    req_method("POST") |>
+    req_body_json(list(indicator_id = indicator_id, source = source), auto_unbox = TRUE) |>
+    etl_perform_json()
+}
+
+etl_split_observations <- function(observations, max_rows = 5000L, max_bytes = 5000000L) {
+  stopifnot(is.list(observations))
+  if (length(observations) == 0) return(list())
+
+  rough <- split(observations, ceiling(seq_along(observations) / max_rows))
+  out <- list()
+
+  split_if_needed <- function(chunk) {
+    payload_size <- nchar(
+      toJSON(chunk, auto_unbox = TRUE, null = "null", na = "null", digits = NA),
+      type = "bytes"
+    )
+    if (payload_size <= max_bytes) return(list(chunk))
+    if (length(chunk) <= 1) stop("En enskild observation överskrider chunkgränsen")
+    mid <- floor(length(chunk) / 2)
+    c(split_if_needed(chunk[seq_len(mid)]), split_if_needed(chunk[(mid + 1):length(chunk)]))
+  }
+
+  for (chunk in rough) out <- c(out, split_if_needed(unname(chunk)))
+  out
+}
+
+etl_publish_batch <- function(indicator_id, source, source_updated_date, observations) {
+  chunks <- etl_split_observations(observations)
+  if (length(chunks) == 0) stop("Inga observationer att publicera")
+
+  start_body <- list(
+    indicator_id = indicator_id,
+    source = source,
+    expected_chunks = length(chunks),
+    expected_rows = length(observations)
+  )
+  if (!is.null(source_updated_date) && !is.na(source_updated_date) && nzchar(source_updated_date)) {
+    start_body$kalla_uppdaterad_datum <- source_updated_date
+  }
+
+  start <- etl_request("/api/public/jobs/etl-batch/start") |>
+    req_method("POST") |>
+    req_body_json(start_body, auto_unbox = TRUE, null = "null") |>
+    etl_perform_json()
+
+  batch_id <- start$batch_id
+  if (is.null(batch_id) || !nzchar(batch_id)) stop("Batch-start returnerade inget batch_id")
+
+  ok <- FALSE
+  on.exit({
+    if (!ok) {
+      try(
+        etl_request("/api/public/jobs/etl-batch/abort") |>
+          req_method("POST") |>
+          req_body_json(
+            list(batch_id = batch_id, reason = "R-jobbet avbröts före lyckad finalisering"),
+            auto_unbox = TRUE
+          ) |>
+          etl_perform_json(),
+        silent = TRUE
+      )
+    }
+  }, add = TRUE)
+
+  for (i in seq_along(chunks)) {
+    etl_request("/api/public/jobs/etl-batch/chunk") |>
+      req_method("POST") |>
+      req_body_json(
+        list(
+          batch_id = batch_id,
+          indicator_id = indicator_id,
+          chunk_index = i - 1L,
+          observations = chunks[[i]]
+        ),
+        auto_unbox = TRUE,
+        null = "null",
+        na = "null",
+        digits = NA
+      ) |>
+      etl_perform_json()
+
+    message(sprintf("Publicerade chunk %d/%d", i, length(chunks)))
+  }
+
+  result <- etl_request("/api/public/jobs/etl-batch/finalize") |>
+    req_method("POST") |>
+    req_body_json(list(batch_id = batch_id), auto_unbox = TRUE) |>
+    etl_perform_json()
+
+  ok <- TRUE
+  result
+}
