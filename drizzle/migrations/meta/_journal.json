@@ -15,6 +15,13 @@
       "when": 1789825348483,
       "tag": "0001_fix_publish_indicator_metadata_insert",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789937585944,
+      "tag": "0002_create_etl_batch_staging",
+      "breakpoints": true
     }
   ]
 }
