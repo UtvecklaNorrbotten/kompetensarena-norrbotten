@@ -53,30 +53,33 @@ RUS-konventionerna gäller:
 - `tillganglighetsdatum = coalesce(kalla_uppdaterad_datum, hamtad_datum)`
 - `styrande_kalla = TAB6929`
 
-## Viktig begränsning i nuvarande ingest-endpoint
+## Storlek: E3 ska publiceras chunkat
 
-Den befintliga endpointen `/api/public/jobs/publish-indicator` accepterar högst:
+Den enkla endpointen `/api/public/jobs/publish-indicator` accepterar högst 50 000
+observationer och cirka 2 MB request body. E3-urvalet omfattar alla tabellinnehåll, år,
+näringsgrenar, län och de valda kodlistorna för utbildning samt kön/ålder/födelseland —
+över 150 000 celler. Hela E3-datasetet ska därför **inte** skickas som ett enda
+publish-anrop.
 
-- 50 000 observationer
-- cirka 2 MB request body
+## Chunkad import (byggd)
 
-E3-urvalet ovan omfattar alla tabellinnehåll, år, näringsgrenar, län och de valda kodlistorna för utbildning samt kön/ålder/födelseland. SCB:s egen tabellsida visar redan att urvalet överstiger 150 000 celler.
+Det chunkade flödet finns nu i backend och ska användas för E3:
 
-Det betyder att hela E3-datasetet **inte ska skickas som ett enda nuvarande publish-anrop**.
+1. `POST /api/public/jobs/etl-batch/start` — skapar `batch_id`, anger indikator, källa,
+   förväntat antal chunkar och (valfritt) förväntat antal rader
+2. `POST /api/public/jobs/etl-batch/chunk` — validerade observationer i mindre chunkar,
+   lagras i staging (`etl_batches`, `etl_batch_chunks`)
+3. `POST /api/public/jobs/etl-batch/finalize` — verifierar antal chunkar/rader och
+   ersätter publicerad data för indikatorn atomiskt
+4. `POST /api/public/jobs/etl-batch/abort` — avbryter och rensar staging vid fel
 
-## Nästa backendsteg för E3
+Vid fel behålls föregående publicerade dataset oförändrat. Samma säkerhetsprincip som
+`publish_indicator` gäller: nyckelskyddad endpoint, advisory lock per indikator, ingen
+generell databasåtkomst. Fullständigt format, statuskoder och begränsningar finns i
+`docs/utveckla.md`.
 
-Innan det schemalagda E3-jobbet aktiveras behövs chunkad import med atomisk finalisering:
-
-1. skapa ett import-/batch-id
-2. skicka validerade observationer i mindre chunkar
-3. lagra chunkarna i staging
-4. verifiera förväntat antal chunkar/rader
-5. finalisera hela batchen atomiskt för indikatorn
-6. först därefter ersätta publicerad data
-7. vid fel behålls föregående publicerade dataset
-
-Detta bevarar samma säkerhetsprincip som `publish_indicator`, men fungerar även för stora datamängder.
+Rekommendation för E3: dela datasetet på exempelvis län eller år, med högst 20 000
+observationer per chunk.
 
 ## Datamodell
 

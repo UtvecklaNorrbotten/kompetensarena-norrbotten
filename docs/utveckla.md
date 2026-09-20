@@ -101,3 +101,92 @@ Lovable har tvåvägs-synk med GitHub:
   `succeeded`/`failed` med radantal och felmeddelande). Hemligheten loggas aldrig.
 - **Takbegränsning:** max 12 anrop per minut och serverinstans; samtidiga publiceringar av
   samma indikator serialiseras dessutom av advisory lock i databasfunktionen.
+
+## ETL-endpoint: chunkad publicering av stora indikatorer
+
+För dataset som överstiger gränsen för `publish-indicator` (50 000 observationer / ~2 MB)
+finns ett chunkat flöde med staging och atomisk finalisering. Den enkla endpointen ovan
+finns kvar oförändrad för mindre dataset.
+
+Samma autentisering gäller för alla steg: `Authorization: Bearer <ETL_PUBLISH_KEY>`.
+Nyckeln finns bara som hemlighet i Lovable och GitHub Actions Secrets — aldrig i repot,
+aldrig i frontend, aldrig i databasen och den loggas aldrig.
+
+### Flöde
+
+```text
+start  ->  chunk 0..n-1  ->  finalize
+                 |
+                 +-- vid fel: abort
+```
+
+1. `POST /api/public/jobs/etl-batch/start`
+
+```json
+{
+  "indicator_id": "e3-matchning-utbildning",
+  "source": "SCB",
+  "expected_chunks": 12,
+  "expected_rows": 184320,
+  "kalla_uppdaterad_datum": "2026-09-18"
+}
+```
+
+Svar: `{ "batch_id": "...", "status": "started", ... }`. En rad skapas i
+`data_source_runs` med status `started`.
+
+2. `POST /api/public/jobs/etl-batch/chunk` (en gång per chunk)
+
+```json
+{
+  "batch_id": "...",
+  "indicator_id": "e3-matchning-utbildning",
+  "chunk_index": 0,
+  "observations": [{ "geo_code": "25", "period": "2023", "value": 12.4, "dimensions": {} }]
+}
+```
+
+Svar: mottaget antal chunkar/rader samt batchens status (`receiving` eller `ready`).
+Chunkar kan skickas i valfri ordning. En identisk chunk som skickas igen är idempotent
+(`"duplicate": true`); samma index med annat innehåll avvisas.
+
+3. `POST /api/public/jobs/etl-batch/finalize` med `{ "batch_id": "..." }`
+
+Publicerar hela batchen atomiskt och markerar batchen `succeeded`.
+
+4. `POST /api/public/jobs/etl-batch/abort` med `{ "batch_id": "...", "reason": "..." }`
+
+Rensar stagingdata, markerar batchen `failed` och loggar körningen som misslyckad.
+
+### Atomisk finalisering
+
+Finaliseringen sker helt i databasfunktionen `etl_finalize_batch`, i en enda transaktion:
+kontroll att alla chunkar finns och att radantalet stämmer, advisory lock per indikator,
+ersättning av indikatorns observationer, uppdatering av `indicator_metadata` (RUS-fält),
+körningslogg i `data_source_runs` och rensning av stagingchunkarna. Misslyckas något steg
+rullas allt tillbaka och tidigare publicerad data ligger kvar oförändrad.
+
+### Statuskoder
+
+| Kod | Betydelse |
+| --- | --- |
+| 200 | Steget lyckades |
+| 400 | Ogiltig payload (zod) eller ogiltig JSON |
+| 401 | Saknad nyckel |
+| 403 | Fel nyckel |
+| 404 | Okänd indikator eller okänd batch |
+| 409 | Fel tillstånd: dubblerad chunk med annat innehåll, chunk för fel indikator, `chunk_index` utanför intervallet, finalisering innan alla chunkar mottagits, felaktigt radantal |
+| 413 | För stor request body |
+| 422 | Publicering avvisad av databasen (t.ex. okänd geografi) |
+| 429 | För många anrop |
+
+### Begränsningar
+
+- Max 20 000 observationer och ~6 MB per chunk-anrop.
+- Max 1 000 chunkar per batch.
+- Takbegränsning: 240 chunk-anrop respektive 30 start/finalize/abort-anrop per minut och
+  serverinstans.
+- Stagingtabellerna (`etl_batches`, `etl_batch_chunks`) är inte läsbara för frontend eller
+  inloggade användare — inga rättigheter utöver serverns, RLS på utan policies.
+- Städning av övergivna batcher sker med databasfunktionen `etl_cleanup_batches(interval)`
+  (standard 48 timmar). Inget schemalagt jobb är kopplat ännu.

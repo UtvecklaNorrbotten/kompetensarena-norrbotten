@@ -96,6 +96,104 @@ export type Database = {
           },
         ]
       }
+      etl_batch_chunks: {
+        Row: {
+          batch_id: string
+          checksum: string
+          chunk_index: number
+          created_at: string
+          observations: Json
+          row_count: number
+        }
+        Insert: {
+          batch_id: string
+          checksum: string
+          chunk_index: number
+          created_at?: string
+          observations: Json
+          row_count: number
+        }
+        Update: {
+          batch_id?: string
+          checksum?: string
+          chunk_index?: number
+          created_at?: string
+          observations?: Json
+          row_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "etl_batch_chunks_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "etl_batches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      etl_batches: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          expected_chunks: number
+          expected_rows: number | null
+          id: string
+          indicator_id: string
+          kalla_uppdaterad_datum: string | null
+          last_activity_at: string
+          received_chunks: number
+          received_rows: number
+          run_id: string | null
+          source: string
+          status: Database["public"]["Enums"]["etl_batch_status"]
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          expected_chunks: number
+          expected_rows?: number | null
+          id?: string
+          indicator_id: string
+          kalla_uppdaterad_datum?: string | null
+          last_activity_at?: string
+          received_chunks?: number
+          received_rows?: number
+          run_id?: string | null
+          source: string
+          status?: Database["public"]["Enums"]["etl_batch_status"]
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          expected_chunks?: number
+          expected_rows?: number | null
+          id?: string
+          indicator_id?: string
+          kalla_uppdaterad_datum?: string | null
+          last_activity_at?: string
+          received_chunks?: number
+          received_rows?: number
+          run_id?: string | null
+          source?: string
+          status?: Database["public"]["Enums"]["etl_batch_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "etl_batches_indicator_id_fkey"
+            columns: ["indicator_id"]
+            isOneToOne: false
+            referencedRelation: "indicators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "etl_batches_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "data_source_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       geographies: {
         Row: {
           code: string
@@ -273,6 +371,33 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      etl_abort_batch: {
+        Args: { p_batch_id: string; p_reason?: string }
+        Returns: Json
+      }
+      etl_cleanup_batches: { Args: { p_older_than?: string }; Returns: number }
+      etl_finalize_batch: { Args: { p_batch_id: string }; Returns: Json }
+      etl_start_batch: {
+        Args: {
+          p_expected_chunks: number
+          p_expected_rows?: number
+          p_indicator_id: string
+          p_kalla_uppdaterad_datum?: string
+          p_run_id?: string
+          p_source: string
+        }
+        Returns: string
+      }
+      etl_store_chunk: {
+        Args: {
+          p_batch_id: string
+          p_checksum: string
+          p_chunk_index: number
+          p_indicator_id: string
+          p_observations: Json
+        }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -292,6 +417,12 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "editor" | "registered"
+      etl_batch_status:
+        | "started"
+        | "receiving"
+        | "ready"
+        | "succeeded"
+        | "failed"
       geo_level: "riket" | "län" | "kommun"
       run_status: "started" | "no_change" | "succeeded" | "failed"
       visibility_level: "publik" | "inloggad" | "admin"
@@ -423,6 +554,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "editor", "registered"],
+      etl_batch_status: [
+        "started",
+        "receiving",
+        "ready",
+        "succeeded",
+        "failed",
+      ],
       geo_level: ["riket", "län", "kommun"],
       run_status: ["started", "no_change", "succeeded", "failed"],
       visibility_level: ["publik", "inloggad", "admin"],
