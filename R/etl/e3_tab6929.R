@@ -35,15 +35,9 @@ state <- etl_get_state(indikator_id)
 senast_lyckad <- state$last_successful_at %||% NA_character_
 
 if (!is.na(senast_lyckad) && nzchar(senast_lyckad)) {
-  senast_lyckad_utc <- format(
-    as.POSIXct(senast_lyckad, tz = "UTC"),
-    "%Y-%m-%dT%H:%M:%SZ",
-    tz = "UTC"
-  )
-
   behov_av_uppdatering <- pxweb2_table_needs_update(
     table = tabell_id,
-    reference_datetime = senast_lyckad_utc
+    reference_datetime = senast_lyckad
   )
 
   if (isFALSE(behov_av_uppdatering)) {
