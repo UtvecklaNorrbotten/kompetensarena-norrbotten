@@ -175,6 +175,19 @@ if (all(is.na(df_e3$value))) {
   stop("Alla E3-värden är NA")
 }
 
+dimension_code_cols <- c(
+  "contents_code",
+  "sni2007_code",
+  "kon_alder_fodelseland_code",
+  "utbildning_code"
+)
+
+for (col in dimension_code_cols) {
+  if (any(is.na(df_e3[[col]]) | !nzchar(df_e3[[col]]))) {
+    stop("Kunde inte mappa alla etiketter till stabila koder för dimensionen: ", col)
+  }
+}
+
 key_df <- df_e3 |>
   transmute(
     geo_code,
