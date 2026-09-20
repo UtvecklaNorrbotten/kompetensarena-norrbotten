@@ -12,10 +12,10 @@
  * frontend och aldrig i loggar.
  */
 import { z } from "zod";
+import { authorize, createRateLimiter, json } from "./etl-auth.server";
 
 const MAX_BODY_BYTES = 2_000_000; // ~2 MB
 const RATE_LIMIT_MAX = 12; // anrop per fönster och instans
-const RATE_LIMIT_WINDOW_MS = 60_000;
 
 const observationSchema = z.object({
   geo_code: z.string().min(1).max(20),

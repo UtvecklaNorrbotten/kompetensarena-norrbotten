@@ -14,6 +14,7 @@ import { Route as KommerSenareRouteImport } from './routes/kommer-senare'
 import { Route as OmRouteImport } from './routes/om'
 import { Route as StatistikRouteImport } from './routes/statistik'
 import { Route as ApiPublicJobsPublishIndicatorRouteImport } from './routes/api/public/jobs/publish-indicator'
+import { Route as ApiPublicJobsEtlBatchAbortRouteImport } from './routes/api/public/jobs/etl-batch/abort'
 import { Route as ApiPublicJobsEtlBatchChunkRouteImport } from './routes/api/public/jobs/etl-batch/chunk'
 import { Route as ApiPublicJobsEtlBatchFinalizeRouteImport } from './routes/api/public/jobs/etl-batch/finalize'
 import { Route as ApiPublicJobsEtlBatchStartRouteImport } from './routes/api/public/jobs/etl-batch/start'
@@ -44,6 +45,12 @@ const ApiPublicJobsPublishIndicatorRoute =
     path: '/api/public/jobs/publish-indicator',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicJobsEtlBatchAbortRoute =
+  ApiPublicJobsEtlBatchAbortRouteImport.update({
+    id: '/api/public/jobs/etl-batch/abort',
+    path: '/api/public/jobs/etl-batch/abort',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicJobsEtlBatchChunkRoute =
   ApiPublicJobsEtlBatchChunkRouteImport.update({
     id: '/api/public/jobs/etl-batch/chunk',
@@ -69,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
+  '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
   '/api/public/jobs/etl-batch/finalize': typeof ApiPublicJobsEtlBatchFinalizeRoute
   '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
@@ -79,6 +87,7 @@ export interface FileRoutesByTo {
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
+  '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
   '/api/public/jobs/etl-batch/finalize': typeof ApiPublicJobsEtlBatchFinalizeRoute
   '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
@@ -90,6 +99,7 @@ export interface FileRoutesById {
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
+  '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
   '/api/public/jobs/etl-batch/finalize': typeof ApiPublicJobsEtlBatchFinalizeRoute
   '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
@@ -102,6 +112,7 @@ export interface FileRouteTypes {
     | '/om'
     | '/statistik'
     | '/api/public/jobs/publish-indicator'
+    | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
     | '/api/public/jobs/etl-batch/finalize'
     | '/api/public/jobs/etl-batch/start'
@@ -112,6 +123,7 @@ export interface FileRouteTypes {
     | '/om'
     | '/statistik'
     | '/api/public/jobs/publish-indicator'
+    | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
     | '/api/public/jobs/etl-batch/finalize'
     | '/api/public/jobs/etl-batch/start'
@@ -122,6 +134,7 @@ export interface FileRouteTypes {
     | '/om'
     | '/statistik'
     | '/api/public/jobs/publish-indicator'
+    | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
     | '/api/public/jobs/etl-batch/finalize'
     | '/api/public/jobs/etl-batch/start'
@@ -133,6 +146,7 @@ export interface RootRouteChildren {
   OmRoute: typeof OmRoute
   StatistikRoute: typeof StatistikRoute
   ApiPublicJobsPublishIndicatorRoute: typeof ApiPublicJobsPublishIndicatorRoute
+  ApiPublicJobsEtlBatchAbortRoute: typeof ApiPublicJobsEtlBatchAbortRoute
   ApiPublicJobsEtlBatchChunkRoute: typeof ApiPublicJobsEtlBatchChunkRoute
   ApiPublicJobsEtlBatchFinalizeRoute: typeof ApiPublicJobsEtlBatchFinalizeRoute
   ApiPublicJobsEtlBatchStartRoute: typeof ApiPublicJobsEtlBatchStartRoute
@@ -175,6 +189,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicJobsPublishIndicatorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/etl-batch/abort': {
+      id: '/api/public/jobs/etl-batch/abort'
+      path: '/api/public/jobs/etl-batch/abort'
+      fullPath: '/api/public/jobs/etl-batch/abort'
+      preLoaderRoute: typeof ApiPublicJobsEtlBatchAbortRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/jobs/etl-batch/chunk': {
       id: '/api/public/jobs/etl-batch/chunk'
       path: '/api/public/jobs/etl-batch/chunk'
@@ -205,6 +226,7 @@ const rootRouteChildren: RootRouteChildren = {
   OmRoute: OmRoute,
   StatistikRoute: StatistikRoute,
   ApiPublicJobsPublishIndicatorRoute: ApiPublicJobsPublishIndicatorRoute,
+  ApiPublicJobsEtlBatchAbortRoute: ApiPublicJobsEtlBatchAbortRoute,
   ApiPublicJobsEtlBatchChunkRoute: ApiPublicJobsEtlBatchChunkRoute,
   ApiPublicJobsEtlBatchFinalizeRoute: ApiPublicJobsEtlBatchFinalizeRoute,
   ApiPublicJobsEtlBatchStartRoute: ApiPublicJobsEtlBatchStartRoute,
