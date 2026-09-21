@@ -83,15 +83,12 @@ etl_split_observations <- function(observations, max_rows = 5000L, max_bytes = 5
   out
 }
 
-etl_publish_batch <- function(indicator_id, source, source_updated_date, observations) {
-  chunks <- etl_split_observations(observations)
-  if (length(chunks) == 0) stop("Inga observationer att publicera")
-
+etl_start_batch <- function(indicator_id, source, source_updated_date, expected_chunks, expected_rows) {
   start_body <- list(
     indicator_id = indicator_id,
     source = source,
-    expected_chunks = length(chunks),
-    expected_rows = length(observations)
+    expected_chunks = expected_chunks,
+    expected_rows = expected_rows
   )
   if (!is.null(source_updated_date) && !is.na(source_updated_date) && nzchar(source_updated_date)) {
     start_body$kalla_uppdaterad_datum <- source_updated_date
@@ -102,50 +99,74 @@ etl_publish_batch <- function(indicator_id, source, source_updated_date, observa
     req_body_json(start_body, auto_unbox = TRUE, null = "null") |>
     etl_perform_json()
 
-  batch_id <- start$batch_id
-  if (is.null(batch_id) || !nzchar(batch_id)) stop("Batch-start returnerade inget batch_id")
-
-  ok <- FALSE
-  on.exit({
-    if (!ok) {
-      try(
-        etl_request("/api/public/jobs/etl-batch/abort") |>
-          req_method("POST") |>
-          req_body_json(
-            list(batch_id = batch_id, reason = "R-jobbet avbröts före lyckad finalisering"),
-            auto_unbox = TRUE
-          ) |>
-          etl_perform_json(),
-        silent = TRUE
-      )
-    }
-  }, add = TRUE)
-
-  for (i in seq_along(chunks)) {
-    etl_request("/api/public/jobs/etl-batch/chunk") |>
-      req_method("POST") |>
-      req_body_json(
-        list(
-          batch_id = batch_id,
-          indicator_id = indicator_id,
-          chunk_index = i - 1L,
-          observations = chunks[[i]]
-        ),
-        auto_unbox = TRUE,
-        null = "null",
-        na = "null",
-        digits = NA
-      ) |>
-      etl_perform_json()
-
-    message(sprintf("Publicerade chunk %d/%d", i, length(chunks)))
+  if (is.null(start$batch_id) || !nzchar(start$batch_id)) {
+    stop("Batch-start returnerade inget batch_id")
   }
 
-  result <- etl_request("/api/public/jobs/etl-batch/finalize") |>
+  start
+}
+
+etl_publish_batch_chunk <- function(batch_id, indicator_id, chunk_index, observations) {
+  etl_request("/api/public/jobs/etl-batch/chunk") |>
+    req_method("POST") |>
+    req_body_json(
+      list(
+        batch_id = batch_id,
+        indicator_id = indicator_id,
+        chunk_index = chunk_index,
+        observations = observations
+      ),
+      auto_unbox = TRUE,
+      null = "null",
+      na = "null",
+      digits = NA
+    ) |>
+    etl_perform_json()
+}
+
+etl_finalize_batch <- function(batch_id) {
+  etl_request("/api/public/jobs/etl-batch/finalize") |>
     req_method("POST") |>
     req_body_json(list(batch_id = batch_id), auto_unbox = TRUE) |>
     etl_perform_json()
+}
 
+etl_abort_batch <- function(batch_id, reason = "R-jobbet avbröts före lyckad finalisering") {
+  etl_request("/api/public/jobs/etl-batch/abort") |>
+    req_method("POST") |>
+    req_body_json(list(batch_id = batch_id, reason = reason), auto_unbox = TRUE) |>
+    etl_perform_json()
+}
+
+etl_publish_batch <- function(indicator_id, source, source_updated_date, observations) {
+  chunks <- etl_split_observations(observations)
+  if (length(chunks) == 0) stop("Inga observationer att publicera")
+
+  start <- etl_start_batch(
+    indicator_id = indicator_id,
+    source = source,
+    source_updated_date = source_updated_date,
+    expected_chunks = length(chunks),
+    expected_rows = length(observations)
+  )
+  batch_id <- start$batch_id
+
+  ok <- FALSE
+  on.exit({
+    if (!ok) try(etl_abort_batch(batch_id), silent = TRUE)
+  }, add = TRUE)
+
+  for (i in seq_along(chunks)) {
+    etl_publish_batch_chunk(
+      batch_id = batch_id,
+      indicator_id = indicator_id,
+      chunk_index = i - 1L,
+      observations = chunks[[i]]
+    )
+    message(sprintf("Publicerade chunk %d/%d", i, length(chunks)))
+  }
+
+  result <- etl_finalize_batch(batch_id)
   ok <- TRUE
   result
 }
