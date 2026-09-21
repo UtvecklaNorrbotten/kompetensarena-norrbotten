@@ -58,6 +58,8 @@ jobs:
 
       - name: Installera pxweb2r
         if: steps.local-time.outputs.run == 'true'
+        env:
+          GITHUB_PAT: ${{ github.token }}
         shell: Rscript {0}
         run: |
           remotes::install_github("FaluPeppe/pxweb2r", upgrade = "never")
