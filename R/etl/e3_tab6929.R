@@ -90,42 +90,71 @@ message(
   )
 )
 
-query_e3 <- list(
-  selection = list(
-    list(variableCode = "ContentsCode", valueCodes = list("*")),
-    list(variableCode = "Tid", valueCodes = list("*")),
-    list(variableCode = "SNI2007", valueCodes = list("*")),
-    list(
-      variableCode = "KonAlderFodelseland",
-      valueCodes = as.list(kon_codes)
-    ),
-    list(
-      variableCode = "Region",
-      valueCodes = as.list(region_codes)
-    ),
-    list(
-      variableCode = "Utbildning",
-      valueCodes = as.list(utbildning_codes)
-    )
-  ),
-  placement = list(
-    heading = c("ContentsCode", "Tid", "KonAlderFodelseland"),
-    stub = c("SNI2007", "Region")
-  )
+variabler <- pxweb2_get_variables(meta)
+variable_sizes <- stats::setNames(variabler$size, variabler$code)
+
+cells_per_utbildning <- (
+  length(region_codes) *
+    variable_sizes[["SNI2007"]] *
+    length(kon_codes) *
+    variable_sizes[["ContentsCode"]] *
+    variable_sizes[["Tid"]]
 )
 
-df_e3 <- pxweb2_get_data(
-  table = meta,
-  query = query_e3,
-  quiet = TRUE
+utbildningar_per_anrop <- floor(150000 / cells_per_utbildning)
+if (utbildningar_per_anrop < 1) {
+  stop("E3-frågan måste delas på fler dimensioner för att hålla SCB:s cellgräns")
+}
+
+utbildning_batches <- split(
+  utbildning_codes,
+  ceiling(seq_along(utbildning_codes) / utbildningar_per_anrop)
+)
+
+bygg_query_e3 <- function(utbildning_batch) {
+  list(
+    selection = list(
+      list(variableCode = "ContentsCode", valueCodes = list("*")),
+      list(variableCode = "Tid", valueCodes = list("*")),
+      list(variableCode = "SNI2007", valueCodes = list("*")),
+      list(
+        variableCode = "KonAlderFodelseland",
+        valueCodes = as.list(kon_codes)
+      ),
+      list(
+        variableCode = "Region",
+        valueCodes = as.list(region_codes)
+      ),
+      list(
+        variableCode = "Utbildning",
+        valueCodes = as.list(utbildning_batch)
+      )
+    ),
+    placement = list(
+      heading = c("ContentsCode", "Tid", "KonAlderFodelseland"),
+      stub = c("SNI2007", "Region")
+    )
+  )
+}
+
+df_e3 <- map2_dfr(
+  utbildning_batches,
+  seq_along(utbildning_batches),
+  function(utbildning_batch, i) {
+    message(sprintf("Hämtar SCB-del %d/%d", i, length(utbildning_batches)))
+
+    pxweb2_get_data(
+      table = meta,
+      query = bygg_query_e3(utbildning_batch),
+      quiet = TRUE
+    )
+  }
 )
 
 if (is.null(df_e3) || nrow(df_e3) == 0) stop("SCB returnerade inga rader för E3")
 message(sprintf("SCB returnerade %s rader för E3", format(nrow(df_e3), big.mark = " ")))
 
 # ---- Standardisera kolumnnamn ----
-
-variabler <- pxweb2_get_variables(meta)
 
 for (i in seq_len(nrow(variabler))) {
   code <- variabler$code[[i]]
