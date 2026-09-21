@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as KommerSenareRouteImport } from './routes/kommer-senare'
 import { Route as OmRouteImport } from './routes/om'
 import { Route as StatistikRouteImport } from './routes/statistik'
+import { Route as ApiPublicJobsEtlNoChangeRouteImport } from './routes/api/public/jobs/etl-no-change'
+import { Route as ApiPublicJobsEtlStateRouteImport } from './routes/api/public/jobs/etl-state'
 import { Route as ApiPublicJobsPublishIndicatorRouteImport } from './routes/api/public/jobs/publish-indicator'
 import { Route as ApiPublicJobsEtlBatchAbortRouteImport } from './routes/api/public/jobs/etl-batch/abort'
 import { Route as ApiPublicJobsEtlBatchChunkRouteImport } from './routes/api/public/jobs/etl-batch/chunk'
@@ -37,6 +39,17 @@ const OmRoute = OmRouteImport.update({
 const StatistikRoute = StatistikRouteImport.update({
   id: '/statistik',
   path: '/statistik',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicJobsEtlNoChangeRoute =
+  ApiPublicJobsEtlNoChangeRouteImport.update({
+    id: '/api/public/jobs/etl-no-change',
+    path: '/api/public/jobs/etl-no-change',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicJobsEtlStateRoute = ApiPublicJobsEtlStateRouteImport.update({
+  id: '/api/public/jobs/etl-state',
+  path: '/api/public/jobs/etl-state',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicJobsPublishIndicatorRoute =
@@ -75,6 +88,8 @@ export interface FileRoutesByFullPath {
   '/kommer-senare': typeof KommerSenareRoute
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
+  '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
+  '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
@@ -86,6 +101,8 @@ export interface FileRoutesByTo {
   '/kommer-senare': typeof KommerSenareRoute
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
+  '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
+  '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
@@ -98,6 +115,8 @@ export interface FileRoutesById {
   '/kommer-senare': typeof KommerSenareRoute
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
+  '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
+  '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
@@ -111,6 +130,8 @@ export interface FileRouteTypes {
     | '/kommer-senare'
     | '/om'
     | '/statistik'
+    | '/api/public/jobs/etl-no-change'
+    | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
     | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
@@ -122,6 +143,8 @@ export interface FileRouteTypes {
     | '/kommer-senare'
     | '/om'
     | '/statistik'
+    | '/api/public/jobs/etl-no-change'
+    | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
     | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
@@ -133,6 +156,8 @@ export interface FileRouteTypes {
     | '/kommer-senare'
     | '/om'
     | '/statistik'
+    | '/api/public/jobs/etl-no-change'
+    | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
     | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
@@ -145,6 +170,8 @@ export interface RootRouteChildren {
   KommerSenareRoute: typeof KommerSenareRoute
   OmRoute: typeof OmRoute
   StatistikRoute: typeof StatistikRoute
+  ApiPublicJobsEtlNoChangeRoute: typeof ApiPublicJobsEtlNoChangeRoute
+  ApiPublicJobsEtlStateRoute: typeof ApiPublicJobsEtlStateRoute
   ApiPublicJobsPublishIndicatorRoute: typeof ApiPublicJobsPublishIndicatorRoute
   ApiPublicJobsEtlBatchAbortRoute: typeof ApiPublicJobsEtlBatchAbortRoute
   ApiPublicJobsEtlBatchChunkRoute: typeof ApiPublicJobsEtlBatchChunkRoute
@@ -180,6 +207,20 @@ declare module '@tanstack/react-router' {
       path: '/statistik'
       fullPath: '/statistik'
       preLoaderRoute: typeof StatistikRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/etl-no-change': {
+      id: '/api/public/jobs/etl-no-change'
+      path: '/api/public/jobs/etl-no-change'
+      fullPath: '/api/public/jobs/etl-no-change'
+      preLoaderRoute: typeof ApiPublicJobsEtlNoChangeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/etl-state': {
+      id: '/api/public/jobs/etl-state'
+      path: '/api/public/jobs/etl-state'
+      fullPath: '/api/public/jobs/etl-state'
+      preLoaderRoute: typeof ApiPublicJobsEtlStateRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/jobs/publish-indicator': {
@@ -225,6 +266,8 @@ const rootRouteChildren: RootRouteChildren = {
   KommerSenareRoute: KommerSenareRoute,
   OmRoute: OmRoute,
   StatistikRoute: StatistikRoute,
+  ApiPublicJobsEtlNoChangeRoute: ApiPublicJobsEtlNoChangeRoute,
+  ApiPublicJobsEtlStateRoute: ApiPublicJobsEtlStateRoute,
   ApiPublicJobsPublishIndicatorRoute: ApiPublicJobsPublishIndicatorRoute,
   ApiPublicJobsEtlBatchAbortRoute: ApiPublicJobsEtlBatchAbortRoute,
   ApiPublicJobsEtlBatchChunkRoute: ApiPublicJobsEtlBatchChunkRoute,
