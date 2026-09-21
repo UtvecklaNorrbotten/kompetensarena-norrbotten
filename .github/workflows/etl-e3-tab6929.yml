@@ -46,13 +46,15 @@ jobs:
         if: steps.local-time.outputs.run == 'true'
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: |
+          packages: |
             any::dplyr
             any::httr2
             any::jsonlite
             any::purrr
             any::tibble
             any::remotes
+          install-pandoc: false
+          install-quarto: false
 
       - name: Installera pxweb2r
         if: steps.local-time.outputs.run == 'true'
