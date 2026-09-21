@@ -28,6 +28,7 @@ source("R/etl/etl_api.R")
 tabell_id <- "TAB6929"
 indikator_id <- "e3-matchning-utbildning"
 kalla <- "SCB"
+test_mode <- tolower(Sys.getenv("ETL_TEST_MODE", unset = "false")) %in% c("1", "true", "yes")
 
 # ---- Kontrollera metadata före datahämtning ----
 
@@ -81,6 +82,20 @@ kon_codes <- hamta_kodlista("vs_KonCKMRMI")
 region_codes <- hamta_kodlista("vs_CKM02Län")
 utbildning_codes <- hamta_kodlista("vs_UtbildningsgruppE2-3N1-2")
 
+contents_codes <- list("*")
+tid_codes <- list("*")
+sni_codes <- list("*")
+
+if (test_mode) {
+  kon_codes <- if ("totalt" %in% kon_codes) "totalt" else kon_codes[[1]]
+  utbildning_codes <- head(utbildning_codes, 2)
+  contents_codes <- list("000008QV")
+  tid_codes <- list(tail(names(meta$dimension$Tid$category$index), 1))
+  sni_codes <- list("A-U")
+
+  message("ETL-testläge: 21 län, 2 utbildningsgrupper, 1 näringsgren, 1 mått och senaste år.")
+}
+
 message(
   sprintf(
     "SCB-urval: %d län, %d utbildningsgrupper och %d könskategorier",
@@ -114,9 +129,9 @@ utbildning_batches <- split(
 bygg_query_e3 <- function(utbildning_batch) {
   list(
     selection = list(
-      list(variableCode = "ContentsCode", valueCodes = list("*")),
-      list(variableCode = "Tid", valueCodes = list("*")),
-      list(variableCode = "SNI2007", valueCodes = list("*")),
+      list(variableCode = "ContentsCode", valueCodes = contents_codes),
+      list(variableCode = "Tid", valueCodes = tid_codes),
+      list(variableCode = "SNI2007", valueCodes = sni_codes),
       list(
         variableCode = "KonAlderFodelseland",
         valueCodes = as.list(kon_codes)
@@ -264,41 +279,102 @@ if (any(duplicated(key_df))) {
   stop("E3 innehåller dubbletter på observationsnyckeln")
 }
 
-# ---- Bygg observationspayload ----
+# ---- Bygg observationspayload och publicera atomiskt ----
 
-observations <- map(seq_len(nrow(df_e3)), function(i) {
-  row <- df_e3[i, , drop = FALSE]
+bygg_observationer <- function(data) {
+  map(seq_len(nrow(data)), function(i) {
+    row <- data[i, , drop = FALSE]
 
-  list(
-    geo_code = row$geo_code[[1]],
-    period = row$period[[1]],
-    value = if (is.na(row$value[[1]])) NA_real_ else row$value[[1]],
-    dimensions = list(
-      contents_code = row$contents_code[[1]] %||% "",
-      contents_label = as.character(row$ContentsCode[[1]]),
-      sni2007_code = row$sni2007_code[[1]] %||% "",
-      sni2007_label = as.character(row$SNI2007[[1]]),
-      kon_alder_fodelseland_code = row$kon_alder_fodelseland_code[[1]] %||% "",
-      kon_alder_fodelseland_label = as.character(row$KonAlderFodelseland[[1]]),
-      utbildning_code = row$utbildning_code[[1]] %||% "",
-      utbildning_label = as.character(row$Utbildning[[1]])
+    list(
+      geo_code = row$geo_code[[1]],
+      period = row$period[[1]],
+      value = if (is.na(row$value[[1]])) NA_real_ else row$value[[1]],
+      dimensions = list(
+        contents_code = row$contents_code[[1]] %||% "",
+        contents_label = as.character(row$ContentsCode[[1]]),
+        sni2007_code = row$sni2007_code[[1]] %||% "",
+        sni2007_label = as.character(row$SNI2007[[1]]),
+        kon_alder_fodelseland_code = row$kon_alder_fodelseland_code[[1]] %||% "",
+        kon_alder_fodelseland_label = as.character(row$KonAlderFodelseland[[1]]),
+        utbildning_code = row$utbildning_code[[1]] %||% "",
+        utbildning_label = as.character(row$Utbildning[[1]])
+      )
+    )
+  })
+}
+
+if (test_mode) {
+  observations <- bygg_observationer(df_e3)
+  test_batch <- etl_start_batch(
+    indicator_id = indikator_id,
+    source = kalla,
+    source_updated_date = kalla_uppdaterad_datum,
+    expected_chunks = 1L,
+    expected_rows = length(observations)
+  )
+
+  test_batch_id <- test_batch$batch_id
+  test_ok <- FALSE
+  on.exit({
+    if (!test_ok) try(etl_abort_batch(test_batch_id), silent = TRUE)
+  }, add = TRUE)
+
+  etl_publish_batch_chunk(
+    batch_id = test_batch_id,
+    indicator_id = indikator_id,
+    chunk_index = 0L,
+    observations = observations
+  )
+  etl_abort_batch(
+    test_batch_id,
+    reason = "Kontrollerad ETL-testkörning utan publicering"
+  )
+
+  test_ok <- TRUE
+  message(sprintf("ETL-test klart: %d rader validerade, staged och avbrutna utan publicering.", length(observations)))
+} else {
+  rows_per_chunk <- 5000L
+  chunk_starts <- seq.int(1L, nrow(df_e3), by = rows_per_chunk)
+
+  if (length(chunk_starts) > 1000L) {
+    stop("E3 överskrider maximalt antal chunkar för en batch")
+  }
+
+  batch <- etl_start_batch(
+    indicator_id = indikator_id,
+    source = kalla,
+    source_updated_date = kalla_uppdaterad_datum,
+    expected_chunks = length(chunk_starts),
+    expected_rows = nrow(df_e3)
+  )
+
+  batch_id <- batch$batch_id
+  ok <- FALSE
+  on.exit({
+    if (!ok) try(etl_abort_batch(batch_id), silent = TRUE)
+  }, add = TRUE)
+
+  for (i in seq_along(chunk_starts)) {
+    start <- chunk_starts[[i]]
+    end <- min(start + rows_per_chunk - 1L, nrow(df_e3))
+    observations <- bygg_observationer(df_e3[start:end, , drop = FALSE])
+
+    etl_publish_batch_chunk(
+      batch_id = batch_id,
+      indicator_id = indikator_id,
+      chunk_index = i - 1L,
+      observations = observations
+    )
+    message(sprintf("Publicerade chunk %d/%d", i, length(chunk_starts)))
+  }
+
+  resultat <- etl_finalize_batch(batch_id)
+  ok <- TRUE
+  message(
+    sprintf(
+      "E3 publicerad: %s rader (batch %s)",
+      resultat$rows %||% nrow(df_e3),
+      resultat$batch_id %||% "okänd"
     )
   )
-})
-
-# ---- Publicera atomiskt ----
-
-resultat <- etl_publish_batch(
-  indicator_id = indikator_id,
-  source = kalla,
-  source_updated_date = kalla_uppdaterad_datum,
-  observations = observations
-)
-
-message(
-  sprintf(
-    "E3 publicerad: %s rader (batch %s)",
-    resultat$rows %||% length(observations),
-    resultat$batch_id %||% "okänd"
-  )
-)
+}
