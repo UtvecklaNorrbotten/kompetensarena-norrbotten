@@ -2,6 +2,12 @@ name: ETL - E3 SCB TAB6929
 
 on:
   workflow_dispatch:
+    inputs:
+      test_mode:
+        description: "Testa en liten batch utan att publicera E3-data"
+        required: false
+        type: boolean
+        default: false
   schedule:
     # Två UTC-tider behövs för att alltid träffa 05:00 i Europe/Stockholm
     # över både sommar- och vintertid. Första steget nedan gör den andra körningen till no-op.
@@ -17,7 +23,7 @@ concurrency:
 jobs:
   e3:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 120
 
     steps:
       - name: Kontrollera lokal körtid
@@ -69,6 +75,7 @@ jobs:
         env:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
           ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+          ETL_TEST_MODE: ${{ github.event.inputs.test_mode || 'false' }}
         shell: Rscript {0}
         run: |
           source("R/etl/e3_tab6929.R")
