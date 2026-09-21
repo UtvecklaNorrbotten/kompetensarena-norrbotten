@@ -64,25 +64,48 @@ kalla_uppdaterad_datum <- if (!is.na(kalla_uppdaterad) && nzchar(kalla_uppdatera
 
 # ---- Hämta data från SCB ----
 
+# PxWeb2-kodlistorna är Valueset-listor. Läs ut deras faktiska koder innan
+# dataanropet så att pxweb2r kan validera och dela upp den stora frågan korrekt.
+hamta_kodlista <- function(id) {
+  x <- pxweb2_get_codelist(id)
+  codes <- unique(stats::na.omit(as.character(x$code)))
+
+  if (length(codes) == 0) {
+    stop("SCB-kodlistan saknar värden: ", id)
+  }
+
+  codes
+}
+
+kon_codes <- hamta_kodlista("vs_KonCKMRMI")
+region_codes <- hamta_kodlista("vs_CKM02Län")
+utbildning_codes <- hamta_kodlista("vs_UtbildningsgruppE2-3N1-2")
+
+message(
+  sprintf(
+    "SCB-urval: %d län, %d utbildningsgrupper och %d könskategorier",
+    length(region_codes),
+    length(utbildning_codes),
+    length(kon_codes)
+  )
+)
+
 query_e3 <- list(
   selection = list(
-    list(variableCode = "ContentsCode", valueCodes = c("*")),
-    list(variableCode = "Tid", valueCodes = c("*")),
-    list(variableCode = "SNI2007", valueCodes = c("*")),
+    list(variableCode = "ContentsCode", valueCodes = list("*")),
+    list(variableCode = "Tid", valueCodes = list("*")),
+    list(variableCode = "SNI2007", valueCodes = list("*")),
     list(
       variableCode = "KonAlderFodelseland",
-      valueCodes = c("*"),
-      codelist = "vs_KonCKMRMI"
+      valueCodes = as.list(kon_codes)
     ),
     list(
       variableCode = "Region",
-      valueCodes = c("*"),
-      codelist = "vs_CKM02Län"
+      valueCodes = as.list(region_codes)
     ),
     list(
       variableCode = "Utbildning",
-      valueCodes = c("*"),
-      codelist = "vs_UtbildningsgruppE2-3N1-2"
+      valueCodes = as.list(utbildning_codes)
     )
   ),
   placement = list(
@@ -98,6 +121,7 @@ df_e3 <- pxweb2_get_data(
 )
 
 if (is.null(df_e3) || nrow(df_e3) == 0) stop("SCB returnerade inga rader för E3")
+message(sprintf("SCB returnerade %s rader för E3", format(nrow(df_e3), big.mark = " ")))
 
 # ---- Standardisera kolumnnamn ----
 
@@ -128,15 +152,7 @@ if (is.na(region_code_col) || is.null(region_code_col)) {
 
 # ---- Koder och etiketter för dimensioner ----
 
-kodlistor <- pxweb2_get_values(
-  meta,
-  include_aggregations = c(
-    KonAlderFodelseland = "vs_KonCKMRMI",
-    Region = "vs_CKM02Län",
-    Utbildning = "vs_UtbildningsgruppE2-3N1-2"
-  ),
-  quiet = TRUE
-)
+kodlistor <- pxweb2_get_values(meta, quiet = TRUE)
 
 lookup_code <- function(variable, label, aggregation = FALSE) {
   x <- kodlistor[[variable]]
