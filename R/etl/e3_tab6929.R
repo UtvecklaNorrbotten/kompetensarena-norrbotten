@@ -54,7 +54,7 @@ if (!is.na(senast_lyckad) && nzchar(senast_lyckad)) {
 # Första körningen, eller när SCB är nyare än vår senaste lyckade publicering:
 # hämta metadata en gång och återanvänd den i datahämtningen.
 meta <- pxweb2_get_metadata(tabell_id)
-kalla_uppdaterad <- pxweb2_table_updated(meta)
+kalla_uppdaterad <- meta$updated %||% NA_character_
 
 kalla_uppdaterad_datum <- if (!is.na(kalla_uppdaterad) && nzchar(kalla_uppdaterad)) {
   substr(kalla_uppdaterad, 1, 10)
