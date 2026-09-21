@@ -179,6 +179,15 @@ if (is.na(region_code_col) || is.null(region_code_col)) {
   stop("Ingen regionkodskolumn hittades i PxWeb2-resultatet")
 }
 
+utbildning_code_col <- names(df_e3)[grepl(
+  "utbildning.*kod|utbildning_kod",
+  names(df_e3),
+  ignore.case = TRUE
+)][1]
+if (is.na(utbildning_code_col) || is.null(utbildning_code_col)) {
+  stop("Ingen utbildningskodskolumn hittades i PxWeb2-resultatet")
+}
+
 # ---- Koder och etiketter för dimensioner ----
 
 kodlistor <- pxweb2_get_values(meta, quiet = TRUE)
@@ -211,7 +220,7 @@ df_e3 <- df_e3 |>
       KonAlderFodelseland,
       aggregation = TRUE
     ),
-    utbildning_code = lookup_code("Utbildning", Utbildning, aggregation = TRUE)
+    utbildning_code = as.character(.data[[utbildning_code_col]])
   )
 
 # ---- Teknisk validering ----
