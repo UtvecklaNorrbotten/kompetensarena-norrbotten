@@ -210,3 +210,5 @@ Följande GitHub Actions Secrets måste sättas innan workflowet kan köras:
 SCB kräver ingen API-nyckel.
 
 Före datahämtning läser jobbet tidpunkten för senaste lyckade publicering och använder `pxweb2_table_needs_update()` mot SCB:s fulla `updated`-timestamp. Därmed upptäcks även en andra SCB-uppdatering samma kalenderdag. Om tabellen inte är nyare hämtas ingen statistikdata och jobbet loggar `no_change` via den nyckelskyddade endpointen `/api/public/jobs/etl-no-change`. RUS-fältet `kalla_uppdaterad_datum` sparas fortsatt som datum.
+
+<!-- Preview rebuild triggered at 2026-09-21T10:55:00Z -->
