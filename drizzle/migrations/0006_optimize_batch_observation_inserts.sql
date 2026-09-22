@@ -58,11 +58,11 @@ begin
   end if;
 
   with deleted_rows as (
-    delete from public.observations
-    where ctid in (
-      select ctid
-      from public.observations
-      where batch_id = p_batch_id
+    delete from public.observations as target
+    where target.ctid in (
+      select candidate.ctid
+      from public.observations as candidate
+      where candidate.batch_id = p_batch_id
       limit p_max_rows
     )
     returning 1
