@@ -57,6 +57,13 @@
       "when": 1790067433515,
       "tag": "0007_optimize_batch_observation_inserts",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1790072420319,
+      "tag": "0008_etl_chunk_timeout_and_retry",
+      "breakpoints": true
     }
   ]
 }
