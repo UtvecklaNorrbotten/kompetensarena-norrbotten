@@ -33,13 +33,30 @@ SNI2007                  *
 KonAlderFodelseland      *   codelist: vs_KonCKMRMI
 Region                   *   codelist: vs_CKM02Län
 Utbildning               *   codelist: vs_UtbildningsgruppE2-3N1-2
+Utbildning               *   codelist: vs_Utbildningsnivå19RMI
 ```
 
-I `pxweb2r` ska detta uttryckas med `pxweb2_get_data()` och de aktuella kodlistorna/aggregationerna, inte genom handskrivna HTTP POST-anrop.
+Kodlistorna är två alternativa indelningar av samma SCB-variabel och hämtas
+därför i separata PxWeb2-anrop. De korsas inte med varandra. Resultaten binds
+ihop före publicering och skiljs åt med:
+
+- `utbildning_indelning_code`: `grupp` eller `niva`
+- `utbildning_indelning_label`: läsbart namn
+- `utbildning_codelist`: exakt SCB-kodlista
+
+Indelningen ingår i den logiska observationsnyckeln. Kodvärden från olika
+kodlistor kan därför aldrig sammanblandas. I `pxweb2r` uttrycks urvalet med
+`pxweb2_get_data()` och explicit `codelist` på kön, region och utbildning,
+inte genom handskrivna HTTP POST-anrop.
 
 ## Uppdateringskontroll
 
 Morgonjobbet använder den gemensamma SCB-hjälparen i `R/etl/scb_common.R`. Den jämför tidpunkten för senaste lyckade publicering med SCB via `pxweb2_table_needs_update()`. Om tabellen inte är nyare loggas `no_change` och ingen statistikdata hämtas.
+
+Den manuella workflow-parametern `force_refresh` används när själva
+ETL-definitionen har ändrats, exempelvis när utbildningsnivå införs, trots att
+SCB:s metadata är oförändrad. Schemalagda körningar använder alltid den vanliga
+metadatajämförelsen.
 
 När data behöver uppdateras hämtas tabellmetadata med `pxweb2_get_metadata("TAB6929")` och samma metadataobjekt återanvänds i den efterföljande datahämtningen.
 
@@ -85,18 +102,23 @@ observationer per chunk.
 E3 innehåller flera tabellinnehåll med olika enheter (antal, procent och procentenheter). Därför ska `ContentsCode` bevaras som en dimension tillsammans med:
 
 - näringsgren SNI 2007
-- utbildning
+- utbildning, som alternativt kan visas efter utbildningsgrupp eller utbildningsnivå
 - kön/ålder/födelseland
 
 Geografi och period ligger i de gemensamma observationsfälten.
 
 När R-flödet byggs ska både stabila koder och läsbara etiketter bevaras där `pxweb2r` exponerar dem.
 
+Utbildningsnivå och utbildningsgrupp är officiella, separat hämtade SCB-värden.
+Andelar summeras eller medelvärdesberäknas inte mellan indelningarna.
+
 ## Timeout, återförsök och verifiering (migration 0008)
 
-E3 behåller 5 000 rader per chunk. Senaste urvalets 4 472 496 rader kräver
-895 chunkar. 2 000 rader skulle kräva 2 237 chunkar och överskrida nuvarande
-gräns på 1 000. Ändra därför inte chunkstorleken isolerat.
+E3 behåller 5 000 rader per chunk. Den tidigare importen med enbart 87
+utbildningsgrupper omfattade 4 472 496 rader och 895 chunkar. Med
+utbildningsnivåer tillkommer en separat serie. Skriptet räknar det faktiska
+antalet chunkar före batchstart och stoppar utan publicering om gränsen 1 000
+överskrids. Förväntad storlek måste bekräftas av den första fulla körningen.
 
 Migration `0008_etl_chunk_timeout_and_retry.sql` sätter
 `statement_timeout = '30s'` i deklarationen för `etl_store_chunk` och begär
@@ -131,11 +153,17 @@ Serverloggen innehåller även RPC-tid och felkod för misslyckade försök.
    konfiguration tillämpar funktionens timeout före RPC-anropet.
    En SQL-editor med 120 sekunders timeout verifierar inte API-vägen.
 4. Kontrollera att serverkoden med HTTP 503 och `rpc_ms` är driftsatt.
-5. Kör workflowet med `finalize_test=true` och `test_mode=false`.
+5. Kör workflowet med `finalize_test=true`, `test_mode=false` och
+   `force_refresh=false`.
    Kontrollera att testindikatorns nya batch publiceras med korrekt radantal.
-6. Kör därefter hela E3 med båda testflaggorna avstängda.
+6. Kör därefter hela E3 med båda testflaggorna avstängda och
+   `force_refresh=true`, eftersom SCB:s metadata kan vara oförändrad när den nya
+   utbildningsindelningen tas i drift.
    Verifiera status `succeeded`, förväntat radantal och aktiv batch för
-   `e3-matchning-utbildning`. Först då är fullimporten verifierad.
+   `e3-matchning-utbildning`. Kontrollera även att både `grupp` och `niva`
+   finns och att antalet per indelning motsvarar workflowloggen. Först då är
+   fullimporten verifierad. Efter införandet ska `force_refresh` åter vara
+   `false`.
 
 Den lokala regressionstesten bevisar inte att Lovable Clouds PostgREST har
 laddat inställningen, och den bevisar inte prestanda för miljontals rader.
