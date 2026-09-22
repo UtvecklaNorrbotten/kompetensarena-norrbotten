@@ -318,81 +318,93 @@ bygg_observationer <- function(data) {
   })
 }
 
-if (test_mode) {
-  observations <- bygg_observationer(df_e3)
-  test_batch <- etl_start_batch(
-    indicator_id = target_indikator_id,
-    source = kalla,
-    source_updated_date = kalla_uppdaterad_datum,
-    expected_chunks = 1L,
-    expected_rows = length(observations)
-  )
+# Funktionsram krävs för att on.exit säkert ska avbryta batchen vid fel
+# även när workflowet kör skriptet med source().
+publicera_e3 <- function() {
+  if (test_mode) {
+    observations <- bygg_observationer(df_e3)
+    test_batch <- etl_start_batch(
+      indicator_id = target_indikator_id,
+      source = kalla,
+      source_updated_date = kalla_uppdaterad_datum,
+      expected_chunks = 1L,
+      expected_rows = length(observations)
+    )
 
-  test_batch_id <- test_batch$batch_id
-  message(sprintf("ETL-batch startad: %s", test_batch_id))
-  test_ok <- FALSE
-  on.exit({
-    if (!test_ok) try(etl_abort_batch(test_batch_id), silent = TRUE)
-  }, add = TRUE)
-
-  etl_publish_batch_chunk(
-    batch_id = test_batch_id,
-    indicator_id = target_indikator_id,
-    chunk_index = 0L,
-    observations = observations
-  )
-  etl_abort_batch(
-    test_batch_id,
-    reason = "Kontrollerad ETL-testkörning utan publicering"
-  )
-
-  test_ok <- TRUE
-  message(sprintf("ETL-test klart: %d rader validerade, staged och avbrutna utan publicering.", length(observations)))
-} else {
-  rows_per_chunk <- 5000L
-  chunk_starts <- seq.int(1L, nrow(df_e3), by = rows_per_chunk)
-
-  if (length(chunk_starts) > 1000L) {
-    stop("E3 överskrider maximalt antal chunkar för en batch")
-  }
-
-  batch <- etl_start_batch(
-    indicator_id = target_indikator_id,
-    source = kalla,
-    source_updated_date = kalla_uppdaterad_datum,
-    expected_chunks = length(chunk_starts),
-    expected_rows = nrow(df_e3)
-  )
-
-  batch_id <- batch$batch_id
-  message(sprintf("ETL-batch startad: %s", batch_id))
-  ok <- FALSE
-  on.exit({
-    if (!ok) try(etl_abort_batch(batch_id), silent = TRUE)
-  }, add = TRUE)
-
-  for (i in seq_along(chunk_starts)) {
-    start <- chunk_starts[[i]]
-    end <- min(start + rows_per_chunk - 1L, nrow(df_e3))
-    observations <- bygg_observationer(df_e3[start:end, , drop = FALSE])
+    test_batch_id <- test_batch$batch_id
+    message(sprintf("ETL-batch startad: %s", test_batch_id))
+    test_ok <- FALSE
+    on.exit({
+      if (!test_ok) try(etl_abort_batch(test_batch_id), silent = TRUE)
+    }, add = TRUE)
 
     etl_publish_batch_chunk(
-      batch_id = batch_id,
+      batch_id = test_batch_id,
       indicator_id = target_indikator_id,
-      chunk_index = i - 1L,
+      chunk_index = 0L,
       observations = observations
     )
-    message(sprintf("Publicerade chunk %d/%d", i, length(chunk_starts)))
-  }
-
-  resultat <- etl_finalize_batch(batch_id)
-  ok <- TRUE
-  message(
-    sprintf(
-      "%s publicerad: %s rader (batch %s)",
-      target_indikator_id,
-      resultat$rows %||% nrow(df_e3),
-      resultat$batch_id %||% "okänd"
+    etl_abort_batch(
+      test_batch_id,
+      reason = "Kontrollerad ETL-testkörning utan publicering"
     )
-  )
+
+    test_ok <- TRUE
+    message(sprintf("ETL-test klart: %d rader validerade, staged och avbrutna utan publicering.", length(observations)))
+  } else {
+    rows_per_chunk <- 5000L
+    chunk_starts <- seq.int(1L, nrow(df_e3), by = rows_per_chunk)
+
+    if (length(chunk_starts) > 1000L) {
+      stop("E3 överskrider maximalt antal chunkar för en batch")
+    }
+
+    batch <- etl_start_batch(
+      indicator_id = target_indikator_id,
+      source = kalla,
+      source_updated_date = kalla_uppdaterad_datum,
+      expected_chunks = length(chunk_starts),
+      expected_rows = nrow(df_e3)
+    )
+
+    batch_id <- batch$batch_id
+    message(sprintf("ETL-batch startad: %s", batch_id))
+    ok <- FALSE
+    on.exit({
+      if (!ok) try(etl_abort_batch(batch_id), silent = TRUE)
+    }, add = TRUE)
+
+    for (i in seq_along(chunk_starts)) {
+      start <- chunk_starts[[i]]
+      end <- min(start + rows_per_chunk - 1L, nrow(df_e3))
+      payload_started <- proc.time()[["elapsed"]]
+      observations <- bygg_observationer(df_e3[start:end, , drop = FALSE])
+      message(sprintf(
+        "Chunk %d/%d: byggde %d observationer på %.2f s",
+        i, length(chunk_starts), length(observations),
+        proc.time()[["elapsed"]] - payload_started
+      ))
+
+      etl_publish_batch_chunk(
+        batch_id = batch_id,
+        indicator_id = target_indikator_id,
+        chunk_index = i - 1L,
+        observations = observations
+      )
+      message(sprintf("Sparade chunk %d/%d", i, length(chunk_starts)))
+    }
+
+    resultat <- etl_finalize_batch(batch_id)
+    ok <- TRUE
+    message(
+      sprintf(
+        "%s publicerad: %s rader (batch %s)",
+        target_indikator_id,
+        resultat$rows %||% nrow(df_e3),
+        resultat$batch_id %||% "okänd"
+      )
+    )
+  }
 }
+
+publicera_e3()
