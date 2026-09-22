@@ -102,7 +102,6 @@ export type Database = {
           checksum: string
           chunk_index: number
           created_at: string
-          observations: Json
           row_count: number
         }
         Insert: {
@@ -110,7 +109,6 @@ export type Database = {
           checksum: string
           chunk_index: number
           created_at?: string
-          observations: Json
           row_count: number
         }
         Update: {
@@ -118,7 +116,6 @@ export type Database = {
           checksum?: string
           chunk_index?: number
           created_at?: string
-          observations?: Json
           row_count?: number
         }
         Relationships: [
@@ -223,6 +220,39 @@ export type Database = {
           },
         ]
       }
+      indicator_active_batches: {
+        Row: {
+          activated_at: string
+          active_batch_id: string
+          indicator_id: string
+        }
+        Insert: {
+          activated_at?: string
+          active_batch_id: string
+          indicator_id: string
+        }
+        Update: {
+          activated_at?: string
+          active_batch_id?: string
+          indicator_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "indicator_active_batches_active_batch_id_fkey"
+            columns: ["active_batch_id"]
+            isOneToOne: false
+            referencedRelation: "etl_batches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicator_active_batches_indicator_id_fkey"
+            columns: ["indicator_id"]
+            isOneToOne: true
+            referencedRelation: "indicators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       indicator_metadata: {
         Row: {
           hamtad_datum: string | null
@@ -308,6 +338,7 @@ export type Database = {
       }
       observations: {
         Row: {
+          batch_id: string | null
           dimensions: Json
           geo_code: string
           id: string
@@ -316,6 +347,7 @@ export type Database = {
           value: number | null
         }
         Insert: {
+          batch_id?: string | null
           dimensions?: Json
           geo_code: string
           id?: string
@@ -324,6 +356,7 @@ export type Database = {
           value?: number | null
         }
         Update: {
+          batch_id?: string | null
           dimensions?: Json
           geo_code?: string
           id?: string
@@ -332,6 +365,13 @@ export type Database = {
           value?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "observations_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "etl_batches"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "observations_geo_code_fkey"
             columns: ["geo_code"]

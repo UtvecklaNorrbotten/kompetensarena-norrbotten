@@ -36,6 +36,13 @@
       "when": 1790059253037,
       "tag": "0004_versioned_etl_publication",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790060681069,
+      "tag": "0005_versioned_etl_publication",
+      "breakpoints": true
     }
   ]
 }
