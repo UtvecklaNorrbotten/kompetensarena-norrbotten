@@ -6,7 +6,7 @@ scb_indicators <- list(
     indicator_id = "e3-matchning-utbildning",
     table_id = "TAB6929",
     script = "R/etl/e3_tab6929.R",
-    label = "E3 - matchning mellan utbildning och yrke"
+    label = "E3 - matchning efter utbildningsgrupp och utbildningsnivå"
   )
 )
 
