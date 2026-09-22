@@ -27,15 +27,25 @@ source("R/etl/etl_api.R")
 
 tabell_id <- "TAB6929"
 indikator_id <- "e3-matchning-utbildning"
+test_indikator_id <- "e3-matchning-utbildning-etl-test"
 kalla <- "SCB"
 test_mode <- tolower(Sys.getenv("ETL_TEST_MODE", unset = "false")) %in% c("1", "true", "yes")
+finalize_test_mode <- tolower(Sys.getenv("ETL_TEST_FINALIZE", unset = "false")) %in% c("1", "true", "yes")
+
+if (test_mode && finalize_test_mode) {
+  stop("Välj antingen ETL_TEST_MODE eller ETL_TEST_FINALIZE, inte båda.")
+}
+
+# En finaliseringstest använder en separat admin-indikator. Därmed kan den
+# pröva hela versionsväxlingen utan att blockera den efterföljande fullimporten.
+target_indikator_id <- if (finalize_test_mode) test_indikator_id else indikator_id
 
 # ---- Kontrollera metadata före datahämtning ----
 
-state <- etl_get_state(indikator_id)
+state <- etl_get_state(target_indikator_id)
 senast_lyckad <- state$last_successful_at %||% NA_character_
 
-if (!is.na(senast_lyckad) && nzchar(senast_lyckad)) {
+if (!finalize_test_mode && !is.na(senast_lyckad) && nzchar(senast_lyckad)) {
   behov_av_uppdatering <- pxweb2_table_needs_update(
     table = tabell_id,
     reference_datetime = senast_lyckad
@@ -94,6 +104,11 @@ if (test_mode) {
   sni_codes <- list("A-U")
 
   message("ETL-testläge: 21 län, 2 utbildningsgrupper, 1 näringsgren, 1 mått och senaste år.")
+} else if (finalize_test_mode) {
+  # Begränsa bara utbildningsdimensionen. Övriga dimensioner är riktiga
+  # TAB6929-data så testet omfattar flera chunkar och den nya finaliseringen.
+  utbildning_codes <- head(utbildning_codes, 2)
+  message("ETL-finaliseringstest: 2 utbildningsgrupper med samtliga övriga TAB6929-dimensioner.")
 }
 
 message(
@@ -306,7 +321,7 @@ bygg_observationer <- function(data) {
 if (test_mode) {
   observations <- bygg_observationer(df_e3)
   test_batch <- etl_start_batch(
-    indicator_id = indikator_id,
+    indicator_id = target_indikator_id,
     source = kalla,
     source_updated_date = kalla_uppdaterad_datum,
     expected_chunks = 1L,
@@ -321,7 +336,7 @@ if (test_mode) {
 
   etl_publish_batch_chunk(
     batch_id = test_batch_id,
-    indicator_id = indikator_id,
+    indicator_id = target_indikator_id,
     chunk_index = 0L,
     observations = observations
   )
@@ -341,7 +356,7 @@ if (test_mode) {
   }
 
   batch <- etl_start_batch(
-    indicator_id = indikator_id,
+    indicator_id = target_indikator_id,
     source = kalla,
     source_updated_date = kalla_uppdaterad_datum,
     expected_chunks = length(chunk_starts),
@@ -361,7 +376,7 @@ if (test_mode) {
 
     etl_publish_batch_chunk(
       batch_id = batch_id,
-      indicator_id = indikator_id,
+      indicator_id = target_indikator_id,
       chunk_index = i - 1L,
       observations = observations
     )
@@ -372,7 +387,8 @@ if (test_mode) {
   ok <- TRUE
   message(
     sprintf(
-      "E3 publicerad: %s rader (batch %s)",
+      "%s publicerad: %s rader (batch %s)",
+      target_indikator_id,
       resultat$rows %||% nrow(df_e3),
       resultat$batch_id %||% "okänd"
     )

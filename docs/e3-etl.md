@@ -68,15 +68,17 @@ Det chunkade flödet finns nu i backend och ska användas för E3:
 1. `POST /api/public/jobs/etl-batch/start` — skapar `batch_id`, anger indikator, källa,
    förväntat antal chunkar och (valfritt) förväntat antal rader
 2. `POST /api/public/jobs/etl-batch/chunk` — validerade observationer i mindre chunkar,
-   lagras i staging (`etl_batches`, `etl_batch_chunks`)
+   skrivs till en ny, ännu osynlig batch-version
 3. `POST /api/public/jobs/etl-batch/finalize` — verifierar antal chunkar/rader och
-   ersätter publicerad data för indikatorn atomiskt
-4. `POST /api/public/jobs/etl-batch/abort` — avbryter och rensar staging vid fel
+   växlar atomiskt indikatorns aktiva batch-version
+4. `POST /api/public/jobs/etl-batch/abort` — markerar batchen som misslyckad och
+   gör den omedelbart osynlig; eventuell städning kan ske separat
 
-Vid fel behålls föregående publicerade dataset oförändrat. Samma säkerhetsprincip som
-`publish_indicator` gäller: nyckelskyddad endpoint, advisory lock per indikator, ingen
-generell databasåtkomst. Fullständigt format, statuskoder och begränsningar finns i
-`docs/utveckla.md`.
+Vid fel behålls föregående publicerade dataset oförändrat. Finaliseringen flyttar inte
+miljontals rader, utan byter bara referensen till den färdiga versionen. Samma
+säkerhetsprincip som `publish_indicator` gäller: nyckelskyddad endpoint, advisory lock
+per indikator, ingen generell databasåtkomst. Fullständigt format, statuskoder och
+begränsningar finns i `docs/utveckla.md`.
 
 Rekommendation för E3: dela datasetet på exempelvis län eller år, med högst 20 000
 observationer per chunk.

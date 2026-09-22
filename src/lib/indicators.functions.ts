@@ -71,7 +71,14 @@ async function fetchIndicators(
   id?: string,
 ): Promise<Indicator[]> {
   let query = supabase.from("indicators").select("*").order("name");
-  if (id) query = query.eq("id", id);
+  if (id) {
+    query = query.eq("id", id);
+  } else {
+    // Statistik-sidan är fortfarande en presentationsyta för exempel.
+    // Råa E3-observationer är flerdimensionella och får en egen läsmodell
+    // innan de visas i gränssnittet.
+    query = query.eq("is_example", true);
+  }
   const { data: rows, error } = await query;
   if (error) throw new Error(`Kunde inte läsa indikatorer: ${error.message}`);
   if (!rows?.length) return [];
