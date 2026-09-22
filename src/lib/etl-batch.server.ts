@@ -52,6 +52,11 @@ type PgError = { code?: string; message: string };
 /** Översätter databasens felkoder till HTTP-status utan att läcka interna detaljer. */
 function statusForPgError(error: PgError): number {
   switch (error.code) {
+    case "57014": // query_canceled (statement timeout)
+    case "55P03": // lock_not_available (lock timeout)
+    case "40P01": // deadlock_detected
+    case "40001": // serialization_failure
+      return 503;
     case "02000": // no_data_found -> okänd batch/indikator
       return 404;
     case "23505": // unique_violation -> dubblerad chunk med annat innehåll
@@ -177,6 +182,7 @@ export async function handleBatchChunk(request: Request): Promise<Response> {
   const checksum = createHash("sha256").update(JSON.stringify(payload.observations), "utf8").digest("hex");
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const rpcStarted = performance.now();
   const { data, error } = await supabaseAdmin.rpc("etl_store_chunk", {
     p_batch_id: payload.batch_id,
     p_indicator_id: payload.indicator_id,
@@ -184,13 +190,22 @@ export async function handleBatchChunk(request: Request): Promise<Response> {
     p_observations: payload.observations,
     p_checksum: checksum,
   });
+  // Inkluderar transporten till PostgREST, inte enbart SQL-exekvering.
+  const rpcMs = Math.round(performance.now() - rpcStarted);
+  console.info("[etl-batch] chunk RPC", {
+    batch_id: payload.batch_id,
+    chunk_index: payload.chunk_index,
+    rows: payload.observations.length,
+    rpc_ms: rpcMs,
+    error_code: error?.code ?? null,
+  });
 
   if (error) {
     console.error("[etl-batch] chunk avvisad:", error.message);
-    return json({ error: "Chunk rejected", message: error.message }, statusForPgError(error));
+    return json({ error: "Chunk rejected", message: error.message, code: error.code, rpc_ms: rpcMs }, statusForPgError(error));
   }
 
-  return json(data, 200);
+  return json({ ...(data as Record<string, unknown>), rpc_ms: rpcMs }, 200);
 }
 
 /** POST /api/public/jobs/etl-batch/finalize */

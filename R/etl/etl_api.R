@@ -24,9 +24,20 @@ etl_request <- function(path) {
     req_headers("Accept" = "application/json")
 }
 
-etl_perform_json <- function(req) {
+etl_perform_json <- function(req, retry_safe = FALSE) {
+  # Start/no-change kan skapa nya poster och får inte upprepas automatiskt
+  # efter ett tappat svar. Chunk/finalize/abort och läsning tål återförsök.
+  if (retry_safe) {
+    req <- req |>
+      req_retry(
+        max_tries = 5,
+        retry_on_failure = TRUE,
+        is_transient = function(resp) resp_status(resp) %in% c(429L, 502L, 503L, 504L)
+      )
+  }
+
   resp <- req |>
-    req_retry(max_tries = 5) |>
+    req_timeout(60) |>
     req_error(is_error = function(resp) FALSE) |>
     req_perform()
 
@@ -51,7 +62,7 @@ etl_perform_json <- function(req) {
 etl_get_state <- function(indicator_id) {
   etl_request("/api/public/jobs/etl-state") |>
     req_url_query(indicator_id = indicator_id) |>
-    etl_perform_json()
+    etl_perform_json(retry_safe = TRUE)
 }
 
 etl_log_no_change <- function(indicator_id, source) {
@@ -107,35 +118,49 @@ etl_start_batch <- function(indicator_id, source, source_updated_date, expected_
 }
 
 etl_publish_batch_chunk <- function(batch_id, indicator_id, chunk_index, observations) {
-  etl_request("/api/public/jobs/etl-batch/chunk") |>
+  json_started <- proc.time()[["elapsed"]]
+  # Koda en gång före HTTP-anropet: ger separat tidsmätning och samma
+  # färdiga payload vid varje återförsök.
+  payload_json <- toJSON(
+    list(
+      batch_id = batch_id,
+      indicator_id = indicator_id,
+      chunk_index = chunk_index,
+      observations = observations
+    ),
+    auto_unbox = TRUE,
+    null = "null",
+    na = "null",
+    digits = NA
+  )
+  json_seconds <- proc.time()[["elapsed"]] - json_started
+  req <- etl_request("/api/public/jobs/etl-batch/chunk") |>
     req_method("POST") |>
-    req_body_json(
-      list(
-        batch_id = batch_id,
-        indicator_id = indicator_id,
-        chunk_index = chunk_index,
-        observations = observations
-      ),
-      auto_unbox = TRUE,
-      null = "null",
-      na = "null",
-      digits = NA
-    ) |>
-    etl_perform_json()
+    req_body_raw(as.character(payload_json), type = "application/json")
+  request_started <- proc.time()[["elapsed"]]
+  on.exit(message(sprintf(
+    "Chunk %d: JSON %.2f s; HTTP inkl. återförsök %.2f s",
+    chunk_index + 1L, json_seconds, proc.time()[["elapsed"]] - request_started
+  )), add = TRUE)
+  result <- etl_perform_json(req, retry_safe = TRUE)
+  if (!is.null(result$rpc_ms)) {
+    message(sprintf("Chunk %d: serverns senaste databas-RPC %.0f ms", chunk_index + 1L, result$rpc_ms))
+  }
+  result
 }
 
 etl_finalize_batch <- function(batch_id) {
   etl_request("/api/public/jobs/etl-batch/finalize") |>
     req_method("POST") |>
     req_body_json(list(batch_id = batch_id), auto_unbox = TRUE) |>
-    etl_perform_json()
+    etl_perform_json(retry_safe = TRUE)
 }
 
 etl_abort_batch <- function(batch_id, reason = "R-jobbet avbröts före lyckad finalisering") {
   etl_request("/api/public/jobs/etl-batch/abort") |>
     req_method("POST") |>
     req_body_json(list(batch_id = batch_id, reason = reason), auto_unbox = TRUE) |>
-    etl_perform_json()
+    etl_perform_json(retry_safe = TRUE)
 }
 
 etl_publish_batch <- function(indicator_id, source, source_updated_date, observations) {
