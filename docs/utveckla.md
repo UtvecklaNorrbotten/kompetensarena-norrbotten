@@ -66,9 +66,9 @@ Lovable har tvåvägs-synk med GitHub:
 
 ## Nästa utvecklingssteg
 
-1. Koppla den första riktiga indikatorn, E3 från SCB TAB6929, till ETL-flödet.
-2. Generalisera GitHub Actions + R-flödet för fler indikatorer och datakällor.
-3. Bygg statussida för datauppdateringar och metadata.
+1. Bygg statussida för datauppdateringar och metadata.
+2. Lägg till nästa verifierade SCB-indikator i det gemensamma ETL-registret.
+3. Förbered motsvarande källadapter för Kolada/Trafikanalys när första sådana indikator väljs.
 4. Fastställ informationsarkitektur och byt ut kvarvarande placeholder-innehåll.
 5. Bygg inloggning och roller, därefter dokumentuppladdning.
 6. AI-chatt med källhänvisning — efter separat genomgång av kostnad, GDPR och förvaltning.
@@ -192,15 +192,18 @@ rullas allt tillbaka och tidigare publicerad data ligger kvar oförändrad.
   (standard 48 timmar). Inget schemalagt jobb är kopplat ännu.
 
 
-## GitHub Actions för E3
+## GitHub Actions för SCB-indikatorer
 
-Repo:t innehåller nu ett R-baserat pilotflöde för E3:
+SCB-flödet är generaliserat men innehåller tills vidare bara den verifierade indikatorn E3:
 
-- `R/etl/e3_tab6929.R` — SCB/PxWeb2-hämtning, metadata-kontroll, teknisk validering och publicering.
-- `R/etl/etl_api.R` — gemensam klient för ETL-endpoints.
-- `.github/workflows/etl-e3-tab6929.yml` — daglig körning cirka 05:00 svensk tid samt manuell `workflow_dispatch`.
+- `R/etl/run_scb.R` — gemensam entrypoint.
+- `R/etl/scb_indicators.R` — register över tillåtna SCB-indikatorer och deras skript.
+- `R/etl/scb_common.R` — gemensam metadata-kontroll, kodlistor, SCB-celluppdelning och standardisering.
+- `R/etl/e3_tab6929.R` — E3-specifik query, transformation och validering.
+- `R/etl/etl_api.R` — källoberoende klient för ETL-endpoints och chunkad publicering.
+- `.github/workflows/etl-scb-indicators.yml` — gemensamt SCB-workflow. E3 körs dagligen cirka 05:00 svensk tid och kan även köras manuellt.
 
-Workflowet använder `pxweb2r` och den exakta TAB6929-queryn för län. Det använder den chunkade batch-endpointen och publicerar först efter lyckad validering.
+Att lägga till en ny SCB-indikator ska normalt innebära ett eget verifierat indikator-skript plus en post i `scb_indicators.R`, inte ett duplicerat workflow.
 
 Följande GitHub Actions Secrets måste sättas innan workflowet kan köras:
 
