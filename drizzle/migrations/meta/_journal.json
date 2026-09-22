@@ -50,6 +50,13 @@
       "when": 1790067039940,
       "tag": "0006_optimize_batch_observation_inserts",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790067433515,
+      "tag": "0007_optimize_batch_observation_inserts",
+      "breakpoints": true
     }
   ]
 }
