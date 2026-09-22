@@ -329,6 +329,7 @@ if (test_mode) {
   )
 
   test_batch_id <- test_batch$batch_id
+  message(sprintf("ETL-batch startad: %s", test_batch_id))
   test_ok <- FALSE
   on.exit({
     if (!test_ok) try(etl_abort_batch(test_batch_id), silent = TRUE)
@@ -364,6 +365,7 @@ if (test_mode) {
   )
 
   batch_id <- batch$batch_id
+  message(sprintf("ETL-batch startad: %s", batch_id))
   ok <- FALSE
   on.exit({
     if (!ok) try(etl_abort_batch(batch_id), silent = TRUE)
