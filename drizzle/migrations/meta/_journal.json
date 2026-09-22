@@ -29,6 +29,13 @@
       "when": 1789979958644,
       "tag": "0003_seed_e3_indicator_and_counties",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790059253037,
+      "tag": "0004_versioned_etl_publication",
+      "breakpoints": true
     }
   ]
 }
