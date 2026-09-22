@@ -17,7 +17,7 @@ Webbplattformen ansvarar för:
 1. autentisering av ETL-anrop
 2. strikt validering av payload
 3. kontroll att indikatorn finns
-4. atomisk publicering via `publish_indicator`
+4. atomisk publicering via `publish_indicator` för små dataset eller det versionerade batchflödet för stora dataset
 5. uppdatering av metadata och körningslogg
 
 ## Säkerhet
@@ -60,3 +60,18 @@ Publicering ska vara knuten till en specifik indikator och får inte påverka an
 ## Framtida datakällor
 
 Kontraktet ska vara källoberoende. SCB är första användningsfallet, men samma endpoint/publiceringsmönster ska kunna användas av Kolada, Trafikanalys och andra betrodda källor.
+
+
+## SCB/PxWeb2
+
+SCB-indikatorer använder ett gemensamt lager i `R/etl/scb_common.R` och ett gemensamt GitHub Actions-workflow.
+
+Gemensamt ansvar:
+
+1. kontrollera senaste lyckade ETL-publicering mot SCB:s fulla `updated`-timestamp med `pxweb2_table_needs_update()`
+2. logga `no_change` utan datahämtning när tabellen inte är nyare
+3. hämta och återanvända PxWeb2-metadata när ny data behövs
+4. återanvända säkra hjälpfunktioner för kodlistor och cellgränser
+5. publicera genom samma källoberoende ETL-klient
+
+Indikatorspecifikt ansvar ska ligga kvar i respektive skript: query, dimensionsurval, transformation och teknisk validering. Det minskar risken att en generell funktion råkar anta samma tabellstruktur för olika SCB-indikatorer.

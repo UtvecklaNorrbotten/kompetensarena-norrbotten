@@ -22,6 +22,7 @@ suppressPackageStartupMessages({
 })
 
 source("R/etl/etl_api.R")
+source("R/etl/scb_common.R")
 
 # ---- Inställningar ----
 
@@ -42,55 +43,28 @@ target_indikator_id <- if (finalize_test_mode) test_indikator_id else indikator_
 
 # ---- Kontrollera metadata före datahämtning ----
 
-state <- etl_get_state(target_indikator_id)
-senast_lyckad <- state$last_successful_at %||% NA_character_
+run_state <- scb_prepare_run(
+  indicator_id = target_indikator_id,
+  table_id = tabell_id,
+  source = kalla,
+  skip_update_check = finalize_test_mode
+)
 
-if (!finalize_test_mode && !is.na(senast_lyckad) && nzchar(senast_lyckad)) {
-  behov_av_uppdatering <- pxweb2_table_needs_update(
-    table = tabell_id,
-    reference_datetime = senast_lyckad
-  )
-
-  if (isFALSE(behov_av_uppdatering)) {
-    etl_log_no_change(indikator_id, kalla)
-    message("TAB6929 har inte uppdaterats sedan senaste lyckade publicering.")
-    quit(save = "no", status = 0)
-  }
-
-  if (is.na(behov_av_uppdatering)) {
-    warning("SCB saknar användbar updated-timestamp för TAB6929; data hämtas för säkerhets skull.")
-  }
+if (!isTRUE(run_state$fetch)) {
+  message("TAB6929 har inte uppdaterats sedan senaste lyckade publicering.")
+  quit(save = "no", status = 0)
 }
 
-# Första körningen, eller när SCB är nyare än vår senaste lyckade publicering:
-# hämta metadata en gång och återanvänd den i datahämtningen.
-meta <- pxweb2_get_metadata(tabell_id)
-kalla_uppdaterad <- meta$updated %||% NA_character_
-
-kalla_uppdaterad_datum <- if (!is.na(kalla_uppdaterad) && nzchar(kalla_uppdaterad)) {
-  substr(kalla_uppdaterad, 1, 10)
-} else {
-  NA_character_
-}
+meta <- run_state$meta
+kalla_uppdaterad_datum <- run_state$updated_date
 
 # ---- Hämta data från SCB ----
 
 # PxWeb2-kodlistorna är Valueset-listor. Läs ut deras faktiska koder innan
 # dataanropet så att pxweb2r kan validera och dela upp den stora frågan korrekt.
-hamta_kodlista <- function(id) {
-  x <- pxweb2_get_codelist(id)
-  codes <- unique(stats::na.omit(as.character(x$code)))
-
-  if (length(codes) == 0) {
-    stop("SCB-kodlistan saknar värden: ", id)
-  }
-
-  codes
-}
-
-kon_codes <- hamta_kodlista("vs_KonCKMRMI")
-region_codes <- hamta_kodlista("vs_CKM02Län")
-utbildning_codes <- hamta_kodlista("vs_UtbildningsgruppE2-3N1-2")
+kon_codes <- scb_get_codelist_codes("vs_KonCKMRMI")
+region_codes <- scb_get_codelist_codes("vs_CKM02Län")
+utbildning_codes <- scb_get_codelist_codes("vs_UtbildningsgruppE2-3N1-2")
 
 contents_codes <- list("*")
 tid_codes <- list("*")
@@ -131,14 +105,9 @@ cells_per_utbildning <- (
     variable_sizes[["Tid"]]
 )
 
-utbildningar_per_anrop <- floor(150000 / cells_per_utbildning)
-if (utbildningar_per_anrop < 1) {
-  stop("E3-frågan måste delas på fler dimensioner för att hålla SCB:s cellgräns")
-}
-
-utbildning_batches <- split(
-  utbildning_codes,
-  ceiling(seq_along(utbildning_codes) / utbildningar_per_anrop)
+utbildning_batches <- scb_split_dimension_by_cell_limit(
+  values = utbildning_codes,
+  cells_per_value = cells_per_utbildning
 )
 
 bygg_query_e3 <- function(utbildning_batch) {
@@ -186,13 +155,7 @@ message(sprintf("SCB returnerade %s rader för E3", format(nrow(df_e3), big.mark
 
 # ---- Standardisera kolumnnamn ----
 
-for (i in seq_len(nrow(variabler))) {
-  code <- variabler$code[[i]]
-  label <- variabler$label[[i]]
-  if (!(code %in% names(df_e3)) && label %in% names(df_e3)) {
-    names(df_e3)[names(df_e3) == label] <- code
-  }
-}
+df_e3 <- scb_standardize_variable_names(df_e3, variabler)
 
 required_cols <- c(
   "ContentsCode", "Tid", "SNI2007",
@@ -204,19 +167,8 @@ if (length(missing_cols) > 0) {
   stop("Saknade kolumner efter PxWeb2-hämtning: ", paste(missing_cols, collapse = ", "))
 }
 
-region_code_col <- names(df_e3)[grepl("region.*kod|region_kod", names(df_e3), ignore.case = TRUE)][1]
-if (is.na(region_code_col) || is.null(region_code_col)) {
-  stop("Ingen regionkodskolumn hittades i PxWeb2-resultatet")
-}
-
-utbildning_code_col <- names(df_e3)[grepl(
-  "utbildning.*kod|utbildning_kod",
-  names(df_e3),
-  ignore.case = TRUE
-)][1]
-if (is.na(utbildning_code_col) || is.null(utbildning_code_col)) {
-  stop("Ingen utbildningskodskolumn hittades i PxWeb2-resultatet")
-}
+region_code_col <- scb_find_code_column(df_e3, "region")
+utbildning_code_col <- scb_find_code_column(df_e3, "utbildning")
 
 # ---- Koder och etiketter för dimensioner ----
 
