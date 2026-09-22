@@ -1,4 +1,8 @@
-name: ETL - SCB-indikatorer
+name: ETL - SCB-data
+
+run-name: >-
+  E3 utbildningsmatchning (grupper och nivåer) –
+  ${{ github.event_name == 'schedule' && 'schemalagd' || 'manuell' }}
 
 on:
   workflow_dispatch:
@@ -20,6 +24,11 @@ on:
         required: false
         type: boolean
         default: false
+      force_refresh:
+        description: "Hämta och publicera även om SCB:s metadata är oförändrad"
+        required: false
+        type: boolean
+        default: false
   schedule:
     # E3 körs dagligen omkring 05:00 svensk tid.
     # Två UTC-tider används för att hantera sommar-/vintertid; en blir no-op.
@@ -34,6 +43,7 @@ concurrency:
 
 jobs:
   scb:
+    name: E3 - utbildningsgrupper och utbildningsnivåer
     runs-on: ubuntu-latest
     timeout-minutes: 180
 
@@ -82,7 +92,7 @@ jobs:
         run: |
           remotes::install_github("FaluPeppe/pxweb2r", upgrade = "never")
 
-      - name: Kör SCB-indikator
+      - name: Hämta och publicera E3 - grupper och nivåer
         if: steps.local-time.outputs.run == 'true'
         env:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
@@ -90,6 +100,7 @@ jobs:
           ETL_INDICATOR: ${{ github.event.inputs.indicator || 'e3' }}
           ETL_TEST_MODE: ${{ github.event.inputs.test_mode || 'false' }}
           ETL_TEST_FINALIZE: ${{ github.event.inputs.finalize_test || 'false' }}
+          ETL_FORCE_REFRESH: ${{ github.event.inputs.force_refresh || 'false' }}
         shell: Rscript {0}
         run: |
           source("R/etl/run_scb.R")

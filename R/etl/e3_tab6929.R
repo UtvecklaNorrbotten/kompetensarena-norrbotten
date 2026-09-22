@@ -32,6 +32,7 @@ test_indikator_id <- "e3-matchning-utbildning-etl-test"
 kalla <- "SCB"
 test_mode <- tolower(Sys.getenv("ETL_TEST_MODE", unset = "false")) %in% c("1", "true", "yes")
 finalize_test_mode <- tolower(Sys.getenv("ETL_TEST_FINALIZE", unset = "false")) %in% c("1", "true", "yes")
+force_refresh_mode <- tolower(Sys.getenv("ETL_FORCE_REFRESH", unset = "false")) %in% c("1", "true", "yes")
 
 if (test_mode && finalize_test_mode) {
   stop("Välj antingen ETL_TEST_MODE eller ETL_TEST_FINALIZE, inte båda.")
@@ -47,7 +48,7 @@ run_state <- scb_prepare_run(
   indicator_id = target_indikator_id,
   table_id = tabell_id,
   source = kalla,
-  skip_update_check = finalize_test_mode
+  skip_update_check = finalize_test_mode || force_refresh_mode
 )
 
 if (!isTRUE(run_state$fetch)) {
@@ -64,7 +65,12 @@ kalla_uppdaterad_datum <- run_state$updated_date
 # dataanropet så att pxweb2r kan validera och dela upp den stora frågan korrekt.
 kon_codes <- scb_get_codelist_codes("vs_KonCKMRMI")
 region_codes <- scb_get_codelist_codes("vs_CKM02Län")
-utbildning_codes <- scb_get_codelist_codes("vs_UtbildningsgruppE2-3N1-2")
+utbildningsindelningar <- tibble::tribble(
+  ~indelning_code, ~indelning_label, ~codelist,
+  "grupp", "Utbildningsgrupp", "vs_UtbildningsgruppE2-3N1-2",
+  "niva", "Utbildningsnivå", "vs_Utbildningsnivå19RMI"
+) |>
+  mutate(codes = map(codelist, scb_get_codelist_codes))
 
 contents_codes <- list("*")
 tid_codes <- list("*")
@@ -72,24 +78,34 @@ sni_codes <- list("*")
 
 if (test_mode) {
   kon_codes <- if ("totalt" %in% kon_codes) "totalt" else kon_codes[[1]]
-  utbildning_codes <- head(utbildning_codes, 2)
+  utbildningsindelningar <- utbildningsindelningar |>
+    mutate(codes = map(codes, head, 2))
   contents_codes <- list("000008QV")
   tid_codes <- list(tail(names(meta$dimension$Tid$category$index), 1))
   sni_codes <- list("A-U")
 
-  message("ETL-testläge: 21 län, 2 utbildningsgrupper, 1 näringsgren, 1 mått och senaste år.")
+  message("ETL-testläge: 21 län, 2 utbildningsgrupper, 2 utbildningsnivåer, 1 näringsgren, 1 mått och senaste år.")
 } else if (finalize_test_mode) {
   # Begränsa bara utbildningsdimensionen. Övriga dimensioner är riktiga
   # TAB6929-data så testet omfattar flera chunkar och den nya finaliseringen.
-  utbildning_codes <- head(utbildning_codes, 2)
-  message("ETL-finaliseringstest: 2 utbildningsgrupper med samtliga övriga TAB6929-dimensioner.")
+  utbildningsindelningar <- utbildningsindelningar |>
+    mutate(codes = map(codes, head, 2))
+  message("ETL-finaliseringstest: 2 utbildningsgrupper och 2 utbildningsnivåer med samtliga övriga TAB6929-dimensioner.")
 }
 
+antal_per_indelning <- map_int(utbildningsindelningar$codes, length)
 message(
   sprintf(
-    "SCB-urval: %d län, %d utbildningsgrupper och %d könskategorier",
+    "SCB-urval: %d län, %s och %d könskategorier",
     length(region_codes),
-    length(utbildning_codes),
+    paste(
+      sprintf(
+        "%d %s",
+        antal_per_indelning,
+        tolower(utbildningsindelningar$indelning_label)
+      ),
+      collapse = ", "
+    ),
     length(kon_codes)
   )
 )
@@ -105,12 +121,28 @@ cells_per_utbildning <- (
     variable_sizes[["Tid"]]
 )
 
-utbildning_batches <- scb_split_dimension_by_cell_limit(
-  values = utbildning_codes,
-  cells_per_value = cells_per_utbildning
+utbildningsanrop <- unlist(
+  map(seq_len(nrow(utbildningsindelningar)), function(j) {
+    batches <- scb_split_dimension_by_cell_limit(
+      values = utbildningsindelningar$codes[[j]],
+      cells_per_value = cells_per_utbildning
+    )
+
+    map(seq_along(batches), function(i) {
+      list(
+        indelning_code = utbildningsindelningar$indelning_code[[j]],
+        indelning_label = utbildningsindelningar$indelning_label[[j]],
+        codelist = utbildningsindelningar$codelist[[j]],
+        values = batches[[i]],
+        batch_index = i,
+        batch_count = length(batches)
+      )
+    })
+  }),
+  recursive = FALSE
 )
 
-bygg_query_e3 <- function(utbildning_batch) {
+bygg_query_e3 <- function(utbildning_batch, utbildning_codelist) {
   list(
     selection = list(
       list(variableCode = "ContentsCode", valueCodes = contents_codes),
@@ -118,15 +150,18 @@ bygg_query_e3 <- function(utbildning_batch) {
       list(variableCode = "SNI2007", valueCodes = sni_codes),
       list(
         variableCode = "KonAlderFodelseland",
-        valueCodes = as.list(kon_codes)
+        valueCodes = as.list(kon_codes),
+        codelist = "vs_KonCKMRMI"
       ),
       list(
         variableCode = "Region",
-        valueCodes = as.list(region_codes)
+        valueCodes = as.list(region_codes),
+        codelist = "vs_CKM02Län"
       ),
       list(
         variableCode = "Utbildning",
-        valueCodes = as.list(utbildning_batch)
+        valueCodes = as.list(utbildning_batch),
+        codelist = utbildning_codelist
       )
     ),
     placement = list(
@@ -136,17 +171,26 @@ bygg_query_e3 <- function(utbildning_batch) {
   )
 }
 
-df_e3 <- map2_dfr(
-  utbildning_batches,
-  seq_along(utbildning_batches),
-  function(utbildning_batch, i) {
-    message(sprintf("Hämtar SCB-del %d/%d", i, length(utbildning_batches)))
+df_e3 <- map_dfr(
+  utbildningsanrop,
+  function(anrop) {
+    message(sprintf(
+      "Hämtar %s, SCB-del %d/%d",
+      tolower(anrop$indelning_label),
+      anrop$batch_index,
+      anrop$batch_count
+    ))
 
     pxweb2_get_data(
       table = meta,
-      query = bygg_query_e3(utbildning_batch),
+      query = bygg_query_e3(anrop$values, anrop$codelist),
       quiet = TRUE
-    )
+    ) |>
+      mutate(
+        utbildning_indelning_code = anrop$indelning_code,
+        utbildning_indelning_label = anrop$indelning_label,
+        utbildning_codelist = anrop$codelist
+      )
   }
 )
 
@@ -159,7 +203,9 @@ df_e3 <- scb_standardize_variable_names(df_e3, variabler)
 
 required_cols <- c(
   "ContentsCode", "Tid", "SNI2007",
-  "KonAlderFodelseland", "Region", "Utbildning", "value"
+  "KonAlderFodelseland", "Region", "Utbildning", "value",
+  "utbildning_indelning_code", "utbildning_indelning_label",
+  "utbildning_codelist"
 )
 
 missing_cols <- setdiff(required_cols, names(df_e3))
@@ -223,6 +269,7 @@ dimension_code_cols <- c(
   "contents_code",
   "sni2007_code",
   "kon_alder_fodelseland_code",
+  "utbildning_indelning_code",
   "utbildning_code"
 )
 
@@ -239,6 +286,7 @@ key_df <- df_e3 |>
     contents_code,
     sni2007_code,
     kon_alder_fodelseland_code,
+    utbildning_indelning_code,
     utbildning_code
   )
 
@@ -263,6 +311,9 @@ bygg_observationer <- function(data) {
         sni2007_label = as.character(row$SNI2007[[1]]),
         kon_alder_fodelseland_code = row$kon_alder_fodelseland_code[[1]] %||% "",
         kon_alder_fodelseland_label = as.character(row$KonAlderFodelseland[[1]]),
+        utbildning_indelning_code = row$utbildning_indelning_code[[1]],
+        utbildning_indelning_label = row$utbildning_indelning_label[[1]],
+        utbildning_codelist = row$utbildning_codelist[[1]],
         utbildning_code = row$utbildning_code[[1]] %||% "",
         utbildning_label = as.character(row$Utbildning[[1]])
       )
