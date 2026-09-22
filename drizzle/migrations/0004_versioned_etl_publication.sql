@@ -97,6 +97,23 @@ create policy "Inloggade ser aktiva observationer enligt nivå" on public.observ
     )
   );
 
+-- Äldre, oavslutade JSONB-batchar kan inte slutföras efter modellbytet.
+-- De markeras därför explicit som misslyckade innan deras råa stagingdata tas bort.
+update public.etl_batches
+set status = 'failed',
+    error_message = coalesce(error_message, 'Avbruten vid byte till versionsstyrd ETL-publicering'),
+    last_activity_at = now()
+where status in ('started', 'receiving', 'ready');
+
+update public.data_source_runs r
+set status = 'failed',
+    finished_at = coalesce(r.finished_at, now()),
+    error_message = coalesce(r.error_message, 'Avbruten vid byte till versionsstyrd ETL-publicering')
+from public.etl_batches b
+where b.run_id = r.id
+  and b.status = 'failed'
+  and r.status = 'started';
+
 -- Chunks behåller endast integritetsuppgifter. Råobservationerna lagras
 -- normaliserat direkt i observations-tabellen under den osynliga batchen.
 alter table public.etl_batch_chunks
