@@ -416,6 +416,10 @@ export type Database = {
         Returns: Json
       }
       etl_cleanup_batches: { Args: { p_older_than?: string }; Returns: number }
+      etl_cleanup_failed_batch: {
+        Args: { p_batch_id: string; p_max_rows?: number }
+        Returns: Json
+      }
       etl_finalize_batch: { Args: { p_batch_id: string }; Returns: Json }
       etl_start_batch: {
         Args: {
