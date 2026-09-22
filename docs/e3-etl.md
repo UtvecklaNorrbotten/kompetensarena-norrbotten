@@ -39,12 +39,9 @@ I `pxweb2r` ska detta uttryckas med `pxweb2_get_data()` och de aktuella kodlisto
 
 ## Uppdateringskontroll
 
-Morgonjobbet ska först använda metadatafunktionerna i `pxweb2r`:
+Morgonjobbet använder den gemensamma SCB-hjälparen i `R/etl/scb_common.R`. Den jämför tidpunkten för senaste lyckade publicering med SCB via `pxweb2_table_needs_update()`. Om tabellen inte är nyare loggas `no_change` och ingen statistikdata hämtas.
 
-- `pxweb2_get_metadata("TAB6929")`
-- `pxweb2_table_updated("TAB6929")`
-
-Ny data ska endast hämtas när SCB:s källdatum är senare än det källdatum som senast publicerats för indikatorn.
+När data behöver uppdateras hämtas tabellmetadata med `pxweb2_get_metadata("TAB6929")` och samma metadataobjekt återanvänds i den efterföljande datahämtningen.
 
 RUS-konventionerna gäller:
 
@@ -142,3 +139,19 @@ Serverloggen innehåller även RPC-tid och felkod för misslyckade försök.
 
 Den lokala regressionstesten bevisar inte att Lovable Clouds PostgREST har
 laddat inställningen, och den bevisar inte prestanda för miljontals rader.
+
+
+## Gemensam SCB-struktur
+
+E3 är fortfarande indikator-specifik där det behövs: urval, transformation, dimensionskoder och tekniska rimlighetskontroller ligger i `R/etl/e3_tab6929.R`.
+
+Följande delar är däremot gemensamma för SCB-indikatorer:
+
+- metadata-/uppdateringskontroll i `scb_prepare_run()`
+- hämtning av SCB-kodlistor i `scb_get_codelist_codes()`
+- uppdelning mot SCB:s cellgräns i `scb_split_dimension_by_cell_limit()`
+- standardisering av variabelnamn/kodkolumner
+- endpoint-anrop, retry och chunkad publicering i `etl_api.R`
+- GitHub Actions via `etl-scb-indicators.yml`
+
+Nya indikatorer ska inte pressas in i E3-logik. Varje indikator behåller sin egen query och validering, medan gemensam infrastruktur återanvänds.
