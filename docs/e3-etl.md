@@ -94,3 +94,51 @@ E3 innehåller flera tabellinnehåll med olika enheter (antal, procent och proce
 Geografi och period ligger i de gemensamma observationsfälten.
 
 När R-flödet byggs ska både stabila koder och läsbara etiketter bevaras där `pxweb2r` exponerar dem.
+
+## Timeout, återförsök och verifiering (migration 0008)
+
+E3 behåller 5 000 rader per chunk. Senaste urvalets 4 472 496 rader kräver
+895 chunkar. 2 000 rader skulle kräva 2 237 chunkar och överskrida nuvarande
+gräns på 1 000. Ändra därför inte chunkstorleken isolerat.
+
+Migration `0008_etl_chunk_timeout_and_retry.sql` sätter
+`statement_timeout = '30s'` i deklarationen för `etl_store_chunk` och begär
+omladdning av PostgRESTs schemacache. Rollernas inställningar ändras inte.
+PostgREST måste stödja och tillåta att funktionens `statement_timeout` lyfts
+till transaktionen (`db-hoisted-tx-settings`).
+Se [Supabases timeoutdokumentation](https://supabase.com/docs/guides/database/postgres/timeouts).
+
+Samma sista chunk kan nu återförsökas när batchen har status `ready`.
+Checksumman måste stämma; ett annat innehåll ger fortfarande konflikt.
+Timeout, låstimeout, deadlock och serialiseringsfel ger HTTP 503.
+R-klienten försöker högst fem gånger vid 429/502/503/504 eller transportfel
+för chunk, finalisering, avbrott och statusläsning. httr2 använder väntetid
+med slumpmässig exponentiell ökning och respekterar Retry-After.
+Varje HTTP-försök har 60 sekunders timeout. Batchstart och no-change
+upprepas inte automatiskt eftersom de kan skapa nya poster.
+Se [httr2 req_retry](https://httr2.r-lib.org/reference/req_retry.html).
+
+Workflowloggen skiljer på byggandet av observationer i R, JSON-kodning och
+HTTP-tid inklusive återförsök. Serverns `rpc_ms` omfattar databas-RPC inklusive
+transport till PostgREST och avser det senaste försöket, inte ren SQL-tid.
+Serverloggen innehåller även RPC-tid och felkod för misslyckade försök.
+
+### Driftsättning
+
+1. Applicera befintliga migrationer i ordning och sedan exakt migration 0008.
+   Registrera den befintliga journalposten; skapa inte en kopia med nytt nummer.
+2. Kontrollera funktionens `proconfig` i `pg_proc`: den ska innehålla
+   `statement_timeout=30s` och `search_path=public`. Kontrollera att endast
+   serverrollen (utöver ägaren) får köra funktionen.
+3. Bekräfta att PostgRESTs schemacache laddats om och att dess version och
+   konfiguration tillämpar funktionens timeout före RPC-anropet.
+   En SQL-editor med 120 sekunders timeout verifierar inte API-vägen.
+4. Kontrollera att serverkoden med HTTP 503 och `rpc_ms` är driftsatt.
+5. Kör workflowet med `finalize_test=true` och `test_mode=false`.
+   Kontrollera att testindikatorns nya batch publiceras med korrekt radantal.
+6. Kör därefter hela E3 med båda testflaggorna avstängda.
+   Verifiera status `succeeded`, förväntat radantal och aktiv batch för
+   `e3-matchning-utbildning`. Först då är fullimporten verifierad.
+
+Den lokala regressionstesten bevisar inte att Lovable Clouds PostgREST har
+laddat inställningen, och den bevisar inte prestanda för miljontals rader.
