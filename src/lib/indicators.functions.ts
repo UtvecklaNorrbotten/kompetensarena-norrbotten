@@ -31,8 +31,15 @@ function createPublicClient() {
 
 type IndicatorRow = Database["public"]["Tables"]["indicators"]["Row"];
 type MetadataRow = Database["public"]["Tables"]["indicator_metadata"]["Row"];
-type ObservationRow = Database["public"]["Tables"]["observations"]["Row"];
+/** Endast de fält presentationen faktiskt behöver — aldrig `select *` på observations. */
+type ObservationRow = Pick<
+  Database["public"]["Tables"]["observations"]["Row"],
+  "indicator_id" | "geo_code" | "period" | "value"
+>;
 type GeographyRow = Database["public"]["Tables"]["geographies"]["Row"];
+
+/** Skyddstak: en presentationsserie ska aldrig dra miljontals E3-rader. */
+const MAX_OBSERVATIONS = 2_000;
 
 function toIndicator(
   row: IndicatorRow,
@@ -86,8 +93,13 @@ async function fetchIndicators(
   const ids = rows.map((r) => r.id);
   const [{ data: metadata }, { data: observations }, { data: geos }] = await Promise.all([
     supabase.from("indicator_metadata").select("*").in("indicator_id", ids),
-    supabase.from("observations").select("*").in("indicator_id", ids),
-    supabase.from("geographies").select("*"),
+    supabase
+      .from("observations")
+      .select("indicator_id, geo_code, period, value")
+      .in("indicator_id", ids)
+      .order("period")
+      .limit(MAX_OBSERVATIONS),
+    supabase.from("geographies").select("code, name, level, parent_code"),
   ]);
 
   const metadataByIndicator = new Map((metadata ?? []).map((m) => [m.indicator_id, m]));
