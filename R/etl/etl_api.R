@@ -188,23 +188,6 @@ etl_publish_batch_chunk <- function(batch_id, indicator_id, chunk_index, observa
   result
 }
 
-# Skickar flera chunkar samtidigt. Chunkarna är oberoende på servern
-# (staging per chunk_index), så parallell sändning är säker. Håll antalet
-# lågt: varje chunk är flera MB och servern har egna takgränser.
-etl_publish_batch_chunks_parallel <- function(batch_id, indicator_id, chunk_indices, payloads, max_active = 3L) {
-  stopifnot(length(chunk_indices) == length(payloads))
-  reqs <- lapply(payloads, etl_chunk_request)
-  started <- proc.time()[["elapsed"]]
-  resps <- req_perform_parallel(reqs, max_active = max_active, on_error = "continue")
-  results <- lapply(seq_along(resps), function(i) {
-    etl_check_chunk_response(resps[[i]], chunk_indices[[i]])
-  })
-  message(sprintf(
-    "Skickade %d chunkar parallellt (max %d samtidigt) på %.2f s",
-    length(reqs), max_active, proc.time()[["elapsed"]] - started
-  ))
-  results
-}
 
 
 etl_finalize_batch <- function(batch_id) {
