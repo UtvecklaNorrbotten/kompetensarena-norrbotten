@@ -42,15 +42,17 @@ af_get_municipality_codes <- function(force_refresh = FALSE) {
   municipality_rows <- unique(text_nodes[grepl("^[0-9]{4}[[:space:]]+[^[:space:]]", text_nodes)])
 
   codes <- sub("^([0-9]{4}).*$", "\\1", municipality_rows)
-  names <- trimws(sub("^[0-9]{4}[[:space:]]+", "", municipality_rows))
+  municipality_names <- trimws(
+    sub("^[0-9]{4}[[:space:]]+", "", municipality_rows)
+  )
 
-  keep <- grepl("^[0-9]{4}$", codes) & nzchar(names)
-  lookup <- stats::setNames(codes[keep], names[keep])
+  keep <- grepl("^[0-9]{4}$", codes) & nzchar(municipality_names)
+  lookup <- stats::setNames(codes[keep], municipality_names[keep])
 
   # SCB redovisar 290 kommuner. Ett avvikande antal betyder normalt att
   # sidstrukturen har ändrats och då ska importen stoppas i stället för
   # att ge kommuner fel kod.
-  lookup <- lookup[!duplicated(names(lookup))]
+  lookup <- lookup[!duplicated(base::names(lookup))]
 
   if (length(lookup) != 290L || length(unique(unname(lookup))) != 290L) {
     stop(
