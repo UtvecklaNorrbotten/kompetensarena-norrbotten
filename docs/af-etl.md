@@ -37,6 +37,17 @@ nedladdning. Nästa kontroll väntar tills även den femte filen är uppdaterad.
 Det innebär att den dagliga kontrollen är mycket liten. De stora Excel-filerna hämtas
 normalt bara en gång per ny månadsperiod.
 
+### När kontrollen startar
+
+Den 23 september 2026 visar Arbetsförmedlingens sida fortfarande augusti 2026 för de fem
+primärkällorna. Det ger oss en praktisk, men inte garanterad, tumregel: börja kontrollera
+från den 23:e i månaden efter statistikmånaden. Workflowet kör därför dagligen den
+23:e–31:e. När fullimporten senare kopplas på kommer samma grind att göra att filerna
+bara laddas ned när alla fem har gått över till samma nya period.
+
+Fältet `check_from_day_of_month = 23` i källregistret betyder alltså **startdag för
+kontroll**, inte ett löfte om Arbetsförmedlingens publiceringsdatum.
+
 ## Filintegritet
 
 Efter nedladdning kontrolleras minst:
@@ -71,3 +82,24 @@ Källregistret ligger i `R/etl/af_sources.R`.
 Nästa steg är att implementera och verifiera fem filspecifika normaliseringar till
 långformat samt korsvalideringar mellan överlappande mått. För pivotbaserade filer ska
 underliggande pivot-cache läsas i stället för att automatisera klick i Excel.
+
+
+## Övergripande källstatus
+
+AF använder samma generella källregister som övriga ETL-flöden:
+
+- `data_sources` beskriver källan och dess kontrollfrekvens.
+- `data_source_state` håller senaste observerade period, senaste lyckade period,
+  senaste kontrolltid, senaste lyckade hämtning och aktuell status.
+- `data_source_runs` får `source_id`, `source_period` och `details` för historik.
+
+AF:s samlade käll-ID är `af-monthly`. De fem Excel-filerna behandlas som komponenter i
+samma månadsleverans, eftersom ingen fullimport får ske förrän samtliga fem är synkroniserade.
+
+Statusarna används så här:
+
+- `waiting`: filerna visar olika månader.
+- `ready`: alla fem visar samma nya månad och kan importeras.
+- `no_change`: den gemensamma månaden är redan importerad.
+- `succeeded`: fullimporten för perioden lyckades.
+- `failed`: kontroll eller import misslyckades.
