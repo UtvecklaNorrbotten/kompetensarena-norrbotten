@@ -123,8 +123,17 @@ flera hundra MB och inte bör byggas som ett helt XML-träd i minnet.
 - `measure_label`
 - `value`
 
-Geografiskt behålls alla län som jämförelse samt Norrbottens 14 kommuner. Övriga
-kommuner filtreras bort redan under pivotläsningen för att minska minne och datamängd.
+Geografiskt behålls hela Sverige: samtliga 290 kommuner och samtliga 21 län.
+Riket skapas som en egen nivå med kod `00` genom summering av länsvärdena.
+
+Kommunkoderna hämtas från SCB:s aktuella officiella kodlista vid körning och cacheas
+i minnet. Om SCB-listan inte kan läsas som exakt 290 unika kommuner stoppas körningen.
+Om ett kommunnamn från AF inte kan mappas till SCB-kod stoppas körningen också; kommuner
+får alltså inte försvinna tyst.
+
+Riket beräknas endast från län, aldrig från kommunerna. Ett riksvärde sätts till `NA`
+om någon av de 21 länsposterna saknas eller är maskerad. Andelar ska inte summeras eller
+medelvärdesberäknas; de beräknas senare från summerade täljare och nämnare.
 
 Den manuella workflow-körningen `mode=validate` laddar ned de fem aktuella filerna,
 normaliserar dem och publicerar ingenting. Överlappande mått används i stället som
@@ -136,3 +145,22 @@ regressionskontroller:
 4. BAS-filens SOK-tal mot tid-filens ARBETSLÖSA.
 
 En framtida produktionsimport ska bara tillåtas om dessa kontroller går igenom.
+
+
+### Datamängd
+
+Den tidigare prototypen behöll 21 län och 14 Norrbottenskommuner. Det nya urvalet
+behåller 21 län och 290 kommuner, vilket innebär ungefär 8,9 gånger fler geografier före
+riksraderna. Det är medvetet: vi undviker att kasta bort nationell kommuninformation
+innan vi vet den faktiska normaliserade kostnaden.
+
+Dry-runen rapporterar därför för varje källa:
+
+- antal normaliserade rader,
+- ungefärlig storlek i R-minnet,
+- att 290 kommuner, 21 län och Riket finns,
+- antal riksrader som blir `NA` på grund av saknade/maskerade länsvärden,
+- total radmängd och ungefärlig minnesstorlek för alla fem dataset.
+
+Beslut om eventuell framtida filtrering ska tas utifrån dessa faktiska mått, inte utifrån
+Excel-filernas komprimerade filstorlek.
