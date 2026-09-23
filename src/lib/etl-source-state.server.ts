@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { Database, Json } from "@/integrations/supabase/types";
 import { authorize, createRateLimiter, json } from "./etl-auth.server";
 
 const stateRate = createRateLimiter(120);
@@ -87,7 +88,7 @@ export async function handleSourceStatePost(request: Request): Promise<Response>
   if (!source) return json({ error: "Unknown source" }, 404);
 
   const now = new Date().toISOString();
-  const stateRow: Record<string, unknown> = {
+  const stateRow: Database["public"]["Tables"]["data_source_state"]["Insert"] = {
     source_id: payload.source_id,
     last_status: payload.status,
     last_checked_at: now,
@@ -98,7 +99,7 @@ export async function handleSourceStatePost(request: Request): Promise<Response>
   if (payload.latest_available_period !== undefined) {
     stateRow.latest_available_period = payload.latest_available_period;
   }
-  if (payload.details !== undefined) stateRow.details = payload.details;
+  if (payload.details !== undefined) stateRow.details = payload.details as Json;
 
   if (payload.status === "succeeded") {
     const successfulPeriod =
@@ -123,7 +124,7 @@ export async function handleSourceStatePost(request: Request): Promise<Response>
   }
 
   if (["no_change", "succeeded", "failed"].includes(payload.status)) {
-    const runStatus = payload.status;
+    const runStatus = payload.status as Database["public"]["Enums"]["run_status"];
     const { error: runError } = await supabaseAdmin.from("data_source_runs").insert({
       source: source.provider,
       source_id: payload.source_id,
@@ -134,7 +135,7 @@ export async function handleSourceStatePost(request: Request): Promise<Response>
       finished_at: now,
       rows_affected: 0,
       error_message: payload.status === "failed" ? payload.error_message ?? null : null,
-      details: payload.details ?? null,
+      details: (payload.details as Json | undefined) ?? null,
     });
 
     if (runError) {
