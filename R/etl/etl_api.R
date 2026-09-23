@@ -6,6 +6,9 @@ suppressPackageStartupMessages({
   library(jsonlite)
 })
 
+# Samma gräns finns i API-valideringen och databasens check constraint.
+ETL_MAX_CHUNKS <- 2000L
+
 etl_base_url <- function() {
   x <- Sys.getenv("ETL_BASE_URL", unset = "")
   if (!nzchar(x)) stop("ETL_BASE_URL saknas")
@@ -166,6 +169,12 @@ etl_abort_batch <- function(batch_id, reason = "R-jobbet avbröts före lyckad f
 etl_publish_batch <- function(indicator_id, source, source_updated_date, observations) {
   chunks <- etl_split_observations(observations)
   if (length(chunks) == 0) stop("Inga observationer att publicera")
+  if (length(chunks) > ETL_MAX_CHUNKS) {
+    stop(sprintf(
+      "Importen kräver %d chunkar; gränsen är %d",
+      length(chunks), ETL_MAX_CHUNKS
+    ))
+  }
 
   start <- etl_start_batch(
     indicator_id = indicator_id,
