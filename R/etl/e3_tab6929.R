@@ -358,8 +358,11 @@ publicera_e3 <- function() {
     rows_per_chunk <- 5000L
     chunk_starts <- seq.int(1L, nrow(df_e3), by = rows_per_chunk)
 
-    if (length(chunk_starts) > 1000L) {
-      stop("E3 överskrider maximalt antal chunkar för en batch")
+    if (length(chunk_starts) > ETL_MAX_CHUNKS) {
+      stop(sprintf(
+        "E3 kräver %d chunkar; gränsen är %d",
+        length(chunk_starts), ETL_MAX_CHUNKS
+      ))
     }
 
     batch <- etl_start_batch(
