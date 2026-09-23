@@ -2,10 +2,18 @@ name: ETL - AF månadskontroll
 
 on:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "Körläge"
+        required: true
+        default: "check"
+        type: choice
+        options:
+          - check
+          - validate
   schedule:
-    # AF:s augusti 2026-filer fanns senast den 23 september.
-    # Kontrollera därför dagligen från den 23:e till månadens slut.
-    # 04:15 UTC motsvarar ungefär 05:15/06:15 svensk tid beroende på DST.
+    # Augusti 2026 fanns fortfarande som senaste period den 23 september.
+    # 23:e är därför startdag för kontroll, inte ett garanterat publiceringsdatum.
     - cron: "15 4 23-31 * *"
 
 permissions:
@@ -18,7 +26,7 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 90
 
     steps:
       - name: Checka ut repo
@@ -36,14 +44,25 @@ jobs:
             any::httr2
             any::jsonlite
             any::xml2
+            any::XML
             any::digest
+            any::readxl
+            any::dplyr
+            any::tidyr
           install-pandoc: false
           install-quarto: false
 
       - name: Kontrollera AF:s månadsfiler
+        if: github.event_name == 'schedule' || inputs.mode == 'check'
         env:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
           ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
         shell: Rscript {0}
         run: |
           source("R/etl/check_af_sources.R")
+
+      - name: Dry-run av AF-normalisering
+        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'validate'
+        shell: Rscript {0}
+        run: |
+          source("R/etl/validate_af_normalization.R")

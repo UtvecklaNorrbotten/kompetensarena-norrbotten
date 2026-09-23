@@ -103,3 +103,36 @@ Statusarna används så här:
 - `no_change`: den gemensamma månaden är redan importerad.
 - `succeeded`: fullimporten för perioden lyckades.
 - `failed`: kontroll eller import misslyckades.
+
+
+## Normalisering och månatlig kvalitetskontroll
+
+Pivotbaserade AF-filer läses strömmande med SAX via `R/etl/af_pivot_cache.R`.
+Det är viktigt eftersom exempelvis yrkesområdesfilens okomprimerade pivot-cache kan vara
+flera hundra MB och inte bör byggas som ett helt XML-träd i minnet.
+
+`R/etl/af_normalize.R` normaliserar de fem primärkällorna till samma långa struktur:
+
+- `period`
+- `geo_code`
+- `geo_level`
+- `sex`
+- `dimension_type`
+- `dimension_value`
+- `measure_code`
+- `measure_label`
+- `value`
+
+Geografiskt behålls alla län som jämförelse samt Norrbottens 14 kommuner. Övriga
+kommuner filtreras bort redan under pivotläsningen för att minska minne och datamängd.
+
+Den manuella workflow-körningen `mode=validate` laddar ned de fem aktuella filerna,
+normaliserar dem och publicerar ingenting. Överlappande mått används i stället som
+regressionskontroller:
+
+1. `web-sok-lan-kom` INSAL summerat över ålder mot tid-filens ARBETSLÖSA.
+2. `svag-konkurrensformaga` SAMTLIGA mot tid-filens ARBETSLÖSA.
+3. yrkesområden summerade inklusive `Uppgift saknas` mot tid-filens ARBETSLÖSA.
+4. BAS-filens SOK-tal mot tid-filens ARBETSLÖSA.
+
+En framtida produktionsimport ska bara tillåtas om dessa kontroller går igenom.
