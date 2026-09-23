@@ -8,7 +8,7 @@ source_id <- "af-monthly"
 state <- etl_get_source_state(source_id)
 last_successful_period <- state$state$latest_successful_period %||% NA_character_
 
-result <- tryCatch({
+run_af_source_check <- function() {
   manifest <- af_discover_sources()
   common_period <- af_common_period(manifest)
 
@@ -75,14 +75,19 @@ result <- tryCatch({
   )
 
   invisible(TRUE)
-}, error = function(e) {
-  try(
-    etl_update_source_state(
-      source_id = source_id,
-      status = "failed",
-      error_message = conditionMessage(e)
-    ),
-    silent = TRUE
-  )
-  stop(e)
-})
+}
+
+tryCatch(
+  run_af_source_check(),
+  error = function(e) {
+    try(
+      etl_update_source_state(
+        source_id = source_id,
+        status = "failed",
+        error_message = conditionMessage(e)
+      ),
+      silent = TRUE
+    )
+    stop(e)
+  }
+)
