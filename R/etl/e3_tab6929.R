@@ -371,30 +371,11 @@ publicera_e3 <- function() {
     test_ok <- TRUE
     message(sprintf("ETL-test klart: %d rader validerade, staged och avbrutna utan publicering.", length(observations)))
   } else {
-    # Serverns tak: 20 000 observationer och ~6 MB per chunk. Mät en liten
-    # provpayload och välj största radantal som ryms med marginal, så att
-    # antalet HTTP-anrop (och därmed nätverkslatensen) minimeras.
-    max_rows_per_chunk <- 15000L
-    max_chunk_bytes <- 5000000L
-    prov_rader <- min(200L, nrow(df_e3))
-    prov_bytes <- nchar(
-      etl_chunk_payload_json(
-        batch_id = "00000000-0000-0000-0000-000000000000",
-        indicator_id = target_indikator_id,
-        chunk_index = 0L,
-        observations = bygg_observationer(df_e3[seq_len(prov_rader), , drop = FALSE])
-      ),
-      type = "bytes"
-    )
-    bytes_per_rad <- prov_bytes / prov_rader
-    rows_per_chunk <- max(1000L, min(
-      max_rows_per_chunk,
-      as.integer(floor(max_chunk_bytes / bytes_per_rad))
-    ))
-    message(sprintf(
-      "Chunkstorlek: %d rader (~%.0f byte/rad, ~%.1f MB per chunk)",
-      rows_per_chunk, bytes_per_rad, rows_per_chunk * bytes_per_rad / 1e6
-    ))
+    # Sekventiella chunkar om högst 5 000 rader. Större och parallella
+    # insättningar konkurrerar om samma tabell och index och kan slå i
+    # databasens 30-sekundersgräns. 5 000 rader i taget är beprövat.
+    rows_per_chunk <- 5000L
+    message(sprintf("Chunkstorlek: %d rader (sekventiell sändning)", rows_per_chunk))
 
     chunk_starts <- seq.int(1L, nrow(df_e3), by = rows_per_chunk)
 
@@ -420,42 +401,21 @@ publicera_e3 <- function() {
       if (!ok) try(etl_abort_batch(batch_id), silent = TRUE)
     }, add = TRUE)
 
-    # Skicka chunkarna i små vågor parallellt: nätverkslatensen överlappar
-    # medan nästa vågs payload byggs. Håll antalet lågt (servern har takgräns).
-    parallel_chunks <- 3L
-    vag_starts <- seq.int(1L, length(chunk_starts), by = parallel_chunks)
+    for (i in seq_along(chunk_starts)) {
+      start <- chunk_starts[[i]]
+      end <- min(start + rows_per_chunk - 1L, nrow(df_e3))
 
-    for (v in vag_starts) {
-      vag <- v:min(v + parallel_chunks - 1L, length(chunk_starts))
-      payload_started <- proc.time()[["elapsed"]]
-      payloads <- lapply(vag, function(i) {
-        start <- chunk_starts[[i]]
-        end <- min(start + rows_per_chunk - 1L, nrow(df_e3))
-        etl_chunk_payload_json(
-          batch_id = batch_id,
-          indicator_id = target_indikator_id,
-          chunk_index = i - 1L,
-          observations = bygg_observationer(df_e3[start:end, , drop = FALSE])
-        )
-      })
-      message(sprintf(
-        "Chunk %d-%d/%d: byggde payload på %.2f s",
-        vag[[1]], vag[[length(vag)]], length(chunk_starts),
-        proc.time()[["elapsed"]] - payload_started
-      ))
-
-      etl_publish_batch_chunks_parallel(
+      # Kolumnvis (vektoriserad) uppbyggnad av observationerna behålls.
+      etl_publish_batch_chunk(
         batch_id = batch_id,
         indicator_id = target_indikator_id,
-        chunk_indices = vag - 1L,
-        payloads = payloads,
-        max_active = parallel_chunks
+        chunk_index = i - 1L,
+        observations = bygg_observationer(df_e3[start:end, , drop = FALSE])
       )
-      message(sprintf(
-        "Sparade chunk %d-%d/%d",
-        vag[[1]], vag[[length(vag)]], length(chunk_starts)
-      ))
+      message(sprintf("Sparade chunk %d/%d", i, length(chunk_starts)))
     }
+
+
 
 
     resultat <- etl_finalize_batch(batch_id)
