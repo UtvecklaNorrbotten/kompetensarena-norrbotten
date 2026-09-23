@@ -117,7 +117,7 @@ Andelar summeras eller medelvärdesberäknas inte mellan indelningarna.
 E3 behåller 5 000 rader per chunk. Den tidigare importen med enbart 87
 utbildningsgrupper omfattade 4 472 496 rader och 895 chunkar. Med
 utbildningsnivåer tillkommer en separat serie. Skriptet räknar det faktiska
-antalet chunkar före batchstart och stoppar utan publicering om gränsen 1 000
+antalet chunkar före batchstart och stoppar utan publicering om gränsen 2 000
 överskrids. Förväntad storlek måste bekräftas av den första fulla körningen.
 
 Migration `0008_etl_chunk_timeout_and_retry.sql` sätter
