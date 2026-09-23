@@ -48,6 +48,7 @@ run_state <- scb_prepare_run(
   indicator_id = target_indikator_id,
   table_id = tabell_id,
   source = kalla,
+  source_state_id = if (!test_mode && !finalize_test_mode) "scb-tab6929" else NULL,
   skip_update_check = finalize_test_mode || force_refresh_mode
 )
 
@@ -420,6 +421,23 @@ publicera_e3 <- function() {
 
     resultat <- etl_finalize_batch(batch_id)
     ok <- TRUE
+
+    if (!test_mode && !finalize_test_mode) {
+      try(
+        etl_update_source_state(
+          source_id = "scb-tab6929",
+          status = "succeeded",
+          latest_available_period = kalla_uppdaterad_datum,
+          latest_successful_period = kalla_uppdaterad_datum,
+          details = list(
+            table_id = tabell_id,
+            rows = resultat$rows %||% nrow(df_e3)
+          )
+        ),
+        silent = TRUE
+      )
+    }
+
     message(
       sprintf(
         "%s publicerad: %s rader (batch %s)",

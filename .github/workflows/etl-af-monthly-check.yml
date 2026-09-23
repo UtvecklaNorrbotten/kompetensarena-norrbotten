@@ -1,0 +1,49 @@
+name: ETL - AF månadskontroll
+
+on:
+  workflow_dispatch:
+  schedule:
+    # AF:s augusti 2026-filer fanns senast den 23 september.
+    # Kontrollera därför dagligen från den 23:e till månadens slut.
+    # 04:15 UTC motsvarar ungefär 05:15/06:15 svensk tid beroende på DST.
+    - cron: "15 4 23-31 * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: etl-af-monthly-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checka ut repo
+        uses: actions/checkout@v4
+
+      - name: Installera R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Installera beroenden
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::httr2
+            any::jsonlite
+            any::xml2
+            any::digest
+          install-pandoc: false
+          install-quarto: false
+
+      - name: Kontrollera AF:s månadsfiler
+        env:
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+        shell: Rscript {0}
+        run: |
+          source("R/etl/check_af_sources.R")

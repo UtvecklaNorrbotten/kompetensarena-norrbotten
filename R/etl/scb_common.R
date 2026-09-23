@@ -8,6 +8,7 @@ scb_prepare_run <- function(
   indicator_id,
   table_id,
   source = "SCB",
+  source_state_id = NULL,
   skip_update_check = FALSE
 ) {
   if (!skip_update_check) {
@@ -22,6 +23,16 @@ scb_prepare_run <- function(
 
       if (isFALSE(needs_update)) {
         etl_log_no_change(indicator_id, source)
+        if (!is.null(source_state_id)) {
+          try(
+            etl_update_source_state(
+              source_id = source_state_id,
+              status = "no_change",
+              details = list(table_id = table_id)
+            ),
+            silent = TRUE
+          )
+        }
         return(list(fetch = FALSE))
       }
 
@@ -41,6 +52,18 @@ scb_prepare_run <- function(
     substr(updated, 1, 10)
   } else {
     NA_character_
+  }
+
+  if (!is.null(source_state_id)) {
+    try(
+      etl_update_source_state(
+        source_id = source_state_id,
+        status = "ready",
+        latest_available_period = updated_date,
+        details = list(table_id = table_id, updated = updated)
+      ),
+      silent = TRUE
+    )
   }
 
   list(
