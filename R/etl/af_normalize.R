@@ -19,7 +19,8 @@ af_add_geo <- function(data, county_col, municipality_col) {
   municipality_present <- !is.na(municipality_raw) & nzchar(municipality_raw)
   county_known <- !is.na(unname(af_county_codes[county_raw]))
 
-  unmapped <- municipality_present & county_known & is.na(geo$geo_code)
+  municipality_non_geo <- af_is_non_geographic_municipality(municipality_raw)
+  unmapped <- municipality_present & !municipality_non_geo & county_known & is.na(geo$geo_code)
   if (any(unmapped)) {
     examples <- unique(municipality_raw[unmapped])
     stop(
