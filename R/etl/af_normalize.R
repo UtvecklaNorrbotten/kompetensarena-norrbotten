@@ -17,6 +17,40 @@ af_add_geo <- function(data, county_col, municipality_col) {
     filter(!is.na(geo_code))
 }
 
+
+af_sum_complete <- function(x) {
+  if (length(x) == 0L || any(is.na(x))) return(NA_real_)
+  sum(x)
+}
+
+af_add_riket_from_counties <- function(data) {
+  required <- c("geo_code", "geo_level", "value")
+  missing <- setdiff(required, names(data))
+  if (length(missing) > 0) {
+    stop("Kan inte skapa Riket; saknade kolumner: ", paste(missing, collapse = ", "))
+  }
+
+  counties <- data |>
+    filter(geo_level == "län")
+
+  if (nrow(counties) == 0) {
+    stop("Kan inte skapa Riket; datasetet saknar länsrader")
+  }
+
+  group_cols <- setdiff(names(data), c("geo_code", "geo_level", "value"))
+
+  riket <- counties |>
+    group_by(across(all_of(group_cols))) |>
+    summarise(value = af_sum_complete(value), .groups = "drop") |>
+    mutate(
+      geo_code = "00",
+      geo_level = "riket"
+    ) |>
+    select(all_of(names(data)))
+
+  bind_rows(data, riket)
+}
+
 af_normalize_web_sok <- function(path) {
   caches <- list(
     list(id = 3L, dimension_type = "ålder", dimension_field = "ALDGR"),
@@ -51,7 +85,8 @@ af_normalize_web_sok <- function(path) {
         measure_label = "Inskrivna arbetslösa",
         value = suppressWarnings(as.numeric(INSAL))
       )
-  }))
+  })) |>
+    af_add_riket_from_counties()
 }
 
 af_normalize_tid_utan_arbete <- function(path) {
@@ -115,7 +150,8 @@ af_normalize_tid_utan_arbete <- function(path) {
         measure_label,
         value = suppressWarnings(as.numeric(value))
       )
-  }))
+  })) |>
+    af_add_riket_from_counties()
 }
 
 af_normalize_svag_konkurrensformaga <- function(path) {
@@ -157,7 +193,8 @@ af_normalize_svag_konkurrensformaga <- function(path) {
       measure_code,
       measure_label,
       value
-    )
+    ) |>
+    af_add_riket_from_counties()
 }
 
 af_normalize_yrkesomrade <- function(path) {
@@ -184,7 +221,8 @@ af_normalize_yrkesomrade <- function(path) {
       measure_code = "KVAR",
       measure_label = "Inskrivna arbetslösa",
       value = suppressWarnings(as.numeric(KVAR))
-    )
+    ) |>
+    af_add_riket_from_counties()
 }
 
 af_bas_measure_map <- data.frame(
@@ -249,7 +287,8 @@ af_normalize_bas <- function(path) {
       measure_code,
       measure_label = "Arbetskraft BAS",
       value = suppressWarnings(as.numeric(value))
-    )
+    ) |>
+    af_add_riket_from_counties()
 }
 
 
