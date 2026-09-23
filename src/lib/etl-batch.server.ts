@@ -14,7 +14,7 @@ import { authorize, createRateLimiter, json } from "./etl-auth.server";
 
 const MAX_BODY_BYTES = 6_000_000; // ~6 MB per chunk-anrop
 const MAX_OBS_PER_CHUNK = 20_000;
-const MAX_CHUNKS = 1_000;
+const MAX_CHUNKS = 2_000;
 
 const controlRate = createRateLimiter(30);
 const chunkRate = createRateLimiter(240);

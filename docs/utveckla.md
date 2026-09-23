@@ -183,7 +183,7 @@ rullas allt tillbaka och tidigare publicerad data ligger kvar oförändrad.
 ### Begränsningar
 
 - Max 20 000 observationer och ~6 MB per chunk-anrop.
-- Max 1 000 chunkar per batch.
+- Max 2 000 chunkar per batch.
 - Takbegränsning: 240 chunk-anrop respektive 30 start/finalize/abort-anrop per minut och
   serverinstans.
 - Stagingtabellerna (`etl_batches`, `etl_batch_chunks`) är inte läsbara för frontend eller

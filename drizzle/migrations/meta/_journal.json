@@ -71,6 +71,13 @@
       "when": 1790078946697,
       "tag": "0009_etl_chunk_timeout_and_retry",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790132155719,
+      "tag": "0010_raise_etl_chunk_limit",
+      "breakpoints": true
     }
   ]
 }
