@@ -114,11 +114,18 @@ Andelar summeras eller medelvärdesberäknas inte mellan indelningarna.
 
 ## Timeout, återförsök och verifiering (migration 0008)
 
-E3 behåller 5 000 rader per chunk. Den tidigare importen med enbart 87
-utbildningsgrupper omfattade 4 472 496 rader och 895 chunkar. Med
-utbildningsnivåer tillkommer en separat serie. Skriptet räknar det faktiska
-antalet chunkar före batchstart och stoppar utan publicering om gränsen 2 000
-överskrids. Förväntad storlek måste bekräftas av den första fulla körningen.
+E3 väljer chunkstorlek automatiskt: skriptet mäter en provpayload på 200 rader,
+räknar fram byte per rad och väljer största radantal som ryms under 5 MB, dock
+högst 15 000 rader per chunk (serverns tak är 20 000 rader och ~6 MB).
+Payloaden byggs vektoriserat i R (kolumnvis uppslagning i stället för
+radslicing), och chunkarna skickas i vågor om tre parallella HTTP-anrop via
+`req_perform_parallel`. Chunkarna är oberoende i staging, så parallell sändning
+påverkar inte den atomiska finaliseringen. Den tidigare importen med enbart 87
+utbildningsgrupper omfattade 4 472 496 rader och 895 chunkar på ~110 minuter;
+med större chunkar och parallell sändning väntas överföringen ta en bråkdel av
+det. Skriptet räknar det faktiska antalet chunkar före batchstart och stoppar
+utan publicering om gränsen 2 000 överskrids.
+
 
 Migration `0008_etl_chunk_timeout_and_retry.sql` sätter
 `statement_timeout = '30s'` i deklarationen för `etl_store_chunk` och begär

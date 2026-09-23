@@ -120,11 +120,8 @@ etl_start_batch <- function(indicator_id, source, source_updated_date, expected_
   start
 }
 
-etl_publish_batch_chunk <- function(batch_id, indicator_id, chunk_index, observations) {
-  json_started <- proc.time()[["elapsed"]]
-  # Koda en gång före HTTP-anropet: ger separat tidsmätning och samma
-  # färdiga payload vid varje återförsök.
-  payload_json <- toJSON(
+etl_chunk_payload_json <- function(batch_id, indicator_id, chunk_index, observations) {
+  as.character(toJSON(
     list(
       batch_id = batch_id,
       indicator_id = indicator_id,
@@ -135,22 +132,80 @@ etl_publish_batch_chunk <- function(batch_id, indicator_id, chunk_index, observa
     null = "null",
     na = "null",
     digits = NA
-  )
-  json_seconds <- proc.time()[["elapsed"]] - json_started
-  req <- etl_request("/api/public/jobs/etl-batch/chunk") |>
+  ))
+}
+
+etl_chunk_request <- function(payload_json) {
+  etl_request("/api/public/jobs/etl-batch/chunk") |>
     req_method("POST") |>
-    req_body_raw(as.character(payload_json), type = "application/json")
+    req_body_raw(payload_json, type = "application/json") |>
+    req_timeout(180) |>
+    req_retry(
+      max_tries = 5,
+      retry_on_failure = TRUE,
+      is_transient = function(resp) resp_status(resp) %in% c(429L, 502L, 503L, 504L)
+    ) |>
+    req_error(is_error = function(resp) FALSE)
+}
+
+etl_check_chunk_response <- function(resp, chunk_index) {
+  if (inherits(resp, "error") || inherits(resp, "condition")) {
+    stop(sprintf("Chunk %d misslyckades: %s", chunk_index + 1L, conditionMessage(resp)), call. = FALSE)
+  }
+
+  status <- resp_status(resp)
+  body <- tryCatch(
+    resp_body_json(resp, simplifyVector = TRUE),
+    error = function(e) list(error = resp_body_string(resp))
+  )
+
+  if (status < 200 || status >= 300) {
+    msg <- body$message %||% body$error %||% paste("HTTP", status)
+    stop(sprintf("Chunk %d misslyckades (%s): %s", chunk_index + 1L, status, msg), call. = FALSE)
+  }
+
+  body
+}
+
+etl_publish_batch_chunk <- function(batch_id, indicator_id, chunk_index, observations) {
+  json_started <- proc.time()[["elapsed"]]
+  # Koda en gång före HTTP-anropet: ger separat tidsmätning och samma
+  # färdiga payload vid varje återförsök.
+  payload_json <- etl_chunk_payload_json(batch_id, indicator_id, chunk_index, observations)
+  json_seconds <- proc.time()[["elapsed"]] - json_started
   request_started <- proc.time()[["elapsed"]]
   on.exit(message(sprintf(
     "Chunk %d: JSON %.2f s; HTTP inkl. återförsök %.2f s",
     chunk_index + 1L, json_seconds, proc.time()[["elapsed"]] - request_started
   )), add = TRUE)
-  result <- etl_perform_json(req, retry_safe = TRUE)
+  result <- etl_check_chunk_response(
+    req_perform(etl_chunk_request(payload_json)),
+    chunk_index
+  )
   if (!is.null(result$rpc_ms)) {
     message(sprintf("Chunk %d: serverns senaste databas-RPC %.0f ms", chunk_index + 1L, result$rpc_ms))
   }
   result
 }
+
+# Skickar flera chunkar samtidigt. Chunkarna är oberoende på servern
+# (staging per chunk_index), så parallell sändning är säker. Håll antalet
+# lågt: varje chunk är flera MB och servern har egna takgränser.
+etl_publish_batch_chunks_parallel <- function(batch_id, indicator_id, chunk_indices, payloads, max_active = 3L) {
+  stopifnot(length(chunk_indices) == length(payloads))
+  reqs <- lapply(payloads, etl_chunk_request)
+  started <- proc.time()[["elapsed"]]
+  resps <- req_perform_parallel(reqs, max_active = max_active, on_error = "continue")
+  results <- lapply(seq_along(resps), function(i) {
+    etl_check_chunk_response(resps[[i]], chunk_indices[[i]])
+  })
+  message(sprintf(
+    "Skickade %d chunkar parallellt (max %d samtidigt) på %.2f s",
+    length(reqs), max_active, proc.time()[["elapsed"]] - started
+  ))
+  results
+}
+
 
 etl_finalize_batch <- function(batch_id) {
   etl_request("/api/public/jobs/etl-batch/finalize") |>

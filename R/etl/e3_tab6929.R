@@ -297,29 +297,45 @@ if (any(duplicated(key_df))) {
 # ---- Bygg observationspayload och publicera atomiskt ----
 
 bygg_observationer <- function(data) {
-  map(seq_len(nrow(data)), function(i) {
-    row <- data[i, , drop = FALSE]
+  # Vektoriserad uppslagning: att plocka ut kolumnerna en gång och indexera
+  # atomära vektorer är storleksordningar snabbare än data[i, , drop = FALSE].
+  geo_code <- as.character(data$geo_code)
+  period <- as.character(data$period)
+  value <- as.numeric(data$value)
+  contents_code <- as.character(data$contents_code)
+  contents_label <- as.character(data$ContentsCode)
+  sni_code <- as.character(data$sni2007_code)
+  sni_label <- as.character(data$SNI2007)
+  kon_code <- as.character(data$kon_alder_fodelseland_code)
+  kon_label <- as.character(data$KonAlderFodelseland)
+  indelning_code <- as.character(data$utbildning_indelning_code)
+  indelning_label <- as.character(data$utbildning_indelning_label)
+  codelist <- as.character(data$utbildning_codelist)
+  utbildning_code <- as.character(data$utbildning_code)
+  utbildning_label <- as.character(data$Utbildning)
 
+  lapply(seq_len(nrow(data)), function(i) {
     list(
-      geo_code = row$geo_code[[1]],
-      period = row$period[[1]],
-      value = if (is.na(row$value[[1]])) NA_real_ else row$value[[1]],
+      geo_code = geo_code[[i]],
+      period = period[[i]],
+      value = value[[i]],
       dimensions = list(
-        contents_code = row$contents_code[[1]] %||% "",
-        contents_label = as.character(row$ContentsCode[[1]]),
-        sni2007_code = row$sni2007_code[[1]] %||% "",
-        sni2007_label = as.character(row$SNI2007[[1]]),
-        kon_alder_fodelseland_code = row$kon_alder_fodelseland_code[[1]] %||% "",
-        kon_alder_fodelseland_label = as.character(row$KonAlderFodelseland[[1]]),
-        utbildning_indelning_code = row$utbildning_indelning_code[[1]],
-        utbildning_indelning_label = row$utbildning_indelning_label[[1]],
-        utbildning_codelist = row$utbildning_codelist[[1]],
-        utbildning_code = row$utbildning_code[[1]] %||% "",
-        utbildning_label = as.character(row$Utbildning[[1]])
+        contents_code = contents_code[[i]],
+        contents_label = contents_label[[i]],
+        sni2007_code = sni_code[[i]],
+        sni2007_label = sni_label[[i]],
+        kon_alder_fodelseland_code = kon_code[[i]],
+        kon_alder_fodelseland_label = kon_label[[i]],
+        utbildning_indelning_code = indelning_code[[i]],
+        utbildning_indelning_label = indelning_label[[i]],
+        utbildning_codelist = codelist[[i]],
+        utbildning_code = utbildning_code[[i]],
+        utbildning_label = utbildning_label[[i]]
       )
     )
   })
 }
+
 
 # Funktionsram krävs för att on.exit säkert ska avbryta batchen vid fel
 # även när workflowet kör skriptet med source().
@@ -355,7 +371,31 @@ publicera_e3 <- function() {
     test_ok <- TRUE
     message(sprintf("ETL-test klart: %d rader validerade, staged och avbrutna utan publicering.", length(observations)))
   } else {
-    rows_per_chunk <- 5000L
+    # Serverns tak: 20 000 observationer och ~6 MB per chunk. Mät en liten
+    # provpayload och välj största radantal som ryms med marginal, så att
+    # antalet HTTP-anrop (och därmed nätverkslatensen) minimeras.
+    max_rows_per_chunk <- 15000L
+    max_chunk_bytes <- 5000000L
+    prov_rader <- min(200L, nrow(df_e3))
+    prov_bytes <- nchar(
+      etl_chunk_payload_json(
+        batch_id = "00000000-0000-0000-0000-000000000000",
+        indicator_id = target_indikator_id,
+        chunk_index = 0L,
+        observations = bygg_observationer(df_e3[seq_len(prov_rader), , drop = FALSE])
+      ),
+      type = "bytes"
+    )
+    bytes_per_rad <- prov_bytes / prov_rader
+    rows_per_chunk <- max(1000L, min(
+      max_rows_per_chunk,
+      as.integer(floor(max_chunk_bytes / bytes_per_rad))
+    ))
+    message(sprintf(
+      "Chunkstorlek: %d rader (~%.0f byte/rad, ~%.1f MB per chunk)",
+      rows_per_chunk, bytes_per_rad, rows_per_chunk * bytes_per_rad / 1e6
+    ))
+
     chunk_starts <- seq.int(1L, nrow(df_e3), by = rows_per_chunk)
 
     if (length(chunk_starts) > ETL_MAX_CHUNKS) {
@@ -380,25 +420,43 @@ publicera_e3 <- function() {
       if (!ok) try(etl_abort_batch(batch_id), silent = TRUE)
     }, add = TRUE)
 
-    for (i in seq_along(chunk_starts)) {
-      start <- chunk_starts[[i]]
-      end <- min(start + rows_per_chunk - 1L, nrow(df_e3))
+    # Skicka chunkarna i små vågor parallellt: nätverkslatensen överlappar
+    # medan nästa vågs payload byggs. Håll antalet lågt (servern har takgräns).
+    parallel_chunks <- 3L
+    vag_starts <- seq.int(1L, length(chunk_starts), by = parallel_chunks)
+
+    for (v in vag_starts) {
+      vag <- v:min(v + parallel_chunks - 1L, length(chunk_starts))
       payload_started <- proc.time()[["elapsed"]]
-      observations <- bygg_observationer(df_e3[start:end, , drop = FALSE])
+      payloads <- lapply(vag, function(i) {
+        start <- chunk_starts[[i]]
+        end <- min(start + rows_per_chunk - 1L, nrow(df_e3))
+        etl_chunk_payload_json(
+          batch_id = batch_id,
+          indicator_id = target_indikator_id,
+          chunk_index = i - 1L,
+          observations = bygg_observationer(df_e3[start:end, , drop = FALSE])
+        )
+      })
       message(sprintf(
-        "Chunk %d/%d: byggde %d observationer på %.2f s",
-        i, length(chunk_starts), length(observations),
+        "Chunk %d-%d/%d: byggde payload på %.2f s",
+        vag[[1]], vag[[length(vag)]], length(chunk_starts),
         proc.time()[["elapsed"]] - payload_started
       ))
 
-      etl_publish_batch_chunk(
+      etl_publish_batch_chunks_parallel(
         batch_id = batch_id,
         indicator_id = target_indikator_id,
-        chunk_index = i - 1L,
-        observations = observations
+        chunk_indices = vag - 1L,
+        payloads = payloads,
+        max_active = parallel_chunks
       )
-      message(sprintf("Sparade chunk %d/%d", i, length(chunk_starts)))
+      message(sprintf(
+        "Sparade chunk %d-%d/%d",
+        vag[[1]], vag[[length(vag)]], length(chunk_starts)
+      ))
     }
+
 
     resultat <- etl_finalize_batch(batch_id)
     ok <- TRUE
