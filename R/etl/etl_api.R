@@ -68,6 +68,44 @@ etl_get_state <- function(indicator_id) {
     etl_perform_json(retry_safe = TRUE)
 }
 
+etl_get_source_state <- function(source_id) {
+  etl_request("/api/public/jobs/source-state") |>
+    req_url_query(source_id = source_id) |>
+    etl_perform_json(retry_safe = TRUE)
+}
+
+etl_update_source_state <- function(
+  source_id,
+  status,
+  latest_available_period = NULL,
+  latest_successful_period = NULL,
+  error_message = NULL,
+  details = NULL
+) {
+  body <- list(
+    source_id = source_id,
+    status = status
+  )
+
+  if (!is.null(latest_available_period)) {
+    body$latest_available_period <- latest_available_period
+  }
+  if (!is.null(latest_successful_period)) {
+    body$latest_successful_period <- latest_successful_period
+  }
+  if (!is.null(error_message)) {
+    body$error_message <- error_message
+  }
+  if (!is.null(details)) {
+    body$details <- details
+  }
+
+  etl_request("/api/public/jobs/source-state") |>
+    req_method("POST") |>
+    req_body_json(body, auto_unbox = TRUE, null = "null", na = "null") |>
+    etl_perform_json()
+}
+
 etl_log_no_change <- function(indicator_id, source) {
   etl_request("/api/public/jobs/etl-no-change") |>
     req_method("POST") |>
