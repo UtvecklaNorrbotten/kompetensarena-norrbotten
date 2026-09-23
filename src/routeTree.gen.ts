@@ -16,6 +16,7 @@ import { Route as StatistikRouteImport } from './routes/statistik'
 import { Route as ApiPublicJobsEtlNoChangeRouteImport } from './routes/api/public/jobs/etl-no-change'
 import { Route as ApiPublicJobsEtlStateRouteImport } from './routes/api/public/jobs/etl-state'
 import { Route as ApiPublicJobsPublishIndicatorRouteImport } from './routes/api/public/jobs/publish-indicator'
+import { Route as ApiPublicJobsSourceStateRouteImport } from './routes/api/public/jobs/source-state'
 import { Route as ApiPublicJobsEtlBatchAbortRouteImport } from './routes/api/public/jobs/etl-batch/abort'
 import { Route as ApiPublicJobsEtlBatchChunkRouteImport } from './routes/api/public/jobs/etl-batch/chunk'
 import { Route as ApiPublicJobsEtlBatchFinalizeRouteImport } from './routes/api/public/jobs/etl-batch/finalize'
@@ -58,6 +59,12 @@ const ApiPublicJobsPublishIndicatorRoute =
     path: '/api/public/jobs/publish-indicator',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicJobsSourceStateRoute =
+  ApiPublicJobsSourceStateRouteImport.update({
+    id: '/api/public/jobs/source-state',
+    path: '/api/public/jobs/source-state',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicJobsEtlBatchAbortRoute =
   ApiPublicJobsEtlBatchAbortRouteImport.update({
     id: '/api/public/jobs/etl-batch/abort',
@@ -91,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
+  '/api/public/jobs/source-state': typeof ApiPublicJobsSourceStateRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
   '/api/public/jobs/etl-batch/finalize': typeof ApiPublicJobsEtlBatchFinalizeRoute
@@ -104,6 +112,7 @@ export interface FileRoutesByTo {
   '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
+  '/api/public/jobs/source-state': typeof ApiPublicJobsSourceStateRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
   '/api/public/jobs/etl-batch/finalize': typeof ApiPublicJobsEtlBatchFinalizeRoute
@@ -118,6 +127,7 @@ export interface FileRoutesById {
   '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
+  '/api/public/jobs/source-state': typeof ApiPublicJobsSourceStateRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
   '/api/public/jobs/etl-batch/finalize': typeof ApiPublicJobsEtlBatchFinalizeRoute
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/api/public/jobs/etl-no-change'
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
+    | '/api/public/jobs/source-state'
     | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
     | '/api/public/jobs/etl-batch/finalize'
@@ -146,6 +157,7 @@ export interface FileRouteTypes {
     | '/api/public/jobs/etl-no-change'
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
+    | '/api/public/jobs/source-state'
     | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
     | '/api/public/jobs/etl-batch/finalize'
@@ -159,6 +171,7 @@ export interface FileRouteTypes {
     | '/api/public/jobs/etl-no-change'
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
+    | '/api/public/jobs/source-state'
     | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
     | '/api/public/jobs/etl-batch/finalize'
@@ -173,6 +186,7 @@ export interface RootRouteChildren {
   ApiPublicJobsEtlNoChangeRoute: typeof ApiPublicJobsEtlNoChangeRoute
   ApiPublicJobsEtlStateRoute: typeof ApiPublicJobsEtlStateRoute
   ApiPublicJobsPublishIndicatorRoute: typeof ApiPublicJobsPublishIndicatorRoute
+  ApiPublicJobsSourceStateRoute: typeof ApiPublicJobsSourceStateRoute
   ApiPublicJobsEtlBatchAbortRoute: typeof ApiPublicJobsEtlBatchAbortRoute
   ApiPublicJobsEtlBatchChunkRoute: typeof ApiPublicJobsEtlBatchChunkRoute
   ApiPublicJobsEtlBatchFinalizeRoute: typeof ApiPublicJobsEtlBatchFinalizeRoute
@@ -230,6 +244,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicJobsPublishIndicatorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/source-state': {
+      id: '/api/public/jobs/source-state'
+      path: '/api/public/jobs/source-state'
+      fullPath: '/api/public/jobs/source-state'
+      preLoaderRoute: typeof ApiPublicJobsSourceStateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/jobs/etl-batch/abort': {
       id: '/api/public/jobs/etl-batch/abort'
       path: '/api/public/jobs/etl-batch/abort'
@@ -269,6 +290,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicJobsEtlNoChangeRoute: ApiPublicJobsEtlNoChangeRoute,
   ApiPublicJobsEtlStateRoute: ApiPublicJobsEtlStateRoute,
   ApiPublicJobsPublishIndicatorRoute: ApiPublicJobsPublishIndicatorRoute,
+  ApiPublicJobsSourceStateRoute: ApiPublicJobsSourceStateRoute,
   ApiPublicJobsEtlBatchAbortRoute: ApiPublicJobsEtlBatchAbortRoute,
   ApiPublicJobsEtlBatchChunkRoute: ApiPublicJobsEtlBatchChunkRoute,
   ApiPublicJobsEtlBatchFinalizeRoute: ApiPublicJobsEtlBatchFinalizeRoute,
