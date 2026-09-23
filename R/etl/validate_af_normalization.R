@@ -35,14 +35,65 @@ run_af_normalization_validation <- function() {
 
   datasets <- list(sok = sok, tid = tid, svag = svag, yrke = yrke, bas = bas)
 
+  municipality_lookup <- af_get_municipality_codes()
+  if (length(municipality_lookup) != 290L) {
+    stop("SCB:s kommunlista innehåller inte 290 kommuner")
+  }
+
   for (nm in names(datasets)) {
     x <- datasets[[nm]]
     if (nrow(x) == 0) stop("Normaliseringen gav 0 rader för ", nm)
     if (any(is.na(x$period) | !nzchar(x$period))) stop(nm, " har saknad period")
     if (any(is.na(x$geo_code) | !nzchar(x$geo_code))) stop(nm, " har saknad geokod")
     if (all(is.na(x$value))) stop(nm, " har bara NA-värden")
-    message(sprintf("%s: %s rader", nm, format(nrow(x), big.mark = " ")))
+
+    geo_counts <- x |>
+      distinct(geo_code, geo_level) |>
+      count(geo_level, name = "n_geographies")
+
+    municipality_count <- geo_counts$n_geographies[geo_counts$geo_level == "kommun"]
+    county_count <- geo_counts$n_geographies[geo_counts$geo_level == "län"]
+    riket_count <- geo_counts$n_geographies[geo_counts$geo_level == "riket"]
+
+    if (length(municipality_count) != 1L || municipality_count != 290L) {
+      stop(nm, " innehåller inte samtliga 290 kommuner")
+    }
+    if (length(county_count) != 1L || county_count != 21L) {
+      stop(nm, " innehåller inte samtliga 21 län")
+    }
+    if (length(riket_count) != 1L || riket_count != 1L || !"00" %in% x$geo_code) {
+      stop(nm, " saknar beräknad riksnivå")
+    }
+
+    approx_mb <- as.numeric(utils::object.size(x)) / 1024^2
+    message(sprintf(
+      "%s: %s rader, %.1f MB i R-minne, 290 kommuner + 21 län + Riket",
+      nm,
+      format(nrow(x), big.mark = " "),
+      approx_mb
+    ))
+
+    incomplete_riket <- sum(x$geo_level == "riket" & is.na(x$value))
+    if (incomplete_riket > 0) {
+      message(sprintf(
+        "%s: %s riksrader är NA eftersom minst ett länsvärde saknas/maskeras.",
+        nm,
+        format(incomplete_riket, big.mark = " ")
+      ))
+    }
   }
+
+  total_rows <- sum(vapply(datasets, nrow, integer(1)))
+  total_mb <- sum(vapply(
+    datasets,
+    function(x) as.numeric(utils::object.size(x)) / 1024^2,
+    numeric(1)
+  ))
+  message(sprintf(
+    "AF totalt efter normalisering: %s rader, cirka %.1f MB i R-minne.",
+    format(total_rows, big.mark = " "),
+    total_mb
+  ))
 
   # Överlappande mått används som automatiska regressionskontroller.
   # Detta är samma princip som de manuella stickproven, men körs nu på samtliga
