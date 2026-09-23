@@ -1,5 +1,24 @@
 # Geografimappning för Arbetsförmedlingens källfiler.
-# Vi behåller alla län som jämförelse och kommuner i Norrbotten.
+#
+# Produktionsurval:
+# - Riket (beräknas senare från de 21 länsvärdena)
+# - samtliga 21 län
+# - samtliga 290 kommuner
+#
+# Länskoder hålls statiskt eftersom de är få och stabila.
+# Kommunkoder hämtas från SCB:s aktuella officiella kodlista och cacheas
+# i minnet under körningen. Då slipper AF-flödet en hårdkodad lista med
+# 290 kommuner samtidigt som geo_code blir SCB:s stabila fyrsiffriga kod.
+
+suppressPackageStartupMessages({
+  library(xml2)
+})
+
+af_scb_geography_url <- paste0(
+  "https://www.scb.se/hitta-statistik/regional-statistik-och-kartor/",
+  "regionala-indelningar/lan-och-kommuner/",
+  "lan-och-kommuner-i-kodnummerordning/"
+)
 
 af_county_codes <- c(
   "Stockholm" = "01", "Uppsala" = "03", "Södermanland" = "04",
@@ -11,13 +30,39 @@ af_county_codes <- c(
   "Jämtland" = "23", "Västerbotten" = "24", "Norrbotten" = "25"
 )
 
-af_norrbotten_municipality_codes <- c(
-  "Arvidsjaur" = "2505", "Arjeplog" = "2506", "Jokkmokk" = "2510",
-  "Överkalix" = "2513", "Kalix" = "2514", "Övertorneå" = "2518",
-  "Pajala" = "2521", "Gällivare" = "2523", "Älvsbyn" = "2560",
-  "Luleå" = "2580", "Piteå" = "2581", "Boden" = "2582",
-  "Haparanda" = "2583", "Kiruna" = "2584"
-)
+.af_geo_cache <- new.env(parent = emptyenv())
+
+af_get_municipality_codes <- function(force_refresh = FALSE) {
+  if (!force_refresh && exists("municipality_codes", envir = .af_geo_cache, inherits = FALSE)) {
+    return(get("municipality_codes", envir = .af_geo_cache, inherits = FALSE))
+  }
+
+  doc <- xml2::read_html(af_scb_geography_url)
+  text_nodes <- trimws(xml2::xml_text(xml2::xml_find_all(doc, "//text()")))
+  municipality_rows <- unique(text_nodes[grepl("^[0-9]{4}[[:space:]]+[^[:space:]]", text_nodes)])
+
+  codes <- sub("^([0-9]{4}).*$", "\\1", municipality_rows)
+  names <- trimws(sub("^[0-9]{4}[[:space:]]+", "", municipality_rows))
+
+  keep <- grepl("^[0-9]{4}$", codes) & nzchar(names)
+  lookup <- stats::setNames(codes[keep], names[keep])
+
+  # SCB redovisar 290 kommuner. Ett avvikande antal betyder normalt att
+  # sidstrukturen har ändrats och då ska importen stoppas i stället för
+  # att ge kommuner fel kod.
+  lookup <- lookup[!duplicated(names(lookup))]
+
+  if (length(lookup) != 290L || length(unique(unname(lookup))) != 290L) {
+    stop(
+      "Kunde inte läsa SCB:s kommunlista säkert: förväntade 290 kommuner men fick ",
+      length(lookup),
+      ". Kontrollera ", af_scb_geography_url
+    )
+  }
+
+  assign("municipality_codes", lookup, envir = .af_geo_cache)
+  lookup
+}
 
 af_clean_county_name <- function(x) {
   x <- trimws(as.character(x))
@@ -39,7 +84,9 @@ af_geo_from_names <- function(county, municipality) {
 
   municipality_missing <- is.na(municipality_clean) | !nzchar(municipality_clean)
   county_code <- unname(af_county_codes[county_clean])
-  municipality_code <- unname(af_norrbotten_municipality_codes[municipality_clean])
+
+  municipality_codes <- af_get_municipality_codes()
+  municipality_code <- unname(municipality_codes[municipality_clean])
 
   geo_level <- ifelse(
     !municipality_missing & !is.na(municipality_code),
