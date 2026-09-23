@@ -16,32 +16,41 @@ export type Database = {
     Tables: {
       data_source_runs: {
         Row: {
+          details: Json | null
           error_message: string | null
           finished_at: string | null
           id: string
           indicator_id: string | null
           rows_affected: number | null
           source: string
+          source_id: string | null
+          source_period: string | null
           started_at: string
           status: Database["public"]["Enums"]["run_status"]
         }
         Insert: {
+          details?: Json | null
           error_message?: string | null
           finished_at?: string | null
           id?: string
           indicator_id?: string | null
           rows_affected?: number | null
           source: string
+          source_id?: string | null
+          source_period?: string | null
           started_at?: string
           status: Database["public"]["Enums"]["run_status"]
         }
         Update: {
+          details?: Json | null
           error_message?: string | null
           finished_at?: string | null
           id?: string
           indicator_id?: string | null
           rows_affected?: number | null
           source?: string
+          source_id?: string | null
+          source_period?: string | null
           started_at?: string
           status?: Database["public"]["Enums"]["run_status"]
         }
@@ -53,7 +62,91 @@ export type Database = {
             referencedRelation: "indicators"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "data_source_runs_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "data_sources"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      data_source_state: {
+        Row: {
+          details: Json
+          last_checked_at: string | null
+          last_error: string | null
+          last_status: string
+          last_successful_at: string | null
+          latest_available_period: string | null
+          latest_successful_period: string | null
+          source_id: string
+          updated_at: string
+        }
+        Insert: {
+          details?: Json
+          last_checked_at?: string | null
+          last_error?: string | null
+          last_status?: string
+          last_successful_at?: string | null
+          latest_available_period?: string | null
+          latest_successful_period?: string | null
+          source_id: string
+          updated_at?: string
+        }
+        Update: {
+          details?: Json
+          last_checked_at?: string | null
+          last_error?: string | null
+          last_status?: string
+          last_successful_at?: string | null
+          latest_available_period?: string | null
+          latest_successful_period?: string | null
+          source_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_source_state_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: true
+            referencedRelation: "data_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      data_sources: {
+        Row: {
+          active: boolean
+          cadence: string | null
+          check_from_day_of_month: number | null
+          created_at: string
+          id: string
+          name: string
+          provider: string
+          source_url: string | null
+        }
+        Insert: {
+          active?: boolean
+          cadence?: string | null
+          check_from_day_of_month?: number | null
+          created_at?: string
+          id: string
+          name: string
+          provider: string
+          source_url?: string | null
+        }
+        Update: {
+          active?: boolean
+          cadence?: string | null
+          check_from_day_of_month?: number | null
+          created_at?: string
+          id?: string
+          name?: string
+          provider?: string
+          source_url?: string | null
+        }
+        Relationships: []
       }
       documents: {
         Row: {
