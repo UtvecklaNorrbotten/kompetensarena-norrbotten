@@ -75,3 +75,31 @@ Gemensamt ansvar:
 5. publicera genom samma källoberoende ETL-klient
 
 Indikatorspecifikt ansvar ska ligga kvar i respektive skript: query, dimensionsurval, transformation och teknisk validering. Det minskar risken att en generell funktion råkar anta samma tabellstruktur för olika SCB-indikatorer.
+
+
+## Gemensamt källregister och senaste lyckade hämtning
+
+Indikatorstatus och källstatus är två olika saker. En källa kan försörja flera indikatorer
+och vissa kontroller, som Arbetsförmedlingens fem månadsfiler, sker innan någon enskild
+indikator publiceras.
+
+Därför finns ett generellt lager:
+
+- `data_sources`: en rad per logisk källa eller källpaket.
+- `data_source_state`: aktuellt läge för källan.
+- `data_source_runs.source_id`: kopplar körningshistorik till samma källa.
+
+`data_source_state` håller minst:
+
+- `latest_available_period`
+- `latest_successful_period`
+- `last_checked_at`
+- `last_successful_at`
+- `last_status`
+- `last_error`
+- `details`
+
+Det gör att en administrativ statussida senare kan svara på två separata frågor:
+**vad finns senast hos källan?** och **vad lyckades Kompetensarena senast hämta/publicera?**
+
+Första registrerade källor är `scb-tab6929` och `af-monthly`.
