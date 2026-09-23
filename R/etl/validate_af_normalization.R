@@ -44,17 +44,50 @@ run_af_normalization_validation <- function() {
     message(sprintf("%s: %s rader", nm, format(nrow(x), big.mark = " ")))
   }
 
-  # Kontroll 1: senaste periodens INSAL från web-sok ska överensstämma med
-  # ARBETSLÖSA i tid-filen för jämförbara totaler. Tid-normaliseringen lagrar
-  # inte ARBETSLÖSA som produktionsmått, så denna kontroll görs separat vid
-  # filnivå i nästa steg.
+  # Överlappande mått används som automatiska regressionskontroller.
+  # Detta är samma princip som de manuella stickproven, men körs nu på samtliga
+  # jämförbara rader i vårt geografiska urval.
+  tid_control <- af_control_tid_sex(path_for("tid_utan_arbete"))
 
-  # Kontroll 2: yrkesområden får inte tappa blank kategori.
+  sok_control <- sok |>
+    filter(dimension_type == "ålder", measure_code == "INSAL") |>
+    group_by(period, geo_code, sex) |>
+    summarise(actual = sum(value, na.rm = TRUE), .groups = "drop")
+  af_assert_control_match(
+    sok_control,
+    tid_control,
+    "web-sok INSAL mot tid-filen ARBETSLÖSA"
+  )
+
+  svag_control <- af_control_svag_samtliga(
+    path_for("svag_konkurrensformaga")
+  )
+  af_assert_control_match(
+    svag_control,
+    tid_control,
+    "svag konkurrensförmåga SAMTLIGA mot tid-filen ARBETSLÖSA"
+  )
+
+  yrke_control <- yrke |>
+    group_by(period, geo_code, sex) |>
+    summarise(actual = sum(value, na.rm = TRUE), .groups = "drop")
+  af_assert_control_match(
+    yrke_control,
+    tid_control,
+    "yrkesområden summerade mot tid-filen ARBETSLÖSA"
+  )
+
+  bas_control <- af_control_bas_sok(path_for("arbetskraft_bas"))
+  af_assert_control_match(
+    bas_control,
+    tid_control,
+    "BAS-filens SOK-tal mot tid-filen ARBETSLÖSA"
+  )
+
   if (!any(yrke$dimension_value == "Uppgift saknas")) {
     stop("Yrkesområdesfilen saknar förväntad kategori 'Uppgift saknas'")
   }
 
-  # Kontroll 3: BAS ska innehålla total arbetskraft.
   if (!any(bas$measure_code == "TOTAK")) {
     stop("BAS-normaliseringen saknar TOTAK")
   }
