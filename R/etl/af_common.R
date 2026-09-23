@@ -36,19 +36,29 @@ af_discover_sources <- function(page_url = af_source_page) {
     cfg <- af_sources[[source_key]]
     prefix <- cfg$filename_prefix
 
-    escaped_prefix <- gsub("([][{}()+*^$|\\?.])", "\\\\1", prefix)
     pattern <- paste0(
-      "(?i)",
-      escaped_prefix,
-      "-(20[0-9]{2}-(?:0[1-9]|1[0-2]))\\.xlsx(?:$|[?#])"
+      prefix,
+      "-(20[0-9]{2}-(?:0[1-9]|1[0-2]))\\.xlsx$"
     )
 
-    matched <- hrefs[grepl(pattern, hrefs, perl = TRUE)]
+    clean_urls <- sub("[?#].*$", "", hrefs)
+    filenames <- basename(clean_urls)
+    is_match <- grepl(pattern, filenames, ignore.case = TRUE, perl = TRUE)
+
+    matched <- hrefs[is_match]
+    matched_filenames <- filenames[is_match]
+
     if (length(matched) == 0) {
       stop("Hittade ingen aktuell AF-fil för: ", cfg$label)
     }
 
-    periods <- sub(paste0(".*", pattern, ".*"), "\\1", matched, perl = TRUE)
+    periods <- sub(
+      pattern,
+      "\\1",
+      matched_filenames,
+      ignore.case = TRUE,
+      perl = TRUE
+    )
     latest_period <- max(periods)
     latest_matches <- matched[periods == latest_period]
 
