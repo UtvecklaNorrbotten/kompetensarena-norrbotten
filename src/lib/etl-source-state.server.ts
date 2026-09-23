@@ -29,7 +29,7 @@ export async function handleSourceStateGet(request: Request): Promise<Response> 
 
   const { data: source, error: sourceError } = await supabaseAdmin
     .from("data_sources")
-    .select("id, provider, name, source_url, cadence, expected_day_of_month, active")
+    .select("id, provider, name, source_url, cadence, check_from_day_of_month, active")
     .eq("id", parsed.data)
     .maybeSingle();
 
