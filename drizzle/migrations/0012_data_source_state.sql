@@ -7,9 +7,9 @@ create table if not exists public.data_sources (
   name text not null,
   source_url text,
   cadence text,
-  expected_day_of_month integer check (
-    expected_day_of_month is null
-    or expected_day_of_month between 1 and 31
+  check_from_day_of_month integer check (
+    check_from_day_of_month is null
+    or check_from_day_of_month between 1 and 31
   ),
   active boolean not null default true,
   created_at timestamptz not null default now()
@@ -52,7 +52,7 @@ create policy "Datakällestatus för admin" on public.data_source_state
   using (public.has_role(auth.uid(), 'admin'));
 
 insert into public.data_sources (
-  id, provider, name, source_url, cadence, expected_day_of_month, active
+  id, provider, name, source_url, cadence, check_from_day_of_month, active
 ) values
   (
     'scb-tab6929',
@@ -77,7 +77,7 @@ on conflict (id) do update set
   name = excluded.name,
   source_url = excluded.source_url,
   cadence = excluded.cadence,
-  expected_day_of_month = excluded.expected_day_of_month,
+  check_from_day_of_month = excluded.check_from_day_of_month,
   active = excluded.active;
 
 insert into public.data_source_state (source_id)
