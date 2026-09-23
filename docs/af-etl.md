@@ -45,8 +45,10 @@ Efter nedladdning kontrolleras minst:
 - filsignaturen är ZIP/XLSX,
 - SHA-256 beräknas och sparas i körningens manifest.
 
-Hashen ska användas som teknisk kontroll. Filperioden styr om en ny månad ska importeras,
-men ett förändrat hashvärde för samma månad ska kunna flaggas som en källrevision.
+Hashen används som teknisk kontroll och revisionsspår för den fil som faktiskt hämtats.
+Den automatiska månadsgrinden bygger däremot på filnamnets period. En tyst ersättning av
+samma `YYYY-MM`-fil upptäcks därför inte utan en separat kontroll av exempelvis
+HTTP-header eller en medveten omhämtning. Det kan läggas till senare om behovet uppstår.
 
 ## Importstrategi
 
