@@ -297,29 +297,45 @@ if (any(duplicated(key_df))) {
 # ---- Bygg observationspayload och publicera atomiskt ----
 
 bygg_observationer <- function(data) {
-  map(seq_len(nrow(data)), function(i) {
-    row <- data[i, , drop = FALSE]
+  # Vektoriserad uppslagning: att plocka ut kolumnerna en gång och indexera
+  # atomära vektorer är storleksordningar snabbare än data[i, , drop = FALSE].
+  geo_code <- as.character(data$geo_code)
+  period <- as.character(data$period)
+  value <- as.numeric(data$value)
+  contents_code <- as.character(data$contents_code)
+  contents_label <- as.character(data$ContentsCode)
+  sni_code <- as.character(data$sni2007_code)
+  sni_label <- as.character(data$SNI2007)
+  kon_code <- as.character(data$kon_alder_fodelseland_code)
+  kon_label <- as.character(data$KonAlderFodelseland)
+  indelning_code <- as.character(data$utbildning_indelning_code)
+  indelning_label <- as.character(data$utbildning_indelning_label)
+  codelist <- as.character(data$utbildning_codelist)
+  utbildning_code <- as.character(data$utbildning_code)
+  utbildning_label <- as.character(data$Utbildning)
 
+  lapply(seq_len(nrow(data)), function(i) {
     list(
-      geo_code = row$geo_code[[1]],
-      period = row$period[[1]],
-      value = if (is.na(row$value[[1]])) NA_real_ else row$value[[1]],
+      geo_code = geo_code[[i]],
+      period = period[[i]],
+      value = value[[i]],
       dimensions = list(
-        contents_code = row$contents_code[[1]] %||% "",
-        contents_label = as.character(row$ContentsCode[[1]]),
-        sni2007_code = row$sni2007_code[[1]] %||% "",
-        sni2007_label = as.character(row$SNI2007[[1]]),
-        kon_alder_fodelseland_code = row$kon_alder_fodelseland_code[[1]] %||% "",
-        kon_alder_fodelseland_label = as.character(row$KonAlderFodelseland[[1]]),
-        utbildning_indelning_code = row$utbildning_indelning_code[[1]],
-        utbildning_indelning_label = row$utbildning_indelning_label[[1]],
-        utbildning_codelist = row$utbildning_codelist[[1]],
-        utbildning_code = row$utbildning_code[[1]] %||% "",
-        utbildning_label = as.character(row$Utbildning[[1]])
+        contents_code = contents_code[[i]],
+        contents_label = contents_label[[i]],
+        sni2007_code = sni_code[[i]],
+        sni2007_label = sni_label[[i]],
+        kon_alder_fodelseland_code = kon_code[[i]],
+        kon_alder_fodelseland_label = kon_label[[i]],
+        utbildning_indelning_code = indelning_code[[i]],
+        utbildning_indelning_label = indelning_label[[i]],
+        utbildning_codelist = codelist[[i]],
+        utbildning_code = utbildning_code[[i]],
+        utbildning_label = utbildning_label[[i]]
       )
     )
   })
 }
+
 
 # Funktionsram krävs för att on.exit säkert ska avbryta batchen vid fel
 # även när workflowet kör skriptet med source().
