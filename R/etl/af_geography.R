@@ -80,22 +80,43 @@ af_clean_municipality_name <- function(x) {
   x
 }
 
+af_is_non_geographic_municipality <- function(x) {
+  x_clean <- tolower(trimws(as.character(x)))
+  is.na(x_clean) | x_clean %in% c(
+    "uppgift saknas",
+    "okänd",
+    "okänt",
+    "ej angivet",
+    "saknas"
+  )
+}
+
 af_geo_from_names <- function(county, municipality) {
   county_clean <- af_clean_county_name(county)
   municipality_clean <- af_clean_municipality_name(municipality)
 
-  municipality_missing <- is.na(municipality_clean) | !nzchar(municipality_clean)
+  municipality_blank <- is.na(municipality_clean) | !nzchar(municipality_clean)
+  municipality_non_geo <- af_is_non_geographic_municipality(municipality_clean) &
+    !municipality_blank
   county_code <- unname(af_county_codes[county_clean])
 
   municipality_codes <- af_get_municipality_codes()
   municipality_code <- unname(municipality_codes[municipality_clean])
 
   geo_level <- ifelse(
-    !municipality_missing & !is.na(municipality_code),
+    !municipality_blank & !municipality_non_geo & !is.na(municipality_code),
     "kommun",
-    ifelse(municipality_missing & !is.na(county_code), "län", NA_character_)
+    ifelse(
+      municipality_blank & !is.na(county_code),
+      "län",
+      NA_character_
+    )
   )
-  geo_code <- ifelse(geo_level == "kommun", municipality_code, county_code)
+  geo_code <- ifelse(
+    geo_level == "kommun",
+    municipality_code,
+    ifelse(geo_level == "län", county_code, NA_character_)
+  )
 
   data.frame(
     geo_code = geo_code,
