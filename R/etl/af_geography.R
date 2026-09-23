@@ -105,6 +105,9 @@ af_geo_from_names <- function(county, municipality) {
 }
 
 af_keep_geo <- function(county, municipality) {
-  geo <- af_geo_from_names(county, municipality)
-  !is.na(geo$geo_code)
+  # Pivotläsaren filtrerar endast bort rader som inte hör till något av Sveriges
+  # 21 län. Själva kommunmappningen görs vektoriserat efter läsningen, så att
+  # en okänd kommun aldrig försvinner tyst.
+  county_clean <- af_clean_county_name(county)
+  !is.na(unname(af_county_codes[county_clean]))
 }
