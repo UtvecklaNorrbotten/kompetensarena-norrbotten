@@ -1,7 +1,7 @@
 name: ETL - SCB-data
 
 run-name: >-
-  E3 utbildningsmatchning (grupper och nivåer) –
+  SCB ETL – ${{ github.event.inputs.indicator || 'e3' }} –
   ${{ github.event_name == 'schedule' && 'schemalagd' || 'manuell' }}
 
 on:
@@ -43,7 +43,7 @@ concurrency:
 
 jobs:
   scb:
-    name: E3 - utbildningsgrupper och utbildningsnivåer
+    name: SCB-indikator - ${{ github.event.inputs.indicator || 'e3' }}
     runs-on: ubuntu-latest
     timeout-minutes: 180
 
@@ -92,7 +92,7 @@ jobs:
         run: |
           remotes::install_github("FaluPeppe/pxweb2r", upgrade = "never")
 
-      - name: Hämta och publicera E3 - grupper och nivåer
+      - name: Kör vald SCB-indikator
         if: steps.local-time.outputs.run == 'true'
         env:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
