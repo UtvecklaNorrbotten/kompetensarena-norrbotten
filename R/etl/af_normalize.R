@@ -57,7 +57,12 @@ af_add_riket_from_counties <- function(data) {
 
   riket <- counties |>
     group_by(across(all_of(group_cols))) |>
-    summarise(value = af_sum_complete(value), .groups = "drop") |>
+    summarise(
+      county_count = n_distinct(geo_code),
+      value = if (n_distinct(geo_code) == 21L) af_sum_complete(value) else NA_real_,
+      .groups = "drop"
+    ) |>
+    select(-county_count) |>
     mutate(
       geo_code = "00",
       geo_level = "riket"
