@@ -251,3 +251,131 @@ af_normalize_bas <- function(path) {
       value = suppressWarnings(as.numeric(value))
     )
 }
+
+
+# ---- Korsvalideringsunderlag (importeras inte som egna produktionsmått) ----
+
+af_control_tid_sex <- function(path) {
+  raw <- readxl::read_excel(path, sheet = "Kön", skip = 4)
+  required <- c("PERIOD", "LÄN", "KOMMUN", "KOEN", "ARBETSLÖSA")
+  missing <- setdiff(required, names(raw))
+  if (length(missing) > 0) {
+    stop("Kön-bladet saknar kontrollkolumner: ", paste(missing, collapse = ", "))
+  }
+
+  af_add_geo(raw, "LÄN", "KOMMUN") |>
+    transmute(
+      period = as.character(PERIOD),
+      geo_code,
+      sex = as.character(KOEN),
+      expected = suppressWarnings(as.numeric(ARBETSLÖSA))
+    )
+}
+
+af_control_web_sok_total_by_sex <- function(path) {
+  # Ålderscachen partitionerar de arbetslösa i åldersgrupper. Summan INSAL
+  # per period/geografi/kön ska därför motsvara ARBETSLÖSA i tid-filen.
+  af_read_pivot_cache(
+    path,
+    cache_id = 3L,
+    keep_fields = c("PERIOD", "KOEN", "LAN", "KOMMUN_BESKR", "ALDGR", "INSAL"),
+    row_filter = function(row) {
+      af_keep_geo(row[["LAN"]], row[["KOMMUN_BESKR"]])
+    }
+  ) |>
+    af_add_geo("LAN", "KOMMUN_BESKR") |>
+    mutate(INSAL = suppressWarnings(as.numeric(INSAL))) |>
+    group_by(PERIOD, geo_code, KOEN) |>
+    summarise(actual = sum(INSAL, na.rm = TRUE), .groups = "drop") |>
+    transmute(period = PERIOD, geo_code, sex = KOEN, actual)
+}
+
+af_control_svag_samtliga <- function(path) {
+  af_read_pivot_cache(
+    path,
+    cache_id = 1L,
+    keep_fields = c(
+      "PERIOD", "KOEN", "LAN_BESKR", "KOMMUN_BESKR",
+      "KUA06", "KUA12", "KUA24", "SAMTLIGA"
+    ),
+    row_filter = function(row) {
+      af_keep_geo(row[["LAN_BESKR"]], row[["KOMMUN_BESKR"]])
+    }
+  ) |>
+    af_add_geo("LAN_BESKR", "KOMMUN_BESKR") |>
+    mutate(SAMTLIGA = suppressWarnings(as.numeric(SAMTLIGA))) |>
+    group_by(PERIOD, geo_code, KOEN) |>
+    summarise(actual = sum(SAMTLIGA, na.rm = TRUE), .groups = "drop") |>
+    transmute(period = PERIOD, geo_code, sex = KOEN, actual)
+}
+
+af_control_yrkesomrade_total <- function(path) {
+  af_read_pivot_cache(
+    path,
+    cache_id = 1L,
+    keep_fields = c("PERIOD", "KÖN", "YRKESOMRÅDE", "LÄN", "KOMMUN", "KVAR"),
+    row_filter = function(row) {
+      af_keep_geo(row[["LÄN"]], row[["KOMMUN"]])
+    }
+  ) |>
+    af_add_geo("LÄN", "KOMMUN") |>
+    mutate(KVAR = suppressWarnings(as.numeric(KVAR))) |>
+    group_by(PERIOD, geo_code, `KÖN`) |>
+    summarise(actual = sum(KVAR, na.rm = TRUE), .groups = "drop") |>
+    transmute(period = PERIOD, geo_code, sex = `KÖN`, actual)
+}
+
+af_control_bas_sok <- function(path) {
+  raw <- af_read_pivot_cache(
+    path,
+    cache_id = 1L,
+    keep_fields = c("PERIOD", "LAN", "KOM", "KVISOK", "MANSOK"),
+    row_filter = function(row) {
+      af_keep_geo(row[["LAN"]], row[["KOM"]])
+    }
+  ) |>
+    af_add_geo("LAN", "KOM")
+
+  bind_rows(
+    raw |>
+      transmute(
+        period = PERIOD, geo_code, sex = "K",
+        actual = suppressWarnings(as.numeric(KVISOK))
+      ),
+    raw |>
+      transmute(
+        period = PERIOD, geo_code, sex = "M",
+        actual = suppressWarnings(as.numeric(MANSOK))
+      )
+  )
+}
+
+af_assert_control_match <- function(actual, expected, label, tolerance = 1e-8) {
+  check <- inner_join(actual, expected, by = c("period", "geo_code", "sex")) |>
+    filter(!is.na(actual), !is.na(expected))
+
+  if (nrow(check) == 0) {
+    stop("Korsvalideringen gav inga jämförbara rader: ", label)
+  }
+
+  bad <- check |>
+    mutate(diff = abs(actual - expected)) |>
+    filter(diff > tolerance)
+
+  if (nrow(bad) > 0) {
+    example <- bad[1, , drop = FALSE]
+    stop(
+      label, " avviker. Första fel: period=", example$period,
+      ", geo=", example$geo_code, ", kön=", example$sex,
+      ", actual=", example$actual, ", expected=", example$expected
+    )
+  }
+
+  message(sprintf(
+    "Korsvalidering OK: %s (%s jämförda rader)",
+    label,
+    format(nrow(check), big.mark = " ")
+  ))
+
+  invisible(TRUE)
+}
