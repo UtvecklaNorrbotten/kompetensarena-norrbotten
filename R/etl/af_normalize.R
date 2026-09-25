@@ -181,10 +181,9 @@ af_normalize_tid_riket <- function(path) {
   )
 
   bind_rows(lapply(af_tid_sheet_specs, function(cfg) {
-    resolved_sheet <- af_resolve_sheet(
-      path,
-      sheet_aliases[[cfg$sheet]] %||% cfg$sheet
-    )
+    aliases <- sheet_aliases[[cfg$sheet]]
+    if (is.null(aliases)) aliases <- cfg$sheet
+    resolved_sheet <- af_resolve_sheet(path, aliases)
     raw <- readxl::read_excel(path, sheet = resolved_sheet, skip = 4)
 
     period_col <- af_find_column(raw, c("PERIOD", "Period"))
