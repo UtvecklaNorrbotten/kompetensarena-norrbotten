@@ -144,134 +144,77 @@ af_tid_value_fields <- c(
   "Utan arbete mer än 24 månader"
 )
 
-af_normalize_sheet_name <- function(x) {
-  x <- tolower(trimws(as.character(x)))
-  iconv(x, from = "", to = "ASCII//TRANSLIT")
-}
-
-af_candidate_tid_sheets <- function(path, aliases) {
-  sheets <- readxl::excel_sheets(path)
-  normalized <- af_normalize_sheet_name(sheets)
-  alias_normalized <- af_normalize_sheet_name(aliases)
-
-  exact <- unique(unlist(lapply(alias_normalized, function(alias) {
-    which(normalized == alias)
-  })))
-  contains <- unique(unlist(lapply(alias_normalized, function(alias) {
-    which(grepl(alias, normalized, fixed = TRUE))
-  })))
-
-  ordered <- unique(c(exact, contains, seq_along(sheets)))
-  sheets[ordered]
-}
-
-af_read_tid_sheet <- function(path, cfg, aliases) {
-  candidates <- af_candidate_tid_sheets(path, aliases)
-
-  for (sheet in candidates) {
-    for (skip in 0:10) {
-      probe <- tryCatch(
-        readxl::read_excel(path, sheet = sheet, skip = skip, n_max = 1),
-        error = function(e) NULL
-      )
-      if (is.null(probe)) next
-
-      has_values <- all(af_tid_value_fields %in% names(probe))
-      if (!has_values) next
-
-      if (is.null(cfg$dimension_candidates)) {
-        known_dimensions <- unique(unlist(lapply(
-          af_tid_sheet_specs,
-          function(x) x$dimension_candidates
-        )))
-        if (any(known_dimensions %in% names(probe))) next
-      } else if (!any(cfg$dimension_candidates %in% names(probe))) {
-        next
-      }
-
-      message(
-        "Riketsfil: använder blad '", sheet,
-        "' för ", cfg$sheet,
-        " (header-rad ", skip + 1L, ")."
-      )
-      return(readxl::read_excel(path, sheet = sheet, skip = skip))
-    }
-  }
-
-  stop(
-    "Kunde inte identifiera bladet för ", cfg$sheet,
-    ". Tillgängliga blad: ",
-    paste(readxl::excel_sheets(path), collapse = ", ")
-  )
-}
-
 af_normalize_tid_riket <- function(path) {
-  sheet_aliases <- list(
-    "Total" = c("Total", "Totalt", "Samtliga", "Samtliga arbetslösa"),
-    "Kön" = c("Kön", "Kon"),
-    "Ålder" = c("Ålder", "Alder"),
-    "Utbildningsnivå" = c("Utbildningsnivå", "Utbildningsniva", "Utbildning"),
-    "Födelseland" = c("Födelseland", "Fodelseland")
+  raw <- af_read_pivot_cache(
+    path,
+    cache_id = 1L,
+    keep_fields = c(
+      "PERIOD", "KOEN", "ALDGR", "FH", "FLAND", "UTBILDNING",
+      "INSAL", "UA06", "UA12", "UA24"
+    )
+  ) |>
+    mutate(
+      INSAL = suppressWarnings(as.numeric(INSAL)),
+      UA06 = suppressWarnings(as.numeric(UA06)),
+      UA12 = suppressWarnings(as.numeric(UA12)),
+      UA24 = suppressWarnings(as.numeric(UA24))
+    )
+
+  measure_map <- c(
+    UA06 = "Utan arbete mer än 6 månader",
+    UA12 = "Utan arbete mer än 12 månader",
+    UA24 = "Utan arbete mer än 24 månader"
   )
 
-  bind_rows(lapply(af_tid_sheet_specs, function(cfg) {
-    aliases <- sheet_aliases[[cfg$sheet]]
-    if (is.null(aliases)) aliases <- cfg$sheet
-    raw <- af_read_tid_sheet(path, cfg, aliases)
+  make_rows <- function(data, dimension_type, dimension_field = NULL) {
+    group_fields <- c("PERIOD", dimension_field)
+    group_fields <- group_fields[!is.na(group_fields) & nzchar(group_fields)]
 
-    period_col <- af_find_column(raw, c("PERIOD", "Period"))
-    dimension_col <- if (is.null(cfg$dimension_candidates)) {
-      NULL
-    } else {
-      af_find_column(raw, cfg$dimension_candidates)
-    }
-
-    missing_values <- setdiff(af_tid_value_fields, names(raw))
-    if (length(missing_values) > 0) {
-      stop(
-        "Rikets ", cfg$sheet, " saknar kolumner: ",
-        paste(missing_values, collapse = ", ")
+    grouped <- data |>
+      group_by(across(all_of(group_fields))) |>
+      summarise(
+        UA06 = sum(UA06, na.rm = TRUE),
+        UA12 = sum(UA12, na.rm = TRUE),
+        UA24 = sum(UA24, na.rm = TRUE),
+        .groups = "drop"
       )
-    }
 
-    raw$dimension_value <- if (is.null(dimension_col)) {
-      "Totalt"
+    if (is.null(dimension_field)) {
+      grouped$dimension_value <- "Totalt"
     } else {
-      as.character(raw[[dimension_col]])
+      grouped$dimension_value <- as.character(grouped[[dimension_field]])
     }
 
-    raw |>
-      transmute(
-        PERIOD = as.character(.data[[period_col]]),
-        dimension_value,
-        across(all_of(af_tid_value_fields))
-      ) |>
+    grouped |>
+      select(PERIOD, dimension_value, UA06, UA12, UA24) |>
       pivot_longer(
-        cols = all_of(af_tid_value_fields),
-        names_to = "measure_label",
+        cols = c(UA06, UA12, UA24),
+        names_to = "measure_code",
         values_to = "value"
       ) |>
       mutate(
-        dimension_type = cfg$dimension_type,
-        measure_code = case_when(
-          measure_label == af_tid_value_fields[[1]] ~ "KUA06",
-          measure_label == af_tid_value_fields[[2]] ~ "KUA12",
-          measure_label == af_tid_value_fields[[3]] ~ "KUA24",
-          TRUE ~ NA_character_
-        )
+        measure_label = unname(measure_map[measure_code])
       ) |>
       transmute(
-        period = PERIOD,
+        period = as.character(PERIOD),
         geo_code = "00",
         geo_level = "riket",
-        sex = if (cfg$dimension_type == "kön") dimension_value else NA_character_,
+        sex = if (dimension_type == "kön") dimension_value else NA_character_,
         dimension_type,
         dimension_value,
         measure_code,
         measure_label,
-        value = suppressWarnings(as.numeric(value))
+        value = as.numeric(value)
       )
-  }))
+  }
+
+  bind_rows(
+    make_rows(raw, "totalt"),
+    make_rows(raw, "kön", "KOEN"),
+    make_rows(raw, "ålder", "ALDGR"),
+    make_rows(raw, "utbildningsnivå", "UTBILDNING"),
+    make_rows(raw, "födelseland", "FLAND")
+  )
 }
 
 af_normalize_tid_utan_arbete <- function(path, riket_path = NULL) {
