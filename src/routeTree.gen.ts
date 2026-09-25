@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as KommerSenareRouteImport } from './routes/kommer-senare'
 import { Route as OmRouteImport } from './routes/om'
 import { Route as StatistikRouteImport } from './routes/statistik'
+import { Route as AdminDatakallorIndexRouteImport } from './routes/admin.datakallor.index'
+import { Route as AdminDatakallorSourceIdRouteImport } from './routes/admin.datakallor.$sourceId'
 import { Route as ApiPublicJobsEtlNoChangeRouteImport } from './routes/api/public/jobs/etl-no-change'
 import { Route as ApiPublicJobsEtlStateRouteImport } from './routes/api/public/jobs/etl-state'
 import { Route as ApiPublicJobsPublishIndicatorRouteImport } from './routes/api/public/jobs/publish-indicator'
@@ -40,6 +42,16 @@ const OmRoute = OmRouteImport.update({
 const StatistikRoute = StatistikRouteImport.update({
   id: '/statistik',
   path: '/statistik',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminDatakallorIndexRoute = AdminDatakallorIndexRouteImport.update({
+  id: '/admin/datakallor/',
+  path: '/admin/datakallor/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminDatakallorSourceIdRoute = AdminDatakallorSourceIdRouteImport.update({
+  id: '/admin/datakallor/$sourceId',
+  path: '/admin/datakallor/$sourceId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicJobsEtlNoChangeRoute =
@@ -95,6 +107,8 @@ export interface FileRoutesByFullPath {
   '/kommer-senare': typeof KommerSenareRoute
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
+  '/admin/datakallor/$sourceId': typeof AdminDatakallorSourceIdRoute
+  '/admin/datakallor/': typeof AdminDatakallorIndexRoute
   '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
@@ -109,6 +123,8 @@ export interface FileRoutesByTo {
   '/kommer-senare': typeof KommerSenareRoute
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
+  '/admin/datakallor/$sourceId': typeof AdminDatakallorSourceIdRoute
+  '/admin/datakallor': typeof AdminDatakallorIndexRoute
   '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
@@ -124,6 +140,8 @@ export interface FileRoutesById {
   '/kommer-senare': typeof KommerSenareRoute
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
+  '/admin/datakallor/$sourceId': typeof AdminDatakallorSourceIdRoute
+  '/admin/datakallor/': typeof AdminDatakallorIndexRoute
   '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
@@ -140,6 +158,8 @@ export interface FileRouteTypes {
     | '/kommer-senare'
     | '/om'
     | '/statistik'
+    | '/admin/datakallor/$sourceId'
+    | '/admin/datakallor/'
     | '/api/public/jobs/etl-no-change'
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
@@ -154,6 +174,8 @@ export interface FileRouteTypes {
     | '/kommer-senare'
     | '/om'
     | '/statistik'
+    | '/admin/datakallor/$sourceId'
+    | '/admin/datakallor'
     | '/api/public/jobs/etl-no-change'
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
@@ -168,6 +190,8 @@ export interface FileRouteTypes {
     | '/kommer-senare'
     | '/om'
     | '/statistik'
+    | '/admin/datakallor/$sourceId'
+    | '/admin/datakallor/'
     | '/api/public/jobs/etl-no-change'
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
@@ -183,6 +207,8 @@ export interface RootRouteChildren {
   KommerSenareRoute: typeof KommerSenareRoute
   OmRoute: typeof OmRoute
   StatistikRoute: typeof StatistikRoute
+  AdminDatakallorSourceIdRoute: typeof AdminDatakallorSourceIdRoute
+  AdminDatakallorIndexRoute: typeof AdminDatakallorIndexRoute
   ApiPublicJobsEtlNoChangeRoute: typeof ApiPublicJobsEtlNoChangeRoute
   ApiPublicJobsEtlStateRoute: typeof ApiPublicJobsEtlStateRoute
   ApiPublicJobsPublishIndicatorRoute: typeof ApiPublicJobsPublishIndicatorRoute
@@ -221,6 +247,20 @@ declare module '@tanstack/react-router' {
       path: '/statistik'
       fullPath: '/statistik'
       preLoaderRoute: typeof StatistikRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/datakallor/': {
+      id: '/admin/datakallor/'
+      path: '/admin/datakallor'
+      fullPath: '/admin/datakallor/'
+      preLoaderRoute: typeof AdminDatakallorIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/datakallor/$sourceId': {
+      id: '/admin/datakallor/$sourceId'
+      path: '/admin/datakallor/$sourceId'
+      fullPath: '/admin/datakallor/$sourceId'
+      preLoaderRoute: typeof AdminDatakallorSourceIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/jobs/etl-no-change': {
@@ -287,6 +327,8 @@ const rootRouteChildren: RootRouteChildren = {
   KommerSenareRoute: KommerSenareRoute,
   OmRoute: OmRoute,
   StatistikRoute: StatistikRoute,
+  AdminDatakallorSourceIdRoute: AdminDatakallorSourceIdRoute,
+  AdminDatakallorIndexRoute: AdminDatakallorIndexRoute,
   ApiPublicJobsEtlNoChangeRoute: ApiPublicJobsEtlNoChangeRoute,
   ApiPublicJobsEtlStateRoute: ApiPublicJobsEtlStateRoute,
   ApiPublicJobsPublishIndicatorRoute: ApiPublicJobsPublishIndicatorRoute,
