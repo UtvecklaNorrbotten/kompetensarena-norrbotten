@@ -144,9 +144,80 @@ af_tid_value_fields <- c(
   "Utan arbete mer än 24 månader"
 )
 
+af_normalize_sheet_name <- function(x) {
+  x <- tolower(trimws(as.character(x)))
+  iconv(x, from = "", to = "ASCII//TRANSLIT")
+}
+
+af_candidate_tid_sheets <- function(path, aliases) {
+  sheets <- readxl::excel_sheets(path)
+  normalized <- af_normalize_sheet_name(sheets)
+  alias_normalized <- af_normalize_sheet_name(aliases)
+
+  exact <- unique(unlist(lapply(alias_normalized, function(alias) {
+    which(normalized == alias)
+  })))
+  contains <- unique(unlist(lapply(alias_normalized, function(alias) {
+    which(grepl(alias, normalized, fixed = TRUE))
+  })))
+
+  ordered <- unique(c(exact, contains, seq_along(sheets)))
+  sheets[ordered]
+}
+
+af_read_tid_sheet <- function(path, cfg, aliases) {
+  candidates <- af_candidate_tid_sheets(path, aliases)
+
+  for (sheet in candidates) {
+    for (skip in 0:10) {
+      probe <- tryCatch(
+        readxl::read_excel(path, sheet = sheet, skip = skip, n_max = 1),
+        error = function(e) NULL
+      )
+      if (is.null(probe)) next
+
+      has_values <- all(af_tid_value_fields %in% names(probe))
+      if (!has_values) next
+
+      if (is.null(cfg$dimension_candidates)) {
+        known_dimensions <- unique(unlist(lapply(
+          af_tid_sheet_specs,
+          function(x) x$dimension_candidates
+        )))
+        if (any(known_dimensions %in% names(probe))) next
+      } else if (!any(cfg$dimension_candidates %in% names(probe))) {
+        next
+      }
+
+      message(
+        "Riketsfil: använder blad '", sheet,
+        "' för ", cfg$sheet,
+        " (header-rad ", skip + 1L, ")."
+      )
+      return(readxl::read_excel(path, sheet = sheet, skip = skip))
+    }
+  }
+
+  stop(
+    "Kunde inte identifiera bladet för ", cfg$sheet,
+    ". Tillgängliga blad: ",
+    paste(readxl::excel_sheets(path), collapse = ", ")
+  )
+}
+
 af_normalize_tid_riket <- function(path) {
+  sheet_aliases <- list(
+    "Total" = c("Total", "Totalt", "Samtliga", "Samtliga arbetslösa"),
+    "Kön" = c("Kön", "Kon"),
+    "Ålder" = c("Ålder", "Alder"),
+    "Utbildningsnivå" = c("Utbildningsnivå", "Utbildningsniva", "Utbildning"),
+    "Födelseland" = c("Födelseland", "Fodelseland")
+  )
+
   bind_rows(lapply(af_tid_sheet_specs, function(cfg) {
-    raw <- readxl::read_excel(path, sheet = cfg$sheet, skip = 4)
+    aliases <- sheet_aliases[[cfg$sheet]]
+    if (is.null(aliases)) aliases <- cfg$sheet
+    raw <- af_read_tid_sheet(path, cfg, aliases)
 
     period_col <- af_find_column(raw, c("PERIOD", "Period"))
     dimension_col <- if (is.null(cfg$dimension_candidates)) {
