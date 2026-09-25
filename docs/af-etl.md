@@ -219,3 +219,22 @@ kommunerna inom respektive län. Riket skapas därefter från de 21 länsvärden
 Kontroll mot den faktiska augusti 2026-filen visar att summan av samtliga 290 kommuners
 `TOTAK` är 5 354 201,083333336, exakt samma värde som visas för Riket i bladet
 `Antal`. Det bekräftar att denna aggregeringsväg är korrekt för BAS-nämnarna.
+
+
+### web-sok: kommun, län och Riket
+
+Inspektion av den faktiska filen `web-sok-lan-kom-2026-08.xlsx` visar att
+pivot-cacherna inte innehåller färdiga länsrader. Geografin består av 290 kommuner,
+21 län i fältet `LAN` samt restkategorier för saknad kommun och saknat län.
+
+Därför byggs geografin så här:
+
+- kommun: endast de 290 namngivna kommunerna,
+- län: summan av alla rader med känt län, inklusive rader där kommunen saknas,
+- Riket: summan av samtliga råa rader, även `LAN = Uppgift saknas`.
+
+Det sista är viktigt. För 2026-08 finns 119 inskrivna arbetslösa i ålderscachen med
+saknat län. Om Riket skapades enbart genom att summera de 21 länsvärdena skulle dessa
+personer falla bort. Summering av hela råcachen ger 349 398 inskrivna arbetslösa för
+2026-08, vilket exakt överensstämmer med `INSAL` i den separata riketsfilen
+`web-tid-riket-2026-08.xlsx`.
