@@ -207,3 +207,15 @@ Riketsvärden läses direkt ur `pivotCacheDefinition1.xml` /
 Rikets >6, >12 och >24 månader summeras ur cachen på exakt samma dimensionsnivåer som
 kommunfilen använder. För augusti 2026 ger cachen totalerna 214 835, 149 016 respektive
 83 001, vilket överensstämmer med den synliga tabellen i arbetsboken.
+
+
+### BAS: län och Riket
+
+`web-inskrivna-arbetslosa-andel-av-bas` har, liksom filen för tid utan arbete,
+kommuner i pivot-cachen men inga explicita länsrader. Till skillnad från tid-filen är
+BAS-nämnarna numeriska och additiva, så län kan härledas exakt genom att summera
+kommunerna inom respektive län. Riket skapas därefter från de 21 länsvärdena.
+
+Kontroll mot den faktiska augusti 2026-filen visar att summan av samtliga 290 kommuners
+`TOTAK` är 5 354 201,083333336, exakt samma värde som visas för Riket i bladet
+`Antal`. Det bekräftar att denna aggregeringsväg är korrekt för BAS-nämnarna.
