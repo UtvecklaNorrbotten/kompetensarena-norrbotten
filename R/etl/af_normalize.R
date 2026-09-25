@@ -462,10 +462,11 @@ af_normalize_bas <- function(path) {
       af_keep_geo(row[["LAN"]], row[["KOM"]])
     }
   ) |>
-    af_add_geo("LAN", "KOM")
+    af_add_geo("LAN", "KOM") |>
+    filter(geo_level == "kommun")
 
-  raw |>
-    select(PERIOD, geo_code, geo_level, all_of(af_bas_measure_map$measure_code)) |>
+  municipalities <- raw |>
+    select(PERIOD, geo_code, all_of(af_bas_measure_map$measure_code)) |>
     pivot_longer(
       cols = all_of(af_bas_measure_map$measure_code),
       names_to = "measure_code",
@@ -475,14 +476,39 @@ af_normalize_bas <- function(path) {
     transmute(
       period = PERIOD,
       geo_code,
-      geo_level,
+      geo_level = "kommun",
       sex,
       dimension_type,
       dimension_value,
       measure_code,
       measure_label = "Arbetskraft BAS",
       value = suppressWarnings(as.numeric(value))
+    )
+
+  counties <- municipalities |>
+    mutate(county_code = substr(geo_code, 1, 2)) |>
+    group_by(
+      period, county_code, sex, dimension_type, dimension_value,
+      measure_code, measure_label
     ) |>
+    summarise(
+      municipality_count = n_distinct(geo_code),
+      value = af_sum_complete(value),
+      .groups = "drop"
+    ) |>
+    transmute(
+      period,
+      geo_code = county_code,
+      geo_level = "län",
+      sex,
+      dimension_type,
+      dimension_value,
+      measure_code,
+      measure_label,
+      value
+    )
+
+  bind_rows(municipalities, counties) |>
     af_add_riket_from_counties()
 }
 
