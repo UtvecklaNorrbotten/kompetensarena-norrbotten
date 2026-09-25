@@ -1,4 +1,4 @@
-# Kontrollerar om Arbetsförmedlingens fem primära månadsfiler är synkroniserade.
+# Kontrollerar om Arbetsförmedlingens sex nödvändiga månadsfiler är synkroniserade.
 # Skriptet laddar inte ned Excel-filer.
 
 source("R/etl/etl_api.R")
@@ -32,10 +32,10 @@ run_af_source_check <- function() {
       latest_available_period = latest_seen,
       details = list(
         files = file_details,
-        note = "Väntar tills samtliga fem primärkällor visar samma månad"
+        note = "Väntar tills samtliga sex primärkällor visar samma månad"
       )
     )
-    message("AF: väntar tills samtliga fem källfiler visar samma månad.")
+    message("AF: väntar tills samtliga sex källfiler visar samma månad.")
     return(invisible(FALSE))
   }
 
@@ -69,7 +69,7 @@ run_af_source_check <- function() {
   )
 
   message(
-    "AF: samtliga fem primärkällor är uppdaterade till ",
+    "AF: samtliga sex primärkällor är uppdaterade till ",
     common_period,
     " och perioden är redo för import."
   )
