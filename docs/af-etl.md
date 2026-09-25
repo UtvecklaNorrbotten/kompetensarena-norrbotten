@@ -9,13 +9,14 @@ de publicerade Excel-filerna som källa.
 
 ## Primära filer
 
-Produktionsflödet utgår från fem filer:
+Produktionsflödet utgår från fem huvudfiler samt en stödfil för exakta riksvärden:
 
 1. `web-sok-lan-kom-YYYY-MM.xlsx`
 2. `web-inskrivna-arbetslosa-tid-utan-arbete-lan-kom-YYYY-MM.xlsx`
 3. `web-inskrivna-arbetslosa-svag-konkurrensformaga-YYYY-MM.xlsx`
 4. `web-arbetslosa-yrkesomrade-YYYY-MM.xlsx`
 5. `web-inskrivna-arbetslosa-andel-av-bas-YYYY-MM.xlsx`
+6. `web-tid-riket-YYYY-MM.xlsx` – stödkälla för exakta riksvärden för tid utan arbete
 
 Filer med årsgenomsnitt och ">12 månader som andel av BAS" används inte som egna
 produktionskällor eftersom de kan härledas från de primära månadsfilerna.
@@ -27,7 +28,7 @@ Filnamnets `YYYY-MM` används som publiceringssignal.
 Den schemalagda processen ska först bara läsa HTML-sidan och identifiera den senaste
 länken för var och en av de fem filprefixen. Excel-filerna får laddas ned först när:
 
-- alla fem filer finns,
+- alla sex nödvändiga filer finns,
 - alla fem har samma `YYYY-MM`,
 - perioden är nyare än senast lyckade fullimport.
 
@@ -69,7 +70,8 @@ primärkälla och används i övriga filer som korsvalidering.
 Planerade ansvarsområden:
 
 - `web-sok-lan-kom`: grundtal och bakgrundsdimensioner.
-- `tid-utan-arbete`: >6, >12 och >24 månader.
+- `tid-utan-arbete`: >6, >12 och >24 månader per kommun. Län summeras endast när publicerade kommunvärden medger en exakt summa.
+- `web-tid-riket`: exakta riksvärden för samma mått; används eftersom kommunfilen innehåller sekretessmarkeringar `<5` som gör exakt rikssummering omöjlig från kommunraderna.
 - `svag-konkurrensformaga`: UTSATTA; SAMTLIGA används som kontroll.
 - `yrkesomrade`: arbetslösa per yrkesområde.
 - `andel-av-bas`: BAS-arbetskraftens nämnare; SOK-tal används som kontroll.
@@ -94,7 +96,7 @@ AF använder samma generella källregister som övriga ETL-flöden:
 - `data_source_runs` får `source_id`, `source_period` och `details` för historik.
 
 AF:s samlade käll-ID är `af-monthly`. De fem Excel-filerna behandlas som komponenter i
-samma månadsleverans, eftersom ingen fullimport får ske förrän samtliga fem är synkroniserade.
+samma månadsleverans, eftersom ingen fullimport får ske förrän samtliga sex är synkroniserade.
 
 Statusarna används så här:
 
@@ -111,7 +113,7 @@ Pivotbaserade AF-filer läses strömmande med SAX via `R/etl/af_pivot_cache.R`.
 Det är viktigt eftersom exempelvis yrkesområdesfilens okomprimerade pivot-cache kan vara
 flera hundra MB och inte bör byggas som ett helt XML-träd i minnet.
 
-`R/etl/af_normalize.R` normaliserar de fem primärkällorna till samma långa struktur:
+`R/etl/af_normalize.R` normaliserar de sex nödvändiga källfilerna till samma långa struktur:
 
 - `period`
 - `geo_code`
@@ -135,7 +137,7 @@ Riket beräknas endast från län, aldrig från kommunerna. Ett riksvärde sätt
 om någon av de 21 länsposterna saknas eller är maskerad. Andelar ska inte summeras eller
 medelvärdesberäknas; de beräknas senare från summerade täljare och nämnare.
 
-Den manuella workflow-körningen `mode=validate` laddar ned de fem aktuella filerna,
+Den manuella workflow-körningen `mode=validate` laddar ned de sex aktuella filerna,
 normaliserar dem och publicerar ingenting. Överlappande mått används i stället som
 regressionskontroller:
 
@@ -164,3 +166,18 @@ Dry-runen rapporterar därför för varje källa:
 
 Beslut om eventuell framtida filtrering ska tas utifrån dessa faktiska mått, inte utifrån
 Excel-filernas komprimerade filstorlek.
+
+
+### Varför en separat riketsfil behövs för tid utan arbete
+
+Valideringskörningen visade att län/kommun-filen inte innehåller explicita länstotaler.
+Den innehåller 290 kommuner plus restkategorin `Uppgift saknas`, och vissa små tal är
+sekretessmarkerade som `<5`. Därför går det inte att återskapa exakta läns- eller
+riksvärden genom att bara summera kommunerna.
+
+För denna källa gäller därför:
+
+- kommunvärden behålls som publicerade,
+- länsvärden härleds endast när alla komponenter är numeriska; annars blir länsvärdet `NA`,
+- Riket hämtas från Arbetsförmedlingens separata riketsfil,
+- övriga AF-källor fortsätter använda länsvärden som källa för beräknat Riket när kompletta länsrader finns.
