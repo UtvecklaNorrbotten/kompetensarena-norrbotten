@@ -149,25 +149,59 @@ af_normalize_sheet_name <- function(x) {
   iconv(x, from = "", to = "ASCII//TRANSLIT")
 }
 
-af_resolve_sheet <- function(path, candidates) {
+af_candidate_tid_sheets <- function(path, aliases) {
   sheets <- readxl::excel_sheets(path)
   normalized <- af_normalize_sheet_name(sheets)
-  candidate_normalized <- af_normalize_sheet_name(candidates)
+  alias_normalized <- af_normalize_sheet_name(aliases)
 
-  exact <- match(candidate_normalized, normalized, nomatch = 0L)
-  exact <- exact[exact > 0L]
-  if (length(exact) > 0L) return(sheets[[exact[[1]]]])
+  exact <- unique(unlist(lapply(alias_normalized, function(alias) {
+    which(normalized == alias)
+  })))
+  contains <- unique(unlist(lapply(alias_normalized, function(alias) {
+    which(grepl(alias, normalized, fixed = TRUE))
+  })))
 
-  for (candidate in candidate_normalized) {
-    hit <- which(grepl(candidate, normalized, fixed = TRUE))
-    if (length(hit) > 0L) return(sheets[[hit[[1]]]])
+  ordered <- unique(c(exact, contains, seq_along(sheets)))
+  sheets[ordered]
+}
+
+af_read_tid_sheet <- function(path, cfg, aliases) {
+  candidates <- af_candidate_tid_sheets(path, aliases)
+
+  for (sheet in candidates) {
+    for (skip in 0:10) {
+      probe <- tryCatch(
+        readxl::read_excel(path, sheet = sheet, skip = skip, n_max = 1),
+        error = function(e) NULL
+      )
+      if (is.null(probe)) next
+
+      has_values <- all(af_tid_value_fields %in% names(probe))
+      if (!has_values) next
+
+      if (is.null(cfg$dimension_candidates)) {
+        known_dimensions <- unique(unlist(lapply(
+          af_tid_sheet_specs,
+          function(x) x$dimension_candidates
+        )))
+        if (any(known_dimensions %in% names(probe))) next
+      } else if (!any(cfg$dimension_candidates %in% names(probe))) {
+        next
+      }
+
+      message(
+        "Riketsfil: använder blad '", sheet,
+        "' för ", cfg$sheet,
+        " (header-rad ", skip + 1L, ")."
+      )
+      return(readxl::read_excel(path, sheet = sheet, skip = skip))
+    }
   }
 
   stop(
-    "Hittade inget blad som motsvarar ",
-    paste(candidates, collapse = " / "),
+    "Kunde inte identifiera bladet för ", cfg$sheet,
     ". Tillgängliga blad: ",
-    paste(sheets, collapse = ", ")
+    paste(readxl::excel_sheets(path), collapse = ", ")
   )
 }
 
@@ -183,8 +217,7 @@ af_normalize_tid_riket <- function(path) {
   bind_rows(lapply(af_tid_sheet_specs, function(cfg) {
     aliases <- sheet_aliases[[cfg$sheet]]
     if (is.null(aliases)) aliases <- cfg$sheet
-    resolved_sheet <- af_resolve_sheet(path, aliases)
-    raw <- readxl::read_excel(path, sheet = resolved_sheet, skip = 4)
+    raw <- af_read_tid_sheet(path, cfg, aliases)
 
     period_col <- af_find_column(raw, c("PERIOD", "Period"))
     dimension_col <- if (is.null(cfg$dimension_candidates)) {
