@@ -80,35 +80,83 @@ af_normalize_web_sok <- function(path) {
     list(id = 1L, dimension_type = "utbildningsnivå", dimension_field = "UTBILDNING")
   )
 
+  municipality_codes <- af_get_municipality_codes()
+
   bind_rows(lapply(caches, function(cfg) {
     fields <- c(
       "PERIOD", "KOEN", "LAN", "KOMMUN_BESKR",
       cfg$dimension_field, "INSAL"
     )
 
+    # Läs hela cachen. För den här källan behövs även restkategorierna
+    # "Uppgift saknas" för att läns- och rikssummor ska bli exakta.
     raw <- af_read_pivot_cache(
       path,
       cache_id = cfg$id,
-      keep_fields = fields,
-      row_filter = function(row) {
-        af_keep_geo(row[["LAN"]], row[["KOMMUN_BESKR"]])
-      }
-    )
+      keep_fields = fields
+    ) |>
+      mutate(
+        county_name = af_clean_county_name(LAN),
+        municipality_name = af_clean_municipality_name(KOMMUN_BESKR),
+        county_code = unname(af_county_codes[county_name]),
+        municipality_code = unname(municipality_codes[municipality_name]),
+        value = suppressWarnings(as.numeric(INSAL)),
+        dimension_value = as.character(.data[[cfg$dimension_field]])
+      )
 
-    af_add_geo(raw, "LAN", "KOMMUN_BESKR") |>
+    # Verkliga kommuner publiceras som kommunnivå. Restkategorier utan
+    # kommunkod publiceras inte som kommun men får ingå i läns-/rikssumman.
+    municipalities <- raw |>
+      filter(!is.na(county_code), !is.na(municipality_code)) |>
       transmute(
         period = PERIOD,
-        geo_code,
-        geo_level,
+        geo_code = municipality_code,
+        geo_level = "kommun",
         sex = KOEN,
         dimension_type = cfg$dimension_type,
-        dimension_value = .data[[cfg$dimension_field]],
+        dimension_value,
         measure_code = "INSAL",
         measure_label = "Inskrivna arbetslösa",
-        value = suppressWarnings(as.numeric(INSAL))
+        value
       )
-  })) |>
-    af_add_riket_from_counties()
+
+    # Län byggs från alla rader med känt län, inklusive kommun = Uppgift saknas.
+    # Därmed tappar vi inte individer vars län är känt men kommun saknas.
+    counties <- raw |>
+      filter(!is.na(county_code)) |>
+      group_by(PERIOD, county_code, KOEN, dimension_value) |>
+      summarise(value = sum(value, na.rm = TRUE), .groups = "drop") |>
+      transmute(
+        period = PERIOD,
+        geo_code = county_code,
+        geo_level = "län",
+        sex = KOEN,
+        dimension_type = cfg$dimension_type,
+        dimension_value,
+        measure_code = "INSAL",
+        measure_label = "Inskrivna arbetslösa",
+        value
+      )
+
+    # Riket byggs från samtliga råa rader, även LAN = Uppgift saknas.
+    # Det ger exakt rikstotal utan att fördela okänd geografi på ett län.
+    riket <- raw |>
+      group_by(PERIOD, KOEN, dimension_value) |>
+      summarise(value = sum(value, na.rm = TRUE), .groups = "drop") |>
+      transmute(
+        period = PERIOD,
+        geo_code = "00",
+        geo_level = "riket",
+        sex = KOEN,
+        dimension_type = cfg$dimension_type,
+        dimension_value,
+        measure_code = "INSAL",
+        measure_label = "Inskrivna arbetslösa",
+        value
+      )
+
+    bind_rows(municipalities, counties, riket)
+  }))
 }
 
 af_find_column <- function(data, candidates, required = TRUE) {
