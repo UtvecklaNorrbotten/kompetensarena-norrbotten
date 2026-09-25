@@ -144,9 +144,48 @@ af_tid_value_fields <- c(
   "Utan arbete mer än 24 månader"
 )
 
+af_normalize_sheet_name <- function(x) {
+  x <- tolower(trimws(as.character(x)))
+  iconv(x, from = "", to = "ASCII//TRANSLIT")
+}
+
+af_resolve_sheet <- function(path, candidates) {
+  sheets <- readxl::excel_sheets(path)
+  normalized <- af_normalize_sheet_name(sheets)
+  candidate_normalized <- af_normalize_sheet_name(candidates)
+
+  exact <- match(candidate_normalized, normalized, nomatch = 0L)
+  exact <- exact[exact > 0L]
+  if (length(exact) > 0L) return(sheets[[exact[[1]]]])
+
+  for (candidate in candidate_normalized) {
+    hit <- which(grepl(candidate, normalized, fixed = TRUE))
+    if (length(hit) > 0L) return(sheets[[hit[[1]]]])
+  }
+
+  stop(
+    "Hittade inget blad som motsvarar ",
+    paste(candidates, collapse = " / "),
+    ". Tillgängliga blad: ",
+    paste(sheets, collapse = ", ")
+  )
+}
+
 af_normalize_tid_riket <- function(path) {
+  sheet_aliases <- list(
+    "Total" = c("Total", "Totalt", "Samtliga", "Samtliga arbetslösa"),
+    "Kön" = c("Kön", "Kon"),
+    "Ålder" = c("Ålder", "Alder"),
+    "Utbildningsnivå" = c("Utbildningsnivå", "Utbildningsniva", "Utbildning"),
+    "Födelseland" = c("Födelseland", "Fodelseland")
+  )
+
   bind_rows(lapply(af_tid_sheet_specs, function(cfg) {
-    raw <- readxl::read_excel(path, sheet = cfg$sheet, skip = 4)
+    resolved_sheet <- af_resolve_sheet(
+      path,
+      sheet_aliases[[cfg$sheet]] %||% cfg$sheet
+    )
+    raw <- readxl::read_excel(path, sheet = resolved_sheet, skip = 4)
 
     period_col <- af_find_column(raw, c("PERIOD", "Period"))
     dimension_col <- if (is.null(cfg$dimension_candidates)) {
