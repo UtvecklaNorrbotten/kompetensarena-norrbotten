@@ -1,5 +1,6 @@
 # Källregister för Arbetsförmedlingens månadsfiler.
-# Endast primära produktionskällor ligger här. Redundanta derivatfiler importeras inte.
+# Primära produktionskällor samt nödvändiga stödkällor ligger här.
+# Redundanta derivatfiler importeras inte som egna dataset.
 
 af_source_page <- "https://arbetsformedlingen.se/statistik/sok-statistik/tidigare-statistik-tidsserier"
 
@@ -12,7 +13,12 @@ af_sources <- list(
   tid_utan_arbete = list(
     label = "Inskrivna arbetslösa, tid utan arbete per län och kommun",
     filename_prefix = "web-inskrivna-arbetslosa-tid-utan-arbete-lan-kom",
-    role = "Tid utan arbete >6, >12 och >24 månader"
+    role = "Tid utan arbete >6, >12 och >24 månader per kommun; län härleds där det är exakt möjligt"
+  ),
+  tid_utan_arbete_riket = list(
+    label = "Inskrivna arbetslösa, tid utan arbete, riket",
+    filename_prefix = "web-tid-riket",
+    role = "Exakta riksvärden för tid utan arbete; stödkälla eftersom kommunfilen innehåller sekretessmarkeringar <5"
   ),
   svag_konkurrensformaga = list(
     label = "Inskrivna arbetslösa, svag konkurrensförmåga",
