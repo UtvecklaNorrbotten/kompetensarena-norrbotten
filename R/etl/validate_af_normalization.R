@@ -22,7 +22,10 @@ run_af_normalization_validation <- function() {
   sok <- af_normalize_web_sok(path_for("arbetssokande"))
 
   message("Normaliserar tid utan arbete ...")
-  tid <- af_normalize_tid_utan_arbete(path_for("tid_utan_arbete"))
+  tid <- af_normalize_tid_utan_arbete(
+    path_for("tid_utan_arbete"),
+    riket_path = path_for("tid_utan_arbete_riket")
+  )
 
   message("Normaliserar svag konkurrensförmåga ...")
   svag <- af_normalize_svag_konkurrensformaga(path_for("svag_konkurrensformaga"))
