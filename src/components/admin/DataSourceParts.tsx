@@ -14,7 +14,7 @@ const statusLabel: Record<SourceStatus, string> = {
 
 const statusClass: Record<SourceStatus, string> = {
   ok: "bg-brand-light text-ink border-brand",
-  running: "bg-accent-light text-ink border-accent",
+  running: "bg-accent-orange-light text-ink border-accent-orange",
   error: "bg-destructive/10 text-destructive border-destructive",
   never: "bg-neutral-surface text-ink-muted border-border",
 };
