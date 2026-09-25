@@ -181,3 +181,29 @@ För denna källa gäller därför:
 - länsvärden härleds endast när alla komponenter är numeriska; annars blir länsvärdet `NA`,
 - Riket hämtas från Arbetsförmedlingens separata riketsfil,
 - övriga AF-källor fortsätter använda länsvärden som källa för beräknat Riket när kompletta länsrader finns.
+
+
+### Riketsfilen för tid utan arbete
+
+`web-tid-riket-YYYY-MM.xlsx` består av bladen `SQL-kod`, `Info` och `Tabell`.
+Den synliga tabellen visar totalserien, medan kön, ålder, födelseland och
+utbildningsnivå ligger som pivottabellsdimensioner. Produktionsläsningen ska därför
+inte försöka hitta separata blad för dessa dimensioner.
+
+Riketsvärden läses direkt ur `pivotCacheDefinition1.xml` /
+`pivotCacheRecords1.xml`. Cachefälten är:
+
+- `PERIOD`
+- `KOEN`
+- `ALDGR`
+- `FH`
+- `FLAND`
+- `UTBILDNING`
+- `INSAL`
+- `UA06`
+- `UA12`
+- `UA24`
+
+Rikets >6, >12 och >24 månader summeras ur cachen på exakt samma dimensionsnivåer som
+kommunfilen använder. För augusti 2026 ger cachen totalerna 214 835, 149 016 respektive
+83 001, vilket överensstämmer med den synliga tabellen i arbetsboken.
