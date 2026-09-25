@@ -111,60 +111,88 @@ af_normalize_web_sok <- function(path) {
     af_add_riket_from_counties()
 }
 
-af_normalize_tid_utan_arbete <- function(path) {
-  sheet_specs <- list(
-    list(sheet = "Total", dimension_type = "totalt", dimension_field = NULL),
-    list(sheet = "Kön", dimension_type = "kön", dimension_field = "KOEN"),
-    list(sheet = "Ålder", dimension_type = "ålder", dimension_field = "ALDER"),
-    list(sheet = "Utbildningsnivå", dimension_type = "utbildningsnivå", dimension_field = "UTBILDNINGSNIVÅ"),
-    list(sheet = "Födelseland", dimension_type = "födelseland", dimension_field = "FÖDELSELAND")
-  )
+af_find_column <- function(data, candidates, required = TRUE) {
+  hit <- candidates[candidates %in% names(data)][1]
+  if (length(hit) == 0 || is.na(hit)) {
+    if (required) {
+      stop("Hittade ingen av kolumnerna: ", paste(candidates, collapse = ", "))
+    }
+    return(NULL)
+  }
+  hit
+}
 
-  value_fields <- c(
-    "Utan arbete mer än 6 månader",
-    "Utan arbete mer än 12 månader",
-    "Utan arbete mer än 24 månader"
+af_tid_sheet_specs <- list(
+  list(sheet = "Total", dimension_type = "totalt", dimension_candidates = NULL),
+  list(sheet = "Kön", dimension_type = "kön", dimension_candidates = c("KOEN", "KÖN")),
+  list(sheet = "Ålder", dimension_type = "ålder", dimension_candidates = c("ALDER", "ÅLDER")),
+  list(
+    sheet = "Utbildningsnivå",
+    dimension_type = "utbildningsnivå",
+    dimension_candidates = c("UTBILDNINGSNIVÅ", "UTBILDNING")
+  ),
+  list(
+    sheet = "Födelseland",
+    dimension_type = "födelseland",
+    dimension_candidates = c("FÖDELSELAND", "FODLGRP")
   )
+)
 
-  bind_rows(lapply(sheet_specs, function(cfg) {
+af_tid_value_fields <- c(
+  "Utan arbete mer än 6 månader",
+  "Utan arbete mer än 12 månader",
+  "Utan arbete mer än 24 månader"
+)
+
+af_normalize_tid_riket <- function(path) {
+  bind_rows(lapply(af_tid_sheet_specs, function(cfg) {
     raw <- readxl::read_excel(path, sheet = cfg$sheet, skip = 4)
-    required <- c("PERIOD", "LÄN", "KOMMUN", "ARBETSLÖSA", value_fields)
-    if (!is.null(cfg$dimension_field)) required <- c(required, cfg$dimension_field)
-    missing <- setdiff(required, names(raw))
-    if (length(missing) > 0) {
-      stop(cfg$sheet, " saknar kolumner: ", paste(missing, collapse = ", "))
+
+    period_col <- af_find_column(raw, c("PERIOD", "Period"))
+    dimension_col <- if (is.null(cfg$dimension_candidates)) {
+      NULL
+    } else {
+      af_find_column(raw, cfg$dimension_candidates)
     }
 
-    raw <- af_add_geo(raw, "LÄN", "KOMMUN")
-    raw$dimension_value <- if (is.null(cfg$dimension_field)) {
+    missing_values <- setdiff(af_tid_value_fields, names(raw))
+    if (length(missing_values) > 0) {
+      stop(
+        "Rikets ", cfg$sheet, " saknar kolumner: ",
+        paste(missing_values, collapse = ", ")
+      )
+    }
+
+    raw$dimension_value <- if (is.null(dimension_col)) {
       "Totalt"
     } else {
-      as.character(raw[[cfg$dimension_field]])
+      as.character(raw[[dimension_col]])
     }
 
     raw |>
-      select(
-        PERIOD, geo_code, geo_level, dimension_value,
-        all_of(value_fields)
+      transmute(
+        PERIOD = as.character(.data[[period_col]]),
+        dimension_value,
+        across(all_of(af_tid_value_fields))
       ) |>
       pivot_longer(
-        cols = all_of(value_fields),
+        cols = all_of(af_tid_value_fields),
         names_to = "measure_label",
         values_to = "value"
       ) |>
       mutate(
         dimension_type = cfg$dimension_type,
         measure_code = case_when(
-          measure_label == value_fields[[1]] ~ "KUA06",
-          measure_label == value_fields[[2]] ~ "KUA12",
-          measure_label == value_fields[[3]] ~ "KUA24",
+          measure_label == af_tid_value_fields[[1]] ~ "KUA06",
+          measure_label == af_tid_value_fields[[2]] ~ "KUA12",
+          measure_label == af_tid_value_fields[[3]] ~ "KUA24",
           TRUE ~ NA_character_
         )
       ) |>
       transmute(
-        period = as.character(PERIOD),
-        geo_code,
-        geo_level,
+        period = PERIOD,
+        geo_code = "00",
+        geo_level = "riket",
         sex = if (cfg$dimension_type == "kön") dimension_value else NA_character_,
         dimension_type,
         dimension_value,
@@ -172,8 +200,139 @@ af_normalize_tid_utan_arbete <- function(path) {
         measure_label,
         value = suppressWarnings(as.numeric(value))
       )
-  })) |>
-    af_add_riket_from_counties()
+  }))
+}
+
+af_normalize_tid_utan_arbete <- function(path, riket_path = NULL) {
+  municipality_codes <- af_get_municipality_codes()
+
+  regional <- bind_rows(lapply(af_tid_sheet_specs, function(cfg) {
+    raw <- readxl::read_excel(path, sheet = cfg$sheet, skip = 4)
+
+    period_col <- af_find_column(raw, c("PERIOD", "Period"))
+    county_col <- af_find_column(raw, c("LÄN", "LAN"))
+    municipality_col <- af_find_column(raw, c("KOMMUN", "KOM"))
+    dimension_col <- if (is.null(cfg$dimension_candidates)) {
+      NULL
+    } else {
+      af_find_column(raw, cfg$dimension_candidates)
+    }
+
+    missing_values <- setdiff(af_tid_value_fields, names(raw))
+    if (length(missing_values) > 0) {
+      stop(
+        cfg$sheet, " saknar kolumner: ",
+        paste(missing_values, collapse = ", ")
+      )
+    }
+
+    county_name <- af_clean_county_name(raw[[county_col]])
+    municipality_name <- af_clean_municipality_name(raw[[municipality_col]])
+    county_code <- unname(af_county_codes[county_name])
+    municipality_code <- unname(municipality_codes[municipality_name])
+
+    municipality_non_geo <- af_is_non_geographic_municipality(municipality_name)
+    municipality_present <- !is.na(municipality_name) & nzchar(municipality_name)
+    real_unmapped <- (
+      !is.na(county_code) &
+      municipality_present &
+      !municipality_non_geo &
+      is.na(municipality_code)
+    )
+
+    if (any(real_unmapped)) {
+      examples <- unique(municipality_name[real_unmapped])
+      stop(
+        cfg$sheet, ": kunde inte mappa kommunnamn till SCB-kod: ",
+        paste(utils::head(examples, 10), collapse = ", "),
+        if (length(examples) > 10) " ..." else ""
+      )
+    }
+
+    raw$county_code_internal <- county_code
+    raw$municipality_code_internal <- municipality_code
+    raw$is_county_residual_internal <- (
+      !is.na(county_code) & municipality_non_geo
+    )
+    raw$dimension_value <- if (is.null(dimension_col)) {
+      "Totalt"
+    } else {
+      as.character(raw[[dimension_col]])
+    }
+
+    long <- raw |>
+      filter(
+        !is.na(county_code_internal) &
+          (!is.na(municipality_code_internal) | is_county_residual_internal)
+      ) |>
+      transmute(
+        period = as.character(.data[[period_col]]),
+        county_code = county_code_internal,
+        municipality_code = municipality_code_internal,
+        is_county_residual = is_county_residual_internal,
+        dimension_value,
+        across(all_of(af_tid_value_fields))
+      ) |>
+      pivot_longer(
+        cols = all_of(af_tid_value_fields),
+        names_to = "measure_label",
+        values_to = "value_raw"
+      ) |>
+      mutate(
+        dimension_type = cfg$dimension_type,
+        sex = if (cfg$dimension_type == "kön") dimension_value else NA_character_,
+        measure_code = case_when(
+          measure_label == af_tid_value_fields[[1]] ~ "KUA06",
+          measure_label == af_tid_value_fields[[2]] ~ "KUA12",
+          measure_label == af_tid_value_fields[[3]] ~ "KUA24",
+          TRUE ~ NA_character_
+        ),
+        value = suppressWarnings(as.numeric(value_raw))
+      )
+
+    municipalities <- long |>
+      filter(!is.na(municipality_code)) |>
+      transmute(
+        period,
+        geo_code = municipality_code,
+        geo_level = "kommun",
+        sex,
+        dimension_type,
+        dimension_value,
+        measure_code,
+        measure_label,
+        value
+      )
+
+    counties <- long |>
+      group_by(
+        period, county_code, sex, dimension_type, dimension_value,
+        measure_code, measure_label
+      ) |>
+      summarise(
+        value = af_sum_complete(value),
+        .groups = "drop"
+      ) |>
+      transmute(
+        period,
+        geo_code = county_code,
+        geo_level = "län",
+        sex,
+        dimension_type,
+        dimension_value,
+        measure_code,
+        measure_label,
+        value
+      )
+
+    bind_rows(municipalities, counties)
+  }))
+
+  if (is.null(riket_path)) {
+    return(regional)
+  }
+
+  bind_rows(regional, af_normalize_tid_riket(riket_path))
 }
 
 af_normalize_svag_konkurrensformaga <- function(path) {
