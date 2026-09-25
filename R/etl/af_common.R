@@ -2,8 +2,8 @@
 #
 # Grundprincip:
 # 1. kontrollera endast den lilla HTML-sidan varje dag
-# 2. identifiera aktuell YYYY-MM i filnamnet för samtliga primärkällor
-# 3. ladda INTE ned någon xlsx förrän alla fem filer visar samma nya period
+# 2. identifiera aktuell YYYY-MM i filnamnet för samtliga nödvändiga källfiler
+# 3. ladda INTE ned någon xlsx förrän alla sex nödvändiga filer visar samma nya period
 # 4. efter lyckad fullimport markeras perioden som importerad av den framtida
 #    AF-orkestreringen; då laddas filerna inte igen nästa dag
 
