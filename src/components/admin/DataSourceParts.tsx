@@ -91,8 +91,8 @@ export function RequireSession({ children }: { children: ReactNode }) {
   if (state === "out")
     return (
       <Notice title="Inloggning krävs">
-        Den här sidan är endast för administratörer. Inloggning är ännu inte byggd i
-        webbplatsen, så sidan kan bara visas för en inloggad användare med adminroll.
+        Den här sidan är endast för administratörer.{" "}
+        <a href="/auth" className="text-brand-dark underline">Logga in</a>
       </Notice>
     );
   return <>{children}</>;

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as KommerSenareRouteImport } from './routes/kommer-senare'
 import { Route as OmRouteImport } from './routes/om'
 import { Route as StatistikRouteImport } from './routes/statistik'
@@ -27,6 +28,11 @@ import { Route as ApiPublicJobsEtlBatchStartRouteImport } from './routes/api/pub
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KommerSenareRoute = KommerSenareRouteImport.update({
@@ -104,6 +110,7 @@ const ApiPublicJobsEtlBatchStartRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/kommer-senare': typeof KommerSenareRoute
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/kommer-senare': typeof KommerSenareRoute
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
@@ -137,6 +145,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/kommer-senare': typeof KommerSenareRoute
   '/om': typeof OmRoute
   '/statistik': typeof StatistikRoute
@@ -155,6 +164,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/kommer-senare'
     | '/om'
     | '/statistik'
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/kommer-senare'
     | '/om'
     | '/statistik'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/auth'
     | '/kommer-senare'
     | '/om'
     | '/statistik'
@@ -204,6 +216,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   KommerSenareRoute: typeof KommerSenareRoute
   OmRoute: typeof OmRoute
   StatistikRoute: typeof StatistikRoute
@@ -226,6 +239,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kommer-senare': {
@@ -324,6 +344,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   KommerSenareRoute: KommerSenareRoute,
   OmRoute: OmRoute,
   StatistikRoute: StatistikRoute,
