@@ -29,6 +29,7 @@ export function AccountLink() {
   return (
     <div className="hidden items-center gap-3 text-sm md:flex">
       <Link to="/admin/datakallor" className="text-brand-dark underline-offset-2 hover:underline">Admin</Link>
+      <Link to="/byt-losenord" className="text-brand-dark underline-offset-2 hover:underline">Byt lösenord</Link>
       <button type="button" onClick={signOut} className="rounded-md border border-border px-3 py-1.5 hover:bg-neutral-surface">
         Logga ut
       </button>
