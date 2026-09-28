@@ -29,7 +29,9 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [forgot, setForgot] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -48,6 +50,18 @@ function AuthPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
     if (error) setError("Fel e-postadress eller lösenord.");
+  }
+
+  async function onForgot(e: FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + "/reset-password",
+    });
+    setBusy(false);
+    if (error) setError("Kunde inte skicka återställningslänk. Försök igen.");
+    else setInfo("Om adressen finns registrerad har en återställningslänk skickats till din e-post.");
   }
 
   async function oauth(provider: "google" | "microsoft") {
@@ -69,22 +83,44 @@ function AuthPage() {
           Logga in med Google
         </button>
         <p className="text-center text-sm text-ink-muted">eller med e-post</p>
-        <form onSubmit={onSubmit} className="space-y-3">
-          <label className="block text-sm font-semibold">
-            E-post
-            <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 font-normal" />
-          </label>
-          <label className="block text-sm font-semibold">
-            Lösenord
-            <input type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 font-normal" />
-          </label>
-          <button type="submit" disabled={busy} className={`${btn} border-brand-dark bg-brand-dark text-primary-foreground hover:opacity-90`}>
-            {busy ? "Loggar in…" : "Logga in"}
-          </button>
-        </form>
+        {forgot ? (
+          <form onSubmit={onForgot} className="space-y-3">
+            <label className="block text-sm font-semibold">
+              E-post
+              <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 font-normal" />
+            </label>
+            <button type="submit" disabled={busy} className={`${btn} border-brand-dark bg-brand-dark text-primary-foreground hover:opacity-90`}>
+              {busy ? "Skickar…" : "Skicka återställningslänk"}
+            </button>
+            <button type="button" onClick={() => { setForgot(false); setError(null); setInfo(null); }}
+              className="w-full text-center text-sm text-brand-dark underline-offset-2 hover:underline">
+              Tillbaka till inloggning
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={onSubmit} className="space-y-3">
+            <label className="block text-sm font-semibold">
+              E-post
+              <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 font-normal" />
+            </label>
+            <label className="block text-sm font-semibold">
+              Lösenord
+              <input type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)}
+                className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 font-normal" />
+            </label>
+            <button type="submit" disabled={busy} className={`${btn} border-brand-dark bg-brand-dark text-primary-foreground hover:opacity-90`}>
+              {busy ? "Loggar in…" : "Logga in"}
+            </button>
+            <button type="button" onClick={() => { setForgot(true); setError(null); setInfo(null); }}
+              className="w-full text-center text-sm text-brand-dark underline-offset-2 hover:underline">
+              Glömt lösenord?
+            </button>
+          </form>
+        )}
         {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+        {info && <p role="status" className="text-sm text-ink-muted">{info}</p>}
       </div>
     </Section>
   );

@@ -11,8 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as BytLosenordRouteImport } from './routes/byt-losenord'
 import { Route as KommerSenareRouteImport } from './routes/kommer-senare'
 import { Route as OmRouteImport } from './routes/om'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as StatistikRouteImport } from './routes/statistik'
 import { Route as AdminDatakallorIndexRouteImport } from './routes/admin.datakallor.index'
 import { Route as AdminDatakallorSourceIdRouteImport } from './routes/admin.datakallor.$sourceId'
@@ -35,6 +37,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BytLosenordRoute = BytLosenordRouteImport.update({
+  id: '/byt-losenord',
+  path: '/byt-losenord',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KommerSenareRoute = KommerSenareRouteImport.update({
   id: '/kommer-senare',
   path: '/kommer-senare',
@@ -43,6 +50,11 @@ const KommerSenareRoute = KommerSenareRouteImport.update({
 const OmRoute = OmRouteImport.update({
   id: '/om',
   path: '/om',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StatistikRoute = StatistikRouteImport.update({
@@ -111,8 +123,10 @@ const ApiPublicJobsEtlBatchStartRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/byt-losenord': typeof BytLosenordRoute
   '/kommer-senare': typeof KommerSenareRoute
   '/om': typeof OmRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/statistik': typeof StatistikRoute
   '/admin/datakallor/$sourceId': typeof AdminDatakallorSourceIdRoute
   '/admin/datakallor/': typeof AdminDatakallorIndexRoute
@@ -128,8 +142,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/byt-losenord': typeof BytLosenordRoute
   '/kommer-senare': typeof KommerSenareRoute
   '/om': typeof OmRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/statistik': typeof StatistikRoute
   '/admin/datakallor/$sourceId': typeof AdminDatakallorSourceIdRoute
   '/admin/datakallor': typeof AdminDatakallorIndexRoute
@@ -146,8 +162,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/byt-losenord': typeof BytLosenordRoute
   '/kommer-senare': typeof KommerSenareRoute
   '/om': typeof OmRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/statistik': typeof StatistikRoute
   '/admin/datakallor/$sourceId': typeof AdminDatakallorSourceIdRoute
   '/admin/datakallor/': typeof AdminDatakallorIndexRoute
@@ -165,8 +183,10 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/byt-losenord'
     | '/kommer-senare'
     | '/om'
+    | '/reset-password'
     | '/statistik'
     | '/admin/datakallor/$sourceId'
     | '/admin/datakallor/'
@@ -182,8 +202,10 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/byt-losenord'
     | '/kommer-senare'
     | '/om'
+    | '/reset-password'
     | '/statistik'
     | '/admin/datakallor/$sourceId'
     | '/admin/datakallor'
@@ -199,8 +221,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
+    | '/byt-losenord'
     | '/kommer-senare'
     | '/om'
+    | '/reset-password'
     | '/statistik'
     | '/admin/datakallor/$sourceId'
     | '/admin/datakallor/'
@@ -217,8 +241,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  BytLosenordRoute: typeof BytLosenordRoute
   KommerSenareRoute: typeof KommerSenareRoute
   OmRoute: typeof OmRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   StatistikRoute: typeof StatistikRoute
   AdminDatakallorSourceIdRoute: typeof AdminDatakallorSourceIdRoute
   AdminDatakallorIndexRoute: typeof AdminDatakallorIndexRoute
@@ -248,6 +274,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/byt-losenord': {
+      id: '/byt-losenord'
+      path: '/byt-losenord'
+      fullPath: '/byt-losenord'
+      preLoaderRoute: typeof BytLosenordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/kommer-senare': {
       id: '/kommer-senare'
       path: '/kommer-senare'
@@ -260,6 +293,13 @@ declare module '@tanstack/react-router' {
       path: '/om'
       fullPath: '/om'
       preLoaderRoute: typeof OmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/statistik': {
@@ -345,8 +385,10 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  BytLosenordRoute: BytLosenordRoute,
   KommerSenareRoute: KommerSenareRoute,
   OmRoute: OmRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   StatistikRoute: StatistikRoute,
   AdminDatakallorSourceIdRoute: AdminDatakallorSourceIdRoute,
   AdminDatakallorIndexRoute: AdminDatakallorIndexRoute,
