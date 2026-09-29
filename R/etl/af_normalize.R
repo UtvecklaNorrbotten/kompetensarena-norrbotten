@@ -639,8 +639,11 @@ af_normalize_bas <- function(path, period = NULL) {
       source_county_code = unname(af_county_codes[af_clean_county_name(LAN)])
     )
 
-  municipalities <- raw |>
-    select(PERIOD, geo_code, source_county_code, all_of(af_bas_measure_map$measure_code)) |>
+  long <- raw |>
+    select(
+      PERIOD, geo_code, source_county_code,
+      all_of(af_bas_measure_map$measure_code)
+    ) |>
     pivot_longer(
       cols = all_of(af_bas_measure_map$measure_code),
       names_to = "measure_code",
@@ -651,7 +654,6 @@ af_normalize_bas <- function(path, period = NULL) {
       period = PERIOD,
       geo_code,
       source_county_code,
-      geo_level = "kommun",
       sex,
       dimension_type,
       dimension_value,
@@ -660,19 +662,33 @@ af_normalize_bas <- function(path, period = NULL) {
       value = suppressWarnings(as.numeric(value))
     )
 
-  counties <- municipalities |>
+  # Kommun-ID är stabilt över tid. Om samma kommun förekommer under två län
+  # i en historisk övergång (t.ex. Heby) kollapsas delraderna till en kommunrad.
+  # Om någon del är sekretessmarkerad/NA blir kommunvärdet NA i stället för att
+  # vi låtsas känna den exakta summan.
+  municipalities <- long |>
+    group_by(
+      period, geo_code, sex, dimension_type, dimension_value,
+      measure_code, measure_label
+    ) |>
+    summarise(value = af_sum_complete(value), .groups = "drop") |>
+    mutate(geo_level = "kommun") |>
+    select(
+      period, geo_code, geo_level, sex, dimension_type, dimension_value,
+      measure_code, measure_label, value
+    )
+
+  # Län följer källans länstillhörighet för respektive historisk period.
+  counties <- long |>
+    filter(!is.na(source_county_code)) |>
     group_by(
       period, source_county_code, sex, dimension_type, dimension_value,
       measure_code, measure_label
     ) |>
-    summarise(
-      municipality_count = n_distinct(geo_code),
-      value = af_sum_complete(value),
-      .groups = "drop"
-    ) |>
+    summarise(value = af_sum_complete(value), .groups = "drop") |>
     transmute(
       period,
-      geo_code = county_code,
+      geo_code = source_county_code,
       geo_level = "län",
       sex,
       dimension_type,
@@ -682,13 +698,9 @@ af_normalize_bas <- function(path, period = NULL) {
       value
     )
 
-  municipalities <- municipalities |>
-    select(-source_county_code)
-
   bind_rows(municipalities, counties) |>
     af_add_riket_from_counties()
 }
-
 
 # ---- Korsvalideringsunderlag (importeras inte som egna produktionsmått) ----
 
@@ -730,7 +742,7 @@ af_control_web_sok_total_by_sex <- function(path, period = NULL) {
     af_add_geo("LAN", "KOMMUN_BESKR") |>
     mutate(INSAL = suppressWarnings(as.numeric(INSAL))) |>
     group_by(PERIOD, geo_code, KOEN) |>
-    summarise(actual = sum(INSAL, na.rm = TRUE), .groups = "drop") |>
+    summarise(actual = af_sum_complete(INSAL), .groups = "drop") |>
     transmute(period = PERIOD, geo_code, sex = KOEN, actual)
 }
 
@@ -767,7 +779,7 @@ af_control_yrkesomrade_total <- function(path, period = NULL) {
     af_add_geo("LÄN", "KOMMUN") |>
     mutate(KVAR = suppressWarnings(as.numeric(KVAR))) |>
     group_by(PERIOD, geo_code, `KÖN`) |>
-    summarise(actual = sum(KVAR, na.rm = TRUE), .groups = "drop") |>
+    summarise(actual = af_sum_complete(KVAR), .groups = "drop") |>
     transmute(period = PERIOD, geo_code, sex = `KÖN`, actual)
 }
 
