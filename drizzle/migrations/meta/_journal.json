@@ -106,6 +106,13 @@
       "when": 1790691792386,
       "tag": "0014_apply_af_geographies_and_indicators",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1790691815499,
+      "tag": "0015_apply_incremental_etl_publication",
+      "breakpoints": true
     }
   ]
 }
