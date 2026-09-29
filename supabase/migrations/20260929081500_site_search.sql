@@ -12,7 +12,12 @@ create table if not exists public.search_index (
 );
 create index if not exists search_index_vector_idx on public.search_index using gin (search_vector);
 alter table public.search_index enable row level security;
-create policy "Public can search published entries" on public.search_index for select to anon, authenticated using (true);
+create policy "Public can search visible entries" on public.search_index
+for select to anon, authenticated using (
+  kind <> 'Indikator' or exists (
+    select 1 from public.indicators i where 'indicator:' || i.id::text = search_index.id
+  )
+);
 revoke all on public.search_index from anon, authenticated;
 grant select on public.search_index to anon, authenticated;
 
