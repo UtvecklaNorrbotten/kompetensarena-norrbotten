@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
-import { BookOpen, Download, Home, LockKeyhole, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
+import { BookOpen, Download, Home, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
 import { areas, areaPath } from "@/config/areas";
 import { AppLink } from "./AppLink";
 
@@ -40,7 +40,7 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
     };
   }, [mobileOpen, onMobileClose]);
 
-  useEffect(() => { onMobileClose(); }, [pathname]); // Navigation closes the mobile panel.
+  useEffect(() => { onMobileClose(); }, [pathname, onMobileClose]); // Navigation closes the mobile panel.
 
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
 
