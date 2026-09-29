@@ -41,15 +41,15 @@ Fördjupningarna i varje område börjar som platshållare och är tydligt märk
 
 **Koppling till SCB och AF:** Yrken kopplas via SSYK-koder, branscher via SNI-koder och geografi via kommunkoder. Det gör det möjligt att räkna andelar, till exempel behov i förhållande till antal sysselsatta, och att lägga till åldersstruktur och pensionsavgångar.
 
-## Steg 4 – Behörighet för företagsnivå
-- En ny roll, "analytiker", som admin tilldelar manuellt.
-- Offentliga sidor visar bara sammanställda siffror. Grupper med färre än cirka 3–5 företag döljs så att enskilda företag inte kan pekas ut.
-- Svar per företag visas bara för admin och analytiker. Skyddet ligger i databasen och på servern, inte bara i gränssnittet.
+## Steg 4 – Behörighet för arbetsgivarnivå
+- Nya roller, "kommunanvändare" och "ledning", som admin tilldelar manuellt beroende på vem materialet delas med. Rollerna kan få olika åtkomst.
+- Offentliga sidor visar sammanställningar per bransch, yrke och geografi. Vid varje siffra står underlaget, till exempel "baserat på 12 arbetsgivare, 48 svar". Arbetsgivare är ett bredare ord än företag eftersom även myndigheter och organisationer har svarat.
+- Svar per arbetsgivare visas bara för admin, kommunanvändare och ledning. Skyddet ligger i databasen och på servern, inte bara i gränssnittet.
 
 ## Frågor att klara ut innan steg 3
-- Hur ser enkätexporten ut? Ett exempel på filen eller en kolumnlista behövs.
-- Finns SSYK- och SNI-koder i svaren, eller behöver vi matcha fritext mot koder?
-- Personuppgiftsbiträdesavtal och laglig grund för att lagra företagssvar, eftersom kontaktpersoner kan förekomma.
+- Rådata finns: en rad per svar och svarande, plus ett antal kolumner. Vi väljer ut de relevanta kolumnerna, och resten av enkätlogiken filtreras bort vid import. Ett exempel på filen behövs för att göra kolumnmappningen.
+- SSYK- och SNI-kodning är till stor del redan gjord lokalt. Den kodade filen importeras direkt, så ingen fritextmatchning behövs i portalen.
+- Personuppgiftsbiträdesavtal och laglig grund finns redan. Det som återstår är att bestämma om personuppgifter, till exempel kontaktpersoner, ska visas i portalen. Tills det är bestämt importeras de inte.
 
 ## Tekniska detaljer
 - Menyn byggs på shadcn Sidebar med `collapsible="icon"` och variant `floating`. Utfällning vid hover/fokus styrs med en kort fördröjning. Konfigurationen ligger i `src/config/areas.ts` så att ingen menytext hårdkodas.
