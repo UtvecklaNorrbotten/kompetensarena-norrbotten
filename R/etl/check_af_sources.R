@@ -89,14 +89,27 @@ run_af_source_check <- function() {
     )
   )
 
-  af_set_github_output(TRUE, common_period)
-  message(
-    "AF: samtliga sex primärkällor är uppdaterade till ",
-    common_period,
-    " och perioden är redo för import."
+  has_historical_baseline <- (
+    !is.na(last_successful_period) &&
+    nzchar(last_successful_period)
   )
 
-  invisible(TRUE)
+  af_set_github_output(has_historical_baseline, common_period)
+
+  if (has_historical_baseline) {
+    message(
+      "AF: samtliga sex primärkällor är uppdaterade till ",
+      common_period,
+      " och perioden är redo för inkrementell import."
+    )
+  } else {
+    message(
+      "AF: källorna är synkroniserade till ", common_period,
+      " men historisk backfill saknas. Automatisk månadsimport startas inte."
+    )
+  }
+
+  invisible(has_historical_baseline)
 }
 
 tryCatch(
