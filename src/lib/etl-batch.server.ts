@@ -26,16 +26,35 @@ const observationSchema = z.object({
   dimensions: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
 });
 
-const startSchema = z.object({
-  indicator_id: z.string().min(1).max(100),
-  source: z.string().min(1).max(100),
-  expected_chunks: z.number().int().min(1).max(MAX_CHUNKS),
-  expected_rows: z.number().int().min(0).optional(),
-  kalla_uppdaterad_datum: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Datum måste vara YYYY-MM-DD")
-    .optional(),
-});
+const startSchema = z
+  .object({
+    indicator_id: z.string().min(1).max(100),
+    source: z.string().min(1).max(100),
+    expected_chunks: z.number().int().min(1).max(MAX_CHUNKS),
+    expected_rows: z.number().int().min(0).optional(),
+    mode: z.enum(["full", "replace_period"]).default("full"),
+    replace_period: z.string().min(1).max(20).optional(),
+    kalla_uppdaterad_datum: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "Datum måste vara YYYY-MM-DD")
+      .optional(),
+  })
+  .superRefine((value, ctx) => {
+    if (value.mode === "replace_period" && !value.replace_period) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["replace_period"],
+        message: "replace_period krävs i replace_period-läge",
+      });
+    }
+    if (value.mode === "replace_period" && value.expected_rows === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["expected_rows"],
+        message: "expected_rows krävs i replace_period-läge",
+      });
+    }
+  });
 
 const chunkSchema = z.object({
   batch_id: z.string().uuid(),
@@ -141,14 +160,31 @@ export async function handleBatchStart(request: Request): Promise<Response> {
     .select("id")
     .single();
 
-  const { data: batchId, error } = await supabaseAdmin.rpc("etl_start_batch", {
-    p_indicator_id: payload.indicator_id,
-    p_source: payload.source,
-    p_expected_chunks: payload.expected_chunks,
-    ...(payload.expected_rows !== undefined ? { p_expected_rows: payload.expected_rows } : {}),
-    ...(payload.kalla_uppdaterad_datum ? { p_kalla_uppdaterad_datum: payload.kalla_uppdaterad_datum } : {}),
-    ...(run?.id ? { p_run_id: run.id } : {}),
-  });
+  const rpcResult =
+    payload.mode === "replace_period"
+      ? await supabaseAdmin.rpc("etl_start_period_batch", {
+          p_indicator_id: payload.indicator_id,
+          p_source: payload.source,
+          p_replace_period: payload.replace_period!,
+          p_expected_chunks: payload.expected_chunks,
+          p_expected_rows: payload.expected_rows!,
+          ...(payload.kalla_uppdaterad_datum
+            ? { p_kalla_uppdaterad_datum: payload.kalla_uppdaterad_datum }
+            : {}),
+          ...(run?.id ? { p_run_id: run.id } : {}),
+        })
+      : await supabaseAdmin.rpc("etl_start_batch", {
+          p_indicator_id: payload.indicator_id,
+          p_source: payload.source,
+          p_expected_chunks: payload.expected_chunks,
+          ...(payload.expected_rows !== undefined ? { p_expected_rows: payload.expected_rows } : {}),
+          ...(payload.kalla_uppdaterad_datum
+            ? { p_kalla_uppdaterad_datum: payload.kalla_uppdaterad_datum }
+            : {}),
+          ...(run?.id ? { p_run_id: run.id } : {}),
+        });
+
+  const { data: batchId, error } = rpcResult;
 
   if (error) {
     console.error("[etl-batch] kunde inte starta batch:", error.message);
@@ -161,6 +197,8 @@ export async function handleBatchStart(request: Request): Promise<Response> {
       indicator_id: payload.indicator_id,
       expected_chunks: payload.expected_chunks,
       expected_rows: payload.expected_rows ?? null,
+      mode: payload.mode,
+      replace_period: payload.replace_period ?? null,
       status: "started",
     },
     200,

@@ -135,13 +135,30 @@ etl_split_observations <- function(observations, max_rows = 5000L, max_bytes = 5
   out
 }
 
-etl_start_batch <- function(indicator_id, source, source_updated_date, expected_chunks, expected_rows) {
+etl_start_batch <- function(
+  indicator_id,
+  source,
+  source_updated_date,
+  expected_chunks,
+  expected_rows,
+  mode = "full",
+  replace_period = NULL
+) {
+  if (!mode %in% c("full", "replace_period")) {
+    stop("Ogiltigt batchläge: ", mode)
+  }
+
   start_body <- list(
     indicator_id = indicator_id,
     source = source,
     expected_chunks = expected_chunks,
-    expected_rows = expected_rows
+    expected_rows = expected_rows,
+    mode = mode
   )
+
+  if (!is.null(replace_period) && !is.na(replace_period) && nzchar(replace_period)) {
+    start_body$replace_period <- replace_period
+  }
   if (!is.null(source_updated_date) && !is.na(source_updated_date) && nzchar(source_updated_date)) {
     start_body$kalla_uppdaterad_datum <- source_updated_date
   }

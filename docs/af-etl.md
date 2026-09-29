@@ -343,3 +343,60 @@ värdesavvikelser inom gemensam täckning blockerar däremot körningen.
 `strategy.fail-fast = false` gör att samtliga struktur- och jämförelsejobb slutförs
 även om ett av dem misslyckas. Därmed visas hela felbilden i en körning i stället för
 att nästa fel upptäcks först efter en ny full historikkörning.
+
+
+## Produktionspublicering
+
+AF-flödet har nu två publiceringslägen utöver validering:
+
+- `publish-history`: en engångsbackfill som publicerar hela den verifierade historiken
+  för fem AF-indikatorer.
+- `publish-current`: publicerar endast den nya gemensamma månadsperioden.
+
+De fem produktionsindikatorerna är:
+
+- `af-arbetssokande`
+- `af-tid-utan-arbete`
+- `af-svag-konkurrensformaga`
+- `af-yrkesomrade`
+- `af-arbetskraft-bas`
+
+Observationerna behåller långt format. `geo_level`, dimensionstyp, dimensionsvärde,
+måttkod och måttetikett sparas i `dimensions`. `sex` sparas när den finns.
+Sekretessmarkeringar från tid-filen följer med som
+`dimensions.value_is_lower_bound = true`; det numeriska `value` är då den
+lägsta säkra nivån.
+
+### Geografier
+
+Migration `0014_seed_af_geographies_and_indicators.sql` seedar Riket, exakt 21 län
+och exakt 290 kommuner enligt SCB:s kodindelning 2026. Kommunernas `parent_code`
+är länskoden och länens `parent_code` är `00` för Riket. Migrationen stoppar om
+slutresultatet inte innehåller exakt 290 kommuner, 21 län och korrekt Riket-post.
+
+### Historisk backfill
+
+Backfillen använder samma versionsstyrda batchmekanism som SCB/E3. Varje AF-källa
+publiceras som en full batch och blir synlig först när just den indikatorns batch
+finaliseras. Workflowet kör källorna sekventiellt för att inte belasta databasen med
+flera stora inserts samtidigt. `data_source_state.latest_successful_period` uppdateras
+först när samtliga fem indikatorer har lyckats.
+
+### Inkrementell månadsimport
+
+Efter backfillen kopieras inte hela historiken varje månad. En ny period tas emot i en
+liten osynlig stagingbatch. Vid finalisering låser databasen indikatorn, tar bort den
+gamla versionen av just den perioden från den aktiva historikbatchen och flyttar in de
+nya staged raderna i samma transaktion. Publika läsare ser därför aldrig en halv
+månadsuppdatering.
+
+Det schemalagda flödet är:
+
+1. HTML-kontrollen avgör om alla sex AF-filer visar samma nya period.
+2. Automatisk publicering tillåts bara om en historisk baseline redan har publicerats.
+3. Den nya perioden kör `validate`.
+4. De fem indikatorerna publiceras med `replace_period`, en i taget.
+5. Först när alla fem lyckats uppdateras `latest_successful_period`.
+
+Om ingen historisk baseline finns markeras källorna som redo men den automatiska
+månadsimporten startas inte. Då måste `publish-history` köras först.
