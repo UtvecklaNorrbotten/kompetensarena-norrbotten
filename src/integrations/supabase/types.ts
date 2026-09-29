@@ -223,7 +223,6 @@ export type Database = {
       }
       etl_batches: {
         Row: {
-          base_batch_id: string | null
           created_at: string
           error_message: string | null
           expected_chunks: number
@@ -234,13 +233,11 @@ export type Database = {
           last_activity_at: string
           received_chunks: number
           received_rows: number
-          replace_period: string | null
           run_id: string | null
           source: string
           status: Database["public"]["Enums"]["etl_batch_status"]
         }
         Insert: {
-          base_batch_id?: string | null
           created_at?: string
           error_message?: string | null
           expected_chunks: number
@@ -251,13 +248,11 @@ export type Database = {
           last_activity_at?: string
           received_chunks?: number
           received_rows?: number
-          replace_period?: string | null
           run_id?: string | null
           source: string
           status?: Database["public"]["Enums"]["etl_batch_status"]
         }
         Update: {
-          base_batch_id?: string | null
           created_at?: string
           error_message?: string | null
           expected_chunks?: number
@@ -268,19 +263,11 @@ export type Database = {
           last_activity_at?: string
           received_chunks?: number
           received_rows?: number
-          replace_period?: string | null
           run_id?: string | null
           source?: string
           status?: Database["public"]["Enums"]["etl_batch_status"]
         }
         Relationships: [
-          {
-            foreignKeyName: "etl_batches_base_batch_id_fkey"
-            columns: ["base_batch_id"]
-            isOneToOne: false
-            referencedRelation: "etl_batches"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "etl_batches_indicator_id_fkey"
             columns: ["indicator_id"]
@@ -563,18 +550,6 @@ export type Database = {
           p_expected_rows?: number
           p_indicator_id: string
           p_kalla_uppdaterad_datum?: string
-          p_run_id?: string
-          p_source: string
-        }
-        Returns: string
-      }
-      etl_start_period_batch: {
-        Args: {
-          p_expected_chunks: number
-          p_expected_rows: number
-          p_indicator_id: string
-          p_kalla_uppdaterad_datum?: string
-          p_replace_period: string
           p_run_id?: string
           p_source: string
         }
