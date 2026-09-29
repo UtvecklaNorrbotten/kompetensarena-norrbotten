@@ -38,10 +38,12 @@ af_control_compare <- function(
     select(all_of(keys), expected)
 
   duplicate_actual <- actual |>
-    count(across(all_of(keys)), name = "n") |>
+    group_by(across(all_of(keys))) |>
+    summarise(n = n(), .groups = "drop") |>
     filter(n > 1)
   duplicate_expected <- expected |>
-    count(across(all_of(keys)), name = "n") |>
+    group_by(across(all_of(keys))) |>
+    summarise(n = n(), .groups = "drop") |>
     filter(n > 1)
 
   if (nrow(duplicate_actual) > 0 || nrow(duplicate_expected) > 0) {
@@ -351,8 +353,8 @@ run_af_normalization_validation <- function() {
 
   # Överlappande mått används som regressionskontroller.
   # Aktuell gemensam period måste matcha exakt. Historiska differenser mellan
-  # separata AF-filer rapporteras eftersom AF kan revidera historiska uttag
-  # oberoende av varandra utan att ändra YYYY-MM i filnamnet.
+  # separata AF-filer rapporteras i stället för att stoppa normal validate.
+  # Exakta filversioner sparas med SHA-256 så att skillnader kan reproduceras.
   tid_control <- af_control_tid_sex(path_for("tid_utan_arbete"))
 
   sok_control <- sok |>
