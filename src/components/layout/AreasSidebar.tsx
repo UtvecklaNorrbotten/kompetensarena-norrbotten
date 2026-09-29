@@ -11,7 +11,6 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
   const [pinned, setPinned] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
-  const [selected, setSelected] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const panel = useRef<HTMLElement>(null);
   const restoreFocus = useRef<HTMLElement | null>(null);
@@ -60,10 +59,10 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
         <li><AppLink href="/" aria-label="Startsida" title="Startsida" className="flex items-center gap-3 rounded-md p-2 hover:bg-brand-light"><Home className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Startsida</span></AppLink></li>
         {areas.map((area) => {
           const Icon = area.icon;
-          const open = selected === area.slug || (selected === null && activeArea === area.slug);
+          const open = activeArea === area.slug;
           return (
             <li key={area.slug}>
-              <AppLink href={areaPath(area.slug)} aria-current={pathname === areaPath(area.slug) || pathname === areaPath(area.slug) + "/" ? "page" : undefined} title={area.title} className="flex items-center gap-3 rounded-md p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light aria-[current=page]:font-semibold" onClick={() => setSelected(area.slug)}>
+              <AppLink href={areaPath(area.slug)} aria-current={pathname === areaPath(area.slug) || pathname === areaPath(area.slug) + "/" ? "page" : undefined} title={area.title} className="flex items-center gap-3 rounded-md p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light aria-[current=page]:font-semibold">
                 <Icon className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>{area.title}</span>
               </AppLink>
               {(expanded || mobile) && open && (
