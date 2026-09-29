@@ -33,11 +33,13 @@ af_control_compare <- function(
 
   actual <- actual |>
     filter(geo_code %in% municipality_codes) |>
-    select(all_of(keys), actual)
+    select(all_of(keys), actual) |>
+    mutate(actual_present = TRUE)
 
   expected <- expected |>
     filter(geo_code %in% municipality_codes) |>
-    select(all_of(keys), expected)
+    select(all_of(keys), expected) |>
+    mutate(expected_present = TRUE)
 
   duplicate_actual <- actual |>
     group_by(across(all_of(keys))) |>
@@ -59,8 +61,8 @@ af_control_compare <- function(
   check <- full_join(actual, expected, by = keys) |>
     mutate(
       issue_type = case_when(
-        is.na(actual) & !is.na(expected) ~ "saknas_i_actual",
-        !is.na(actual) & is.na(expected) ~ "saknas_i_expected",
+        is.na(actual_present) ~ "saknas_i_actual",
+        is.na(expected_present) ~ "saknas_i_expected",
         !is.na(actual) & !is.na(expected) & abs(actual - expected) > tolerance ~ "avvikelse",
         TRUE ~ NA_character_
       ),
@@ -74,6 +76,13 @@ af_control_compare <- function(
 
   comparable <- check |>
     filter(!is.na(actual), !is.na(expected))
+
+  unknown_value_rows <- check |>
+    filter(
+      !is.na(actual_present),
+      !is.na(expected_present),
+      is.na(actual) | is.na(expected)
+    )
 
   issues <- check |>
     filter(!is.na(issue_type))
@@ -94,6 +103,7 @@ af_control_compare <- function(
     missing_actual_total = sum(issues$issue_type == "saknas_i_actual"),
     missing_expected_total = sum(issues$issue_type == "saknas_i_expected"),
     mismatches_total = sum(issues$issue_type == "avvikelse"),
+    skipped_unknown_values = nrow(unknown_value_rows),
     fatal = nrow(latest_issues) > 0 || (strict_history && nrow(historical_issues) > 0),
     stringsAsFactors = FALSE
   )
@@ -101,13 +111,14 @@ af_control_compare <- function(
   message(sprintf(
     paste0(
       "Korsvalidering %s: %s jämförda rader, %s avvikelser totalt ",
-      "(aktuell period: %s, historik: %s)."
+      "(aktuell period: %s, historik: %s; okända värden hoppades över: %s)."
     ),
     label,
     format(nrow(comparable), big.mark = " "),
     format(nrow(issues), big.mark = " "),
     format(nrow(latest_issues), big.mark = " "),
-    format(nrow(historical_issues), big.mark = " ")
+    format(nrow(historical_issues), big.mark = " "),
+    format(nrow(unknown_value_rows), big.mark = " ")
   ))
 
   if (nrow(historical_issues) > 0 && nrow(latest_issues) == 0) {
