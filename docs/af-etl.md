@@ -262,19 +262,54 @@ Riket inte ska underskattas.
 `ETL - AF månadskontroll` har tre manuella lägen:
 
 - `check`: läser endast källsidan och kontrollerar att de sex filerna visar samma period.
-- `validate`: normaliserar hela historiken, kräver full struktur och exakt
-  korsvalidering för den aktuella gemensamma perioden. Historiska skillnader mellan
-  separata källfiler rapporteras men blockerar inte.
-- `validate-strict`: samma kontroll, men även historiska källskillnader blockerar.
+- `validate`: behåller endast den aktuella gemensamma perioden ur de sex filerna
+  och är den normala kvalitetskontrollen inför en månadsimport.
+- `validate-history`: normaliserar hela historiken och används manuellt för den
+  första backfillen eller när parser-, dimensions- eller geografiregler ändras.
 
-Bakgrunden är att en full historisk likhetskontroll kan fånga skillnader mellan
-separata AF-uttag som inte påverkar den aktuella månaden. Sådana skillnader ska inte
-döljas: varje validate-körning sparar därför en artifact med källfilernas URL,
-SHA-256 och storlek, struktursammanfattning samt samtliga korsvalideringsavvikelser.
+Arbetsförmedlingens xlsx-filer innehåller hela tidsserien. Det går därför inte att
+hämta endast en månads rader via källan: hela den nya arbetsboken måste laddas ned.
+Efter nedladdningen filtrerar den normala `validate` däremot pivot-cacherna redan
+under den strömmande läsningen så att bara den aktuella perioden behålls i R-minnet
+och normaliseras. Det är samma strategi som den framtida månadsimporten ska använda.
 
-Valideringen kontrollerar dessutom att maxperioden inne i varje normaliserat dataset
-är samma som perioden i filnamnen, och att den aktuella perioden innehåller 290
-kommuner, 21 län och Riket.
+Varje valideringskörning sparar en artifact med källfilernas URL, SHA-256 och storlek,
+struktursammanfattning samt korsvalideringsavvikelser. Valideringen kontrollerar också
+att maxperioden inne i normaliserade data motsvarar perioden i filnamnen och att den
+aktuella perioden innehåller 290 kommuner, 21 län och Riket.
 
 Workflowet kör den billiga källkontrollen både den 23-31 och den 1-7 för att även
 fånga en publicering som kommer efter ett månadsskifte.
+
+
+### Historiska kommunbyten, inklusive Heby
+
+Kommunen behåller sin stabila SCB-kod över tid även om länstillhörigheten ändras.
+Därför används kommunkoden som kommunens identitet, medan länssummeringar följer
+länstillhörigheten som faktiskt anges i AF-källan för respektive period.
+
+Heby är det verifierade specialfallet som utlöste denna regel. Kring länsbytet
+2006/2007 förekommer samma kommun i två länsrader under samma period. Normaliseringen
+kollapsar sådana delrader till en enda kommunrad per period/dimension. Om samtliga
+delvärden är numeriska summeras de. Om minst ett delvärde är sekretessmarkerat eller
+saknas blir den sammanslagna kommunposten `NA`; vi ersätter aldrig ett okänt
+`<5`-värde med noll.
+
+Korsvalideringen använder samma princip. En kontrollrad som finns i båda källorna men
+har ett okänt/maskerat värde hoppas över som exakt likhetskontroll och rapporteras som
+okänd, inte som en falsk avvikelse.
+
+### Backfill och löpande månadsimport
+
+Målbilden är två separata körvägar:
+
+1. `validate-history` / historisk backfill: hela historiken läses och verifieras
+   manuellt en gång samt igen när normaliseringsregler ändras.
+2. Löpande månadskörning: HTML-grinden kontrollerar först om en ny gemensam period
+   finns. Först då laddas de sex nya arbetsböckerna ned, och endast den nya perioden
+   behålls och normaliseras.
+
+`data_source_state.latest_successful_period` är grinden som gör att samma redan
+lyckade period inte ska importeras på nytt. Den faktiska AF-publiceringen till
+databasen kopplas på i ett separat steg; nuvarande workflow validerar och förbereder
+den inkrementella normaliseringsvägen men publicerar ännu ingen AF-data.

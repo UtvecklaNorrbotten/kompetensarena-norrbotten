@@ -40,6 +40,13 @@ af_sum_complete <- function(x) {
   sum(x)
 }
 
+af_period_matches <- function(value, period = NULL) {
+  if (is.null(period) || length(period) == 0L || is.na(period) || !nzchar(period)) {
+    return(TRUE)
+  }
+  identical(as.character(value), as.character(period))
+}
+
 af_add_riket_from_counties <- function(data) {
   required <- c("geo_code", "geo_level", "value")
   missing <- setdiff(required, names(data))
@@ -73,7 +80,7 @@ af_add_riket_from_counties <- function(data) {
   bind_rows(data, riket)
 }
 
-af_normalize_web_sok <- function(path) {
+af_normalize_web_sok <- function(path, period = NULL) {
   caches <- list(
     list(id = 3L, dimension_type = "ålder", dimension_field = "ALDGR"),
     list(id = 2L, dimension_type = "födelseland", dimension_field = "FODLGRP"),
@@ -93,7 +100,10 @@ af_normalize_web_sok <- function(path) {
     raw <- af_read_pivot_cache(
       path,
       cache_id = cfg$id,
-      keep_fields = fields
+      keep_fields = fields,
+      row_filter = function(row) {
+        af_period_matches(row[["PERIOD"]], period)
+      }
     ) |>
       mutate(
         county_name = af_clean_county_name(LAN),
@@ -108,6 +118,8 @@ af_normalize_web_sok <- function(path) {
     # kommunkod publiceras inte som kommun men får ingå i läns-/rikssumman.
     municipalities <- raw |>
       filter(!is.na(county_code), !is.na(municipality_code)) |>
+      group_by(PERIOD, municipality_code, KOEN, dimension_value) |>
+      summarise(value = af_sum_complete(value), .groups = "drop") |>
       transmute(
         period = PERIOD,
         geo_code = municipality_code,
@@ -125,7 +137,7 @@ af_normalize_web_sok <- function(path) {
     counties <- raw |>
       filter(!is.na(county_code)) |>
       group_by(PERIOD, county_code, KOEN, dimension_value) |>
-      summarise(value = sum(value, na.rm = TRUE), .groups = "drop") |>
+      summarise(value = af_sum_complete(value), .groups = "drop") |>
       transmute(
         period = PERIOD,
         geo_code = county_code,
@@ -142,7 +154,7 @@ af_normalize_web_sok <- function(path) {
     # Det ger exakt rikstotal utan att fördela okänd geografi på ett län.
     riket <- raw |>
       group_by(PERIOD, KOEN, dimension_value) |>
-      summarise(value = sum(value, na.rm = TRUE), .groups = "drop") |>
+      summarise(value = af_sum_complete(value), .groups = "drop") |>
       transmute(
         period = PERIOD,
         geo_code = "00",
@@ -192,14 +204,17 @@ af_tid_value_fields <- c(
   "Utan arbete mer än 24 månader"
 )
 
-af_normalize_tid_riket <- function(path) {
+af_normalize_tid_riket <- function(path, period = NULL) {
   raw <- af_read_pivot_cache(
     path,
     cache_id = 1L,
     keep_fields = c(
       "PERIOD", "KOEN", "ALDGR", "FH", "FLAND", "UTBILDNING",
       "INSAL", "UA06", "UA12", "UA24"
-    )
+    ),
+    row_filter = function(row) {
+      af_period_matches(row[["PERIOD"]], period)
+    }
   ) |>
     mutate(
       INSAL = suppressWarnings(as.numeric(INSAL)),
@@ -265,7 +280,7 @@ af_normalize_tid_riket <- function(path) {
   )
 }
 
-af_normalize_tid_utan_arbete <- function(path, riket_path = NULL) {
+af_normalize_tid_utan_arbete <- function(path, riket_path = NULL, period = NULL) {
   municipality_codes <- af_get_municipality_codes()
 
   regional <- bind_rows(lapply(af_tid_sheet_specs, function(cfg) {
@@ -278,6 +293,10 @@ af_normalize_tid_utan_arbete <- function(path, riket_path = NULL) {
       NULL
     } else {
       af_find_column(raw, cfg$dimension_candidates)
+    }
+
+    if (!is.null(period)) {
+      raw <- raw[as.character(raw[[period_col]]) == as.character(period), , drop = FALSE]
     }
 
     missing_values <- setdiff(af_tid_value_fields, names(raw))
@@ -354,6 +373,11 @@ af_normalize_tid_utan_arbete <- function(path, riket_path = NULL) {
 
     municipalities <- long |>
       filter(!is.na(municipality_code)) |>
+      group_by(
+        period, municipality_code, sex, dimension_type, dimension_value,
+        measure_code, measure_label
+      ) |>
+      summarise(value = af_sum_complete(value), .groups = "drop") |>
       transmute(
         period,
         geo_code = municipality_code,
@@ -394,10 +418,10 @@ af_normalize_tid_utan_arbete <- function(path, riket_path = NULL) {
     return(regional)
   }
 
-  bind_rows(regional, af_normalize_tid_riket(riket_path))
+  bind_rows(regional, af_normalize_tid_riket(riket_path, period = period))
 }
 
-af_normalize_svag_konkurrensformaga <- function(path) {
+af_normalize_svag_konkurrensformaga <- function(path, period = NULL) {
   municipality_codes <- af_get_municipality_codes()
 
   raw <- af_read_pivot_cache(
@@ -406,7 +430,10 @@ af_normalize_svag_konkurrensformaga <- function(path) {
     keep_fields = c(
       "PERIOD", "KOEN", "LAN_BESKR", "KOMMUN_BESKR",
       "KUA06", "KUA12", "KUA24", "UTSATTA"
-    )
+    ),
+    row_filter = function(row) {
+      af_period_matches(row[["PERIOD"]], period)
+    }
   ) |>
     mutate(
       county_name = af_clean_county_name(LAN_BESKR),
@@ -420,7 +447,7 @@ af_normalize_svag_konkurrensformaga <- function(path) {
     municipalities <- data |>
       filter(!is.na(county_code), !is.na(municipality_code)) |>
       group_by(PERIOD, municipality_code, KOEN) |>
-      summarise(value = sum(UTSATTA, na.rm = TRUE), .groups = "drop") |>
+      summarise(value = af_sum_complete(UTSATTA), .groups = "drop") |>
       transmute(
         period = PERIOD,
         geo_code = municipality_code,
@@ -436,7 +463,7 @@ af_normalize_svag_konkurrensformaga <- function(path) {
     counties <- data |>
       filter(!is.na(county_code)) |>
       group_by(PERIOD, county_code, KOEN) |>
-      summarise(value = sum(UTSATTA, na.rm = TRUE), .groups = "drop") |>
+      summarise(value = af_sum_complete(UTSATTA), .groups = "drop") |>
       transmute(
         period = PERIOD,
         geo_code = county_code,
@@ -451,7 +478,7 @@ af_normalize_svag_konkurrensformaga <- function(path) {
 
     riket <- data |>
       group_by(PERIOD, KOEN) |>
-      summarise(value = sum(UTSATTA, na.rm = TRUE), .groups = "drop") |>
+      summarise(value = af_sum_complete(UTSATTA), .groups = "drop") |>
       transmute(
         period = PERIOD,
         geo_code = "00",
@@ -487,13 +514,16 @@ af_normalize_svag_konkurrensformaga <- function(path) {
   )
 }
 
-af_normalize_yrkesomrade <- function(path) {
+af_normalize_yrkesomrade <- function(path, period = NULL) {
   municipality_codes <- af_get_municipality_codes()
 
   raw <- af_read_pivot_cache(
     path,
     cache_id = 1L,
-    keep_fields = c("PERIOD", "KÖN", "YRKESOMRÅDE", "LÄN", "KOMMUN", "KVAR")
+    keep_fields = c("PERIOD", "KÖN", "YRKESOMRÅDE", "LÄN", "KOMMUN", "KVAR"),
+    row_filter = function(row) {
+      af_period_matches(row[["PERIOD"]], period)
+    }
   ) |>
     mutate(
       county_name = af_clean_county_name(LÄN),
@@ -511,7 +541,7 @@ af_normalize_yrkesomrade <- function(path) {
   municipalities <- raw |>
     filter(!is.na(county_code), !is.na(municipality_code)) |>
     group_by(PERIOD, municipality_code, KÖN, dimension_value) |>
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") |>
+    summarise(value = af_sum_complete(value), .groups = "drop") |>
     transmute(
       period = PERIOD,
       geo_code = municipality_code,
@@ -529,7 +559,7 @@ af_normalize_yrkesomrade <- function(path) {
   counties <- raw |>
     filter(!is.na(county_code)) |>
     group_by(PERIOD, county_code, KÖN, dimension_value) |>
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") |>
+    summarise(value = af_sum_complete(value), .groups = "drop") |>
     transmute(
       period = PERIOD,
       geo_code = county_code,
@@ -544,7 +574,7 @@ af_normalize_yrkesomrade <- function(path) {
 
   riket <- raw |>
     group_by(PERIOD, KÖN, dimension_value) |>
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") |>
+    summarise(value = af_sum_complete(value), .groups = "drop") |>
     transmute(
       period = PERIOD,
       geo_code = "00",
@@ -591,7 +621,7 @@ af_bas_measure_map <- data.frame(
   stringsAsFactors = FALSE
 )
 
-af_normalize_bas <- function(path) {
+af_normalize_bas <- function(path, period = NULL) {
   fields <- c("PERIOD", "LAN", "KOM", af_bas_measure_map$measure_code)
 
   raw <- af_read_pivot_cache(
@@ -599,14 +629,21 @@ af_normalize_bas <- function(path) {
     cache_id = 1L,
     keep_fields = fields,
     row_filter = function(row) {
-      af_keep_geo(row[["LAN"]], row[["KOM"]])
+      af_period_matches(row[["PERIOD"]], period) &&
+        af_keep_geo(row[["LAN"]], row[["KOM"]])
     }
   ) |>
     af_add_geo("LAN", "KOM") |>
-    filter(geo_level == "kommun")
+    filter(geo_level == "kommun") |>
+    mutate(
+      source_county_code = unname(af_county_codes[af_clean_county_name(LAN)])
+    )
 
-  municipalities <- raw |>
-    select(PERIOD, geo_code, all_of(af_bas_measure_map$measure_code)) |>
+  long <- raw |>
+    select(
+      PERIOD, geo_code, source_county_code,
+      all_of(af_bas_measure_map$measure_code)
+    ) |>
     pivot_longer(
       cols = all_of(af_bas_measure_map$measure_code),
       names_to = "measure_code",
@@ -616,7 +653,7 @@ af_normalize_bas <- function(path) {
     transmute(
       period = PERIOD,
       geo_code,
-      geo_level = "kommun",
+      source_county_code,
       sex,
       dimension_type,
       dimension_value,
@@ -625,20 +662,33 @@ af_normalize_bas <- function(path) {
       value = suppressWarnings(as.numeric(value))
     )
 
-  counties <- municipalities |>
-    mutate(county_code = substr(geo_code, 1, 2)) |>
+  # Kommun-ID är stabilt över tid. Om samma kommun förekommer under två län
+  # i en historisk övergång (t.ex. Heby) kollapsas delraderna till en kommunrad.
+  # Om någon del är sekretessmarkerad/NA blir kommunvärdet NA i stället för att
+  # vi låtsas känna den exakta summan.
+  municipalities <- long |>
     group_by(
-      period, county_code, sex, dimension_type, dimension_value,
+      period, geo_code, sex, dimension_type, dimension_value,
       measure_code, measure_label
     ) |>
-    summarise(
-      municipality_count = n_distinct(geo_code),
-      value = af_sum_complete(value),
-      .groups = "drop"
+    summarise(value = af_sum_complete(value), .groups = "drop") |>
+    mutate(geo_level = "kommun") |>
+    select(
+      period, geo_code, geo_level, sex, dimension_type, dimension_value,
+      measure_code, measure_label, value
+    )
+
+  # Län följer källans länstillhörighet för respektive historisk period.
+  counties <- long |>
+    filter(!is.na(source_county_code)) |>
+    group_by(
+      period, source_county_code, sex, dimension_type, dimension_value,
+      measure_code, measure_label
     ) |>
+    summarise(value = af_sum_complete(value), .groups = "drop") |>
     transmute(
       period,
-      geo_code = county_code,
+      geo_code = source_county_code,
       geo_level = "län",
       sex,
       dimension_type,
@@ -652,15 +702,18 @@ af_normalize_bas <- function(path) {
     af_add_riket_from_counties()
 }
 
-
 # ---- Korsvalideringsunderlag (importeras inte som egna produktionsmått) ----
 
-af_control_tid_sex <- function(path) {
+af_control_tid_sex <- function(path, period = NULL) {
   raw <- readxl::read_excel(path, sheet = "Kön", skip = 4)
   required <- c("PERIOD", "LÄN", "KOMMUN", "KOEN", "ARBETSLÖSA")
   missing <- setdiff(required, names(raw))
   if (length(missing) > 0) {
     stop("Kön-bladet saknar kontrollkolumner: ", paste(missing, collapse = ", "))
+  }
+
+  if (!is.null(period)) {
+    raw <- raw[as.character(raw$PERIOD) == as.character(period), , drop = FALSE]
   }
 
   af_add_geo(raw, "LÄN", "KOMMUN") |>
@@ -669,10 +722,12 @@ af_control_tid_sex <- function(path) {
       geo_code,
       sex = as.character(KOEN),
       expected = suppressWarnings(as.numeric(ARBETSLÖSA))
-    )
+    ) |>
+    group_by(period, geo_code, sex) |>
+    summarise(expected = af_sum_complete(expected), .groups = "drop")
 }
 
-af_control_web_sok_total_by_sex <- function(path) {
+af_control_web_sok_total_by_sex <- function(path, period = NULL) {
   # Ålderscachen partitionerar de arbetslösa i åldersgrupper. Summan INSAL
   # per period/geografi/kön ska därför motsvara ARBETSLÖSA i tid-filen.
   af_read_pivot_cache(
@@ -680,17 +735,18 @@ af_control_web_sok_total_by_sex <- function(path) {
     cache_id = 3L,
     keep_fields = c("PERIOD", "KOEN", "LAN", "KOMMUN_BESKR", "ALDGR", "INSAL"),
     row_filter = function(row) {
-      af_keep_geo(row[["LAN"]], row[["KOMMUN_BESKR"]])
+      af_period_matches(row[["PERIOD"]], period) &&
+        af_keep_geo(row[["LAN"]], row[["KOMMUN_BESKR"]])
     }
   ) |>
     af_add_geo("LAN", "KOMMUN_BESKR") |>
     mutate(INSAL = suppressWarnings(as.numeric(INSAL))) |>
     group_by(PERIOD, geo_code, KOEN) |>
-    summarise(actual = sum(INSAL, na.rm = TRUE), .groups = "drop") |>
+    summarise(actual = af_sum_complete(INSAL), .groups = "drop") |>
     transmute(period = PERIOD, geo_code, sex = KOEN, actual)
 }
 
-af_control_svag_samtliga <- function(path) {
+af_control_svag_samtliga <- function(path, period = NULL) {
   af_read_pivot_cache(
     path,
     cache_id = 1L,
@@ -699,39 +755,42 @@ af_control_svag_samtliga <- function(path) {
       "KUA06", "KUA12", "KUA24", "SAMTLIGA"
     ),
     row_filter = function(row) {
-      af_keep_geo(row[["LAN_BESKR"]], row[["KOMMUN_BESKR"]])
+      af_period_matches(row[["PERIOD"]], period) &&
+        af_keep_geo(row[["LAN_BESKR"]], row[["KOMMUN_BESKR"]])
     }
   ) |>
     af_add_geo("LAN_BESKR", "KOMMUN_BESKR") |>
     mutate(SAMTLIGA = suppressWarnings(as.numeric(SAMTLIGA))) |>
     group_by(PERIOD, geo_code, KOEN) |>
-    summarise(actual = sum(SAMTLIGA, na.rm = TRUE), .groups = "drop") |>
+    summarise(actual = af_sum_complete(SAMTLIGA), .groups = "drop") |>
     transmute(period = PERIOD, geo_code, sex = KOEN, actual)
 }
 
-af_control_yrkesomrade_total <- function(path) {
+af_control_yrkesomrade_total <- function(path, period = NULL) {
   af_read_pivot_cache(
     path,
     cache_id = 1L,
     keep_fields = c("PERIOD", "KÖN", "YRKESOMRÅDE", "LÄN", "KOMMUN", "KVAR"),
     row_filter = function(row) {
-      af_keep_geo(row[["LÄN"]], row[["KOMMUN"]])
+      af_period_matches(row[["PERIOD"]], period) &&
+        af_keep_geo(row[["LÄN"]], row[["KOMMUN"]])
     }
   ) |>
     af_add_geo("LÄN", "KOMMUN") |>
     mutate(KVAR = suppressWarnings(as.numeric(KVAR))) |>
     group_by(PERIOD, geo_code, `KÖN`) |>
-    summarise(actual = sum(KVAR, na.rm = TRUE), .groups = "drop") |>
+    summarise(actual = af_sum_complete(KVAR), .groups = "drop") |>
     transmute(period = PERIOD, geo_code, sex = `KÖN`, actual)
 }
 
-af_control_bas_sok <- function(path) {
+af_control_bas_sok <- function(path, period = NULL) {
   raw <- af_read_pivot_cache(
     path,
     cache_id = 1L,
     keep_fields = c("PERIOD", "LAN", "KOM", "KVISOK", "MANSOK"),
     row_filter = function(row) {
-      af_keep_geo(row[["LAN"]], row[["KOM"]])
+      af_period_matches(row[["PERIOD"]], period) &&
+        af_keep_geo(row[["LAN"]], row[["KOM"]])
     }
   ) |>
     af_add_geo("LAN", "KOM")
@@ -747,7 +806,9 @@ af_control_bas_sok <- function(path) {
         period = PERIOD, geo_code, sex = "M",
         actual = suppressWarnings(as.numeric(MANSOK))
       )
-  )
+  ) |>
+    group_by(period, geo_code, sex) |>
+    summarise(actual = af_sum_complete(actual), .groups = "drop")
 }
 
 af_assert_control_match <- function(actual, expected, label, tolerance = 1e-8) {

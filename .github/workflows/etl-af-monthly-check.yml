@@ -11,7 +11,7 @@ on:
         options:
           - check
           - validate
-          - validate-strict
+          - validate-history
   schedule:
     # 23:e är startdag för kontroll, inte ett garanterat publiceringsdatum.
     # 1-7 täcker sena publiceringar som annars skulle falla mellan månadsskiften.
@@ -63,17 +63,17 @@ jobs:
         run: |
           source("R/etl/check_af_sources.R")
 
-      - name: Full validering av AF-normalisering
-        if: github.event_name == 'workflow_dispatch' && (inputs.mode == 'validate' || inputs.mode == 'validate-strict')
+      - name: Validering av AF-normalisering
+        if: github.event_name == 'workflow_dispatch' && (inputs.mode == 'validate' || inputs.mode == 'validate-history')
         env:
-          AF_VALIDATION_STRICT: ${{ inputs.mode == 'validate-strict' }}
+          AF_VALIDATION_HISTORY: ${{ inputs.mode == 'validate-history' }}
           AF_VALIDATION_REPORT_DIR: artifacts/af-validation
         shell: Rscript {0}
         run: |
           source("R/etl/validate_af_normalization.R")
 
       - name: Ladda upp AF-valideringsrapport
-        if: always() && github.event_name == 'workflow_dispatch' && (inputs.mode == 'validate' || inputs.mode == 'validate-strict')
+        if: always() && github.event_name == 'workflow_dispatch' && (inputs.mode == 'validate' || inputs.mode == 'validate-history')
         uses: actions/upload-artifact@v4
         with:
           name: af-validation-report-${{ github.run_number }}

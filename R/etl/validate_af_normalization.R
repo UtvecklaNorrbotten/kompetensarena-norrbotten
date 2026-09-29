@@ -3,12 +3,14 @@
 # Publicerar inget.
 #
 # Normal validate:
-# - hela historiken normaliseras
-# - aktuell gemensam period måste vara helt konsistent mellan källorna
-# - historiska källskillnader rapporteras men blockerar inte
+# - endast den aktuella gemensamma perioden behålls ur källfilerna
+# - struktur och korsvalideringar för den perioden måste vara konsistenta
 #
-# Strict validate:
-# - även historiska källskillnader blockerar körningen
+# History validate:
+# - hela historiken normaliseras manuellt
+# - historiska specialfall (t.ex. kommuner som bytt län) kollapsas till stabil
+#   kommunkod, medan län följer källans historiska länstillhörighet
+# - historiska korsvalideringsavvikelser blockerar
 
 source("R/etl/af_common.R")
 source("R/etl/af_normalize.R")
@@ -31,11 +33,13 @@ af_control_compare <- function(
 
   actual <- actual |>
     filter(geo_code %in% municipality_codes) |>
-    select(all_of(keys), actual)
+    select(all_of(keys), actual) |>
+    mutate(actual_present = TRUE)
 
   expected <- expected |>
     filter(geo_code %in% municipality_codes) |>
-    select(all_of(keys), expected)
+    select(all_of(keys), expected) |>
+    mutate(expected_present = TRUE)
 
   duplicate_actual <- actual |>
     group_by(across(all_of(keys))) |>
@@ -57,8 +61,8 @@ af_control_compare <- function(
   check <- full_join(actual, expected, by = keys) |>
     mutate(
       issue_type = case_when(
-        is.na(actual) & !is.na(expected) ~ "saknas_i_actual",
-        !is.na(actual) & is.na(expected) ~ "saknas_i_expected",
+        is.na(actual_present) ~ "saknas_i_actual",
+        is.na(expected_present) ~ "saknas_i_expected",
         !is.na(actual) & !is.na(expected) & abs(actual - expected) > tolerance ~ "avvikelse",
         TRUE ~ NA_character_
       ),
@@ -72,6 +76,13 @@ af_control_compare <- function(
 
   comparable <- check |>
     filter(!is.na(actual), !is.na(expected))
+
+  unknown_value_rows <- check |>
+    filter(
+      !is.na(actual_present),
+      !is.na(expected_present),
+      is.na(actual) | is.na(expected)
+    )
 
   issues <- check |>
     filter(!is.na(issue_type))
@@ -92,6 +103,7 @@ af_control_compare <- function(
     missing_actual_total = sum(issues$issue_type == "saknas_i_actual"),
     missing_expected_total = sum(issues$issue_type == "saknas_i_expected"),
     mismatches_total = sum(issues$issue_type == "avvikelse"),
+    skipped_unknown_values = nrow(unknown_value_rows),
     fatal = nrow(latest_issues) > 0 || (strict_history && nrow(historical_issues) > 0),
     stringsAsFactors = FALSE
   )
@@ -99,13 +111,14 @@ af_control_compare <- function(
   message(sprintf(
     paste0(
       "Korsvalidering %s: %s jämförda rader, %s avvikelser totalt ",
-      "(aktuell period: %s, historik: %s)."
+      "(aktuell period: %s, historik: %s; okända värden hoppades över: %s)."
     ),
     label,
     format(nrow(comparable), big.mark = " "),
     format(nrow(issues), big.mark = " "),
     format(nrow(latest_issues), big.mark = " "),
-    format(nrow(historical_issues), big.mark = " ")
+    format(nrow(historical_issues), big.mark = " "),
+    format(nrow(unknown_value_rows), big.mark = " ")
   ))
 
   if (nrow(historical_issues) > 0 && nrow(latest_issues) == 0) {
@@ -141,7 +154,8 @@ af_control_compare <- function(
 }
 
 run_af_normalization_validation <- function() {
-  strict_history <- af_env_flag("AF_VALIDATION_STRICT", FALSE)
+  history_mode <- af_env_flag("AF_VALIDATION_HISTORY", FALSE)
+  strict_history <- history_mode
   report_dir <- Sys.getenv(
     "AF_VALIDATION_REPORT_DIR",
     unset = "artifacts/af-validation"
@@ -150,8 +164,8 @@ run_af_normalization_validation <- function() {
 
   message(
     "AF-validering: ",
-    if (strict_history) "STRICT (historiska avvikelser blockerar)" else
-      "NORMAL (endast aktuell period blockerar vid källskillnader)"
+    if (history_mode) "HISTORY (hela historiken; historiska avvikelser blockerar)" else
+      "CURRENT (endast aktuell gemensam period)"
   )
 
   manifest <- af_discover_sources()
@@ -166,6 +180,7 @@ run_af_normalization_validation <- function() {
 
   files <- af_download_sources(manifest, tmp)
   path_for <- function(key) files$path[match(key, files$source_key)][[1]]
+  period_filter <- if (history_mode) NULL else common_period
 
   manifest_report <- files |>
     select(source_key, label, period, filename, url, sha256, bytes)
@@ -187,22 +202,35 @@ run_af_normalization_validation <- function() {
   }
 
   message("Normaliserar web-sok-lan-kom ...")
-  sok <- af_normalize_web_sok(path_for("arbetssokande"))
+  sok <- af_normalize_web_sok(
+    path_for("arbetssokande"),
+    period = period_filter
+  )
 
   message("Normaliserar tid utan arbete ...")
   tid <- af_normalize_tid_utan_arbete(
     path_for("tid_utan_arbete"),
-    riket_path = path_for("tid_utan_arbete_riket")
+    riket_path = path_for("tid_utan_arbete_riket"),
+    period = period_filter
   )
 
   message("Normaliserar svag konkurrensförmåga ...")
-  svag <- af_normalize_svag_konkurrensformaga(path_for("svag_konkurrensformaga"))
+  svag <- af_normalize_svag_konkurrensformaga(
+    path_for("svag_konkurrensformaga"),
+    period = period_filter
+  )
 
   message("Normaliserar yrkesområde ...")
-  yrke <- af_normalize_yrkesomrade(path_for("yrkesomrade"))
+  yrke <- af_normalize_yrkesomrade(
+    path_for("yrkesomrade"),
+    period = period_filter
+  )
 
   message("Normaliserar BAS ...")
-  bas <- af_normalize_bas(path_for("arbetskraft_bas"))
+  bas <- af_normalize_bas(
+    path_for("arbetskraft_bas"),
+    period = period_filter
+  )
 
   datasets <- list(sok = sok, tid = tid, svag = svag, yrke = yrke, bas = bas)
 
@@ -313,12 +341,13 @@ run_af_normalization_validation <- function() {
 
     message(sprintf(
       paste0(
-        "%s: %s rader, %.1f MB; hela historiken 290 kommuner + 21 län + Riket; ",
+        "%s: %s rader, %.1f MB; urval=%s; ",
         "%s: 290 kommuner + 21 län + Riket"
       ),
       nm,
       format(nrow(x), big.mark = " "),
       approx_mb,
+      if (history_mode) "hela historiken" else common_period,
       common_period
     ))
 
@@ -355,7 +384,10 @@ run_af_normalization_validation <- function() {
   # Aktuell gemensam period måste matcha exakt. Historiska differenser mellan
   # separata AF-filer rapporteras i stället för att stoppa normal validate.
   # Exakta filversioner sparas med SHA-256 så att skillnader kan reproduceras.
-  tid_control <- af_control_tid_sex(path_for("tid_utan_arbete"))
+  tid_control <- af_control_tid_sex(
+    path_for("tid_utan_arbete"),
+    period = period_filter
+  )
 
   sok_control <- sok |>
     filter(
@@ -367,7 +399,8 @@ run_af_normalization_validation <- function() {
     summarise(actual = af_sum_complete(value), .groups = "drop")
 
   svag_control <- af_control_svag_samtliga(
-    path_for("svag_konkurrensformaga")
+    path_for("svag_konkurrensformaga"),
+    period = period_filter
   )
 
   yrke_control <- yrke |>
@@ -375,7 +408,10 @@ run_af_normalization_validation <- function() {
     group_by(period, geo_code, sex) |>
     summarise(actual = af_sum_complete(value), .groups = "drop")
 
-  bas_control <- af_control_bas_sok(path_for("arbetskraft_bas"))
+  bas_control <- af_control_bas_sok(
+    path_for("arbetskraft_bas"),
+    period = period_filter
+  )
 
   comparisons <- list(
     af_control_compare(
@@ -449,8 +485,9 @@ run_af_normalization_validation <- function() {
   }
 
   message(
-    "AF-normalisering godkänd för period ", common_period,
-    ". Ingen data publicerades. Rapport: ", report_dir
+    "AF-normalisering godkänd (",
+    if (history_mode) "hela historiken" else paste0("period ", common_period),
+    "). Ingen data publicerades. Rapport: ", report_dir
   )
   invisible(datasets)
 }
