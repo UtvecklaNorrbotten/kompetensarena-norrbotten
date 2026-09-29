@@ -194,10 +194,12 @@ af_compare_shared_coverage <- function(actual, expected, label) {
     dplyr::select(dplyr::all_of(keys), expected, expected_is_lower_bound)
 
   dup_actual <- actual |>
-    dplyr::count(dplyr::across(dplyr::all_of(keys)), name = "n") |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(keys))) |>
+    dplyr::summarise(n = dplyr::n(), .groups = "drop") |>
     dplyr::filter(n > 1)
   dup_expected <- expected |>
-    dplyr::count(dplyr::across(dplyr::all_of(keys)), name = "n") |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(keys))) |>
+    dplyr::summarise(n = dplyr::n(), .groups = "drop") |>
     dplyr::filter(n > 1)
 
   if (nrow(dup_actual) > 0 || nrow(dup_expected) > 0) {
