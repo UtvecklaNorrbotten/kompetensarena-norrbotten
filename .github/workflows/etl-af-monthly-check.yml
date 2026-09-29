@@ -11,10 +11,12 @@ on:
         options:
           - check
           - validate
+          - validate-strict
   schedule:
-    # Augusti 2026 fanns fortfarande som senaste period den 23 september.
-    # 23:e är därför startdag för kontroll, inte ett garanterat publiceringsdatum.
+    # 23:e är startdag för kontroll, inte ett garanterat publiceringsdatum.
+    # 1-7 täcker sena publiceringar som annars skulle falla mellan månadsskiften.
     - cron: "15 4 23-31 * *"
+    - cron: "15 4 1-7 * *"
 
 permissions:
   contents: read
@@ -30,7 +32,7 @@ jobs:
 
     steps:
       - name: Checka ut repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Installera R
         uses: r-lib/actions/setup-r@v2
@@ -61,8 +63,20 @@ jobs:
         run: |
           source("R/etl/check_af_sources.R")
 
-      - name: Dry-run av AF-normalisering
-        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'validate'
+      - name: Full validering av AF-normalisering
+        if: github.event_name == 'workflow_dispatch' && (inputs.mode == 'validate' || inputs.mode == 'validate-strict')
+        env:
+          AF_VALIDATION_STRICT: ${{ inputs.mode == 'validate-strict' }}
+          AF_VALIDATION_REPORT_DIR: artifacts/af-validation
         shell: Rscript {0}
         run: |
           source("R/etl/validate_af_normalization.R")
+
+      - name: Ladda upp AF-valideringsrapport
+        if: always() && github.event_name == 'workflow_dispatch' && (inputs.mode == 'validate' || inputs.mode == 'validate-strict')
+        uses: actions/upload-artifact@v4
+        with:
+          name: af-validation-report-${{ github.run_number }}
+          path: artifacts/af-validation
+          if-no-files-found: warn
+          retention-days: 30
