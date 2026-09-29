@@ -124,6 +124,8 @@ flera hundra MB och inte bör byggas som ett helt XML-träd i minnet.
 - `measure_code`
 - `measure_label`
 - `value`
+- `value_is_lower_bound` för mått där sekretessmarkering kan göra `value`
+  till en undre gräns i stället för ett exakt värde
 
 Geografiskt behålls hela Sverige: samtliga 290 kommuner och samtliga 21 län.
 Riket skapas som en egen nivå med kod `00` genom summering av länsvärdena.
@@ -177,10 +179,15 @@ riksvärden genom att bara summera kommunerna.
 
 För denna källa gäller därför:
 
-- kommunvärden behålls som publicerade,
-- länsvärden härleds endast när alla komponenter är numeriska; annars blir länsvärdet `NA`,
-- Riket hämtas från Arbetsförmedlingens separata riketsfil,
-- övriga AF-källor fortsätter använda länsvärden som källa för beräknat Riket när kompletta länsrader finns.
+- exakta kommunvärden behålls som publicerade,
+- `<5` tolkas inte som noll eller som ett exakt tal; den numeriska delen sätts
+  till den lägsta säkra nivån 0 och `value_is_lower_bound = TRUE`,
+- vid summering blir `value` summan av alla exakta delar plus dessa undre
+  gränser. Exempel: `106 + <5` lagras som `value = 106` och
+  `value_is_lower_bound = TRUE`,
+- ett verkligt saknat värde utan känd undre gräns är fortfarande `NA`,
+- Riket hämtas från Arbetsförmedlingens separata riketsfil och är därför exakt,
+- övriga AF-källor fortsätter använda sina verifierade aggregeringsregler.
 
 
 ### Riketsfilen för tid utan arbete
@@ -291,13 +298,14 @@ länstillhörigheten som faktiskt anges i AF-källan för respektive period.
 Heby är det verifierade specialfallet som utlöste denna regel. Kring länsbytet
 2006/2007 förekommer samma kommun i två länsrader under samma period. Normaliseringen
 kollapsar sådana delrader till en enda kommunrad per period/dimension. Om samtliga
-delvärden är numeriska summeras de. Om minst ett delvärde är sekretessmarkerat eller
-saknas blir den sammanslagna kommunposten `NA`; vi ersätter aldrig ett okänt
-`<5`-värde med noll.
+delvärden är numeriska summeras de exakt. Om en del är `<5` bevaras summan av de
+kända delarna som undre gräns. Hebyexemplet `106 + <5` blir därför `106` med
+`value_is_lower_bound = TRUE`, inte `NA`. Ett verkligt saknat värde utan känd
+gräns förblir däremot `NA`.
 
-Korsvalideringen använder samma princip. En kontrollrad som finns i båda källorna men
-har ett okänt/maskerat värde hoppas över som exakt likhetskontroll och rapporteras som
-okänd, inte som en falsk avvikelse.
+Korsvalideringen känner till flaggan. Ett exakt värde godkänns mot en undre gräns
+om det ligger på eller över gränsen; ett värde under gränsen är ett fel. Två undre
+gränser behandlas inte som om de vore exakta tal.
 
 ### Backfill och löpande månadsimport
 

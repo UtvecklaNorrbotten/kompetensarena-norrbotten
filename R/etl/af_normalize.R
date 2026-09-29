@@ -40,6 +40,21 @@ af_sum_complete <- function(x) {
   sum(x)
 }
 
+# AF sekretessmarkerar vissa små antal som "<5". För sådana värden behåller vi
+# den lägsta säkra numeriska nivån (0) och markerar att värdet är en undre gräns.
+# Ett verkligt saknat/okänt värde är däremot fortfarande NA och får inte ersättas
+# med noll.
+af_is_lower_bound_value <- function(x) {
+  grepl("^\\s*<\\s*5\\s*$", as.character(x))
+}
+
+af_parse_lower_bound_value <- function(x) {
+  lower_bound <- af_is_lower_bound_value(x)
+  value <- suppressWarnings(as.numeric(x))
+  value[lower_bound] <- 0
+  value
+}
+
 af_period_matches <- function(value, period = NULL) {
   if (is.null(period) || length(period) == 0L || is.na(period) || !nzchar(period)) {
     return(TRUE)
@@ -267,7 +282,8 @@ af_normalize_tid_riket <- function(path, period = NULL) {
         dimension_value,
         measure_code,
         measure_label,
-        value = as.numeric(value)
+        value = as.numeric(value),
+        value_is_lower_bound = FALSE
       )
   }
 
@@ -368,7 +384,8 @@ af_normalize_tid_utan_arbete <- function(path, riket_path = NULL, period = NULL)
           measure_label == af_tid_value_fields[[3]] ~ "KUA24",
           TRUE ~ NA_character_
         ),
-        value = suppressWarnings(as.numeric(value_raw))
+        value_is_lower_bound = af_is_lower_bound_value(value_raw),
+        value = af_parse_lower_bound_value(value_raw)
       )
 
     municipalities <- long |>
@@ -377,7 +394,13 @@ af_normalize_tid_utan_arbete <- function(path, riket_path = NULL, period = NULL)
         period, municipality_code, sex, dimension_type, dimension_value,
         measure_code, measure_label
       ) |>
-      summarise(value = af_sum_complete(value), .groups = "drop") |>
+      summarise(
+        value = if (
+          any(is.na(value) & !value_is_lower_bound)
+        ) NA_real_ else sum(value, na.rm = TRUE),
+        value_is_lower_bound = any(value_is_lower_bound),
+        .groups = "drop"
+      ) |>
       transmute(
         period,
         geo_code = municipality_code,
@@ -387,7 +410,8 @@ af_normalize_tid_utan_arbete <- function(path, riket_path = NULL, period = NULL)
         dimension_value,
         measure_code,
         measure_label,
-        value
+        value,
+        value_is_lower_bound
       )
 
     counties <- long |>
@@ -396,7 +420,10 @@ af_normalize_tid_utan_arbete <- function(path, riket_path = NULL, period = NULL)
         measure_code, measure_label
       ) |>
       summarise(
-        value = af_sum_complete(value),
+        value = if (
+          any(is.na(value) & !value_is_lower_bound)
+        ) NA_real_ else sum(value, na.rm = TRUE),
+        value_is_lower_bound = any(value_is_lower_bound),
         .groups = "drop"
       ) |>
       transmute(
@@ -408,7 +435,8 @@ af_normalize_tid_utan_arbete <- function(path, riket_path = NULL, period = NULL)
         dimension_value,
         measure_code,
         measure_label,
-        value
+        value,
+        value_is_lower_bound
       )
 
     bind_rows(municipalities, counties)
@@ -721,10 +749,17 @@ af_control_tid_sex <- function(path, period = NULL) {
       period = as.character(PERIOD),
       geo_code,
       sex = as.character(KOEN),
-      expected = suppressWarnings(as.numeric(ARBETSLÖSA))
+      expected_is_lower_bound = af_is_lower_bound_value(ARBETSLÖSA),
+      expected = af_parse_lower_bound_value(ARBETSLÖSA)
     ) |>
     group_by(period, geo_code, sex) |>
-    summarise(expected = af_sum_complete(expected), .groups = "drop")
+    summarise(
+      expected = if (
+        any(is.na(expected) & !expected_is_lower_bound)
+      ) NA_real_ else sum(expected, na.rm = TRUE),
+      expected_is_lower_bound = any(expected_is_lower_bound),
+      .groups = "drop"
+    )
 }
 
 af_control_web_sok_total_by_sex <- function(path, period = NULL) {
