@@ -12,3 +12,7 @@
 ## Arkitekturregler
 - Adminvyer ligger under `/admin/*`, är `ssr: false`, finns inte i navigation.ts och läser via serverfunktioner med `requireSupabaseAuth` + `has_role(admin)`; varför: ett enda behörighetssystem (user_roles) och inget adminläckage i publik SSR.
 - Datakällestatus härleds generellt ur `data_source_runs` (via `source_id`) med `data_source_state` som reserv; varför: inga källspecifika villkor i UI när nya källor tillkommer.
+
+- Områdessidor och etiketter definieras i `src/config/areas.ts`; nya sidor ska ha egen sidtitel, och platshållare får aldrig se ut som uppmätta resultat.
+- Publik sökning indexerar bara innehåll som får publiceras. Råa enkätsvar, personuppgifter och arbetsgivarnivå får inte läggas i `search_index`.
+- Enkätimport ska först valideras mot en faktisk kodad fil. Publicering ska ske atomiskt, och arbetsgivarsvar kräver både RLS och serverkontroll innan en vy byggs.

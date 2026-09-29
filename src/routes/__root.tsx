@@ -7,7 +7,8 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { AreasSidebar } from "@/components/layout/AreasSidebar";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -119,6 +120,8 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const closeMenu = useCallback(() => setMobileOpen(false), []);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -126,11 +129,14 @@ function RootComponent() {
         Hoppa till innehållet
       </a>
       <div className="flex min-h-screen flex-col">
-        <Header />
-        <main id="innehall" className="flex-1">
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
-        </main>
+        <Header onOpenMenu={() => setMobileOpen(true)} />
+        <div className="flex flex-1">
+          <AreasSidebar mobileOpen={mobileOpen} onMobileClose={closeMenu} />
+          <main id="innehall" className="min-w-0 flex-1">
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <Outlet />
+          </main>
+        </div>
         <Footer />
       </div>
     </QueryClientProvider>

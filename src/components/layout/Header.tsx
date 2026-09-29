@@ -1,18 +1,15 @@
-import { DesktopNav } from "./DesktopNav";
-import { MobileNav } from "./MobileNav";
+import { Menu } from "lucide-react";
 import { Logo } from "./Logo";
 import { AccountLink } from "./AccountLink";
+import { SiteSearch } from "./SiteSearch";
 
-// Obs: ingen backdrop-blur på headern – det skapar en containing block och
-// bryter mobilmenyns fixed-positionering.
-export function Header() {
+export function Header({ onOpenMenu }: { onOpenMenu: () => void }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-surface">
-      <div className="mx-auto flex w-full max-w-(--container-content) items-center justify-between gap-6 px-4 py-3 md:px-8">
+    <header className="sticky top-0 z-40 h-[72px] border-b border-border bg-surface">
+      <div className="mx-auto flex h-full w-full max-w-(--container-content) items-center justify-between gap-3 px-4 md:px-8">
+        <button type="button" onClick={onOpenMenu} aria-label="Öppna områdesmenyn" className="rounded p-2 hover:bg-brand-light md:hidden"><Menu className="size-5" /></button>
         <Logo />
-        <DesktopNav />
-        <AccountLink />
-        <MobileNav />
+        <div className="ml-auto flex items-center gap-2"><SiteSearch /><AccountLink /></div>
       </div>
     </header>
   );
