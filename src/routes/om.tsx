@@ -13,6 +13,8 @@ export const Route = createFileRoute("/om")({
       { name: "description", content: description },
       { property: "og:title", content: "Om Kompetensarena Norrbotten" },
       { property: "og:description", content: description },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: OmSidan,

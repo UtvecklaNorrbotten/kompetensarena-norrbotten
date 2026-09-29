@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { BookOpen, Download, Home, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
 import { areas, areaPath } from "@/config/areas";
+import { Button } from "@/components/ui/button";
 import { AppLink } from "./AppLink";
 
 type Props = { mobileOpen: boolean; onMobileClose: () => void };
@@ -16,6 +17,7 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
   const restoreFocus = useRef<HTMLElement | null>(null);
   const activeArea = areas.find((area) => pathname.startsWith(areaPath(area.slug) + "/") || pathname === areaPath(area.slug))?.slug;
   const expanded = pinned || hovered || focused;
+  const rowClass = "flex h-10 items-center gap-3 whitespace-nowrap rounded-md p-2 hover:bg-brand-light";
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -45,31 +47,31 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
 
   const nav = (mobile: boolean) => (
     <nav aria-label="Områden" className="flex h-full flex-col overflow-y-auto py-3">
-      <div className="mb-2 flex items-center justify-between px-2">
-        {(expanded || mobile) && <span className="px-2 text-sm font-semibold text-brand-dark">Områden</span>}
+      <div className="mb-2 flex h-9 items-center justify-between px-2">
+        <span aria-hidden={!expanded && !mobile} className={`px-2 text-sm font-semibold text-brand-dark ${expanded || mobile ? "" : "invisible"}`}>Områden</span>
         {mobile ? (
-          <button type="button" onClick={onMobileClose} aria-label="Stäng menyn" className="rounded p-2 hover:bg-brand-light"><X className="size-5" /></button>
+          <Button variant="ghost" size="icon" type="button" onClick={onMobileClose} aria-label="Stäng menyn"><X className="size-5" /></Button>
         ) : (
-          <button type="button" onClick={() => setPinned(!pinned)} aria-label={pinned ? "Lås upp menyn" : "Lås menyn utfälld"} aria-pressed={pinned} title={pinned ? "Lås upp menyn" : "Lås menyn utfälld"} className="rounded p-2 hover:bg-brand-light">
+          <Button variant="ghost" size="icon" type="button" onClick={() => setPinned(!pinned)} aria-label={pinned ? "Lås upp menyn" : "Lås menyn utfälld"} aria-pressed={pinned} title={pinned ? "Lås upp menyn" : "Lås menyn utfälld"}>
             {pinned ? <PanelLeftClose className="size-5" /> : <PanelLeftOpen className="size-5" />}
-          </button>
+          </Button>
         )}
       </div>
       <ul className="space-y-1 px-2">
-        <li><AppLink href="/" aria-label="Startsida" title="Startsida" className="flex items-center gap-3 rounded-md p-2 hover:bg-brand-light"><Home className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Startsida</span></AppLink></li>
+        <li><AppLink href="/" aria-label="Startsida" title="Startsida" className={rowClass}><Home className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Startsida</span></AppLink></li>
         {areas.map((area) => {
           const Icon = area.icon;
           const open = activeArea === area.slug;
           return (
             <li key={area.slug}>
-              <AppLink href={areaPath(area.slug)} aria-current={pathname === areaPath(area.slug) || pathname === areaPath(area.slug) + "/" ? "page" : undefined} title={area.title} className="flex items-center gap-3 rounded-md p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light aria-[current=page]:font-semibold">
+              <AppLink href={areaPath(area.slug)} aria-current={pathname === areaPath(area.slug) || pathname === areaPath(area.slug) + "/" ? "page" : undefined} title={area.title} className={`${rowClass} aria-[current=page]:bg-brand-light aria-[current=page]:font-semibold`}>
                 <Icon className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>{area.title}</span>
               </AppLink>
-              {(expanded || mobile) && open && (
-                <ul className="ml-8 border-l border-border pl-2 text-sm">
-                  <li><AppLink href={areaPath(area.slug)} aria-current={pathname === areaPath(area.slug) || pathname === areaPath(area.slug) + "/" ? "page" : undefined} className="block rounded p-2 hover:bg-brand-light aria-[current=page]:font-semibold">Översikt</AppLink></li>
+              {open && (
+                <ul aria-hidden={!expanded && !mobile} className={`ml-8 border-l border-border pl-2 text-sm ${expanded || mobile ? "" : "invisible"}`}>
+                  <li><AppLink tabIndex={expanded || mobile ? undefined : -1} href={areaPath(area.slug)} aria-current={pathname === areaPath(area.slug) || pathname === areaPath(area.slug) + "/" ? "page" : undefined} className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:font-semibold">Översikt</AppLink></li>
                   {area.topics.map((topic) => (
-                    <li key={topic.slug}><AppLink href={areaPath(area.slug, topic.slug)} aria-current={pathname === areaPath(area.slug, topic.slug) ? "page" : undefined} className="block rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light aria-[current=page]:font-semibold">{topic.title}</AppLink></li>
+                    <li key={topic.slug}><AppLink tabIndex={expanded || mobile ? undefined : -1} href={areaPath(area.slug, topic.slug)} aria-current={pathname === areaPath(area.slug, topic.slug) ? "page" : undefined} className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light aria-[current=page]:font-semibold">{topic.title}</AppLink></li>
                   ))}
                 </ul>
               )}
@@ -78,9 +80,9 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
         })}
       </ul>
       <div className="mt-5 border-t border-border px-2 pt-3">
-        {(expanded || mobile) && <p className="px-2 pb-2 text-xs font-semibold uppercase text-ink-muted">Data och metod</p>}
-        <AppLink href="/om" title="Om" className="flex items-center gap-3 rounded-md p-2 hover:bg-brand-light"><BookOpen className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Om</span></AppLink>
-        <AppLink href="/ladda-ned-data" title="Ladda ned data" className="flex items-center gap-3 rounded-md p-2 hover:bg-brand-light"><Download className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Ladda ned data</span></AppLink>
+        <p aria-hidden={!expanded && !mobile} className={`h-6 whitespace-nowrap px-2 pb-2 text-xs font-semibold uppercase text-ink-muted ${expanded || mobile ? "" : "invisible"}`}>Data och metod</p>
+        <AppLink href="/om" title="Om" className={rowClass}><BookOpen className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Om</span></AppLink>
+        <AppLink href="/ladda-ned-data" title="Ladda ned data" className={rowClass}><Download className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Ladda ned data</span></AppLink>
       </div>
     </nav>
   );

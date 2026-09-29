@@ -13,6 +13,8 @@ export const Route = createFileRoute("/")({
         content: "Kompetensarena Norrbotten – kunskap om kompetensförsörjning",
       },
       { property: "og:description", content: site.description },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Startsida,
