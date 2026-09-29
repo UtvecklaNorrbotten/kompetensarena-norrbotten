@@ -447,7 +447,7 @@ af_normalize_svag_konkurrensformaga <- function(path, period = NULL) {
     municipalities <- data |>
       filter(!is.na(county_code), !is.na(municipality_code)) |>
       group_by(PERIOD, municipality_code, KOEN) |>
-      summarise(value = sum(UTSATTA, na.rm = TRUE), .groups = "drop") |>
+      summarise(value = af_sum_complete(UTSATTA), .groups = "drop") |>
       transmute(
         period = PERIOD,
         geo_code = municipality_code,
@@ -463,7 +463,7 @@ af_normalize_svag_konkurrensformaga <- function(path, period = NULL) {
     counties <- data |>
       filter(!is.na(county_code)) |>
       group_by(PERIOD, county_code, KOEN) |>
-      summarise(value = sum(UTSATTA, na.rm = TRUE), .groups = "drop") |>
+      summarise(value = af_sum_complete(UTSATTA), .groups = "drop") |>
       transmute(
         period = PERIOD,
         geo_code = county_code,
@@ -478,7 +478,7 @@ af_normalize_svag_konkurrensformaga <- function(path, period = NULL) {
 
     riket <- data |>
       group_by(PERIOD, KOEN) |>
-      summarise(value = sum(UTSATTA, na.rm = TRUE), .groups = "drop") |>
+      summarise(value = af_sum_complete(UTSATTA), .groups = "drop") |>
       transmute(
         period = PERIOD,
         geo_code = "00",
