@@ -224,7 +224,7 @@ for (i in seq_along(chunk_starts)) {
   )
   message(
     target, ": chunk ", i, "/", length(chunk_starts),
-    " (", nrow(data), " rader)"
+    " (", length(observations), " rader)"
   )
 }
 
