@@ -481,6 +481,36 @@ export type Database = {
           },
         ]
       }
+      search_index: {
+        Row: {
+          description: string | null
+          id: string
+          kind: string
+          search_vector: unknown
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          description?: string | null
+          id: string
+          kind: string
+          search_vector?: unknown
+          title: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          kind?: string
+          search_vector?: unknown
+          title?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -550,6 +580,15 @@ export type Database = {
           p_rows_affected?: number
         }
         Returns: Json
+      }
+      search_site: {
+        Args: { query_text: string }
+        Returns: {
+          description: string
+          kind: string
+          title: string
+          url: string
+        }[]
       }
     }
     Enums: {
