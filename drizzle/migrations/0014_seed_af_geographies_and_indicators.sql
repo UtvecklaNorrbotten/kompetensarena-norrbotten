@@ -299,6 +299,12 @@ on conflict (code) do update set
   level = excluded.level,
   parent_code = excluded.parent_code;
 
+-- Län ligger under Riket i den geografiska hierarkin.
+update public.geographies
+set parent_code = '00'
+where level = 'län'
+  and code <> '00';
+
 insert into public.indicators (
   id, name, description, unit, styrande_kalla, source_table_id,
   frequency, visibility, is_example
@@ -377,7 +383,18 @@ begin
   from public.geographies
   where level = 'kommun';
 
-  if v_kommuner < 290 then
-    raise exception 'Geografiseed ofullständig: endast % kommuner', v_kommuner;
+  if v_kommuner <> 290 then
+    raise exception 'Geografiseed ska innehålla exakt 290 kommuner men innehåller %', v_kommuner;
+  end if;
+
+  if (select count(*) from public.geographies where level = 'län') <> 21 then
+    raise exception 'Geografiseed ska innehålla exakt 21 län';
+  end if;
+
+  if not exists (
+    select 1 from public.geographies
+    where code = '00' and level = 'riket' and parent_code is null
+  ) then
+    raise exception 'Geografiseed saknar korrekt Riket-post';
   end if;
 end $$;
