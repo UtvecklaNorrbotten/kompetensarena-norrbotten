@@ -321,3 +321,25 @@ Målbilden är två separata körvägar:
 lyckade period inte ska importeras på nytt. Den faktiska AF-publiceringen till
 databasen kopplas på i ett separat steg; nuvarande workflow validerar och förbereder
 den inkrementella normaliseringsvägen men publicerar ännu ingen AF-data.
+
+
+### Uppdelad historikvalidering
+
+Historikvalideringen körs inte längre som ett enda långt sekventiellt jobb. Den delas
+i två parallella matriser:
+
+- struktur per källa: `sok`, `tid`, `svag`, `yrke`, `bas`
+- korsvalidering mot tid-filen: `sok`, `svag`, `yrke`, `bas`
+
+Varje strukturjobb laddar endast de filer som den källan behöver och kontrollerar bland
+annat maxperiod, dubblettnycklar, aktuell geografisk täckning och historisk
+periodtäckning. Resultatet sparas som en separat artifact per källa.
+
+Korsvalideringarna jämför endast den del av historiken där båda källorna faktiskt har
+samma `period + kommun + kön`. Perioder eller nycklar som bara finns i en av källorna
+redovisas separat som täckningsskillnader och räknas inte som datafel. Verkliga
+värdesavvikelser inom gemensam täckning blockerar däremot körningen.
+
+`strategy.fail-fast = false` gör att samtliga struktur- och jämförelsejobb slutförs
+även om ett av dem misslyckas. Därmed visas hela felbilden i en körning i stället för
+att nästa fel upptäcks först efter en ny full historikkörning.
