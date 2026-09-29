@@ -1,17 +1,19 @@
--- Inkrementell, versionsstyrd ETL för månadsdata.
--- En ny månadsbatch klonar föregående aktiva version utom perioden som ersätts,
--- tar emot den nya periodens chunkar och växlar först vid lyckad finalisering.
+-- Inkrementell, atomisk ETL för månadsdata.
+-- Historiken ligger kvar i indikatorns aktiva batch. En ny månadsperiod tas först
+-- emot i en liten osynlig stagingbatch. Vid finalisering ersätts endast den
+-- angivna perioden i den aktiva batchen, i en enda databastransaktion.
+-- Därmed behöver miljoner historiska rader varken laddas om eller kopieras varje månad.
 
 alter table public.etl_batches
   add column if not exists base_batch_id uuid references public.etl_batches(id) on delete set null,
   add column if not exists replace_period text;
 
-create or replace function public.etl_start_incremental_batch(
+create or replace function public.etl_start_period_batch(
   p_indicator_id text,
   p_source text,
   p_replace_period text,
   p_expected_chunks integer,
-  p_expected_new_rows integer,
+  p_expected_rows integer,
   p_kalla_uppdaterad_datum date default null,
   p_run_id uuid default null
 )
@@ -19,12 +21,10 @@ returns uuid
 language plpgsql
 security definer
 set search_path = public
-set statement_timeout = '30s'
 as $$
 declare
   v_id uuid;
   v_base_batch_id uuid;
-  v_base_rows integer;
 begin
   if p_replace_period is null or length(trim(p_replace_period)) = 0 then
     raise exception 'replace_period måste anges' using errcode = 'invalid_parameter_value';
@@ -34,8 +34,8 @@ begin
     raise exception 'expected_chunks utanför tillåtet intervall' using errcode = 'invalid_parameter_value';
   end if;
 
-  if p_expected_new_rows < 0 then
-    raise exception 'expected_new_rows får inte vara negativt' using errcode = 'invalid_parameter_value';
+  if p_expected_rows < 0 then
+    raise exception 'expected_rows får inte vara negativt' using errcode = 'invalid_parameter_value';
   end if;
 
   perform pg_advisory_xact_lock(hashtext(p_indicator_id));
@@ -49,13 +49,6 @@ begin
     raise exception 'Indikator % saknar aktiv historisk batch; kör full backfill först', p_indicator_id
       using errcode = 'no_data_found';
   end if;
-
-  select count(*)
-  into v_base_rows
-  from public.observations
-  where batch_id = v_base_batch_id
-    and indicator_id = p_indicator_id
-    and period <> p_replace_period;
 
   insert into public.etl_batches (
     indicator_id,
@@ -75,9 +68,9 @@ begin
     p_source,
     p_kalla_uppdaterad_datum,
     p_expected_chunks,
-    v_base_rows + p_expected_new_rows,
+    p_expected_rows,
     0,
-    v_base_rows,
+    0,
     'started',
     p_run_id,
     v_base_batch_id,
@@ -85,22 +78,13 @@ begin
   )
   returning id into v_id;
 
-  insert into public.observations (
-    batch_id, indicator_id, geo_code, period, value, dimensions
-  )
-  select
-    v_id, indicator_id, geo_code, period, value, dimensions
-  from public.observations
-  where batch_id = v_base_batch_id
-    and indicator_id = p_indicator_id
-    and period <> p_replace_period;
-
   return v_id;
 end;
 $$;
 
--- Finalisering räknar den faktiska nya batchversionens rader. Det gör samma
--- funktion korrekt både för fulla batchar och inkrementella copy-forward-batchar.
+-- Fulla batchar fortsätter byta aktiv batch som tidigare.
+-- Periodbatchar flyttar däremot bara den nya periodens staged rader in i den
+-- redan aktiva historikbatchen efter att den gamla versionen av perioden tagits bort.
 create or replace function public.etl_finalize_batch(p_batch_id uuid)
 returns jsonb
 language plpgsql
@@ -111,6 +95,7 @@ declare
   v_batch public.etl_batches%rowtype;
   v_chunks integer;
   v_rows integer;
+  v_current_active uuid;
 begin
   select * into v_batch
   from public.etl_batches
@@ -126,6 +111,7 @@ begin
       'batch_id', p_batch_id,
       'indicator_id', v_batch.indicator_id,
       'rows', v_batch.received_rows,
+      'replace_period', v_batch.replace_period,
       'already_finalized', true
     );
   end if;
@@ -151,21 +137,54 @@ begin
     and indicator_id = v_batch.indicator_id;
 
   if v_batch.expected_rows is not null and v_rows <> v_batch.expected_rows then
-    raise exception 'Radantal stämmer inte: % i batchen, % förväntade', v_rows, v_batch.expected_rows
+    raise exception 'Radantal stämmer inte: % staged, % förväntade', v_rows, v_batch.expected_rows
       using errcode = 'invalid_parameter_value';
   end if;
 
   perform pg_advisory_xact_lock(hashtext(v_batch.indicator_id));
 
-  insert into public.indicator_active_batches (
-    indicator_id, active_batch_id, activated_at
-  )
-  values (
-    v_batch.indicator_id, p_batch_id, now()
-  )
-  on conflict (indicator_id) do update set
-    active_batch_id = excluded.active_batch_id,
-    activated_at = excluded.activated_at;
+  if v_batch.replace_period is not null then
+    select active_batch_id
+    into v_current_active
+    from public.indicator_active_batches
+    where indicator_id = v_batch.indicator_id
+    for update;
+
+    if v_current_active is distinct from v_batch.base_batch_id then
+      raise exception 'Aktiv batch ändrades under periodimporten'
+        using errcode = 'serialization_failure';
+    end if;
+
+    if exists (
+      select 1
+      from public.observations
+      where batch_id = p_batch_id
+        and period <> v_batch.replace_period
+    ) then
+      raise exception 'Periodbatchen innehåller rader utanför %', v_batch.replace_period
+        using errcode = 'invalid_parameter_value';
+    end if;
+
+    delete from public.observations
+    where batch_id = v_batch.base_batch_id
+      and indicator_id = v_batch.indicator_id
+      and period = v_batch.replace_period;
+
+    update public.observations
+    set batch_id = v_batch.base_batch_id
+    where batch_id = p_batch_id
+      and indicator_id = v_batch.indicator_id;
+  else
+    insert into public.indicator_active_batches (
+      indicator_id, active_batch_id, activated_at
+    )
+    values (
+      v_batch.indicator_id, p_batch_id, now()
+    )
+    on conflict (indicator_id) do update set
+      active_batch_id = excluded.active_batch_id,
+      activated_at = excluded.activated_at;
+  end if;
 
   insert into public.indicator_metadata (
     indicator_id,
@@ -233,10 +252,10 @@ begin
 end;
 $$;
 
-revoke execute on function public.etl_start_incremental_batch(
+revoke execute on function public.etl_start_period_batch(
   text, text, text, integer, integer, date, uuid
 ) from public, anon, authenticated;
-grant execute on function public.etl_start_incremental_batch(
+grant execute on function public.etl_start_period_batch(
   text, text, text, integer, integer, date, uuid
 ) to service_role;
 
