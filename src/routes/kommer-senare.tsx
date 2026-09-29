@@ -12,6 +12,8 @@ export const Route = createFileRoute("/kommer-senare")({
       { name: "description", content: description },
       { property: "og:title", content: "Under uppbyggnad – Kompetensarena Norrbotten" },
       { property: "og:description", content: description },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: KommerSenare,

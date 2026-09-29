@@ -15,6 +15,10 @@ export const Route = createFileRoute("/omraden/$area/")({
     meta: [
       { title: `${loaderData?.title ?? "Område"} – Kompetensarena Norrbotten` },
       { name: "description", content: loaderData?.description ?? "" },
+      { property: "og:title", content: `${loaderData?.title ?? "Område"} – Kompetensarena Norrbotten` },
+      { property: "og:description", content: loaderData?.description ?? "" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AreaOverview,

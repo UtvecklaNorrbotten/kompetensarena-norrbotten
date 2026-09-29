@@ -16,6 +16,10 @@ export const Route = createFileRoute("/omraden/$area/$topic")({
     meta: [
       { title: `${loaderData?.topic.title ?? "Fördjupning"} – ${loaderData?.area.title ?? "Kompetensarena Norrbotten"}` },
       { name: "description", content: "Platshållare för en kommande fördjupning i Kompetensarena Norrbotten." },
+      { property: "og:title", content: `${loaderData?.topic.title ?? "Fördjupning"} – ${loaderData?.area.title ?? "Kompetensarena Norrbotten"}` },
+      { property: "og:description", content: "Platshållare för en kommande fördjupning i Kompetensarena Norrbotten." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: TopicPage,
