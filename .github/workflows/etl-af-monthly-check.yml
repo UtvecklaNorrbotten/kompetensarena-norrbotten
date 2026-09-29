@@ -12,6 +12,8 @@ on:
           - check
           - validate
           - validate-history
+          - publish-history
+          - publish-current
   schedule:
     # 23:e är startdag för kontroll, inte ett garanterat publiceringsdatum.
     # 1-7 täcker sena publiceringar som annars skulle falla mellan månadsskiften.
@@ -27,9 +29,12 @@ concurrency:
 
 jobs:
   check:
-    if: github.event_name == 'schedule' || inputs.mode == 'check'
+    if: github.event_name == 'schedule' || inputs.mode == 'check' || inputs.mode == 'publish-current'
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    outputs:
+      ready: ${{ steps.af-check.outputs.ready }}
+      period: ${{ steps.af-check.outputs.period }}
 
     steps:
       - name: Checka ut repo
@@ -53,6 +58,7 @@ jobs:
           install-quarto: false
 
       - name: Kontrollera AF:s månadsfiler
+        id: af-check
         env:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
           ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
@@ -205,3 +211,235 @@ jobs:
           path: artifacts/af-history-compare-${{ matrix.target }}
           if-no-files-found: warn
           retention-days: 30
+
+  publish-history:
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'publish-history'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        target: [sok, tid, svag, yrke, bas]
+
+    steps:
+      - name: Checka ut repo
+        uses: actions/checkout@v5
+
+      - name: Installera R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Installera beroenden
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::httr2
+            any::jsonlite
+            any::xml2
+            any::XML
+            any::digest
+            any::readxl
+            any::dplyr
+            any::tidyr
+          install-pandoc: false
+          install-quarto: false
+
+      - name: Publicera historik - ${{ matrix.target }}
+        env:
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+          AF_PUBLISH_MODE: history
+          AF_PUBLISH_TARGET: ${{ matrix.target }}
+          AF_PUBLISH_REPORT_DIR: artifacts/af-publish-history-${{ matrix.target }}
+        shell: Rscript {0}
+        run: |
+          source("R/etl/publish_af_target.R")
+
+      - name: Ladda upp publiceringsrapport - ${{ matrix.target }}
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: af-publish-history-${{ matrix.target }}-${{ github.run_number }}
+          path: artifacts/af-publish-history-${{ matrix.target }}
+          if-no-files-found: warn
+          retention-days: 30
+
+  mark-history-published:
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'publish-history'
+    needs: publish-history
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checka ut repo
+        uses: actions/checkout@v5
+
+      - name: Installera R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Installera beroenden
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::httr2
+            any::jsonlite
+            any::xml2
+            any::digest
+          install-pandoc: false
+          install-quarto: false
+
+      - name: Markera historisk AF-publicering lyckad
+        env:
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+        shell: Rscript {0}
+        run: |
+          source("R/etl/mark_af_publication_success.R")
+
+  validate-current-for-publish:
+    if: >-
+      always() &&
+      needs.check.result == 'success' &&
+      needs.check.outputs.ready == 'true' &&
+      (github.event_name == 'schedule' || inputs.mode == 'publish-current')
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checka ut repo
+        uses: actions/checkout@v5
+
+      - name: Installera R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Installera beroenden
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::httr2
+            any::jsonlite
+            any::xml2
+            any::XML
+            any::digest
+            any::readxl
+            any::dplyr
+            any::tidyr
+          install-pandoc: false
+          install-quarto: false
+
+      - name: Validera ny AF-period före publicering
+        env:
+          AF_VALIDATION_HISTORY: "false"
+          AF_VALIDATION_REPORT_DIR: artifacts/af-validation-before-publish
+        shell: Rscript {0}
+        run: |
+          source("R/etl/validate_af_normalization.R")
+
+      - name: Ladda upp valideringsrapport
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: af-validation-before-publish-${{ github.run_number }}
+          path: artifacts/af-validation-before-publish
+          if-no-files-found: warn
+          retention-days: 30
+
+  publish-current:
+    if: >-
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && inputs.mode == 'publish-current')
+    needs: validate-current-for-publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        target: [sok, tid, svag, yrke, bas]
+
+    steps:
+      - name: Checka ut repo
+        uses: actions/checkout@v5
+
+      - name: Installera R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Installera beroenden
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::httr2
+            any::jsonlite
+            any::xml2
+            any::XML
+            any::digest
+            any::readxl
+            any::dplyr
+            any::tidyr
+          install-pandoc: false
+          install-quarto: false
+
+      - name: Publicera ny period - ${{ matrix.target }}
+        env:
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+          AF_PUBLISH_MODE: current
+          AF_PUBLISH_TARGET: ${{ matrix.target }}
+          AF_PUBLISH_REPORT_DIR: artifacts/af-publish-current-${{ matrix.target }}
+        shell: Rscript {0}
+        run: |
+          source("R/etl/publish_af_target.R")
+
+      - name: Ladda upp publiceringsrapport - ${{ matrix.target }}
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: af-publish-current-${{ matrix.target }}-${{ github.run_number }}
+          path: artifacts/af-publish-current-${{ matrix.target }}
+          if-no-files-found: warn
+          retention-days: 30
+
+  mark-current-published:
+    if: >-
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && inputs.mode == 'publish-current')
+    needs: publish-current
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checka ut repo
+        uses: actions/checkout@v5
+
+      - name: Installera R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Installera beroenden
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::httr2
+            any::jsonlite
+            any::xml2
+            any::digest
+          install-pandoc: false
+          install-quarto: false
+
+      - name: Markera AF-period publicerad
+        env:
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+        shell: Rscript {0}
+        run: |
+          source("R/etl/mark_af_publication_success.R")
