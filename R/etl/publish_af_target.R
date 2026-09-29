@@ -13,6 +13,7 @@ source("R/etl/etl_api.R")
 source("R/etl/af_common.R")
 source("R/etl/af_normalize.R")
 
+publicera_af <- function() {
 mode <- Sys.getenv("AF_PUBLISH_MODE", unset = "")
 target <- Sys.getenv("AF_PUBLISH_TARGET", unset = "")
 report_dir <- Sys.getenv("AF_PUBLISH_REPORT_DIR", unset = "artifacts/af-publish")
@@ -62,7 +63,7 @@ if (mode == "current") {
       "AF-period ", common_period,
       " är redan framgångsrikt publicerad; ", target, " hoppas över."
     )
-    quit(save = "no", status = 0)
+    return(invisible(list(skipped = TRUE, period = common_period, target = target)))
   }
 }
 
@@ -261,3 +262,7 @@ message(
   " rader; period=", common_period,
   "; batch=", result$batch_id %||% batch_id
 )
+
+}
+
+publicera_af()
