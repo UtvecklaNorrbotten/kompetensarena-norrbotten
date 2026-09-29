@@ -255,3 +255,26 @@ För `svag konkurrensförmåga` summerar `SAMTLIGA` i 2026-08 till 349 398
 (171 986 kvinnor och 177 412 män), samma total som övriga kontrollkällor.
 119 personer saknar län och måste därför tas med direkt från råcachen för att
 Riket inte ska underskattas.
+
+
+### Valideringsstrategi
+
+`ETL - AF månadskontroll` har tre manuella lägen:
+
+- `check`: läser endast källsidan och kontrollerar att de sex filerna visar samma period.
+- `validate`: normaliserar hela historiken, kräver full struktur och exakt
+  korsvalidering för den aktuella gemensamma perioden. Historiska skillnader mellan
+  separata källfiler rapporteras men blockerar inte.
+- `validate-strict`: samma kontroll, men även historiska källskillnader blockerar.
+
+Bakgrunden är att en full historisk likhetskontroll kan fånga skillnader mellan
+separata AF-uttag som inte påverkar den aktuella månaden. Sådana skillnader ska inte
+döljas: varje validate-körning sparar därför en artifact med källfilernas URL,
+SHA-256 och storlek, struktursammanfattning samt samtliga korsvalideringsavvikelser.
+
+Valideringen kontrollerar dessutom att maxperioden inne i varje normaliserat dataset
+är samma som perioden i filnamnen, och att den aktuella perioden innehåller 290
+kommuner, 21 län och Riket.
+
+Workflowet kör den billiga källkontrollen både den 23-31 och den 1-7 för att även
+fånga en publicering som kommer efter ett månadsskifte.
