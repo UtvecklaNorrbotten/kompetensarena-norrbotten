@@ -146,51 +146,42 @@ if (geo_count("kommun") != 290L) stop(target, ": senaste period saknar 290 kommu
 if (geo_count("län") != 21L) stop(target, ": senaste period saknar 21 län")
 if (geo_count("riket") != 1L) stop(target, ": senaste period saknar Riket")
 
-make_dimensions <- function(data) {
-  has_bound <- "value_is_lower_bound" %in% names(data)
+build_observations <- function(chunk) {
+  has_bound <- "value_is_lower_bound" %in% names(chunk)
 
-  lapply(seq_len(nrow(data)), function(i) {
+  lapply(seq_len(nrow(chunk)), function(i) {
     dims <- list(
-      geo_level = as.character(data$geo_level[[i]]),
-      dimension_type = as.character(data$dimension_type[[i]]),
-      dimension_value = as.character(data$dimension_value[[i]]),
-      measure_code = as.character(data$measure_code[[i]]),
-      measure_label = as.character(data$measure_label[[i]])
+      geo_level = as.character(chunk$geo_level[[i]]),
+      dimension_type = as.character(chunk$dimension_type[[i]]),
+      dimension_value = as.character(chunk$dimension_value[[i]]),
+      measure_code = as.character(chunk$measure_code[[i]]),
+      measure_label = as.character(chunk$measure_label[[i]])
     )
 
-    sex <- data$sex[[i]]
+    sex <- chunk$sex[[i]]
     if (!is.na(sex) && nzchar(as.character(sex))) {
       dims$sex <- as.character(sex)
     }
 
-    if (has_bound && isTRUE(data$value_is_lower_bound[[i]])) {
+    if (has_bound && isTRUE(chunk$value_is_lower_bound[[i]])) {
       dims$value_is_lower_bound <- TRUE
     }
 
-    dims
+    list(
+      geo_code = as.character(chunk$geo_code[[i]]),
+      period = as.character(chunk$period[[i]]),
+      value = as.numeric(chunk$value[[i]]),
+      dimensions = dims
+    )
   })
 }
 
-dimensions <- make_dimensions(data)
-geo_code <- as.character(data$geo_code)
-period <- as.character(data$period)
-value <- as.numeric(data$value)
-
-observations <- lapply(seq_len(nrow(data)), function(i) {
-  list(
-    geo_code = geo_code[[i]],
-    period = period[[i]],
-    value = value[[i]],
-    dimensions = dimensions[[i]]
-  )
-})
-
 rows_per_chunk <- 5000L
-chunks <- split(observations, ceiling(seq_along(observations) / rows_per_chunk))
+chunk_starts <- seq.int(1L, nrow(data), by = rows_per_chunk)
 
-if (length(chunks) > ETL_MAX_CHUNKS) {
+if (length(chunk_starts) > ETL_MAX_CHUNKS) {
   stop(
-    target, ": kräver ", length(chunks),
+    target, ": kräver ", length(chunk_starts),
     " chunkar; max är ", ETL_MAX_CHUNKS
   )
 }
@@ -200,8 +191,8 @@ batch <- etl_start_batch(
   indicator_id = indicator_id,
   source = "Arbetsförmedlingen",
   source_updated_date = NULL,
-  expected_chunks = length(chunks),
-  expected_rows = length(observations),
+  expected_chunks = length(chunk_starts),
+  expected_rows = nrow(data),
   mode = batch_mode,
   replace_period = if (mode == "current") common_period else NULL
 )
@@ -220,16 +211,20 @@ on.exit({
   }
 }, add = TRUE)
 
-for (i in seq_along(chunks)) {
+for (i in seq_along(chunk_starts)) {
+  row_start <- chunk_starts[[i]]
+  row_end <- min(row_start + rows_per_chunk - 1L, nrow(data))
+  observations <- build_observations(data[row_start:row_end, , drop = FALSE])
+
   etl_publish_batch_chunk(
     batch_id = batch_id,
     indicator_id = indicator_id,
     chunk_index = i - 1L,
-    observations = unname(chunks[[i]])
+    observations = observations
   )
   message(
-    target, ": chunk ", i, "/", length(chunks),
-    " (", length(chunks[[i]]), " rader)"
+    target, ": chunk ", i, "/", length(chunk_starts),
+    " (", nrow(data), " rader)"
   )
 }
 
@@ -249,7 +244,7 @@ summary <- data.frame(
   indicator_id = indicator_id,
   mode = mode,
   period = common_period,
-  rows_sent = length(observations),
+  rows_sent = nrow(data),
   batch_id = result$batch_id %||% batch_id,
   stringsAsFactors = FALSE
 )
@@ -262,7 +257,7 @@ utils::write.csv(
 
 message(
   "AF ", target, " publicerad i ", mode, "-läge: ",
-  format(length(observations), big.mark = " "),
+  format(nrow(data), big.mark = " "),
   " rader; period=", common_period,
   "; batch=", result$batch_id %||% batch_id
 )
