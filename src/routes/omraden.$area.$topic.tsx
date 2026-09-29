@@ -9,7 +9,8 @@ export const Route = createFileRoute("/omraden/$area/$topic")({
     const area = getArea(params.area);
     const topic = getTopic(params.area, params.topic);
     if (!area || !topic) throw notFound();
-    return { area, topic };
+    // Ikonkomponenten kan inte serialiseras från servern – skicka bara data.
+    return { area: { slug: area.slug, title: area.title }, topic };
   },
   head: ({ loaderData }) => ({
     meta: [
