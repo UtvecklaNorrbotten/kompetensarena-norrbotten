@@ -349,6 +349,11 @@ run_af_normalization_validation <- function() {
 
     approx_mb <- as.numeric(utils::object.size(x)) / 1024^2
     incomplete_riket <- sum(x$geo_level == "riket" & is.na(x$value))
+    lower_bound_rows <- if ("value_is_lower_bound" %in% names(x)) {
+      sum(x$value_is_lower_bound %in% TRUE)
+    } else {
+      0L
+    }
 
     structure_report[[length(structure_report) + 1L]] <- data.frame(
       dataset = nm,
@@ -363,6 +368,7 @@ run_af_normalization_validation <- function() {
       riket_latest = riket_count_latest,
       riket_na_all = incomplete_riket,
       riket_na_latest = latest_riket_na,
+      lower_bound_rows = lower_bound_rows,
       stringsAsFactors = FALSE
     )
 
@@ -380,9 +386,17 @@ run_af_normalization_validation <- function() {
 
     if (incomplete_riket > 0) {
       message(sprintf(
-        "%s: %s historiska riksrader är NA eftersom minst ett länsvärde saknas/maskeras; aktuell period har 0.",
+        "%s: %s historiska riksrader är NA eftersom minst ett verkligt värde saknas; aktuell period har 0.",
         nm,
         format(incomplete_riket, big.mark = " ")
+      ))
+    }
+
+    if (lower_bound_rows > 0) {
+      message(sprintf(
+        "%s: %s rader är markerade som undre gräns på grund av sekretessmarkering.",
+        nm,
+        format(lower_bound_rows, big.mark = " ")
       ))
     }
   }
