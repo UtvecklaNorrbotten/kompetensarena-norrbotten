@@ -15,7 +15,7 @@ export function Logo() {
       className="inline-flex h-full shrink-0 items-center rounded-md"
       aria-label={`${site.name} – till startsidan`}
     >
-      <img src={logo} alt={site.name} className="block h-full w-auto max-w-[min(45vw,260px)] object-contain" />
+      <img src={logo} alt={site.name} className="block h-[70px] w-auto max-w-none max-md:w-[45vw] max-md:object-cover max-md:object-left" />
     </Link>
   );
 }
