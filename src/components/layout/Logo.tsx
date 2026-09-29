@@ -12,10 +12,10 @@ export function Logo() {
   return (
     <Link
       to="/"
-      className="inline-flex items-center rounded-md py-1"
+      className="inline-flex h-full shrink-0 items-center rounded-md"
       aria-label={`${site.name} – till startsidan`}
     >
-      <img src={logo} alt={site.name} className="h-11 w-auto" />
+      <img src={logo} alt={site.name} className="block h-full w-auto max-w-[min(45vw,260px)] object-contain" />
     </Link>
   );
 }
