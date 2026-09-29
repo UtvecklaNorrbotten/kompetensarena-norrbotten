@@ -562,7 +562,7 @@ af_normalize_yrkesomrade <- function(path, period = NULL) {
     summarise(value = af_sum_complete(value), .groups = "drop") |>
     transmute(
       period = PERIOD,
-      geo_code = source_county_code,
+      geo_code = county_code,
       geo_level = "län",
       sex = KÖN,
       dimension_type = "yrkesområde",
