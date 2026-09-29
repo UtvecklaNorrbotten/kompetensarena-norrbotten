@@ -13,11 +13,14 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BytLosenordRouteImport } from './routes/byt-losenord'
 import { Route as KommerSenareRouteImport } from './routes/kommer-senare'
+import { Route as LaddaNedDataRouteImport } from './routes/ladda-ned-data'
 import { Route as OmRouteImport } from './routes/om'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as StatistikRouteImport } from './routes/statistik'
 import { Route as AdminDatakallorIndexRouteImport } from './routes/admin.datakallor.index'
 import { Route as AdminDatakallorSourceIdRouteImport } from './routes/admin.datakallor.$sourceId'
+import { Route as OmradenAreaIndexRouteImport } from './routes/omraden.$area.index'
+import { Route as OmradenAreaTopicRouteImport } from './routes/omraden.$area.$topic'
 import { Route as ApiPublicJobsEtlNoChangeRouteImport } from './routes/api/public/jobs/etl-no-change'
 import { Route as ApiPublicJobsEtlStateRouteImport } from './routes/api/public/jobs/etl-state'
 import { Route as ApiPublicJobsPublishIndicatorRouteImport } from './routes/api/public/jobs/publish-indicator'
@@ -47,6 +50,11 @@ const KommerSenareRoute = KommerSenareRouteImport.update({
   path: '/kommer-senare',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LaddaNedDataRoute = LaddaNedDataRouteImport.update({
+  id: '/ladda-ned-data',
+  path: '/ladda-ned-data',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OmRoute = OmRouteImport.update({
   id: '/om',
   path: '/om',
@@ -70,6 +78,16 @@ const AdminDatakallorIndexRoute = AdminDatakallorIndexRouteImport.update({
 const AdminDatakallorSourceIdRoute = AdminDatakallorSourceIdRouteImport.update({
   id: '/admin/datakallor/$sourceId',
   path: '/admin/datakallor/$sourceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OmradenAreaIndexRoute = OmradenAreaIndexRouteImport.update({
+  id: '/omraden/$area/',
+  path: '/omraden/$area/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OmradenAreaTopicRoute = OmradenAreaTopicRouteImport.update({
+  id: '/omraden/$area/$topic',
+  path: '/omraden/$area/$topic',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicJobsEtlNoChangeRoute =
@@ -125,11 +143,14 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/byt-losenord': typeof BytLosenordRoute
   '/kommer-senare': typeof KommerSenareRoute
+  '/ladda-ned-data': typeof LaddaNedDataRoute
   '/om': typeof OmRoute
   '/reset-password': typeof ResetPasswordRoute
   '/statistik': typeof StatistikRoute
   '/admin/datakallor/$sourceId': typeof AdminDatakallorSourceIdRoute
+  '/omraden/$area/$topic': typeof OmradenAreaTopicRoute
   '/admin/datakallor/': typeof AdminDatakallorIndexRoute
+  '/omraden/$area/': typeof OmradenAreaIndexRoute
   '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
@@ -144,11 +165,14 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/byt-losenord': typeof BytLosenordRoute
   '/kommer-senare': typeof KommerSenareRoute
+  '/ladda-ned-data': typeof LaddaNedDataRoute
   '/om': typeof OmRoute
   '/reset-password': typeof ResetPasswordRoute
   '/statistik': typeof StatistikRoute
   '/admin/datakallor/$sourceId': typeof AdminDatakallorSourceIdRoute
+  '/omraden/$area/$topic': typeof OmradenAreaTopicRoute
   '/admin/datakallor': typeof AdminDatakallorIndexRoute
+  '/omraden/$area': typeof OmradenAreaIndexRoute
   '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
@@ -164,11 +188,14 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/byt-losenord': typeof BytLosenordRoute
   '/kommer-senare': typeof KommerSenareRoute
+  '/ladda-ned-data': typeof LaddaNedDataRoute
   '/om': typeof OmRoute
   '/reset-password': typeof ResetPasswordRoute
   '/statistik': typeof StatistikRoute
   '/admin/datakallor/$sourceId': typeof AdminDatakallorSourceIdRoute
+  '/omraden/$area/$topic': typeof OmradenAreaTopicRoute
   '/admin/datakallor/': typeof AdminDatakallorIndexRoute
+  '/omraden/$area/': typeof OmradenAreaIndexRoute
   '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
@@ -185,11 +212,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/byt-losenord'
     | '/kommer-senare'
+    | '/ladda-ned-data'
     | '/om'
     | '/reset-password'
     | '/statistik'
     | '/admin/datakallor/$sourceId'
+    | '/omraden/$area/$topic'
     | '/admin/datakallor/'
+    | '/omraden/$area/'
     | '/api/public/jobs/etl-no-change'
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
@@ -204,11 +234,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/byt-losenord'
     | '/kommer-senare'
+    | '/ladda-ned-data'
     | '/om'
     | '/reset-password'
     | '/statistik'
     | '/admin/datakallor/$sourceId'
+    | '/omraden/$area/$topic'
     | '/admin/datakallor'
+    | '/omraden/$area'
     | '/api/public/jobs/etl-no-change'
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
@@ -223,11 +256,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/byt-losenord'
     | '/kommer-senare'
+    | '/ladda-ned-data'
     | '/om'
     | '/reset-password'
     | '/statistik'
     | '/admin/datakallor/$sourceId'
+    | '/omraden/$area/$topic'
     | '/admin/datakallor/'
+    | '/omraden/$area/'
     | '/api/public/jobs/etl-no-change'
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
@@ -243,11 +279,14 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   BytLosenordRoute: typeof BytLosenordRoute
   KommerSenareRoute: typeof KommerSenareRoute
+  LaddaNedDataRoute: typeof LaddaNedDataRoute
   OmRoute: typeof OmRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   StatistikRoute: typeof StatistikRoute
   AdminDatakallorSourceIdRoute: typeof AdminDatakallorSourceIdRoute
+  OmradenAreaTopicRoute: typeof OmradenAreaTopicRoute
   AdminDatakallorIndexRoute: typeof AdminDatakallorIndexRoute
+  OmradenAreaIndexRoute: typeof OmradenAreaIndexRoute
   ApiPublicJobsEtlNoChangeRoute: typeof ApiPublicJobsEtlNoChangeRoute
   ApiPublicJobsEtlStateRoute: typeof ApiPublicJobsEtlStateRoute
   ApiPublicJobsPublishIndicatorRoute: typeof ApiPublicJobsPublishIndicatorRoute
@@ -288,6 +327,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KommerSenareRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ladda-ned-data': {
+      id: '/ladda-ned-data'
+      path: '/ladda-ned-data'
+      fullPath: '/ladda-ned-data'
+      preLoaderRoute: typeof LaddaNedDataRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/om': {
       id: '/om'
       path: '/om'
@@ -321,6 +367,20 @@ declare module '@tanstack/react-router' {
       path: '/admin/datakallor/$sourceId'
       fullPath: '/admin/datakallor/$sourceId'
       preLoaderRoute: typeof AdminDatakallorSourceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/omraden/$area/': {
+      id: '/omraden/$area/'
+      path: '/omraden/$area'
+      fullPath: '/omraden/$area/'
+      preLoaderRoute: typeof OmradenAreaIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/omraden/$area/$topic': {
+      id: '/omraden/$area/$topic'
+      path: '/omraden/$area/$topic'
+      fullPath: '/omraden/$area/$topic'
+      preLoaderRoute: typeof OmradenAreaTopicRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/jobs/etl-no-change': {
@@ -387,11 +447,14 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   BytLosenordRoute: BytLosenordRoute,
   KommerSenareRoute: KommerSenareRoute,
+  LaddaNedDataRoute: LaddaNedDataRoute,
   OmRoute: OmRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   StatistikRoute: StatistikRoute,
   AdminDatakallorSourceIdRoute: AdminDatakallorSourceIdRoute,
+  OmradenAreaTopicRoute: OmradenAreaTopicRoute,
   AdminDatakallorIndexRoute: AdminDatakallorIndexRoute,
+  OmradenAreaIndexRoute: OmradenAreaIndexRoute,
   ApiPublicJobsEtlNoChangeRoute: ApiPublicJobsEtlNoChangeRoute,
   ApiPublicJobsEtlStateRoute: ApiPublicJobsEtlStateRoute,
   ApiPublicJobsPublishIndicatorRoute: ApiPublicJobsPublishIndicatorRoute,
