@@ -238,3 +238,20 @@ saknat län. Om Riket skapades enbart genom att summera de 21 länsvärdena skul
 personer falla bort. Summering av hela råcachen ger 349 398 inskrivna arbetslösa för
 2026-08, vilket exakt överensstämmer med `INSAL` i den separata riketsfilen
 `web-tid-riket-2026-08.xlsx`.
+
+
+### Svag konkurrensförmåga och yrkesområde: geografi
+
+Valideringen av de faktiska 2026-08-filerna visar att inte heller dessa källor ska
+tolkas som om blanka kommunfält vore färdiga länstotaler.
+
+- `svag konkurrensförmåga`: inga explicita länsrader finns. Län byggs från alla
+  rader med känt län och Riket från hela råcachen.
+- `yrkesområde`: det förekommer blanka kommunfält tillsammans med känt län. Dessa
+  är restposter för saknad kommun, inte länstotaler. De ingår därför i länssumman
+  men publiceras inte som kommun. Riket byggs från hela råcachen.
+
+För `svag konkurrensförmåga` summerar `SAMTLIGA` i 2026-08 till 349 398
+(171 986 kvinnor och 177 412 män), samma total som övriga kontrollkällor.
+119 personer saknar län och måste därför tas med direkt från råcachen för att
+Riket inte ska underskattas.
