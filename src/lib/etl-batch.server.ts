@@ -69,6 +69,7 @@ const cleanupSchema = z.object({
   batch_id: z.string().uuid(),
   max_rows: z.number().int().min(1).max(50000).default(5000),
 });
+const resumeSchema = z.object({ batch_id: z.string().uuid() });
 
 type PgError = { code?: string; message: string };
 
@@ -361,4 +362,65 @@ export async function handleBatchListFailed(request: Request): Promise<Response>
     (data ?? []).filter((row) => !activeIds.has(row.id)),
     200,
   );
+}
+
+
+/** GET/POST /api/public/jobs/etl-batch/resume-history
+ * GET: hittar senaste ofullbordade fulla AF-batch för en indikator.
+ * POST: återöppnar en misslyckad full historikbatch för idempotent fortsättning.
+ */
+export async function handleBatchResumeHistory(request: Request): Promise<Response> {
+  const denied = await authorize(request);
+  if (denied) return denied;
+
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+  if (request.method === "GET") {
+    if (controlRate()) return json({ error: "Too many requests" }, 429);
+
+    const indicatorId = new URL(request.url).searchParams.get("indicator_id")?.trim();
+    if (!indicatorId) return json({ error: "indicator_id krävs" }, 400);
+
+    const { data, error } = await supabaseAdmin
+      .from("etl_batches")
+      .select(
+        "id, indicator_id, expected_chunks, expected_rows, received_chunks, received_rows, status, replace_period, source, created_at, last_activity_at",
+      )
+      .eq("indicator_id", indicatorId)
+      .is("replace_period", null)
+      .in("status", ["failed", "started", "receiving", "ready"])
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) {
+      console.error("[etl-batch] resume-uppslag misslyckades:", error.message);
+      return json({ error: "Lookup failed" }, 500);
+    }
+
+    return json(data ?? null, 200);
+  }
+
+  if (request.method === "POST") {
+    if (controlRate()) return json({ error: "Too many requests" }, 429);
+
+    const body = await readBody(request, resumeSchema);
+    if (!body.ok) return body.response;
+
+    const { data, error } = await supabaseAdmin.rpc("etl_reopen_failed_batch", {
+      p_batch_id: body.data.batch_id,
+    });
+
+    if (error) {
+      console.error("[etl-batch] återöppning misslyckades:", error.message);
+      return json(
+        { error: "Resume failed", message: error.message, code: error.code },
+        statusForPgError(error),
+      );
+    }
+
+    return json(data, 200);
+  }
+
+  return json({ error: "Method not allowed" }, 405);
 }

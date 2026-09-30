@@ -178,6 +178,45 @@ build_observations <- function(chunk) {
 }
 
 rows_per_chunk <- if (mode == "history") 2000L else 5000L
+resume_batch <- NULL
+
+if (mode == "history") {
+  candidate <- try(
+    etl_get_resumable_history_batch(indicator_id),
+    silent = TRUE
+  )
+
+  if (!inherits(candidate, "try-error") && is.list(candidate) && !is.null(candidate$id)) {
+    candidate_rows <- suppressWarnings(as.integer(candidate$expected_rows))
+    candidate_chunks <- suppressWarnings(as.integer(candidate$expected_chunks))
+
+    chunk_size_from_candidate <- NA_integer_
+    if (
+      !is.na(candidate_rows) &&
+      candidate_rows == nrow(data) &&
+      candidate_chunks == ceiling(nrow(data) / 5000)
+    ) {
+      chunk_size_from_candidate <- 5000L
+    } else if (
+      !is.na(candidate_rows) &&
+      candidate_rows == nrow(data) &&
+      candidate_chunks == ceiling(nrow(data) / 2000)
+    ) {
+      chunk_size_from_candidate <- 2000L
+    }
+
+    if (!is.na(chunk_size_from_candidate)) {
+      rows_per_chunk <- chunk_size_from_candidate
+      resume_batch <- candidate
+      message(
+        target, ": återupptar batch ", candidate$id,
+        " (", candidate$received_chunks, "/", candidate$expected_chunks,
+        " chunkar redan mottagna; chunkstorlek ", rows_per_chunk, ")."
+      )
+    }
+  }
+}
+
 chunk_starts <- seq.int(1L, nrow(data), by = rows_per_chunk)
 
 if (length(chunk_starts) > ETL_MAX_CHUNKS) {
@@ -187,39 +226,40 @@ if (length(chunk_starts) > ETL_MAX_CHUNKS) {
   )
 }
 
-batch_mode <- if (mode == "current") "replace_period" else "full"
-batch <- etl_start_batch(
-  indicator_id = indicator_id,
-  source = "Arbetsförmedlingen",
-  source_updated_date = NULL,
-  expected_chunks = length(chunk_starts),
-  expected_rows = nrow(data),
-  mode = batch_mode,
-  replace_period = if (mode == "current") common_period else NULL
-)
+if (!is.null(resume_batch)) {
+  batch <- etl_reopen_history_batch(resume_batch$id)
+  batch_id <- resume_batch$id
+} else {
+  batch_mode <- if (mode == "current") "replace_period" else "full"
+  batch <- etl_start_batch(
+    indicator_id = indicator_id,
+    source = paste("Arbetsförmedlingen", common_period),
+    source_updated_date = NULL,
+    expected_chunks = length(chunk_starts),
+    expected_rows = nrow(data),
+    mode = batch_mode,
+    replace_period = if (mode == "current") common_period else NULL
+  )
+  batch_id <- batch$batch_id
+}
 
-batch_id <- batch$batch_id
 ok <- FALSE
 on.exit({
-  if (!ok) {
-    abort_result <- try(
+  if (!ok && mode == "current") {
+    try(
       etl_abort_batch(
         batch_id,
         reason = paste0("AF ", mode, "/", target, " avbruten före finalisering")
       ),
       silent = TRUE
     )
+  }
 
-    if (!inherits(abort_result, "try-error")) {
-      try(
-        etl_cleanup_failed_batch_all(
-          batch_id,
-          max_rows = 5000L,
-          max_rounds = 2000L
-        ),
-        silent = TRUE
-      )
-    }
+  if (!ok && mode == "history") {
+    message(
+      target, ": historikbatch ", batch_id,
+      " lämnas kvar för säker återupptagning vid nästa körning."
+    )
   }
 }, add = TRUE)
 

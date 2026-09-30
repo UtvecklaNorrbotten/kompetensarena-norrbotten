@@ -74,6 +74,19 @@ etl_get_source_state <- function(source_id) {
     etl_perform_json(retry_safe = TRUE)
 }
 
+etl_get_resumable_history_batch <- function(indicator_id) {
+  etl_request("/api/public/jobs/etl-batch/resume-history") |>
+    req_url_query(indicator_id = indicator_id) |>
+    etl_perform_json(retry_safe = TRUE)
+}
+
+etl_reopen_history_batch <- function(batch_id) {
+  etl_request("/api/public/jobs/etl-batch/resume-history") |>
+    req_method("POST") |>
+    req_body_json(list(batch_id = batch_id), auto_unbox = TRUE) |>
+    etl_perform_json(retry_safe = TRUE)
+}
+
 etl_update_source_state <- function(
   source_id,
   status,
