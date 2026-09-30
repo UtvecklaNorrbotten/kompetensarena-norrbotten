@@ -64,14 +64,14 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
           const open = activeArea === area.slug;
           return (
             <li key={area.slug}>
-              <AppLink href={areaPath(area.slug)} aria-current={pathname === areaPath(area.slug) || pathname === areaPath(area.slug) + "/" ? "page" : undefined} title={area.title} className={`${rowClass} aria-[current=page]:bg-brand-light`}>
+              <AppLink href={areaPath(area.slug)} activeOptions={{ exact: true }} title={area.title} className={rowClass}>
                 <Icon className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>{area.title}</span>
               </AppLink>
               {open && (
                 <ul aria-hidden={!expanded && !mobile} className={`ml-8 border-l border-border pl-2 text-sm ${expanded || mobile ? "" : "invisible"}`}>
-                  <li><AppLink tabIndex={expanded || mobile ? undefined : -1} href={areaPath(area.slug)} aria-current={pathname === areaPath(area.slug) || pathname === areaPath(area.slug) + "/" ? "page" : undefined} className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light">Översikt</AppLink></li>
+                  <li><AppLink tabIndex={expanded || mobile ? undefined : -1} href={areaPath(area.slug)} activeOptions={{ exact: true }} className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light">Översikt</AppLink></li>
                   {area.topics.map((topic) => (
-                    <li key={topic.slug}><AppLink tabIndex={expanded || mobile ? undefined : -1} href={areaPath(area.slug, topic.slug)} aria-current={pathname === areaPath(area.slug, topic.slug) ? "page" : undefined} className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light">{topic.title}</AppLink></li>
+                    <li key={topic.slug}><AppLink tabIndex={expanded || mobile ? undefined : -1} href={areaPath(area.slug, topic.slug)} activeOptions={{ exact: true }} className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light">{topic.title}</AppLink></li>
                   ))}
                 </ul>
               )}
