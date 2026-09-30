@@ -311,7 +311,7 @@ export async function handleBatchCleanupFailed(request: Request): Promise<Respon
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data, error } = await supabaseAdmin.rpc("etl_cleanup_failed_batch", {
     p_batch_id: body.data.batch_id,
-    p_max_rows: body.data.max_rows,
+    p_max_rows: body.data.max_rows ?? 5000,
   });
 
   if (error) {
