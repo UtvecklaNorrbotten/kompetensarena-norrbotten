@@ -69,7 +69,9 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
         {areas.map((area) => {
           const Icon = area.icon;
           const open = activeArea === area.slug;
-          const showSub = open && (mobile || expanded);
+          // Behåll det aktiva områdets undermeny i layouten även när sidomenyn är hopfälld.
+          // Annars flyttar ikonerna nedåt när menyn expanderas vid hovring.
+          const showSub = open;
           return (
             <li key={area.slug}>
               <AppLink href={areaPath(area.slug)} onClick={blurOnClick} activeOptions={{ exact: true }} title={area.title} className={rowClass}>
