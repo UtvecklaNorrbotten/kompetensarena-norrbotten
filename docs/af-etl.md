@@ -400,3 +400,31 @@ Det schemalagda flödet är:
 
 Om ingen historisk baseline finns markeras källorna som redo men den automatiska
 månadsimporten startas inte. Då måste `publish-history` köras först.
+
+
+## Månadsfönster och kvartalsvis revisionskontroll
+
+Den automatiska månadschecken körs tills vidare den **1–15 samt den 23:e varje månad**
+kl. 04:15 UTC. Fönstret kan kortas när AF:s faktiska publiceringsmönster är känt.
+
+Historiska revisioner hanteras separat i workflowet
+`ETL - AF kvartalsvis revisionskontroll`:
+
+- schemalagd körning den 16 januari, april, juli och oktober kl. 05:15 UTC,
+- hela AF-historiken normaliseras, men endast perioder t.o.m.
+  `latest_successful_period` jämförs,
+- varje target/period får en stabil SHA-256-fingerprint av geografi, dimensioner,
+  värde och eventuell `value_is_lower_bound`,
+- oförändrade perioder skrivs inte om,
+- ändrade eller nytillkomna historiska perioder ersätts atomiskt med
+  `replace_period`,
+- om en tidigare publicerad period helt försvinner ur källan stoppas kontrollen
+  i stället för att data raderas automatiskt.
+
+Fingerprints lagras internt i `af_revision_fingerprints`. Den vanliga
+månadsimporten sparar fingerprint för varje ny lyckad period, så kvartalskontrollen
+behöver bara agera på verkliga historiska förändringar.
+
+Efter införandet ska workflowet köras **en gång i läget `baseline`** för att skapa
+fingerprints för den redan publicerade historiken t.o.m. 2026-08. Därefter används
+läget `check`; schemalagda körningar använder alltid `check`.
