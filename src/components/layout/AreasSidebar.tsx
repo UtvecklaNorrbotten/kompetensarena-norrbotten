@@ -69,7 +69,7 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
         {areas.map((area) => {
           const Icon = area.icon;
           const open = activeArea === area.slug;
-          const showSub = mobile ? open : expanded;
+          const showSub = open && (mobile || expanded);
           return (
             <li key={area.slug}>
               <AppLink href={areaPath(area.slug)} onClick={blurOnClick} activeOptions={{ exact: true }} title={area.title} className={rowClass}>
