@@ -65,6 +65,10 @@ const chunkSchema = z.object({
 
 const finalizeSchema = z.object({ batch_id: z.string().uuid() });
 const abortSchema = z.object({ batch_id: z.string().uuid(), reason: z.string().max(500).optional() });
+const cleanupSchema = z.object({
+  batch_id: z.string().uuid(),
+  max_rows: z.number().int().min(1).max(50000).default(5000),
+});
 
 type PgError = { code?: string; message: string };
 
@@ -287,6 +291,35 @@ export async function handleBatchAbort(request: Request): Promise<Response> {
   if (error) {
     console.error("[etl-batch] avbrott misslyckades:", error.message);
     return json({ error: "Abort failed", message: error.message }, statusForPgError(error));
+  }
+
+  return json(data, 200);
+}
+
+
+/** POST /api/public/jobs/etl-batch/cleanup-failed
+ * Tar bort en begränsad mängd observationsrader från en redan misslyckad,
+ * osynlig batch. Klienten upprepar anropet tills remaining=false.
+ */
+export async function handleBatchCleanupFailed(request: Request): Promise<Response> {
+  const denied = await guard(request, chunkRate);
+  if (denied) return denied;
+
+  const body = await readBody(request, cleanupSchema);
+  if (!body.ok) return body.response;
+
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin.rpc("etl_cleanup_failed_batch", {
+    p_batch_id: body.data.batch_id,
+    p_max_rows: body.data.max_rows,
+  });
+
+  if (error) {
+    console.error("[etl-batch] cleanup misslyckades:", error.message);
+    return json(
+      { error: "Cleanup failed", message: error.message, code: error.code },
+      statusForPgError(error),
+    );
   }
 
   return json(data, 200);
