@@ -21,16 +21,16 @@ import { Route as AdminDatakallorIndexRouteImport } from './routes/admin.datakal
 import { Route as AdminDatakallorSourceIdRouteImport } from './routes/admin.datakallor.$sourceId'
 import { Route as OmradenAreaIndexRouteImport } from './routes/omraden.$area.index'
 import { Route as OmradenAreaTopicRouteImport } from './routes/omraden.$area.$topic'
+import { Route as ApiPublicJobsAfRevisionsRouteImport } from './routes/api/public/jobs/af-revisions'
 import { Route as ApiPublicJobsEtlNoChangeRouteImport } from './routes/api/public/jobs/etl-no-change'
 import { Route as ApiPublicJobsEtlStateRouteImport } from './routes/api/public/jobs/etl-state'
 import { Route as ApiPublicJobsPublishIndicatorRouteImport } from './routes/api/public/jobs/publish-indicator'
 import { Route as ApiPublicJobsSourceStateRouteImport } from './routes/api/public/jobs/source-state'
-import { Route as ApiPublicJobsAfRevisionsRouteImport } from './routes/api/public/jobs/af-revisions'
 import { Route as ApiPublicJobsEtlBatchAbortRouteImport } from './routes/api/public/jobs/etl-batch/abort'
 import { Route as ApiPublicJobsEtlBatchChunkRouteImport } from './routes/api/public/jobs/etl-batch/chunk'
 import { Route as ApiPublicJobsEtlBatchCleanupFailedRouteImport } from './routes/api/public/jobs/etl-batch/cleanup-failed'
-import { Route as ApiPublicJobsEtlBatchResumeHistoryRouteImport } from './routes/api/public/jobs/etl-batch/resume-history'
 import { Route as ApiPublicJobsEtlBatchFinalizeRouteImport } from './routes/api/public/jobs/etl-batch/finalize'
+import { Route as ApiPublicJobsEtlBatchResumeHistoryRouteImport } from './routes/api/public/jobs/etl-batch/resume-history'
 import { Route as ApiPublicJobsEtlBatchStartRouteImport } from './routes/api/public/jobs/etl-batch/start'
 
 const IndexRoute = IndexRouteImport.update({
@@ -93,6 +93,12 @@ const OmradenAreaTopicRoute = OmradenAreaTopicRouteImport.update({
   path: '/omraden/$area/$topic',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicJobsAfRevisionsRoute =
+  ApiPublicJobsAfRevisionsRouteImport.update({
+    id: '/api/public/jobs/af-revisions',
+    path: '/api/public/jobs/af-revisions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicJobsEtlNoChangeRoute =
   ApiPublicJobsEtlNoChangeRouteImport.update({
     id: '/api/public/jobs/etl-no-change',
@@ -116,12 +122,6 @@ const ApiPublicJobsSourceStateRoute =
     path: '/api/public/jobs/source-state',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicJobsAfRevisionsRoute =
-  ApiPublicJobsAfRevisionsRouteImport.update({
-    id: '/api/public/jobs/af-revisions',
-    path: '/api/public/jobs/af-revisions',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ApiPublicJobsEtlBatchAbortRoute =
   ApiPublicJobsEtlBatchAbortRouteImport.update({
     id: '/api/public/jobs/etl-batch/abort',
@@ -140,16 +140,16 @@ const ApiPublicJobsEtlBatchCleanupFailedRoute =
     path: '/api/public/jobs/etl-batch/cleanup-failed',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicJobsEtlBatchResumeHistoryRoute =
-  ApiPublicJobsEtlBatchResumeHistoryRouteImport.update({
-    id: '/api/public/jobs/etl-batch/resume-history',
-    path: '/api/public/jobs/etl-batch/resume-history',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ApiPublicJobsEtlBatchFinalizeRoute =
   ApiPublicJobsEtlBatchFinalizeRouteImport.update({
     id: '/api/public/jobs/etl-batch/finalize',
     path: '/api/public/jobs/etl-batch/finalize',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicJobsEtlBatchResumeHistoryRoute =
+  ApiPublicJobsEtlBatchResumeHistoryRouteImport.update({
+    id: '/api/public/jobs/etl-batch/resume-history',
+    path: '/api/public/jobs/etl-batch/resume-history',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicJobsEtlBatchStartRoute =
@@ -172,18 +172,16 @@ export interface FileRoutesByFullPath {
   '/omraden/$area/$topic': typeof OmradenAreaTopicRoute
   '/admin/datakallor/': typeof AdminDatakallorIndexRoute
   '/omraden/$area/': typeof OmradenAreaIndexRoute
+  '/api/public/jobs/af-revisions': typeof ApiPublicJobsAfRevisionsRoute
   '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
   '/api/public/jobs/source-state': typeof ApiPublicJobsSourceStateRoute
-  '/api/public/jobs/af-revisions': typeof ApiPublicJobsAfRevisionsRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
   '/api/public/jobs/etl-batch/cleanup-failed': typeof ApiPublicJobsEtlBatchCleanupFailedRoute
-  '/api/public/jobs/etl-batch/resume-history': typeof ApiPublicJobsEtlBatchResumeHistoryRoute
-  '/api/public/jobs/etl-batch/resume-history': typeof ApiPublicJobsEtlBatchResumeHistoryRoute
-  '/api/public/jobs/etl-batch/resume-history': typeof ApiPublicJobsEtlBatchResumeHistoryRoute
   '/api/public/jobs/etl-batch/finalize': typeof ApiPublicJobsEtlBatchFinalizeRoute
+  '/api/public/jobs/etl-batch/resume-history': typeof ApiPublicJobsEtlBatchResumeHistoryRoute
   '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
 }
 export interface FileRoutesByTo {
@@ -199,15 +197,16 @@ export interface FileRoutesByTo {
   '/omraden/$area/$topic': typeof OmradenAreaTopicRoute
   '/admin/datakallor': typeof AdminDatakallorIndexRoute
   '/omraden/$area': typeof OmradenAreaIndexRoute
+  '/api/public/jobs/af-revisions': typeof ApiPublicJobsAfRevisionsRoute
   '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
   '/api/public/jobs/source-state': typeof ApiPublicJobsSourceStateRoute
-  '/api/public/jobs/af-revisions': typeof ApiPublicJobsAfRevisionsRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
   '/api/public/jobs/etl-batch/cleanup-failed': typeof ApiPublicJobsEtlBatchCleanupFailedRoute
   '/api/public/jobs/etl-batch/finalize': typeof ApiPublicJobsEtlBatchFinalizeRoute
+  '/api/public/jobs/etl-batch/resume-history': typeof ApiPublicJobsEtlBatchResumeHistoryRoute
   '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
 }
 export interface FileRoutesById {
@@ -224,15 +223,16 @@ export interface FileRoutesById {
   '/omraden/$area/$topic': typeof OmradenAreaTopicRoute
   '/admin/datakallor/': typeof AdminDatakallorIndexRoute
   '/omraden/$area/': typeof OmradenAreaIndexRoute
+  '/api/public/jobs/af-revisions': typeof ApiPublicJobsAfRevisionsRoute
   '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
   '/api/public/jobs/source-state': typeof ApiPublicJobsSourceStateRoute
-  '/api/public/jobs/af-revisions': typeof ApiPublicJobsAfRevisionsRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
   '/api/public/jobs/etl-batch/cleanup-failed': typeof ApiPublicJobsEtlBatchCleanupFailedRoute
   '/api/public/jobs/etl-batch/finalize': typeof ApiPublicJobsEtlBatchFinalizeRoute
+  '/api/public/jobs/etl-batch/resume-history': typeof ApiPublicJobsEtlBatchResumeHistoryRoute
   '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
 }
 export interface FileRouteTypes {
@@ -250,16 +250,16 @@ export interface FileRouteTypes {
     | '/omraden/$area/$topic'
     | '/admin/datakallor/'
     | '/omraden/$area/'
+    | '/api/public/jobs/af-revisions'
     | '/api/public/jobs/etl-no-change'
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
     | '/api/public/jobs/source-state'
-    | '/api/public/jobs/af-revisions'
     | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
     | '/api/public/jobs/etl-batch/cleanup-failed'
-    | '/api/public/jobs/etl-batch/resume-history'
     | '/api/public/jobs/etl-batch/finalize'
+    | '/api/public/jobs/etl-batch/resume-history'
     | '/api/public/jobs/etl-batch/start'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -275,16 +275,16 @@ export interface FileRouteTypes {
     | '/omraden/$area/$topic'
     | '/admin/datakallor'
     | '/omraden/$area'
+    | '/api/public/jobs/af-revisions'
     | '/api/public/jobs/etl-no-change'
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
     | '/api/public/jobs/source-state'
-    | '/api/public/jobs/af-revisions'
     | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
     | '/api/public/jobs/etl-batch/cleanup-failed'
-    | '/api/public/jobs/etl-batch/resume-history'
     | '/api/public/jobs/etl-batch/finalize'
+    | '/api/public/jobs/etl-batch/resume-history'
     | '/api/public/jobs/etl-batch/start'
   id:
     | '__root__'
@@ -300,16 +300,16 @@ export interface FileRouteTypes {
     | '/omraden/$area/$topic'
     | '/admin/datakallor/'
     | '/omraden/$area/'
+    | '/api/public/jobs/af-revisions'
     | '/api/public/jobs/etl-no-change'
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
     | '/api/public/jobs/source-state'
-    | '/api/public/jobs/af-revisions'
     | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
     | '/api/public/jobs/etl-batch/cleanup-failed'
-    | '/api/public/jobs/etl-batch/resume-history'
     | '/api/public/jobs/etl-batch/finalize'
+    | '/api/public/jobs/etl-batch/resume-history'
     | '/api/public/jobs/etl-batch/start'
   fileRoutesById: FileRoutesById
 }
@@ -326,16 +326,16 @@ export interface RootRouteChildren {
   OmradenAreaTopicRoute: typeof OmradenAreaTopicRoute
   AdminDatakallorIndexRoute: typeof AdminDatakallorIndexRoute
   OmradenAreaIndexRoute: typeof OmradenAreaIndexRoute
+  ApiPublicJobsAfRevisionsRoute: typeof ApiPublicJobsAfRevisionsRoute
   ApiPublicJobsEtlNoChangeRoute: typeof ApiPublicJobsEtlNoChangeRoute
   ApiPublicJobsEtlStateRoute: typeof ApiPublicJobsEtlStateRoute
   ApiPublicJobsPublishIndicatorRoute: typeof ApiPublicJobsPublishIndicatorRoute
   ApiPublicJobsSourceStateRoute: typeof ApiPublicJobsSourceStateRoute
-  ApiPublicJobsAfRevisionsRoute: typeof ApiPublicJobsAfRevisionsRoute
   ApiPublicJobsEtlBatchAbortRoute: typeof ApiPublicJobsEtlBatchAbortRoute
   ApiPublicJobsEtlBatchChunkRoute: typeof ApiPublicJobsEtlBatchChunkRoute
   ApiPublicJobsEtlBatchCleanupFailedRoute: typeof ApiPublicJobsEtlBatchCleanupFailedRoute
-  ApiPublicJobsEtlBatchResumeHistoryRoute: typeof ApiPublicJobsEtlBatchResumeHistoryRoute
   ApiPublicJobsEtlBatchFinalizeRoute: typeof ApiPublicJobsEtlBatchFinalizeRoute
+  ApiPublicJobsEtlBatchResumeHistoryRoute: typeof ApiPublicJobsEtlBatchResumeHistoryRoute
   ApiPublicJobsEtlBatchStartRoute: typeof ApiPublicJobsEtlBatchStartRoute
 }
 
@@ -425,6 +425,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OmradenAreaTopicRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/af-revisions': {
+      id: '/api/public/jobs/af-revisions'
+      path: '/api/public/jobs/af-revisions'
+      fullPath: '/api/public/jobs/af-revisions'
+      preLoaderRoute: typeof ApiPublicJobsAfRevisionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/jobs/etl-no-change': {
       id: '/api/public/jobs/etl-no-change'
       path: '/api/public/jobs/etl-no-change'
@@ -453,13 +460,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicJobsSourceStateRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/jobs/af-revisions': {
-      id: '/api/public/jobs/af-revisions'
-      path: '/api/public/jobs/af-revisions'
-      fullPath: '/api/public/jobs/af-revisions'
-      preLoaderRoute: typeof ApiPublicJobsAfRevisionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/jobs/etl-batch/abort': {
       id: '/api/public/jobs/etl-batch/abort'
       path: '/api/public/jobs/etl-batch/abort'
@@ -481,18 +481,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicJobsEtlBatchCleanupFailedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/jobs/etl-batch/resume-history': {
-      id: '/api/public/jobs/etl-batch/resume-history'
-      path: '/api/public/jobs/etl-batch/resume-history'
-      fullPath: '/api/public/jobs/etl-batch/resume-history'
-      preLoaderRoute: typeof ApiPublicJobsEtlBatchResumeHistoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/jobs/etl-batch/finalize': {
       id: '/api/public/jobs/etl-batch/finalize'
       path: '/api/public/jobs/etl-batch/finalize'
       fullPath: '/api/public/jobs/etl-batch/finalize'
       preLoaderRoute: typeof ApiPublicJobsEtlBatchFinalizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/etl-batch/resume-history': {
+      id: '/api/public/jobs/etl-batch/resume-history'
+      path: '/api/public/jobs/etl-batch/resume-history'
+      fullPath: '/api/public/jobs/etl-batch/resume-history'
+      preLoaderRoute: typeof ApiPublicJobsEtlBatchResumeHistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/jobs/etl-batch/start': {
@@ -518,18 +518,18 @@ const rootRouteChildren: RootRouteChildren = {
   OmradenAreaTopicRoute: OmradenAreaTopicRoute,
   AdminDatakallorIndexRoute: AdminDatakallorIndexRoute,
   OmradenAreaIndexRoute: OmradenAreaIndexRoute,
+  ApiPublicJobsAfRevisionsRoute: ApiPublicJobsAfRevisionsRoute,
   ApiPublicJobsEtlNoChangeRoute: ApiPublicJobsEtlNoChangeRoute,
   ApiPublicJobsEtlStateRoute: ApiPublicJobsEtlStateRoute,
   ApiPublicJobsPublishIndicatorRoute: ApiPublicJobsPublishIndicatorRoute,
   ApiPublicJobsSourceStateRoute: ApiPublicJobsSourceStateRoute,
-  ApiPublicJobsAfRevisionsRoute: ApiPublicJobsAfRevisionsRoute,
   ApiPublicJobsEtlBatchAbortRoute: ApiPublicJobsEtlBatchAbortRoute,
   ApiPublicJobsEtlBatchChunkRoute: ApiPublicJobsEtlBatchChunkRoute,
   ApiPublicJobsEtlBatchCleanupFailedRoute:
     ApiPublicJobsEtlBatchCleanupFailedRoute,
+  ApiPublicJobsEtlBatchFinalizeRoute: ApiPublicJobsEtlBatchFinalizeRoute,
   ApiPublicJobsEtlBatchResumeHistoryRoute:
     ApiPublicJobsEtlBatchResumeHistoryRoute,
-  ApiPublicJobsEtlBatchFinalizeRoute: ApiPublicJobsEtlBatchFinalizeRoute,
   ApiPublicJobsEtlBatchStartRoute: ApiPublicJobsEtlBatchStartRoute,
 }
 export const routeTree = rootRouteImport
