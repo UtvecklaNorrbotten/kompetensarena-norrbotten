@@ -75,21 +75,21 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
         )}
       </div>
       <ul className="space-y-1 px-2">
-        <li><AppLink href="/" aria-label="Startsida" title="Startsida" className={rowClass}><Home className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Startsida</span></AppLink></li>
+        <li><AppLink href="/" onClick={blurOnClick} aria-label="Startsida" title="Startsida" className={rowClass}><Home className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Startsida</span></AppLink></li>
         {areas.map((area) => {
           const Icon = area.icon;
           const open = activeArea === area.slug;
           const showSub = mobile ? open : open || hoveredArea === area.slug;
           return (
             <li key={area.slug} onMouseEnter={() => openArea(area.slug)} onMouseLeave={closeArea} onFocus={() => openArea(area.slug)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) closeArea(); }}>
-              <AppLink href={areaPath(area.slug)} activeOptions={{ exact: true }} title={area.title} className={rowClass}>
+              <AppLink href={areaPath(area.slug)} onClick={blurOnClick} activeOptions={{ exact: true }} title={area.title} className={rowClass}>
                 <Icon className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>{area.title}</span>
               </AppLink>
               {showSub && (
                 <ul aria-hidden={!expanded && !mobile} className={`ml-8 border-l border-border pl-2 text-sm ${expanded || mobile ? "" : "invisible"}`}>
-                  <li><AppLink tabIndex={expanded || mobile ? undefined : -1} href={areaPath(area.slug)} activeOptions={{ exact: true }} className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light">Översikt</AppLink></li>
+                  <li><AppLink tabIndex={expanded || mobile ? undefined : -1} onClick={blurOnClick} href={areaPath(area.slug)} activeOptions={{ exact: true }} className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light">Översikt</AppLink></li>
                   {area.topics.map((topic) => (
-                    <li key={topic.slug}><AppLink tabIndex={expanded || mobile ? undefined : -1} href={areaPath(area.slug, topic.slug)} activeOptions={{ exact: true }} className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light">{topic.title}</AppLink></li>
+                    <li key={topic.slug}><AppLink tabIndex={expanded || mobile ? undefined : -1} onClick={blurOnClick} href={areaPath(area.slug, topic.slug)} activeOptions={{ exact: true }} className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light">{topic.title}</AppLink></li>
                   ))}
                 </ul>
               )}
@@ -99,8 +99,8 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
       </ul>
       <div className="mt-5 border-t border-border px-2 pt-3">
         <p aria-hidden={!expanded && !mobile} className={`h-6 whitespace-nowrap px-2 pb-2 text-xs font-semibold uppercase text-ink-muted ${expanded || mobile ? "" : "invisible"}`}>Data och metod</p>
-        <AppLink href="/om" title="Om" className={rowClass}><BookOpen className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Om</span></AppLink>
-        <AppLink href="/ladda-ned-data" title="Ladda ned data" className={rowClass}><Download className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Ladda ned data</span></AppLink>
+        <AppLink href="/om" onClick={blurOnClick} title="Om" className={rowClass}><BookOpen className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Om</span></AppLink>
+        <AppLink href="/ladda-ned-data" onClick={blurOnClick} title="Ladda ned data" className={rowClass}><Download className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Ladda ned data</span></AppLink>
       </div>
     </nav>
   );
