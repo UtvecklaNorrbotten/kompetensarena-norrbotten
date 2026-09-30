@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type { MouseEvent as ReactMouseEvent } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { BookOpen, Download, Home, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
 import { areas, areaPath } from "@/config/areas";
@@ -57,7 +58,7 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); if (areaTimer.current) clearTimeout(areaTimer.current); }, []);
 
   // Ett musklick ska lämna fokus på länken (menyn styrs annars av hovring).
-  const blurOnClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+  const blurOnClick = (event: ReactMouseEvent<HTMLAnchorElement>) => {
     if (event.detail > 0) event.currentTarget.blur();
   };
 
