@@ -324,3 +324,41 @@ export async function handleBatchCleanupFailed(request: Request): Promise<Respon
 
   return json(data, 200);
 }
+
+
+/** GET /api/public/jobs/etl-batch/cleanup-failed
+ * Listar misslyckade AF-batchar som inte är aktiva, för kontrollerad städning.
+ */
+export async function handleBatchListFailed(request: Request): Promise<Response> {
+  if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
+  const denied = await authorize(request);
+  if (denied) return denied;
+  if (controlRate()) return json({ error: "Too many requests" }, 429);
+
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+  const { data: activeRows, error: activeError } = await supabaseAdmin
+    .from("indicator_active_batches")
+    .select("active_batch_id");
+  if (activeError) return json({ error: "Lookup failed" }, 500);
+
+  const activeIds = new Set((activeRows ?? []).map((row) => row.active_batch_id));
+
+  const { data, error } = await supabaseAdmin
+    .from("etl_batches")
+    .select("id, indicator_id, received_rows, created_at, last_activity_at")
+    .eq("status", "failed")
+    .like("indicator_id", "af-%")
+    .order("created_at", { ascending: true })
+    .limit(100);
+
+  if (error) {
+    console.error("[etl-batch] kunde inte lista misslyckade batchar:", error.message);
+    return json({ error: "Lookup failed" }, 500);
+  }
+
+  return json(
+    (data ?? []).filter((row) => !activeIds.has(row.id)),
+    200,
+  );
+}
