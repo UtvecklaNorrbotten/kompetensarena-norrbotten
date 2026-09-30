@@ -65,6 +65,10 @@ const chunkSchema = z.object({
 
 const finalizeSchema = z.object({ batch_id: z.string().uuid() });
 const abortSchema = z.object({ batch_id: z.string().uuid(), reason: z.string().max(500).optional() });
+const cleanupSchema = z.object({
+  batch_id: z.string().uuid(),
+  max_rows: z.number().int().min(1).max(50000).default(5000),
+});
 
 type PgError = { code?: string; message: string };
 
@@ -290,4 +294,71 @@ export async function handleBatchAbort(request: Request): Promise<Response> {
   }
 
   return json(data, 200);
+}
+
+
+/** POST /api/public/jobs/etl-batch/cleanup-failed
+ * Tar bort en begränsad mängd observationsrader från en redan misslyckad,
+ * osynlig batch. Klienten upprepar anropet tills remaining=false.
+ */
+export async function handleBatchCleanupFailed(request: Request): Promise<Response> {
+  const denied = await guard(request, chunkRate);
+  if (denied) return denied;
+
+  const body = await readBody(request, cleanupSchema);
+  if (!body.ok) return body.response;
+
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin.rpc("etl_cleanup_failed_batch", {
+    p_batch_id: body.data.batch_id,
+    p_max_rows: body.data.max_rows,
+  });
+
+  if (error) {
+    console.error("[etl-batch] cleanup misslyckades:", error.message);
+    return json(
+      { error: "Cleanup failed", message: error.message, code: error.code },
+      statusForPgError(error),
+    );
+  }
+
+  return json(data, 200);
+}
+
+
+/** GET /api/public/jobs/etl-batch/cleanup-failed
+ * Listar misslyckade AF-batchar som inte är aktiva, för kontrollerad städning.
+ */
+export async function handleBatchListFailed(request: Request): Promise<Response> {
+  if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
+  const denied = await authorize(request);
+  if (denied) return denied;
+  if (controlRate()) return json({ error: "Too many requests" }, 429);
+
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+  const { data: activeRows, error: activeError } = await supabaseAdmin
+    .from("indicator_active_batches")
+    .select("active_batch_id");
+  if (activeError) return json({ error: "Lookup failed" }, 500);
+
+  const activeIds = new Set((activeRows ?? []).map((row) => row.active_batch_id));
+
+  const { data, error } = await supabaseAdmin
+    .from("etl_batches")
+    .select("id, indicator_id, received_rows, created_at, last_activity_at")
+    .eq("status", "failed")
+    .like("indicator_id", "af-%")
+    .order("created_at", { ascending: true })
+    .limit(100);
+
+  if (error) {
+    console.error("[etl-batch] kunde inte lista misslyckade batchar:", error.message);
+    return json({ error: "Lookup failed" }, 500);
+  }
+
+  return json(
+    (data ?? []).filter((row) => !activeIds.has(row.id)),
+    200,
+  );
 }
