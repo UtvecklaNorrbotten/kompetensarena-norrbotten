@@ -557,6 +557,10 @@ export type Database = {
         Returns: Json
       }
       etl_finalize_batch: { Args: { p_batch_id: string }; Returns: Json }
+      etl_reopen_failed_batch: {
+        Args: { p_batch_id: string }
+        Returns: Json
+      }
       etl_start_batch: {
         Args: {
           p_expected_chunks: number
