@@ -12,6 +12,7 @@ suppressPackageStartupMessages({
 source("R/etl/etl_api.R")
 source("R/etl/af_common.R")
 source("R/etl/af_normalize.R")
+source("R/etl/af_fingerprints.R")
 
 publicera_af <- function() {
 mode <- Sys.getenv("AF_PUBLISH_MODE", unset = "")
@@ -282,6 +283,16 @@ for (i in seq_along(chunk_starts)) {
 
 result <- etl_finalize_batch(batch_id)
 ok <- TRUE
+
+if (mode == "current") {
+  fp <- af_period_fingerprints(data)
+  etl_upsert_af_revision_fingerprints(
+    target = target,
+    fingerprints = fp,
+    source_release_period = common_period,
+    source_manifest = list(files = af_source_manifest_list(files))
+  )
+}
 
 utils::write.csv(
   files |>
