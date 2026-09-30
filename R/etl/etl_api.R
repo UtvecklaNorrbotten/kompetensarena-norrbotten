@@ -259,6 +259,35 @@ etl_abort_batch <- function(batch_id, reason = "R-jobbet avbröts före lyckad f
     etl_perform_json(retry_safe = TRUE)
 }
 
+etl_cleanup_failed_batch <- function(batch_id, max_rows = 5000L) {
+  etl_request("/api/public/jobs/etl-batch/cleanup-failed") |>
+    req_method("POST") |>
+    req_body_json(
+      list(batch_id = batch_id, max_rows = as.integer(max_rows)),
+      auto_unbox = TRUE
+    ) |>
+    etl_perform_json(retry_safe = TRUE)
+}
+
+etl_cleanup_failed_batch_all <- function(batch_id, max_rows = 5000L, max_rounds = 2000L) {
+  total_deleted <- 0L
+
+  for (i in seq_len(max_rounds)) {
+    result <- etl_cleanup_failed_batch(batch_id, max_rows = max_rows)
+    total_deleted <- total_deleted + as.integer(result$deleted_rows %||% 0L)
+
+    if (!isTRUE(result$remaining)) {
+      message(
+        "Städade misslyckad batch ", batch_id,
+        ": ", format(total_deleted, big.mark = " "), " observationsrader borttagna."
+      )
+      return(invisible(result))
+    }
+  }
+
+  stop("Cleanup nådde max_rounds för batch ", batch_id)
+}
+
 etl_publish_batch <- function(indicator_id, source, source_updated_date, observations) {
   chunks <- etl_split_observations(observations)
   if (length(chunks) == 0) stop("Inga observationer att publicera")
