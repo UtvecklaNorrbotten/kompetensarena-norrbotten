@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type { MouseEvent as ReactMouseEvent } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { BookOpen, Download, Home, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
 import { areas, areaPath } from "@/config/areas";
@@ -12,12 +13,23 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
   const [pinned, setPinned] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
+  const [hoveredArea, setHoveredArea] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const areaTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const panel = useRef<HTMLElement>(null);
   const restoreFocus = useRef<HTMLElement | null>(null);
   const activeArea = areas.find((area) => pathname.startsWith(areaPath(area.slug) + "/") || pathname === areaPath(area.slug))?.slug;
   const expanded = pinned || hovered || focused;
   const rowClass = "flex h-10 items-center gap-3 whitespace-nowrap rounded-md p-2 hover:bg-brand-light";
+
+  const openArea = (slug: string) => {
+    if (areaTimer.current) clearTimeout(areaTimer.current);
+    setHoveredArea(slug);
+  };
+  const closeArea = () => {
+    if (areaTimer.current) clearTimeout(areaTimer.current);
+    areaTimer.current = setTimeout(() => setHoveredArea(null), 180);
+  };
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -43,7 +55,12 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
 
   useEffect(() => { onMobileClose(); }, [pathname, onMobileClose]); // Navigation closes the mobile panel.
 
-  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); if (areaTimer.current) clearTimeout(areaTimer.current); }, []);
+
+  // Ett musklick ska lämna fokus på länken (menyn styrs annars av hovring).
+  const blurOnClick = (event: ReactMouseEvent<HTMLAnchorElement>) => {
+    if (event.detail > 0) event.currentTarget.blur();
+  };
 
   const nav = (mobile: boolean) => (
     <nav aria-label="Områden" className="flex h-full flex-col overflow-y-auto py-3">
@@ -58,20 +75,21 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
         )}
       </div>
       <ul className="space-y-1 px-2">
-        <li><AppLink href="/" aria-label="Startsida" title="Startsida" className={rowClass}><Home className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Startsida</span></AppLink></li>
+        <li><AppLink href="/" onClick={blurOnClick} aria-label="Startsida" title="Startsida" className={rowClass}><Home className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Startsida</span></AppLink></li>
         {areas.map((area) => {
           const Icon = area.icon;
           const open = activeArea === area.slug;
+          const showSub = mobile ? open : open || hoveredArea === area.slug;
           return (
-            <li key={area.slug}>
-              <AppLink href={areaPath(area.slug)} activeOptions={{ exact: true }} title={area.title} className={rowClass}>
+            <li key={area.slug} onMouseEnter={() => openArea(area.slug)} onMouseLeave={closeArea} onFocus={() => openArea(area.slug)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) closeArea(); }}>
+              <AppLink href={areaPath(area.slug)} onClick={blurOnClick} activeOptions={{ exact: true }} title={area.title} className={rowClass}>
                 <Icon className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>{area.title}</span>
               </AppLink>
-              {open && (
+              {showSub && (
                 <ul aria-hidden={!expanded && !mobile} className={`ml-8 border-l border-border pl-2 text-sm ${expanded || mobile ? "" : "invisible"}`}>
-                  <li><AppLink tabIndex={expanded || mobile ? undefined : -1} href={areaPath(area.slug)} activeOptions={{ exact: true }} className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light">Översikt</AppLink></li>
+                  <li><AppLink tabIndex={expanded || mobile ? undefined : -1} onClick={blurOnClick} href={areaPath(area.slug)} activeOptions={{ exact: true }} className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light">Översikt</AppLink></li>
                   {area.topics.map((topic) => (
-                    <li key={topic.slug}><AppLink tabIndex={expanded || mobile ? undefined : -1} href={areaPath(area.slug, topic.slug)} activeOptions={{ exact: true }} className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light">{topic.title}</AppLink></li>
+                    <li key={topic.slug}><AppLink tabIndex={expanded || mobile ? undefined : -1} onClick={blurOnClick} href={areaPath(area.slug, topic.slug)} activeOptions={{ exact: true }} className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light">{topic.title}</AppLink></li>
                   ))}
                 </ul>
               )}
@@ -81,8 +99,8 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
       </ul>
       <div className="mt-5 border-t border-border px-2 pt-3">
         <p aria-hidden={!expanded && !mobile} className={`h-6 whitespace-nowrap px-2 pb-2 text-xs font-semibold uppercase text-ink-muted ${expanded || mobile ? "" : "invisible"}`}>Data och metod</p>
-        <AppLink href="/om" title="Om" className={rowClass}><BookOpen className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Om</span></AppLink>
-        <AppLink href="/ladda-ned-data" title="Ladda ned data" className={rowClass}><Download className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Ladda ned data</span></AppLink>
+        <AppLink href="/om" onClick={blurOnClick} title="Om" className={rowClass}><BookOpen className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Om</span></AppLink>
+        <AppLink href="/ladda-ned-data" onClick={blurOnClick} title="Ladda ned data" className={rowClass}><Download className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Ladda ned data</span></AppLink>
       </div>
     </nav>
   );
