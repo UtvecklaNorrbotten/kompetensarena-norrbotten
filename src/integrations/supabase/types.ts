@@ -14,36 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      af_revision_fingerprints: {
-        Row: {
-          checked_at: string
-          checksum: string
-          period: string
-          row_count: number
-          source_manifest: Json
-          source_release_period: string | null
-          target: string
-        }
-        Insert: {
-          checked_at?: string
-          checksum: string
-          period: string
-          row_count: number
-          source_manifest?: Json
-          source_release_period?: string | null
-          target: string
-        }
-        Update: {
-          checked_at?: string
-          checksum?: string
-          period?: string
-          row_count?: number
-          source_manifest?: Json
-          source_release_period?: string | null
-          target?: string
-        }
-        Relationships: []
-      }
       data_source_runs: {
         Row: {
           details: Json | null
