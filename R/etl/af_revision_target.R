@@ -151,6 +151,15 @@ utils::write.csv(
 )
 
 if (mode == "baseline") {
+  if (!identical(as.character(common_period), as.character(latest_successful))) {
+    stop(
+      target,
+      ": baseline får bara skapas när källans releaseperiod (", common_period,
+      ") är samma som latest_successful_period (", latest_successful,
+      "). Kör baseline innan nästa AF-release eller verifiera historiken separat."
+    )
+  }
+
   etl_upsert_af_revision_fingerprints(
     target = target,
     fingerprints = current,
