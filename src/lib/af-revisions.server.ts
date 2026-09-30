@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { authorize, createRateLimiter, json } from "./etl-auth.server";
+import type { Json } from "@/integrations/supabase/types";
 
 const rate = createRateLimiter(60);
 
@@ -69,7 +70,7 @@ export async function handleAfRevisions(request: Request): Promise<Response> {
       checksum: fp.checksum,
       row_count: fp.row_count,
       source_release_period: parsed.data.source_release_period ?? null,
-      source_manifest: parsed.data.source_manifest ?? {},
+      source_manifest: (parsed.data.source_manifest ?? {}) as Json,
       checked_at: now,
     }));
 
