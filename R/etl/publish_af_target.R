@@ -177,7 +177,7 @@ build_observations <- function(chunk) {
   })
 }
 
-rows_per_chunk <- 5000L
+rows_per_chunk <- if (mode == "history") 2000L else 5000L
 chunk_starts <- seq.int(1L, nrow(data), by = rows_per_chunk)
 
 if (length(chunk_starts) > ETL_MAX_CHUNKS) {
@@ -202,13 +202,24 @@ batch_id <- batch$batch_id
 ok <- FALSE
 on.exit({
   if (!ok) {
-    try(
+    abort_result <- try(
       etl_abort_batch(
         batch_id,
         reason = paste0("AF ", mode, "/", target, " avbruten före finalisering")
       ),
       silent = TRUE
     )
+
+    if (!inherits(abort_result, "try-error")) {
+      try(
+        etl_cleanup_failed_batch_all(
+          batch_id,
+          max_rows = 5000L,
+          max_rounds = 2000L
+        ),
+        silent = TRUE
+      )
+    }
   }
 }, add = TRUE)
 
