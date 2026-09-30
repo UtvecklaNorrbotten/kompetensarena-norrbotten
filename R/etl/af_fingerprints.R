@@ -34,48 +34,44 @@ af_period_fingerprints <- function(data) {
     stop("Fingerprint saknar kolumner: ", paste(missing, collapse = ", "))
   }
 
-  lower_bound <- if ("value_is_lower_bound" %in% names(data)) {
-    ifelse(data$value_is_lower_bound %in% TRUE, "1", "0")
-  } else {
-    rep("0", nrow(data))
-  }
-
-  canonical <- data.frame(
-    period = as.character(data$period),
-    geo_code = af_fingerprint_escape(data$geo_code),
-    geo_level = af_fingerprint_escape(data$geo_level),
-    sex = af_fingerprint_escape(data$sex),
-    dimension_type = af_fingerprint_escape(data$dimension_type),
-    dimension_value = af_fingerprint_escape(data$dimension_value),
-    measure_code = af_fingerprint_escape(data$measure_code),
-    measure_label = af_fingerprint_escape(data$measure_label),
-    value = af_fingerprint_number(data$value),
-    lower_bound = lower_bound,
-    stringsAsFactors = FALSE
-  )
-
-  canonical <- canonical |>
-    arrange(
-      period, geo_code, geo_level, sex,
-      dimension_type, dimension_value,
-      measure_code, measure_label, value, lower_bound
-    )
-
-  periods <- unique(canonical$period)
+  periods <- sort(unique(as.character(data$period)))
 
   bind_rows(lapply(periods, function(p) {
-    block <- canonical[canonical$period == p, , drop = FALSE]
+    block <- data[as.character(data$period) == p, , drop = FALSE]
+    lower_bound <- if ("value_is_lower_bound" %in% names(block)) {
+      ifelse(block$value_is_lower_bound %in% TRUE, "1", "0")
+    } else {
+      rep("0", nrow(block))
+    }
+
+    canonical <- data.frame(
+      geo_code = af_fingerprint_escape(block$geo_code),
+      geo_level = af_fingerprint_escape(block$geo_level),
+      sex = af_fingerprint_escape(block$sex),
+      dimension_type = af_fingerprint_escape(block$dimension_type),
+      dimension_value = af_fingerprint_escape(block$dimension_value),
+      measure_code = af_fingerprint_escape(block$measure_code),
+      measure_label = af_fingerprint_escape(block$measure_label),
+      value = af_fingerprint_number(block$value),
+      lower_bound = lower_bound,
+      stringsAsFactors = FALSE
+    ) |>
+      arrange(
+        geo_code, geo_level, sex,
+        dimension_type, dimension_value,
+        measure_code, measure_label, value, lower_bound
+      )
 
     lines <- paste(
-      block$geo_code,
-      block$geo_level,
-      block$sex,
-      block$dimension_type,
-      block$dimension_value,
-      block$measure_code,
-      block$measure_label,
-      block$value,
-      block$lower_bound,
+      canonical$geo_code,
+      canonical$geo_level,
+      canonical$sex,
+      canonical$dimension_type,
+      canonical$dimension_value,
+      canonical$measure_code,
+      canonical$measure_label,
+      canonical$value,
+      canonical$lower_bound,
       sep = "|"
     )
 
