@@ -54,7 +54,7 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
 
   useEffect(() => { onMobileClose(); }, [pathname, onMobileClose]); // Navigation closes the mobile panel.
 
-  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); if (areaTimer.current) clearTimeout(areaTimer.current); }, []);
 
   const nav = (mobile: boolean) => (
     <nav aria-label="Områden" className="flex h-full flex-col overflow-y-auto py-3">
@@ -73,12 +73,13 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
         {areas.map((area) => {
           const Icon = area.icon;
           const open = activeArea === area.slug;
+          const showSub = mobile ? open : open || hoveredArea === area.slug;
           return (
-            <li key={area.slug}>
+            <li key={area.slug} onMouseEnter={() => openArea(area.slug)} onMouseLeave={closeArea} onFocus={() => openArea(area.slug)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) closeArea(); }}>
               <AppLink href={areaPath(area.slug)} activeOptions={{ exact: true }} title={area.title} className={rowClass}>
                 <Icon className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>{area.title}</span>
               </AppLink>
-              {open && (
+              {showSub && (
                 <ul aria-hidden={!expanded && !mobile} className={`ml-8 border-l border-border pl-2 text-sm ${expanded || mobile ? "" : "invisible"}`}>
                   <li><AppLink tabIndex={expanded || mobile ? undefined : -1} href={areaPath(area.slug)} activeOptions={{ exact: true }} className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light">Översikt</AppLink></li>
                   {area.topics.map((topic) => (
