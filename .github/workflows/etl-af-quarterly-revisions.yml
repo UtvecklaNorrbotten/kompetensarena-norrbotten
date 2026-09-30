@@ -1,0 +1,77 @@
+name: ETL - AF kvartalsvis revisionskontroll
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Körläge"
+        required: true
+        default: "check"
+        type: choice
+        options:
+          - baseline
+          - check
+  schedule:
+    # Full historikdiff fyra gånger per år, efter månadskontrollens 1-15-fönster.
+    - cron: "15 5 16 1,4,7,10 *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: etl-af-quarterly-revisions
+  cancel-in-progress: false
+
+jobs:
+  revision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        target: [sok, tid, svag, yrke, bas]
+
+    steps:
+      - name: Checka ut repo
+        uses: actions/checkout@v5
+
+      - name: Installera R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Installera beroenden
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::httr2
+            any::jsonlite
+            any::xml2
+            any::XML
+            any::digest
+            any::readxl
+            any::dplyr
+            any::tidyr
+          install-pandoc: false
+          install-quarto: false
+
+      - name: Kör revisionskontroll - ${{ matrix.target }}
+        env:
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+          AF_REVISION_MODE: ${{ github.event_name == 'schedule' && 'check' || inputs.mode }}
+          AF_REVISION_TARGET: ${{ matrix.target }}
+          AF_REVISION_REPORT_DIR: artifacts/af-revision-${{ matrix.target }}
+        shell: Rscript {0}
+        run: |
+          source("R/etl/af_revision_target.R")
+
+      - name: Ladda upp revisionsrapport - ${{ matrix.target }}
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: af-revision-${{ matrix.target }}-${{ github.run_number }}
+          path: artifacts/af-revision-${{ matrix.target }}
+          if-no-files-found: warn
+          retention-days: 90
