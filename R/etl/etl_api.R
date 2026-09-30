@@ -259,6 +259,11 @@ etl_abort_batch <- function(batch_id, reason = "R-jobbet avbröts före lyckad f
     etl_perform_json(retry_safe = TRUE)
 }
 
+etl_list_failed_batches <- function() {
+  etl_request("/api/public/jobs/etl-batch/cleanup-failed") |>
+    etl_perform_json(retry_safe = TRUE)
+}
+
 etl_cleanup_failed_batch <- function(batch_id, max_rows = 5000L) {
   etl_request("/api/public/jobs/etl-batch/cleanup-failed") |>
     req_method("POST") |>
