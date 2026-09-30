@@ -74,6 +74,46 @@ etl_get_source_state <- function(source_id) {
     etl_perform_json(retry_safe = TRUE)
 }
 
+etl_get_af_revision_fingerprints <- function(target) {
+  etl_request("/api/public/jobs/af-revisions") |>
+    req_url_query(target = target) |>
+    etl_perform_json(retry_safe = TRUE)
+}
+
+etl_upsert_af_revision_fingerprints <- function(
+  target,
+  fingerprints,
+  source_release_period = NULL,
+  source_manifest = NULL
+) {
+  if (!is.data.frame(fingerprints) || nrow(fingerprints) == 0L) {
+    stop("fingerprints måste vara en icke-tom data.frame")
+  }
+
+  body <- list(
+    target = target,
+    fingerprints = lapply(seq_len(nrow(fingerprints)), function(i) {
+      list(
+        period = as.character(fingerprints$period[[i]]),
+        checksum = as.character(fingerprints$checksum[[i]]),
+        row_count = as.integer(fingerprints$row_count[[i]])
+      )
+    })
+  )
+
+  if (!is.null(source_release_period)) {
+    body$source_release_period <- source_release_period
+  }
+  if (!is.null(source_manifest)) {
+    body$source_manifest <- source_manifest
+  }
+
+  etl_request("/api/public/jobs/af-revisions") |>
+    req_method("POST") |>
+    req_body_json(body, auto_unbox = TRUE, null = "null", na = "null") |>
+    etl_perform_json(retry_safe = TRUE)
+}
+
 etl_get_resumable_history_batch <- function(indicator_id) {
   etl_request("/api/public/jobs/etl-batch/resume-history") |>
     req_url_query(indicator_id = indicator_id) |>

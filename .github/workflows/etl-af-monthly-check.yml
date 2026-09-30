@@ -15,10 +15,10 @@ on:
           - publish-history
           - publish-current
   schedule:
-    # 23:e är startdag för kontroll, inte ett garanterat publiceringsdatum.
-    # 1-7 täcker sena publiceringar som annars skulle falla mellan månadsskiften.
-    - cron: "15 4 23-31 * *"
-    - cron: "15 4 1-7 * *"
+    # Tillfälligt brett observationsfönster tills AF:s faktiska publiceringsmönster är känt.
+    # Kontroll sker 1-15 samt den 23:e varje månad.
+    - cron: "15 4 1-15 * *"
+    - cron: "15 4 23 * *"
 
 permissions:
   contents: read
