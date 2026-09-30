@@ -13,23 +13,13 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
   const [pinned, setPinned] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
-  const [hoveredArea, setHoveredArea] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const areaTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const panel = useRef<HTMLElement>(null);
   const restoreFocus = useRef<HTMLElement | null>(null);
   const activeArea = areas.find((area) => pathname.startsWith(areaPath(area.slug) + "/") || pathname === areaPath(area.slug))?.slug;
   const expanded = pinned || hovered || focused;
   const rowClass = "flex h-10 items-center gap-3 whitespace-nowrap rounded-md p-2 hover:bg-brand-light";
 
-  const openArea = (slug: string) => {
-    if (areaTimer.current) clearTimeout(areaTimer.current);
-    setHoveredArea(slug);
-  };
-  const closeArea = () => {
-    if (areaTimer.current) clearTimeout(areaTimer.current);
-    areaTimer.current = setTimeout(() => setHoveredArea(null), 180);
-  };
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -55,7 +45,7 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
 
   useEffect(() => { onMobileClose(); }, [pathname, onMobileClose]); // Navigation closes the mobile panel.
 
-  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); if (areaTimer.current) clearTimeout(areaTimer.current); }, []);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
 
   // Ett musklick ska lämna fokus på länken (menyn styrs annars av hovring).
   const blurOnClick = (event: ReactMouseEvent<HTMLAnchorElement>) => {
@@ -79,9 +69,9 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
         {areas.map((area) => {
           const Icon = area.icon;
           const open = activeArea === area.slug;
-          const showSub = mobile ? open : open || hoveredArea === area.slug;
+          const showSub = mobile ? open : expanded;
           return (
-            <li key={area.slug} onMouseEnter={() => openArea(area.slug)} onMouseLeave={closeArea} onFocus={() => openArea(area.slug)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) closeArea(); }}>
+            <li key={area.slug}>
               <AppLink href={areaPath(area.slug)} onClick={blurOnClick} activeOptions={{ exact: true }} title={area.title} className={rowClass}>
                 <Icon className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>{area.title}</span>
               </AppLink>
