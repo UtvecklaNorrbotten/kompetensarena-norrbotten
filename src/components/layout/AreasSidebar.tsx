@@ -12,12 +12,23 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
   const [pinned, setPinned] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
+  const [hoveredArea, setHoveredArea] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const areaTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const panel = useRef<HTMLElement>(null);
   const restoreFocus = useRef<HTMLElement | null>(null);
   const activeArea = areas.find((area) => pathname.startsWith(areaPath(area.slug) + "/") || pathname === areaPath(area.slug))?.slug;
   const expanded = pinned || hovered || focused;
   const rowClass = "flex h-10 items-center gap-3 whitespace-nowrap rounded-md p-2 hover:bg-brand-light";
+
+  const openArea = (slug: string) => {
+    if (areaTimer.current) clearTimeout(areaTimer.current);
+    setHoveredArea(slug);
+  };
+  const closeArea = () => {
+    if (areaTimer.current) clearTimeout(areaTimer.current);
+    areaTimer.current = setTimeout(() => setHoveredArea(null), 180);
+  };
 
   useEffect(() => {
     if (!mobileOpen) return;
