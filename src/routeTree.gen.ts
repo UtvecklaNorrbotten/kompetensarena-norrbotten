@@ -27,6 +27,7 @@ import { Route as ApiPublicJobsPublishIndicatorRouteImport } from './routes/api/
 import { Route as ApiPublicJobsSourceStateRouteImport } from './routes/api/public/jobs/source-state'
 import { Route as ApiPublicJobsEtlBatchAbortRouteImport } from './routes/api/public/jobs/etl-batch/abort'
 import { Route as ApiPublicJobsEtlBatchChunkRouteImport } from './routes/api/public/jobs/etl-batch/chunk'
+import { Route as ApiPublicJobsEtlBatchCleanupFailedRouteImport } from './routes/api/public/jobs/etl-batch/cleanup-failed'
 import { Route as ApiPublicJobsEtlBatchFinalizeRouteImport } from './routes/api/public/jobs/etl-batch/finalize'
 import { Route as ApiPublicJobsEtlBatchStartRouteImport } from './routes/api/public/jobs/etl-batch/start'
 
@@ -125,6 +126,12 @@ const ApiPublicJobsEtlBatchChunkRoute =
     path: '/api/public/jobs/etl-batch/chunk',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicJobsEtlBatchCleanupFailedRoute =
+  ApiPublicJobsEtlBatchCleanupFailedRouteImport.update({
+    id: '/api/public/jobs/etl-batch/cleanup-failed',
+    path: '/api/public/jobs/etl-batch/cleanup-failed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicJobsEtlBatchFinalizeRoute =
   ApiPublicJobsEtlBatchFinalizeRouteImport.update({
     id: '/api/public/jobs/etl-batch/finalize',
@@ -157,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/api/public/jobs/source-state': typeof ApiPublicJobsSourceStateRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
+  '/api/public/jobs/etl-batch/cleanup-failed': typeof ApiPublicJobsEtlBatchCleanupFailedRoute
   '/api/public/jobs/etl-batch/finalize': typeof ApiPublicJobsEtlBatchFinalizeRoute
   '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
 }
@@ -179,6 +187,7 @@ export interface FileRoutesByTo {
   '/api/public/jobs/source-state': typeof ApiPublicJobsSourceStateRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
+  '/api/public/jobs/etl-batch/cleanup-failed': typeof ApiPublicJobsEtlBatchCleanupFailedRoute
   '/api/public/jobs/etl-batch/finalize': typeof ApiPublicJobsEtlBatchFinalizeRoute
   '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
 }
@@ -202,6 +211,7 @@ export interface FileRoutesById {
   '/api/public/jobs/source-state': typeof ApiPublicJobsSourceStateRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
+  '/api/public/jobs/etl-batch/cleanup-failed': typeof ApiPublicJobsEtlBatchCleanupFailedRoute
   '/api/public/jobs/etl-batch/finalize': typeof ApiPublicJobsEtlBatchFinalizeRoute
   '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
 }
@@ -226,6 +236,7 @@ export interface FileRouteTypes {
     | '/api/public/jobs/source-state'
     | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
+    | '/api/public/jobs/etl-batch/cleanup-failed'
     | '/api/public/jobs/etl-batch/finalize'
     | '/api/public/jobs/etl-batch/start'
   fileRoutesByTo: FileRoutesByTo
@@ -248,6 +259,7 @@ export interface FileRouteTypes {
     | '/api/public/jobs/source-state'
     | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
+    | '/api/public/jobs/etl-batch/cleanup-failed'
     | '/api/public/jobs/etl-batch/finalize'
     | '/api/public/jobs/etl-batch/start'
   id:
@@ -270,6 +282,7 @@ export interface FileRouteTypes {
     | '/api/public/jobs/source-state'
     | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
+    | '/api/public/jobs/etl-batch/cleanup-failed'
     | '/api/public/jobs/etl-batch/finalize'
     | '/api/public/jobs/etl-batch/start'
   fileRoutesById: FileRoutesById
@@ -293,6 +306,7 @@ export interface RootRouteChildren {
   ApiPublicJobsSourceStateRoute: typeof ApiPublicJobsSourceStateRoute
   ApiPublicJobsEtlBatchAbortRoute: typeof ApiPublicJobsEtlBatchAbortRoute
   ApiPublicJobsEtlBatchChunkRoute: typeof ApiPublicJobsEtlBatchChunkRoute
+  ApiPublicJobsEtlBatchCleanupFailedRoute: typeof ApiPublicJobsEtlBatchCleanupFailedRoute
   ApiPublicJobsEtlBatchFinalizeRoute: typeof ApiPublicJobsEtlBatchFinalizeRoute
   ApiPublicJobsEtlBatchStartRoute: typeof ApiPublicJobsEtlBatchStartRoute
 }
@@ -425,6 +439,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicJobsEtlBatchChunkRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/etl-batch/cleanup-failed': {
+      id: '/api/public/jobs/etl-batch/cleanup-failed'
+      path: '/api/public/jobs/etl-batch/cleanup-failed'
+      fullPath: '/api/public/jobs/etl-batch/cleanup-failed'
+      preLoaderRoute: typeof ApiPublicJobsEtlBatchCleanupFailedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/jobs/etl-batch/finalize': {
       id: '/api/public/jobs/etl-batch/finalize'
       path: '/api/public/jobs/etl-batch/finalize'
@@ -461,6 +482,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicJobsSourceStateRoute: ApiPublicJobsSourceStateRoute,
   ApiPublicJobsEtlBatchAbortRoute: ApiPublicJobsEtlBatchAbortRoute,
   ApiPublicJobsEtlBatchChunkRoute: ApiPublicJobsEtlBatchChunkRoute,
+  ApiPublicJobsEtlBatchCleanupFailedRoute:
+    ApiPublicJobsEtlBatchCleanupFailedRoute,
   ApiPublicJobsEtlBatchFinalizeRoute: ApiPublicJobsEtlBatchFinalizeRoute,
   ApiPublicJobsEtlBatchStartRoute: ApiPublicJobsEtlBatchStartRoute,
 }
