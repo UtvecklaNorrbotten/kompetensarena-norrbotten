@@ -56,6 +56,11 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
 
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); if (areaTimer.current) clearTimeout(areaTimer.current); }, []);
 
+  // Ett musklick ska lämna fokus på länken (menyn styrs annars av hovring).
+  const blurOnClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (event.detail > 0) event.currentTarget.blur();
+  };
+
   const nav = (mobile: boolean) => (
     <nav aria-label="Områden" className="flex h-full flex-col overflow-y-auto py-3">
       <div className="mb-2 flex h-9 items-center justify-between px-2">
