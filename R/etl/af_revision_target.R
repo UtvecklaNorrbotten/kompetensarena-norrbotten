@@ -15,6 +15,7 @@ source("R/etl/af_common.R")
 source("R/etl/af_normalize.R")
 source("R/etl/af_fingerprints.R")
 
+run_af_revision <- function() {
 mode <- Sys.getenv("AF_REVISION_MODE", unset = "")
 target <- Sys.getenv("AF_REVISION_TARGET", unset = "")
 report_dir <- Sys.getenv("AF_REVISION_REPORT_DIR", unset = "artifacts/af-revisions")
@@ -161,7 +162,7 @@ if (mode == "baseline") {
     target, ": revisionsbaseline sparad för ",
     nrow(current), " perioder t.o.m. ", latest_successful
   )
-  quit(save = "no", status = 0)
+  return(invisible(list(mode = "baseline", target = target, periods = nrow(current))))
 }
 
 if (nrow(stored) == 0L) {
@@ -351,3 +352,7 @@ utils::write.csv(
   row.names = FALSE,
   na = ""
 )
+
+}
+
+run_af_revision()
