@@ -13,6 +13,7 @@ Daily: api-info → jämför med `data_source_state.latest_successful_period` �
 ## Säkerhetsregler
 - ETL avbryter om `hasMore=false` inte nås, om unika ≠ count, om count eller källdatum ändras under uttaget.
 - Databasen (`afr_finalize_sync`) kontrollerar `tidigare + nya − bortfallna = source_count` och efter tillämpning att antalet i källan stämmer.
+- AFR-klienten håller minst `SCB_AFR_MIN_INTERVAL_SEC` (standard 3 s) mellan anrop, fördubblar intervallet vid 429 (max 60 s), pausar i förväg om kvothuvuden visar att kvoten tar slut, och loggar väntetider under `throttle`.
 - Bortfall > max(1000, 2 %) stoppar finalisering om inte `confirm_large_removal` angetts manuellt.
 - Första laddningen skrivs direkt men är osynlig (analysvyn kräver publicerad första laddning) tills finalisering. Avbruten laddning återupptas idempotent; annars `cleanup-initial`.
 
