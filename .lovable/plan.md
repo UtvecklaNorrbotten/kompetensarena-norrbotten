@@ -7,21 +7,22 @@ Mål: ett robust, rikstäckande lager för juridiska enheter (JE) och arbetsstä
 1. **Datakälla `scb-afr`** registreras i befintliga `data_sources`/`data_source_state` och syns automatiskt i adminvyn (/admin/datakallor) – ingen ny statuslösning.
 2. **Kodtabeller** från AFR:s 19 kodtabell-endpoints (kod + klartext), med upptäckt och loggning när en tabell ändras. Telefon-/e-post-/reklamspärr hämtas inte.
 3. **Aktuella tabeller** för AE och JE med endast de analytiska fälten i briefen (inga adresser, telefon, e-post, namn på fysiska personer). Näringsgrenar i egna radtabeller (rangordning, kod, andel, avdelning) så SNI går att fråga effektivt; primär = rangordning 1.
-4. **Historik (SCD typ 2)**: en ny version skapas bara när hash över historiserade attribut ändras. Varje version har första/sista observation, SCB:s `senasteUppdateringsDatum`, hämtningstid, hash, ändringstyp (ny, SNI, geografi, storlek, status, ägarkategori, sektor, säte, omsättningsklass, ej längre observerad).
-5. **Daglig synk** i GitHub Actions kl. ~06:00 svensk tid (efter SCB:s fönster runt 04:00):
+4. **Historik (SCD typ 2)**: en ny version skapas bara när hash över historiserade attribut ändras. Varje version (rad) har första/sista observation, hash och ändringstyp (ny, SNI, geografi, storlek, status, ägarkategori, sektor, säte, omsättningsklass, ej längre observerad), samt en referens till synkkörningen. SCB:s `senasteUppdateringsDatum` och hämtningstid lagras en gång per körning (inte på varje rad) och nås via den referensen.
+5. **Daglig synk** i GitHub Actions kl. 05:30 svensk tid (efter SCB:s underhåll, klart ca 04:30):
    api-info → jämför källdatum → vid ändring: count för AE/JE → full paginerad hämtning (limit 5000, cursor tills `hasMore=false`) → staging → atomisk finalisering. Retry/backoff på 429/5xx med `Retry-After`.
 6. **Atomisk publicering**: diff, historik, bortfall och uppdatering av current sker i en databasfunktion först när hela traverseringen är klar och kontrollerna godkänts. Avbruten körning lämnar publicerade data orörda och kan aldrig markera poster som borttagna.
 7. **Körningslogg** i `data_source_runs.details`: källdatum, API-version, JE-/AE-count, sidor, hämtade/nya/ändrade/oförändrade/ej längre observerade, retries/429, ändringar per typ, körtid och överförd datamängd. Adminvyn visar detta generellt.
-8. **Integritet**: `peOrgNr`/`orgNr` ligger bara i en skyddad mappningstabell (ingen åtkomst för inloggade eller anonyma); analyslagret använder en intern stabil JE-id. Koordinater lagras men exponeras inte. Inga AFR-data in i sökindexet.
+8. **Integritet**: `peOrgNr` ligger bara i en skyddad mappningstabell. `orgNr` lagras och blir läsbart för admin (och senare utvalda roller med rådataåtkomst) för matchning mot annan registerdata – aldrig för anonyma besökare eller vanliga inloggade, och aldrig i publika vyer. Analyslagret använder en intern stabil JE-id. Koordinater lagras men exponeras inte. Inga AFR-data in i sökindexet.
 9. **Analysvyer för senare bruk** (förberedda, inte publicerade): AE med ärvda JE-attribut, härledd ägarkontroll (Offentlig / Privat svensk / Privat utländsk från `agKat`), säte inom/utom arbetsställets län. `privPubl` beskrivs som privat/publikt AB.
 
 ## Viktigt vägval: skicka bara förändringar
 
 Ett helt Sverigeuttag (sannolikt flera miljoner poster inkl. inaktiva) varje dag via våra importendpoints skulle ta lika lång tid som E3-importen (110+ min) och fylla databasen. Förslag:
 
-- ETL-skriptet hämtar en kompakt lista med nuvarande hashvärden per objekt från en nyckelskyddad endpoint.
-- Det skickar **alla id:n + hash** (litet) för fullständighetskontroll och bortfall, men **fullständiga poster bara för nya och ändrade**.
-- Resultatet blir identiskt med full diff i databasen, men överföringen krymper kraftigt efter första laddningen.
+- ETL hämtar befintliga id:n och hashvärden före körningen från en hash-endpoint som är nyckelskyddad, paginerad, gzip-komprimerad och bara nås server-side (ETL), aldrig från webbplatsen.
+- Efter en **fullständigt lyckad** AFR-traversering (`hasMore=false`, antal stämmer mot count) beräknar ETL själv nya, ändrade och bortfallna objekt och skickar **endast dessa** till import-API:t.
+- Bortfall skickas och finaliseras aldrig om traverseringen bröts. Bryts SCB-anropet på sida 137 av 400 avbryts körningen utan att något markeras som borttaget. Databasen kontrollerar dessutom själv: körningen måste vara markerad komplett med källans count, och bortfallet får inte överstiga en säkerhetströskel.
+- Hashen är identisk och deterministisk i R och databasen: fasta fält i fast ordning, normaliserade tomvärden och datumformat, SNI-listor sorterade på rangordning och kod. Databasen räknar om hashen på mottagna poster och avvisar avvikelser.
 - Första laddningen är en engångsstor import (chunkad, återupptagbar som AF-historiken).
 
 ## Före första fulla importen
