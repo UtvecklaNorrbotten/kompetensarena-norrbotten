@@ -10,6 +10,10 @@ suppressPackageStartupMessages({
 AFR_PAGE_LIMIT <- 5000L
 AFR_API_VERSION <- "v1"
 
+`%||%` <- function(x, y) {
+  if (is.null(x) || length(x) == 0 || (length(x) == 1 && is.na(x))) y else x
+}
+
 afr_stats <- new.env()
 afr_stats$requests <- 0L
 afr_stats$retries <- 0L
@@ -136,10 +140,6 @@ afr_get <- function(path, query = list(), max_tries = 8L) {
     stop(sprintf("AFR-anrop misslyckades (HTTP %d) för %s", status, path), call. = FALSE)
   }
   stop(sprintf("AFR-anrop gav upp efter %d försök: %s", max_tries, path), call. = FALSE)
-}
-
-`%||%` <- function(x, y) {
-  if (is.null(x) || length(x) == 0 || (length(x) == 1 && is.na(x))) y else x
 }
 
 afr_api_info <- function() afr_get("/api-info")
