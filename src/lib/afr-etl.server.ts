@@ -19,7 +19,7 @@ const controlRate = createRateLimiter(60);
 const chunkRate = createRateLimiter(300);
 const readRate = createRateLimiter(600);
 
-const str = (max: number) => z.string().max(max).nullable();
+const str = (max: number) => z.string().max(max * 10).nullable();
 const int = z.number().int().nullable();
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable();
 const hash = z.string().regex(/^[0-9a-f]{64}$/);
@@ -27,7 +27,7 @@ const hash = z.string().regex(/^[0-9a-f]{64}$/);
 const sniSchema = z
   .object({
     r: z.number().int().min(0).max(1000),
-    kod: z.string().min(1).max(20),
+    kod: z.string().min(1).max(50),
     andel: int,
     avd: str(10),
   })
@@ -55,7 +55,7 @@ const jeRecord = z
     bol_stat: str(10),
     priv_publ: str(10),
     sektor: str(20),
-    sni: z.array(sniSchema).max(50),
+    sni: z.array(sniSchema).max(1000),
     hash,
   })
   .strict();
@@ -77,7 +77,7 @@ const aeRecord = z
     tat_sma_typ_kod: str(20),
     tat_ort_sma_ort_kod: str(20),
     tat_ort_sma_ort_ben: str(200),
-    sni: z.array(sniSchema).max(50),
+    sni: z.array(sniSchema).max(1000),
     hash,
   })
   .strict();
