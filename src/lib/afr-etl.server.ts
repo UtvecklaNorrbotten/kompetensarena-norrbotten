@@ -351,7 +351,7 @@ export async function handleAfrCleanup(request: Request): Promise<Response> {
   const db = await admin();
   const { data, error } = await db.rpc("afr_cleanup_failed_initial", {
     p_sync_id: body.data.sync_id,
-    p_max_rows: body.data.max_rows,
+    p_max_rows: body.data.max_rows ?? 20000,
   });
   if (error) return rpcError("Cleanup", error);
   return json(data, 200);
