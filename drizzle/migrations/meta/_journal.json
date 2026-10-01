@@ -141,6 +141,13 @@
       "when": 1790853613442,
       "tag": "0019_0019_scb_afr",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1790853882624,
+      "tag": "0020_0020_afr_fix_removed_stage",
+      "breakpoints": true
     }
   ]
 }
