@@ -5,44 +5,60 @@ Mål: ett robust, rikstäckande lager för juridiska enheter (JE) och arbetsstä
 ## Vad som byggs
 
 1. **Datakälla `scb-afr`** registreras i befintliga `data_sources`/`data_source_state` och syns automatiskt i adminvyn (/admin/datakallor) – ingen ny statuslösning.
-2. **Kodtabeller** från AFR:s 19 kodtabell-endpoints (kod + klartext), med upptäckt och loggning när en tabell ändras. Telefon-/e-post-/reklamspärr hämtas inte.
+2. **Kodtabeller**: de 17 analytiskt relevanta av AFR:s 20 kodtabell-endpoints hämtas (kod + klartext). De tre spärrtabellerna (telefon, e-post, reklam) hämtas inte. Ändringar i kodtabeller upptäcks, historiseras och loggas separat.
 3. **Aktuella tabeller** för AE och JE med endast de analytiska fälten i briefen (inga adresser, telefon, e-post, namn på fysiska personer). Näringsgrenar i egna radtabeller (rangordning, kod, andel, avdelning) så SNI går att fråga effektivt; primär = rangordning 1.
-4. **Historik (SCD typ 2)**: en ny version skapas bara när hash över historiserade attribut ändras. Varje version (rad) har första/sista observation, hash och ändringstyp (ny, SNI, geografi, storlek, status, ägarkategori, sektor, säte, omsättningsklass, ej längre observerad), samt en referens till synkkörningen. SCB:s `senasteUppdateringsDatum` och hämtningstid lagras en gång per körning (inte på varje rad) och nås via den referensen.
-5. **Daglig synk** i GitHub Actions kl. 05:30 svensk tid (efter SCB:s underhåll, klart ca 04:30):
-   api-info → jämför källdatum → vid ändring: count för AE/JE → full paginerad hämtning (limit 5000, cursor tills `hasMore=false`) → staging → atomisk finalisering. Retry/backoff på 429/5xx med `Retry-After`.
-6. **Atomisk publicering**: diff, historik, bortfall och uppdatering av current sker i en databasfunktion först när hela traverseringen är klar och kontrollerna godkänts. Avbruten körning lämnar publicerade data orörda och kan aldrig markera poster som borttagna.
-7. **Körningslogg** i `data_source_runs.details`: källdatum, API-version, JE-/AE-count, sidor, hämtade/nya/ändrade/oförändrade/ej längre observerade, retries/429, ändringar per typ, körtid och överförd datamängd. Adminvyn visar detta generellt.
-8. **Integritet**: `peOrgNr` ligger bara i en skyddad mappningstabell. `orgNr` lagras och blir läsbart för admin (och senare utvalda roller med rådataåtkomst) för matchning mot annan registerdata – aldrig för anonyma besökare eller vanliga inloggade, och aldrig i publika vyer. Analyslagret använder en intern stabil JE-id. Koordinater lagras men exponeras inte. Inga AFR-data in i sökindexet.
-9. **Analysvyer för senare bruk** (förberedda, inte publicerade): AE med ärvda JE-attribut, härledd ägarkontroll (Offentlig / Privat svensk / Privat utländsk från `agKat`), säte inom/utom arbetsställets län. `privPubl` beskrivs som privat/publikt AB.
+4. **Historik (SCD typ 2)**: en ny version skapas bara när hash över historiserade attribut ändras. Varje version (rad) har första/sista observation, hash och `change_types` som lista (t.ex. `["SNI", "storlek"]`, möjliga värden: ny, SNI, geografi, storlek, status, ägarkategori, sektor, säte, omsättningsklass, ej längre observerad), samt en referens till synkkörningen. SCB:s `senasteUppdateringsDatum` och hämtningstid lagras en gång per körning (inte på varje rad) och nås via den referensen.
+5. **SNI-historik per objekt**: varje historikversion har sina egna SNI-rader (kod, rangordning, andel) kopplade till versionen, så att tidigare SNI kan rekonstrueras exakt – inte bara att "SNI ändrades". Hashen bygger på SNI-kod, rangordning och andel, aldrig på klartext; en ändrad klartext i kodtabellen gör alltså inga JE/AE ändrade. Ingen SNI 2007 → 2025-mappning i detta steg.
+6. **Daglig synk** i GitHub Actions kl. 04:00 UTC (05:00 svensk vintertid, 06:00 sommartid – efter SCB:s nattliga underhåll):
+   api-info → jämför källdatum → vid ändring: count för AE/JE → full paginerad hämtning (limit 5000, cursor tills `hasMore=false`) → count igen → delta → atomisk finalisering. Retry/backoff på 429/5xx med `Retry-After`.
+7. **Atomisk publicering**: diff, historik, bortfall och uppdatering av current sker i en databasfunktion först när hela traverseringen är klar och kontrollerna godkänts. Avbruten körning lämnar publicerade data orörda och kan aldrig markera poster som borttagna.
+8. **Körningslogg** i `data_source_runs.details`: källdatum, API-version, JE-/AE-count (före/efter), sidor, hämtade/nya/ändrade/oförändrade/ej längre observerade, retries/429, ändringar per typ, kodtabellsändringar, körtid och överförd datamängd. Adminvyn visar detta generellt.
+9. **Integritet**: både `peOrgNr` och `orgNr` ligger bara i en skyddad identifieringstabell, eftersom JE även kan vara fysiska personer. `orgNr` kan användas server-side/av admin för matchning mot annan registerdata, men exponeras aldrig för anonyma eller vanliga inloggade, ligger inte i publika vyer och skickas inte till sökindexet. Current/history och analyslagret använder en intern stabil `je_id`. Koordinater lagras men exponeras inte. Inga AFR-data in i sökindexet.
+10. **Analysvyer för senare bruk** (förberedda, inte publicerade): AE med ärvda JE-attribut, härledd ägarkontroll (Offentlig / Privat svensk / Privat utländsk från `agKat`), säte inom/utom arbetsställets län. `privPubl` beskrivs som privat/publikt AB.
 
-## Viktigt vägval: skicka bara förändringar
+## Viktigt vägval: läs hela AFR, skicka bara förändringar
 
-Ett helt Sverigeuttag (sannolikt flera miljoner poster inkl. inaktiva) varje dag via våra importendpoints skulle ta lika lång tid som E3-importen (110+ min) och fylla databasen. Förslag:
+Ett helt Sverigeuttag varje dag via våra importendpoints skulle ta lika lång tid som E3-importen (110+ min) och fylla databasen. Flöde:
 
-- ETL hämtar befintliga id:n och hashvärden före körningen från en hash-endpoint som är nyckelskyddad, paginerad, gzip-komprimerad och bara nås server-side (ETL), aldrig från webbplatsen.
-- Efter en **fullständigt lyckad** AFR-traversering (`hasMore=false`, antal stämmer mot count) beräknar ETL själv nya, ändrade och bortfallna objekt och skickar **endast dessa** till import-API:t.
-- Bortfall skickas och finaliseras aldrig om traverseringen bröts. Bryts SCB-anropet på sida 137 av 400 avbryts körningen utan att något markeras som borttaget. Databasen kontrollerar dessutom själv: körningen måste vara markerad komplett med källans count, och bortfallet får inte överstiga en säkerhetströskel.
-- Hashen är identisk och deterministisk i R och databasen: fasta fält i fast ordning, normaliserade tomvärden och datumformat, SNI-listor sorterade på rangordning och kod. Databasen räknar om hashen på mottagna poster och avvisar avvikelser.
-- Första laddningen är en engångsstor import (chunkad, återupptagbar som AF-historiken).
+1. ETL hämtar befintliga id + hash från en hash-endpoint som är nyckelskyddad, paginerad, gzip-komprimerad och bara nås server-side (ETL), aldrig från webbplatsen.
+2. ETL traverserar hela AFR för JE och AE.
+3. ETL räknar deterministiska hashvärden.
+4. ETL delar upp i nya, ändrade, bortfallna och oförändrade.
+5. Endast fullständiga nya poster, fullständiga ändrade poster och id för bortfallna skickas till import-API:t. Hela nyckelbeståndet skickas inte tillbaka.
 
-## Före första fulla importen
+**Fullständighetskontroll i ETL** – alla krav måste uppfyllas, annars avbryts körningen utan att något skickas:
+- `hasMore=false` nåddes korrekt.
+- `unique_observed_count == source_count` (exakt, ingen tolerans).
+- count före och efter traverseringen är lika; annars avbryts synken och körs om senare.
 
-Testkörning som endast loggar api-info, AE-count, JE-count och beräknat antal sidor. Därefter bedöms lagringsbehov innan full laddning körs.
+Bryts SCB-anropet på sida 137 av 400 avbryts körningen och inget markeras som borttaget.
+
+**Databasens slutkontroll** före finalisering, för JE och AE var för sig:
+- `tidigare current + nya − bortfallna = source_count`, annars publiceras inte batchen.
+- Säkerhetströskel för ovanligt stora bortfall; överskrids den stoppas finaliseringen för manuell kontroll.
+
+**Deterministisk hash** i R och databasen: fasta fält i fast ordning, normaliserade tomvärden och datumformat, SNI-listor sorterade på rangordning och kod, ingen klartext. Databasen räknar om hashen på mottagna poster och avvisar avvikelser.
+
+## Första laddningen
+
+Separat från den dagliga deltaöverföringen: chunkad, återupptagbar och atomiskt finaliserad (som AF-historiken).
+
+Innan den startar körs `count-only` och redovisar: JE-count, AE-count, antal API-sidor vid limit=5000, uppskattad lagringsmängd och uppskattad storlek på första importen. Full laddning startas inte förrän detta är granskat.
 
 ## Det du själv behöver göra
 
 - Lägga till `SCB_AFR_API_KEY` som GitHub Actions-secret (används bara i ETL:t, aldrig i webbplatsen eller databasen).
-- Starta första testkörningen manuellt i GitHub Actions.
+- Starta första `count-only`-körningen manuellt i GitHub Actions.
 
 ## Ej i detta steg
 
-Frontend-analysvyn "Näringslivets struktur", enkätjämförelse/viktning, kartor med enskilda arbetsställen.
+Frontend-analysvyn "Näringslivets struktur", enkätjämförelse/viktning, kartor med enskilda arbetsställen, SNI 2007 → 2025-mappning.
 
 ## Tekniska detaljer
 
-- Migration (unikt namn, t.ex. `0019_scb_afr`): tabeller `afr_code_tables`, `afr_je_ident` (privat: je_id uuid ↔ peOrgNr, inga grants till anon/authenticated), `afr_je_current`, `afr_je_history`, `afr_je_sni`, `afr_ae_current`, `afr_ae_history`, `afr_ae_sni`, staging `afr_stage_je/ae` (+ `afr_stage_keys`) knutna till `etl_batches`. Index på län, kommun, SNI, anstKl, agKat, je_id. RLS på allt; läsning initialt bara admin. Seed av `data_sources` för `scb-afr`.
-- Funktioner (security definer, grant endast till ETL-rollen, ingen generell DELETE): `afr_start_sync`, `afr_store_chunk` (checksumme-idempotent), `afr_finalize_sync` (kontroller: `hasMore=false`, mottagna nycklar = count ± tolerans, inga dubletter, bortfall < tröskel annars fel), `afr_abort_sync`, `afr_current_hashes` (paginerad).
-- Hash: SHA-256 över kanoniskt JSON av historiserade fält, SNI sorterad på rangordning+kod; beräknas i R och verifieras i databasen.
-- Endpoints under `/api/public/jobs/afr/*` med befintlig ETL-nyckel, rate limit och Zod-validering; återanvänder `etl-auth.server.ts` och batchmönstret.
-- R: `R/etl/afr_*.R` (klient, normalisering, hash, synk) via `etl_api.R`; workflow `.github/workflows/etl-scb-afr-daily.yml` (cron 04:00 UTC + manuell körning med lägena `count-only`, `full`).
+- Migration (unikt namn, t.ex. `0019_scb_afr`): `afr_code_tables` + `afr_code_table_history`, `afr_je_ident` (je_id ↔ peOrgNr/orgNr, endast admin-läsning, inga grants till anon/vanliga authenticated), `afr_sync_runs` (källdatum, hämtningstid, counts), `afr_je_current`, `afr_je_history`, `afr_je_sni_current`, `afr_je_sni_history` (kopplad till history_id), motsvarande för AE, samt staging för delta och första laddningen knutet till `etl_batches`. Index på län, kommun, SNI, anstKl, agKat, je_id. RLS på allt; läsning initialt bara admin. Seed av `data_sources` för `scb-afr`.
+- Funktioner (security definer, grant endast till ETL-rollen, ingen generell DELETE): `afr_start_sync` (tar emot source_count, count före/efter, observerat antal), `afr_store_chunk` (checksumme-idempotent), `afr_finalize_sync` (balanskontroll och bortfallströskel), `afr_abort_sync`, `afr_current_hashes` (paginerad).
+- Hash: SHA-256 över kanoniskt JSON av historiserade fält; beräknas i R och verifieras i databasen.
+- Endpoints under `/api/public/jobs/afr/*` med befintlig ETL-nyckel, rate limit och Zod-validering; hash-endpointen svarar gzip. Återanvänder `etl-auth.server.ts` och batchmönstret.
+- R: `R/etl/afr_*.R` (klient, normalisering, hash, delta, synk) via `etl_api.R`; workflow `.github/workflows/etl-scb-afr-daily.yml` (cron `0 4 * * *` + manuell körning med lägena `count-only`, `initial-load`, `daily`).
 - Dokumentation i `docs/afr-etl.md` och regel i `AGENTS.md`.
