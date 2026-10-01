@@ -16,3 +16,4 @@
 - Områdessidor och etiketter definieras i `src/config/areas.ts`; nya sidor ska ha egen sidtitel, och platshållare får aldrig se ut som uppmätta resultat.
 - Publik sökning indexerar bara innehåll som får publiceras. Råa enkätsvar, personuppgifter och arbetsgivarnivå får inte läggas i `search_index`.
 - Enkätimport ska först valideras mot en faktisk kodad fil. Publicering ska ske atomiskt, och arbetsgivarsvar kräver både RLS och serverkontroll innan en vy byggs.
+- AFR (SCB företagsregister) synkas av GitHub Actions via nyckelskyddade `/api/public/jobs/afr/*` och `afr_*`-funktioner; ETL skickar bara delta efter fullständig traversering och databasen balanskontrollerar före atomisk finalisering, identifierare finns bara i `afr_je_ident`; varför: korrekt historik utan dagliga fullkopior och utan att röja fysiska personer.
