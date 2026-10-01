@@ -156,7 +156,9 @@ result <- tryCatch({
       estimated_initial_import_mb = round((je_count * 450 + ae_count * 550) / 1e6),
       estimated_storage_mb = round((je_count + ae_count) * 1500 / 1e6),
       estimate_note = "Grov uppskattning: ~450/550 byte per JE/AE i import, ~1,5 kB per objekt lagrat inkl. historik, SNI och index.",
-      code_tables = code_changes, requests = afr_stats$requests
+      code_tables = code_changes, requests = afr_stats$requests,
+      retries = afr_stats$retries, http_429 = afr_stats$http_429,
+      throttle = afr_throttle_summary()
     )
     print(str(details))
     afr_log_check("count_only", source_date, details)
