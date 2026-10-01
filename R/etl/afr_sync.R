@@ -182,7 +182,8 @@ result <- tryCatch({
   base_stats <- list(
     api_name = info$apiNamn, je_pages = je$pages, ae_pages = ae$pages,
     je_count_before = je_count, je_count_after = je_after, ae_count_before = ae_count, ae_count_after = ae_after,
-    je_observed = je$unique, ae_observed = ae$unique, code_tables = code_changes
+    je_observed = je$unique, ae_observed = ae$unique, code_tables = code_changes,
+    throttle = afr_throttle_summary()
   )
 
   if (afr_mode == "initial-load") {

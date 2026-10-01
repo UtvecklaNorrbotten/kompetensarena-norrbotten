@@ -52,6 +52,7 @@ etl_perform_json <- function(req, retry_safe = FALSE) {
 
   if (status < 200 || status >= 300) {
     msg <- body$message %||% body$error %||% paste("HTTP", status)
+    if (!is.null(body$issues)) msg <- paste(msg, jsonlite::toJSON(body$issues, auto_unbox = TRUE))
     stop(sprintf("ETL-anrop misslyckades (%s): %s", status, msg), call. = FALSE)
   }
 
