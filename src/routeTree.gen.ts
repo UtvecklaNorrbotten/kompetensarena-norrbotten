@@ -26,6 +26,15 @@ import { Route as ApiPublicJobsEtlNoChangeRouteImport } from './routes/api/publi
 import { Route as ApiPublicJobsEtlStateRouteImport } from './routes/api/public/jobs/etl-state'
 import { Route as ApiPublicJobsPublishIndicatorRouteImport } from './routes/api/public/jobs/publish-indicator'
 import { Route as ApiPublicJobsSourceStateRouteImport } from './routes/api/public/jobs/source-state'
+import { Route as ApiPublicJobsAfrAbortRouteImport } from './routes/api/public/jobs/afr/abort'
+import { Route as ApiPublicJobsAfrCheckRouteImport } from './routes/api/public/jobs/afr/check'
+import { Route as ApiPublicJobsAfrChunkRouteImport } from './routes/api/public/jobs/afr/chunk'
+import { Route as ApiPublicJobsAfrCleanupRouteImport } from './routes/api/public/jobs/afr/cleanup'
+import { Route as ApiPublicJobsAfrCodesRouteImport } from './routes/api/public/jobs/afr/codes'
+import { Route as ApiPublicJobsAfrFinalizeRouteImport } from './routes/api/public/jobs/afr/finalize'
+import { Route as ApiPublicJobsAfrHashesRouteImport } from './routes/api/public/jobs/afr/hashes'
+import { Route as ApiPublicJobsAfrResumeRouteImport } from './routes/api/public/jobs/afr/resume'
+import { Route as ApiPublicJobsAfrStartRouteImport } from './routes/api/public/jobs/afr/start'
 import { Route as ApiPublicJobsEtlBatchAbortRouteImport } from './routes/api/public/jobs/etl-batch/abort'
 import { Route as ApiPublicJobsEtlBatchChunkRouteImport } from './routes/api/public/jobs/etl-batch/chunk'
 import { Route as ApiPublicJobsEtlBatchCleanupFailedRouteImport } from './routes/api/public/jobs/etl-batch/cleanup-failed'
@@ -122,6 +131,52 @@ const ApiPublicJobsSourceStateRoute =
     path: '/api/public/jobs/source-state',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicJobsAfrAbortRoute = ApiPublicJobsAfrAbortRouteImport.update({
+  id: '/api/public/jobs/afr/abort',
+  path: '/api/public/jobs/afr/abort',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicJobsAfrCheckRoute = ApiPublicJobsAfrCheckRouteImport.update({
+  id: '/api/public/jobs/afr/check',
+  path: '/api/public/jobs/afr/check',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicJobsAfrChunkRoute = ApiPublicJobsAfrChunkRouteImport.update({
+  id: '/api/public/jobs/afr/chunk',
+  path: '/api/public/jobs/afr/chunk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicJobsAfrCleanupRoute = ApiPublicJobsAfrCleanupRouteImport.update({
+  id: '/api/public/jobs/afr/cleanup',
+  path: '/api/public/jobs/afr/cleanup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicJobsAfrCodesRoute = ApiPublicJobsAfrCodesRouteImport.update({
+  id: '/api/public/jobs/afr/codes',
+  path: '/api/public/jobs/afr/codes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicJobsAfrFinalizeRoute =
+  ApiPublicJobsAfrFinalizeRouteImport.update({
+    id: '/api/public/jobs/afr/finalize',
+    path: '/api/public/jobs/afr/finalize',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicJobsAfrHashesRoute = ApiPublicJobsAfrHashesRouteImport.update({
+  id: '/api/public/jobs/afr/hashes',
+  path: '/api/public/jobs/afr/hashes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicJobsAfrResumeRoute = ApiPublicJobsAfrResumeRouteImport.update({
+  id: '/api/public/jobs/afr/resume',
+  path: '/api/public/jobs/afr/resume',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicJobsAfrStartRoute = ApiPublicJobsAfrStartRouteImport.update({
+  id: '/api/public/jobs/afr/start',
+  path: '/api/public/jobs/afr/start',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicJobsEtlBatchAbortRoute =
   ApiPublicJobsEtlBatchAbortRouteImport.update({
     id: '/api/public/jobs/etl-batch/abort',
@@ -177,6 +232,15 @@ export interface FileRoutesByFullPath {
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
   '/api/public/jobs/source-state': typeof ApiPublicJobsSourceStateRoute
+  '/api/public/jobs/afr/abort': typeof ApiPublicJobsAfrAbortRoute
+  '/api/public/jobs/afr/check': typeof ApiPublicJobsAfrCheckRoute
+  '/api/public/jobs/afr/chunk': typeof ApiPublicJobsAfrChunkRoute
+  '/api/public/jobs/afr/cleanup': typeof ApiPublicJobsAfrCleanupRoute
+  '/api/public/jobs/afr/codes': typeof ApiPublicJobsAfrCodesRoute
+  '/api/public/jobs/afr/finalize': typeof ApiPublicJobsAfrFinalizeRoute
+  '/api/public/jobs/afr/hashes': typeof ApiPublicJobsAfrHashesRoute
+  '/api/public/jobs/afr/resume': typeof ApiPublicJobsAfrResumeRoute
+  '/api/public/jobs/afr/start': typeof ApiPublicJobsAfrStartRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
   '/api/public/jobs/etl-batch/cleanup-failed': typeof ApiPublicJobsEtlBatchCleanupFailedRoute
@@ -202,6 +266,15 @@ export interface FileRoutesByTo {
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
   '/api/public/jobs/source-state': typeof ApiPublicJobsSourceStateRoute
+  '/api/public/jobs/afr/abort': typeof ApiPublicJobsAfrAbortRoute
+  '/api/public/jobs/afr/check': typeof ApiPublicJobsAfrCheckRoute
+  '/api/public/jobs/afr/chunk': typeof ApiPublicJobsAfrChunkRoute
+  '/api/public/jobs/afr/cleanup': typeof ApiPublicJobsAfrCleanupRoute
+  '/api/public/jobs/afr/codes': typeof ApiPublicJobsAfrCodesRoute
+  '/api/public/jobs/afr/finalize': typeof ApiPublicJobsAfrFinalizeRoute
+  '/api/public/jobs/afr/hashes': typeof ApiPublicJobsAfrHashesRoute
+  '/api/public/jobs/afr/resume': typeof ApiPublicJobsAfrResumeRoute
+  '/api/public/jobs/afr/start': typeof ApiPublicJobsAfrStartRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
   '/api/public/jobs/etl-batch/cleanup-failed': typeof ApiPublicJobsEtlBatchCleanupFailedRoute
@@ -228,6 +301,15 @@ export interface FileRoutesById {
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
   '/api/public/jobs/source-state': typeof ApiPublicJobsSourceStateRoute
+  '/api/public/jobs/afr/abort': typeof ApiPublicJobsAfrAbortRoute
+  '/api/public/jobs/afr/check': typeof ApiPublicJobsAfrCheckRoute
+  '/api/public/jobs/afr/chunk': typeof ApiPublicJobsAfrChunkRoute
+  '/api/public/jobs/afr/cleanup': typeof ApiPublicJobsAfrCleanupRoute
+  '/api/public/jobs/afr/codes': typeof ApiPublicJobsAfrCodesRoute
+  '/api/public/jobs/afr/finalize': typeof ApiPublicJobsAfrFinalizeRoute
+  '/api/public/jobs/afr/hashes': typeof ApiPublicJobsAfrHashesRoute
+  '/api/public/jobs/afr/resume': typeof ApiPublicJobsAfrResumeRoute
+  '/api/public/jobs/afr/start': typeof ApiPublicJobsAfrStartRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
   '/api/public/jobs/etl-batch/chunk': typeof ApiPublicJobsEtlBatchChunkRoute
   '/api/public/jobs/etl-batch/cleanup-failed': typeof ApiPublicJobsEtlBatchCleanupFailedRoute
@@ -255,6 +337,15 @@ export interface FileRouteTypes {
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
     | '/api/public/jobs/source-state'
+    | '/api/public/jobs/afr/abort'
+    | '/api/public/jobs/afr/check'
+    | '/api/public/jobs/afr/chunk'
+    | '/api/public/jobs/afr/cleanup'
+    | '/api/public/jobs/afr/codes'
+    | '/api/public/jobs/afr/finalize'
+    | '/api/public/jobs/afr/hashes'
+    | '/api/public/jobs/afr/resume'
+    | '/api/public/jobs/afr/start'
     | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
     | '/api/public/jobs/etl-batch/cleanup-failed'
@@ -280,6 +371,15 @@ export interface FileRouteTypes {
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
     | '/api/public/jobs/source-state'
+    | '/api/public/jobs/afr/abort'
+    | '/api/public/jobs/afr/check'
+    | '/api/public/jobs/afr/chunk'
+    | '/api/public/jobs/afr/cleanup'
+    | '/api/public/jobs/afr/codes'
+    | '/api/public/jobs/afr/finalize'
+    | '/api/public/jobs/afr/hashes'
+    | '/api/public/jobs/afr/resume'
+    | '/api/public/jobs/afr/start'
     | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
     | '/api/public/jobs/etl-batch/cleanup-failed'
@@ -305,6 +405,15 @@ export interface FileRouteTypes {
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
     | '/api/public/jobs/source-state'
+    | '/api/public/jobs/afr/abort'
+    | '/api/public/jobs/afr/check'
+    | '/api/public/jobs/afr/chunk'
+    | '/api/public/jobs/afr/cleanup'
+    | '/api/public/jobs/afr/codes'
+    | '/api/public/jobs/afr/finalize'
+    | '/api/public/jobs/afr/hashes'
+    | '/api/public/jobs/afr/resume'
+    | '/api/public/jobs/afr/start'
     | '/api/public/jobs/etl-batch/abort'
     | '/api/public/jobs/etl-batch/chunk'
     | '/api/public/jobs/etl-batch/cleanup-failed'
@@ -331,6 +440,15 @@ export interface RootRouteChildren {
   ApiPublicJobsEtlStateRoute: typeof ApiPublicJobsEtlStateRoute
   ApiPublicJobsPublishIndicatorRoute: typeof ApiPublicJobsPublishIndicatorRoute
   ApiPublicJobsSourceStateRoute: typeof ApiPublicJobsSourceStateRoute
+  ApiPublicJobsAfrAbortRoute: typeof ApiPublicJobsAfrAbortRoute
+  ApiPublicJobsAfrCheckRoute: typeof ApiPublicJobsAfrCheckRoute
+  ApiPublicJobsAfrChunkRoute: typeof ApiPublicJobsAfrChunkRoute
+  ApiPublicJobsAfrCleanupRoute: typeof ApiPublicJobsAfrCleanupRoute
+  ApiPublicJobsAfrCodesRoute: typeof ApiPublicJobsAfrCodesRoute
+  ApiPublicJobsAfrFinalizeRoute: typeof ApiPublicJobsAfrFinalizeRoute
+  ApiPublicJobsAfrHashesRoute: typeof ApiPublicJobsAfrHashesRoute
+  ApiPublicJobsAfrResumeRoute: typeof ApiPublicJobsAfrResumeRoute
+  ApiPublicJobsAfrStartRoute: typeof ApiPublicJobsAfrStartRoute
   ApiPublicJobsEtlBatchAbortRoute: typeof ApiPublicJobsEtlBatchAbortRoute
   ApiPublicJobsEtlBatchChunkRoute: typeof ApiPublicJobsEtlBatchChunkRoute
   ApiPublicJobsEtlBatchCleanupFailedRoute: typeof ApiPublicJobsEtlBatchCleanupFailedRoute
@@ -460,6 +578,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicJobsSourceStateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/afr/abort': {
+      id: '/api/public/jobs/afr/abort'
+      path: '/api/public/jobs/afr/abort'
+      fullPath: '/api/public/jobs/afr/abort'
+      preLoaderRoute: typeof ApiPublicJobsAfrAbortRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/afr/check': {
+      id: '/api/public/jobs/afr/check'
+      path: '/api/public/jobs/afr/check'
+      fullPath: '/api/public/jobs/afr/check'
+      preLoaderRoute: typeof ApiPublicJobsAfrCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/afr/chunk': {
+      id: '/api/public/jobs/afr/chunk'
+      path: '/api/public/jobs/afr/chunk'
+      fullPath: '/api/public/jobs/afr/chunk'
+      preLoaderRoute: typeof ApiPublicJobsAfrChunkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/afr/cleanup': {
+      id: '/api/public/jobs/afr/cleanup'
+      path: '/api/public/jobs/afr/cleanup'
+      fullPath: '/api/public/jobs/afr/cleanup'
+      preLoaderRoute: typeof ApiPublicJobsAfrCleanupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/afr/codes': {
+      id: '/api/public/jobs/afr/codes'
+      path: '/api/public/jobs/afr/codes'
+      fullPath: '/api/public/jobs/afr/codes'
+      preLoaderRoute: typeof ApiPublicJobsAfrCodesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/afr/finalize': {
+      id: '/api/public/jobs/afr/finalize'
+      path: '/api/public/jobs/afr/finalize'
+      fullPath: '/api/public/jobs/afr/finalize'
+      preLoaderRoute: typeof ApiPublicJobsAfrFinalizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/afr/hashes': {
+      id: '/api/public/jobs/afr/hashes'
+      path: '/api/public/jobs/afr/hashes'
+      fullPath: '/api/public/jobs/afr/hashes'
+      preLoaderRoute: typeof ApiPublicJobsAfrHashesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/afr/resume': {
+      id: '/api/public/jobs/afr/resume'
+      path: '/api/public/jobs/afr/resume'
+      fullPath: '/api/public/jobs/afr/resume'
+      preLoaderRoute: typeof ApiPublicJobsAfrResumeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/afr/start': {
+      id: '/api/public/jobs/afr/start'
+      path: '/api/public/jobs/afr/start'
+      fullPath: '/api/public/jobs/afr/start'
+      preLoaderRoute: typeof ApiPublicJobsAfrStartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/jobs/etl-batch/abort': {
       id: '/api/public/jobs/etl-batch/abort'
       path: '/api/public/jobs/etl-batch/abort'
@@ -523,6 +704,15 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicJobsEtlStateRoute: ApiPublicJobsEtlStateRoute,
   ApiPublicJobsPublishIndicatorRoute: ApiPublicJobsPublishIndicatorRoute,
   ApiPublicJobsSourceStateRoute: ApiPublicJobsSourceStateRoute,
+  ApiPublicJobsAfrAbortRoute: ApiPublicJobsAfrAbortRoute,
+  ApiPublicJobsAfrCheckRoute: ApiPublicJobsAfrCheckRoute,
+  ApiPublicJobsAfrChunkRoute: ApiPublicJobsAfrChunkRoute,
+  ApiPublicJobsAfrCleanupRoute: ApiPublicJobsAfrCleanupRoute,
+  ApiPublicJobsAfrCodesRoute: ApiPublicJobsAfrCodesRoute,
+  ApiPublicJobsAfrFinalizeRoute: ApiPublicJobsAfrFinalizeRoute,
+  ApiPublicJobsAfrHashesRoute: ApiPublicJobsAfrHashesRoute,
+  ApiPublicJobsAfrResumeRoute: ApiPublicJobsAfrResumeRoute,
+  ApiPublicJobsAfrStartRoute: ApiPublicJobsAfrStartRoute,
   ApiPublicJobsEtlBatchAbortRoute: ApiPublicJobsEtlBatchAbortRoute,
   ApiPublicJobsEtlBatchChunkRoute: ApiPublicJobsEtlBatchChunkRoute,
   ApiPublicJobsEtlBatchCleanupFailedRoute:
