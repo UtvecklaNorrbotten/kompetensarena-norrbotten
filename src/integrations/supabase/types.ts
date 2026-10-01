@@ -44,6 +44,768 @@ export type Database = {
         }
         Relationships: []
       }
+      afr_ae_current: {
+        Row: {
+          ae_stat: number | null
+          ae_typ: number | null
+          anst_kl: number | null
+          cfar_nr: number
+          current_history_id: number | null
+          first_seen_at: string
+          hj_verks_je: number | null
+          in_source: boolean
+          je_id: string | null
+          kommun: string | null
+          lan: string | null
+          nord_sw: number | null
+          ost_sw: number | null
+          removed_observed_at: string | null
+          row_hash: string
+          slut_dat: string | null
+          start_dat: string | null
+          sync_id: string
+          tat_ort_sma_ort_ben: string | null
+          tat_ort_sma_ort_kod: string | null
+          tat_sma_typ_kod: string | null
+        }
+        Insert: {
+          ae_stat?: number | null
+          ae_typ?: number | null
+          anst_kl?: number | null
+          cfar_nr: number
+          current_history_id?: number | null
+          first_seen_at?: string
+          hj_verks_je?: number | null
+          in_source?: boolean
+          je_id?: string | null
+          kommun?: string | null
+          lan?: string | null
+          nord_sw?: number | null
+          ost_sw?: number | null
+          removed_observed_at?: string | null
+          row_hash: string
+          slut_dat?: string | null
+          start_dat?: string | null
+          sync_id: string
+          tat_ort_sma_ort_ben?: string | null
+          tat_ort_sma_ort_kod?: string | null
+          tat_sma_typ_kod?: string | null
+        }
+        Update: {
+          ae_stat?: number | null
+          ae_typ?: number | null
+          anst_kl?: number | null
+          cfar_nr?: number
+          current_history_id?: number | null
+          first_seen_at?: string
+          hj_verks_je?: number | null
+          in_source?: boolean
+          je_id?: string | null
+          kommun?: string | null
+          lan?: string | null
+          nord_sw?: number | null
+          ost_sw?: number | null
+          removed_observed_at?: string | null
+          row_hash?: string
+          slut_dat?: string | null
+          start_dat?: string | null
+          sync_id?: string
+          tat_ort_sma_ort_ben?: string | null
+          tat_ort_sma_ort_kod?: string | null
+          tat_sma_typ_kod?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "afr_ae_current_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: false
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
+          },
+          {
+            foreignKeyName: "afr_ae_current_sync_id_fkey"
+            columns: ["sync_id"]
+            isOneToOne: false
+            referencedRelation: "afr_syncs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      afr_ae_history: {
+        Row: {
+          ae_stat: number | null
+          ae_typ: number | null
+          anst_kl: number | null
+          cfar_nr: number
+          change_types: string[]
+          history_id: number
+          hj_verks_je: number | null
+          in_source: boolean
+          je_id: string | null
+          kommun: string | null
+          lan: string | null
+          nord_sw: number | null
+          ost_sw: number | null
+          row_hash: string
+          slut_dat: string | null
+          start_dat: string | null
+          sync_id: string
+          tat_ort_sma_ort_ben: string | null
+          tat_ort_sma_ort_kod: string | null
+          tat_sma_typ_kod: string | null
+          valid_from: string
+          valid_to: string | null
+        }
+        Insert: {
+          ae_stat?: number | null
+          ae_typ?: number | null
+          anst_kl?: number | null
+          cfar_nr: number
+          change_types: string[]
+          history_id?: never
+          hj_verks_je?: number | null
+          in_source?: boolean
+          je_id?: string | null
+          kommun?: string | null
+          lan?: string | null
+          nord_sw?: number | null
+          ost_sw?: number | null
+          row_hash: string
+          slut_dat?: string | null
+          start_dat?: string | null
+          sync_id: string
+          tat_ort_sma_ort_ben?: string | null
+          tat_ort_sma_ort_kod?: string | null
+          tat_sma_typ_kod?: string | null
+          valid_from: string
+          valid_to?: string | null
+        }
+        Update: {
+          ae_stat?: number | null
+          ae_typ?: number | null
+          anst_kl?: number | null
+          cfar_nr?: number
+          change_types?: string[]
+          history_id?: never
+          hj_verks_je?: number | null
+          in_source?: boolean
+          je_id?: string | null
+          kommun?: string | null
+          lan?: string | null
+          nord_sw?: number | null
+          ost_sw?: number | null
+          row_hash?: string
+          slut_dat?: string | null
+          start_dat?: string | null
+          sync_id?: string
+          tat_ort_sma_ort_ben?: string | null
+          tat_ort_sma_ort_kod?: string | null
+          tat_sma_typ_kod?: string | null
+          valid_from?: string
+          valid_to?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "afr_ae_history_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: false
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
+          },
+          {
+            foreignKeyName: "afr_ae_history_sync_id_fkey"
+            columns: ["sync_id"]
+            isOneToOne: false
+            referencedRelation: "afr_syncs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      afr_ae_sni_current: {
+        Row: {
+          andel_procent: number | null
+          avdelnings_kod: string | null
+          cfar_nr: number
+          naringsgren: string
+          rangordning: number
+        }
+        Insert: {
+          andel_procent?: number | null
+          avdelnings_kod?: string | null
+          cfar_nr: number
+          naringsgren: string
+          rangordning: number
+        }
+        Update: {
+          andel_procent?: number | null
+          avdelnings_kod?: string | null
+          cfar_nr?: number
+          naringsgren?: string
+          rangordning?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "afr_ae_sni_current_cfar_nr_fkey"
+            columns: ["cfar_nr"]
+            isOneToOne: false
+            referencedRelation: "afr_ae_analysis"
+            referencedColumns: ["cfar_nr"]
+          },
+          {
+            foreignKeyName: "afr_ae_sni_current_cfar_nr_fkey"
+            columns: ["cfar_nr"]
+            isOneToOne: false
+            referencedRelation: "afr_ae_current"
+            referencedColumns: ["cfar_nr"]
+          },
+        ]
+      }
+      afr_ae_sni_history: {
+        Row: {
+          andel_procent: number | null
+          avdelnings_kod: string | null
+          history_id: number
+          naringsgren: string
+          rangordning: number
+        }
+        Insert: {
+          andel_procent?: number | null
+          avdelnings_kod?: string | null
+          history_id: number
+          naringsgren: string
+          rangordning: number
+        }
+        Update: {
+          andel_procent?: number | null
+          avdelnings_kod?: string | null
+          history_id?: number
+          naringsgren?: string
+          rangordning?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "afr_ae_sni_history_history_id_fkey"
+            columns: ["history_id"]
+            isOneToOne: false
+            referencedRelation: "afr_ae_history"
+            referencedColumns: ["history_id"]
+          },
+        ]
+      }
+      afr_agkat_group: {
+        Row: {
+          ag_kat: string
+          grupp: string
+        }
+        Insert: {
+          ag_kat: string
+          grupp: string
+        }
+        Update: {
+          ag_kat?: string
+          grupp?: string
+        }
+        Relationships: []
+      }
+      afr_code_value_history: {
+        Row: {
+          change: string
+          id: number
+          kod: string
+          new_extra: Json | null
+          new_klartext: string | null
+          observed_at: string
+          old_extra: Json | null
+          old_klartext: string | null
+          table_name: string
+        }
+        Insert: {
+          change: string
+          id?: never
+          kod: string
+          new_extra?: Json | null
+          new_klartext?: string | null
+          observed_at?: string
+          old_extra?: Json | null
+          old_klartext?: string | null
+          table_name: string
+        }
+        Update: {
+          change?: string
+          id?: never
+          kod?: string
+          new_extra?: Json | null
+          new_klartext?: string | null
+          observed_at?: string
+          old_extra?: Json | null
+          old_klartext?: string | null
+          table_name?: string
+        }
+        Relationships: []
+      }
+      afr_code_values: {
+        Row: {
+          active: boolean
+          extra: Json
+          first_seen_at: string
+          klartext: string | null
+          kod: string
+          table_name: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          extra?: Json
+          first_seen_at?: string
+          klartext?: string | null
+          kod: string
+          table_name: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          extra?: Json
+          first_seen_at?: string
+          klartext?: string | null
+          kod?: string
+          table_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      afr_je_current: {
+        Row: {
+          ae_ant: number | null
+          ag_kat: string | null
+          anst_kl: string | null
+          arb_giv_stat: string | null
+          bol_stat: string | null
+          current_history_id: number | null
+          f_skatt_stat: string | null
+          first_seen_at: string
+          ftg_stat: string | null
+          in_source: boolean
+          je_id: string
+          jurform: string | null
+          kommun_sate: string | null
+          lan_sate: string | null
+          moms_stat: string | null
+          oms_ar: number | null
+          oms_kl: string | null
+          priv_publ: string | null
+          reg_dat: string | null
+          removed_observed_at: string | null
+          row_hash: string
+          sektor: string | null
+          slut_dat: string | null
+          start_dat: string | null
+          sync_id: string
+        }
+        Insert: {
+          ae_ant?: number | null
+          ag_kat?: string | null
+          anst_kl?: string | null
+          arb_giv_stat?: string | null
+          bol_stat?: string | null
+          current_history_id?: number | null
+          f_skatt_stat?: string | null
+          first_seen_at?: string
+          ftg_stat?: string | null
+          in_source?: boolean
+          je_id: string
+          jurform?: string | null
+          kommun_sate?: string | null
+          lan_sate?: string | null
+          moms_stat?: string | null
+          oms_ar?: number | null
+          oms_kl?: string | null
+          priv_publ?: string | null
+          reg_dat?: string | null
+          removed_observed_at?: string | null
+          row_hash: string
+          sektor?: string | null
+          slut_dat?: string | null
+          start_dat?: string | null
+          sync_id: string
+        }
+        Update: {
+          ae_ant?: number | null
+          ag_kat?: string | null
+          anst_kl?: string | null
+          arb_giv_stat?: string | null
+          bol_stat?: string | null
+          current_history_id?: number | null
+          f_skatt_stat?: string | null
+          first_seen_at?: string
+          ftg_stat?: string | null
+          in_source?: boolean
+          je_id?: string
+          jurform?: string | null
+          kommun_sate?: string | null
+          lan_sate?: string | null
+          moms_stat?: string | null
+          oms_ar?: number | null
+          oms_kl?: string | null
+          priv_publ?: string | null
+          reg_dat?: string | null
+          removed_observed_at?: string | null
+          row_hash?: string
+          sektor?: string | null
+          slut_dat?: string | null
+          start_dat?: string | null
+          sync_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "afr_je_current_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: true
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
+          },
+          {
+            foreignKeyName: "afr_je_current_sync_id_fkey"
+            columns: ["sync_id"]
+            isOneToOne: false
+            referencedRelation: "afr_syncs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      afr_je_history: {
+        Row: {
+          ae_ant: number | null
+          ag_kat: string | null
+          anst_kl: string | null
+          arb_giv_stat: string | null
+          bol_stat: string | null
+          change_types: string[]
+          f_skatt_stat: string | null
+          ftg_stat: string | null
+          history_id: number
+          in_source: boolean
+          je_id: string
+          jurform: string | null
+          kommun_sate: string | null
+          lan_sate: string | null
+          moms_stat: string | null
+          oms_ar: number | null
+          oms_kl: string | null
+          priv_publ: string | null
+          reg_dat: string | null
+          row_hash: string
+          sektor: string | null
+          slut_dat: string | null
+          start_dat: string | null
+          sync_id: string
+          valid_from: string
+          valid_to: string | null
+        }
+        Insert: {
+          ae_ant?: number | null
+          ag_kat?: string | null
+          anst_kl?: string | null
+          arb_giv_stat?: string | null
+          bol_stat?: string | null
+          change_types: string[]
+          f_skatt_stat?: string | null
+          ftg_stat?: string | null
+          history_id?: never
+          in_source?: boolean
+          je_id: string
+          jurform?: string | null
+          kommun_sate?: string | null
+          lan_sate?: string | null
+          moms_stat?: string | null
+          oms_ar?: number | null
+          oms_kl?: string | null
+          priv_publ?: string | null
+          reg_dat?: string | null
+          row_hash: string
+          sektor?: string | null
+          slut_dat?: string | null
+          start_dat?: string | null
+          sync_id: string
+          valid_from: string
+          valid_to?: string | null
+        }
+        Update: {
+          ae_ant?: number | null
+          ag_kat?: string | null
+          anst_kl?: string | null
+          arb_giv_stat?: string | null
+          bol_stat?: string | null
+          change_types?: string[]
+          f_skatt_stat?: string | null
+          ftg_stat?: string | null
+          history_id?: never
+          in_source?: boolean
+          je_id?: string
+          jurform?: string | null
+          kommun_sate?: string | null
+          lan_sate?: string | null
+          moms_stat?: string | null
+          oms_ar?: number | null
+          oms_kl?: string | null
+          priv_publ?: string | null
+          reg_dat?: string | null
+          row_hash?: string
+          sektor?: string | null
+          slut_dat?: string | null
+          start_dat?: string | null
+          sync_id?: string
+          valid_from?: string
+          valid_to?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "afr_je_history_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: false
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
+          },
+          {
+            foreignKeyName: "afr_je_history_sync_id_fkey"
+            columns: ["sync_id"]
+            isOneToOne: false
+            referencedRelation: "afr_syncs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      afr_je_ident: {
+        Row: {
+          first_seen_at: string
+          je_id: string
+          org_nr: string | null
+          pe_org_nr: string
+        }
+        Insert: {
+          first_seen_at?: string
+          je_id?: string
+          org_nr?: string | null
+          pe_org_nr: string
+        }
+        Update: {
+          first_seen_at?: string
+          je_id?: string
+          org_nr?: string | null
+          pe_org_nr?: string
+        }
+        Relationships: []
+      }
+      afr_je_sni_current: {
+        Row: {
+          andel_procent: number | null
+          avdelnings_kod: string | null
+          je_id: string
+          naringsgren: string
+          rangordning: number
+        }
+        Insert: {
+          andel_procent?: number | null
+          avdelnings_kod?: string | null
+          je_id: string
+          naringsgren: string
+          rangordning: number
+        }
+        Update: {
+          andel_procent?: number | null
+          avdelnings_kod?: string | null
+          je_id?: string
+          naringsgren?: string
+          rangordning?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "afr_je_sni_current_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: false
+            referencedRelation: "afr_je_current"
+            referencedColumns: ["je_id"]
+          },
+        ]
+      }
+      afr_je_sni_history: {
+        Row: {
+          andel_procent: number | null
+          avdelnings_kod: string | null
+          history_id: number
+          naringsgren: string
+          rangordning: number
+        }
+        Insert: {
+          andel_procent?: number | null
+          avdelnings_kod?: string | null
+          history_id: number
+          naringsgren: string
+          rangordning: number
+        }
+        Update: {
+          andel_procent?: number | null
+          avdelnings_kod?: string | null
+          history_id?: number
+          naringsgren?: string
+          rangordning?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "afr_je_sni_history_history_id_fkey"
+            columns: ["history_id"]
+            isOneToOne: false
+            referencedRelation: "afr_je_history"
+            referencedColumns: ["history_id"]
+          },
+        ]
+      }
+      afr_stage_records: {
+        Row: {
+          entity: string
+          key: string
+          op: string
+          payload: Json | null
+          row_hash: string | null
+          sync_id: string
+        }
+        Insert: {
+          entity: string
+          key: string
+          op: string
+          payload?: Json | null
+          row_hash?: string | null
+          sync_id: string
+        }
+        Update: {
+          entity?: string
+          key?: string
+          op?: string
+          payload?: Json | null
+          row_hash?: string | null
+          sync_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "afr_stage_records_sync_id_fkey"
+            columns: ["sync_id"]
+            isOneToOne: false
+            referencedRelation: "afr_syncs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      afr_sync_chunks: {
+        Row: {
+          checksum: string
+          chunk_index: number
+          created_at: string
+          entity: string
+          removed_count: number
+          row_count: number
+          sync_id: string
+        }
+        Insert: {
+          checksum: string
+          chunk_index: number
+          created_at?: string
+          entity: string
+          removed_count?: number
+          row_count: number
+          sync_id: string
+        }
+        Update: {
+          checksum?: string
+          chunk_index?: number
+          created_at?: string
+          entity?: string
+          removed_count?: number
+          row_count?: number
+          sync_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "afr_sync_chunks_sync_id_fkey"
+            columns: ["sync_id"]
+            isOneToOne: false
+            referencedRelation: "afr_syncs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      afr_syncs: {
+        Row: {
+          ae_source_count: number
+          api_version: string | null
+          confirm_large_removal: boolean
+          created_at: string
+          error_message: string | null
+          expected_ae_chunks: number
+          expected_je_chunks: number
+          fetched_at: string
+          finalized_at: string | null
+          id: string
+          je_source_count: number
+          last_activity_at: string
+          mode: string
+          received_ae_chunks: number
+          received_je_chunks: number
+          run_id: string | null
+          source_date: string
+          stats: Json
+          status: string
+        }
+        Insert: {
+          ae_source_count: number
+          api_version?: string | null
+          confirm_large_removal?: boolean
+          created_at?: string
+          error_message?: string | null
+          expected_ae_chunks: number
+          expected_je_chunks: number
+          fetched_at: string
+          finalized_at?: string | null
+          id?: string
+          je_source_count: number
+          last_activity_at?: string
+          mode: string
+          received_ae_chunks?: number
+          received_je_chunks?: number
+          run_id?: string | null
+          source_date: string
+          stats?: Json
+          status?: string
+        }
+        Update: {
+          ae_source_count?: number
+          api_version?: string | null
+          confirm_large_removal?: boolean
+          created_at?: string
+          error_message?: string | null
+          expected_ae_chunks?: number
+          expected_je_chunks?: number
+          fetched_at?: string
+          finalized_at?: string | null
+          id?: string
+          je_source_count?: number
+          last_activity_at?: string
+          mode?: string
+          received_ae_chunks?: number
+          received_je_chunks?: number
+          run_id?: string | null
+          source_date?: string
+          stats?: Json
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "afr_syncs_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "data_source_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       data_source_runs: {
         Row: {
           details: Json | null
@@ -574,9 +1336,90 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      afr_ae_analysis: {
+        Row: {
+          ae_stat: number | null
+          ae_typ: number | null
+          ag_kat: string | null
+          agarkontroll_grupp: string | null
+          anst_kl: number | null
+          cfar_nr: number | null
+          hj_verks_je: number | null
+          je_id: string | null
+          jurform: string | null
+          kommun: string | null
+          kommun_sate: string | null
+          lan: string | null
+          lan_sate: string | null
+          primar_sni: string | null
+          sate_utanfor_lan: boolean | null
+          sektor: string | null
+          tat_ort_sma_ort_kod: string | null
+          tat_sma_typ_kod: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "afr_ae_current_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: false
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
+          },
+        ]
+      }
     }
     Functions: {
+      afr_abort_sync: {
+        Args: { p_reason?: string; p_sync_id: string }
+        Returns: Json
+      }
+      afr_ae_canonical: { Args: { p: Json }; Returns: string }
+      afr_canonical_sni: { Args: { p: Json }; Returns: string }
+      afr_cleanup_failed_initial: {
+        Args: { p_max_rows?: number; p_sync_id: string }
+        Returns: Json
+      }
+      afr_current_hashes: {
+        Args: { p_after?: string; p_entity: string; p_limit?: number }
+        Returns: Json
+      }
+      afr_finalize_sync: {
+        Args: { p_stats?: Json; p_sync_id: string }
+        Returns: Json
+      }
+      afr_hash: { Args: { p_text: string }; Returns: string }
+      afr_je_canonical: { Args: { p: Json }; Returns: string }
+      afr_reopen_initial_sync: { Args: { p_sync_id: string }; Returns: Json }
+      afr_start_sync: {
+        Args: {
+          p_ae_source_count: number
+          p_api_version: string
+          p_confirm_large_removal?: boolean
+          p_details?: Json
+          p_expected_ae_chunks: number
+          p_expected_je_chunks: number
+          p_fetched_at: string
+          p_je_source_count: number
+          p_mode: string
+          p_source_date: string
+        }
+        Returns: string
+      }
+      afr_store_chunk: {
+        Args: {
+          p_checksum: string
+          p_chunk_index: number
+          p_entity: string
+          p_records: Json
+          p_removed: Json
+          p_sync_id: string
+        }
+        Returns: Json
+      }
+      afr_sync_code_table: {
+        Args: { p_rows: Json; p_table: string }
+        Returns: Json
+      }
       etl_abort_batch: {
         Args: { p_batch_id: string; p_reason?: string }
         Returns: Json

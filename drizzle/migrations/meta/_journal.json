@@ -134,6 +134,13 @@
       "when": 1790764693519,
       "tag": "0018_apply_af_revision_fingerprints",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1790853613442,
+      "tag": "0019_0019_scb_afr",
+      "breakpoints": true
     }
   ]
 }
