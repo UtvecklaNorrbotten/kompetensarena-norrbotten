@@ -169,6 +169,13 @@
       "when": 1790926431143,
       "tag": "0023_afr_set_based_store_chunk",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1790926510111,
+      "tag": "0024_afr_finalize_hybrid_sni",
+      "breakpoints": true
     }
   ]
 }
