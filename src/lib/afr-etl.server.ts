@@ -467,3 +467,31 @@ export async function handleAfrCheck(request: Request): Promise<Response> {
   }
   return json({ ok: true }, 200);
 }
+
+const maintenanceSchema = z.discriminatedUnion("action", [
+  z.object({
+    action: z.literal("backfill_primary_sni"),
+    from_page: z.number().int().min(0),
+    pages: z.number().int().min(1).max(5000).default(1000),
+  }),
+  z.object({ action: z.literal("rebuild_indexes") }),
+]);
+
+/**
+ * POST /api/public/jobs/afr/maintenance – stegvisa underhållssteg före finalisering:
+ * ifyllnad av primary_sni och återuppbyggnad av pausade index/kopplingar (ett per anrop).
+ */
+export async function handleAfrMaintenance(request: Request): Promise<Response> {
+  const denied = await guard(request, "POST", chunkRate);
+  if (denied) return denied;
+  const body = await readBody(request, maintenanceSchema);
+  if (!body.ok) return body.response;
+  const db = await admin();
+  const p = body.data;
+  const { data, error } =
+    p.action === "backfill_primary_sni"
+      ? await db.rpc("afr_backfill_primary_sni", { p_from_page: p.from_page, p_pages: p.pages ?? 1000 })
+      : await db.rpc("afr_rebuild_deferred");
+  if (error) return rpcError(`Maintenance ${p.action}`, error);
+  return json(data, 200);
+}
