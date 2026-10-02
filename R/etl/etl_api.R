@@ -33,9 +33,10 @@ etl_perform_json <- function(req, retry_safe = FALSE, timeout = 60) {
   if (retry_safe) {
     req <- req |>
       req_retry(
-        max_tries = 5,
-        retry_on_failure = TRUE,
-        is_transient = function(resp) resp_status(resp) %in% c(429L, 502L, 503L, 504L)
+        max_tries = 6,
+        retry_on_failure = TRUE,  # även curl-timeout/nätverksfel
+        backoff = function(i) min(120, 15 * 2^(i - 1)),
+        is_transient = function(resp) resp_status(resp) %in% c(408L, 429L, 500L, 502L, 503L, 504L)
       )
   }
 

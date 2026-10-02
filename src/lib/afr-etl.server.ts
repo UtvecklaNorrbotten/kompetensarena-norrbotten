@@ -162,6 +162,8 @@ const checkSchema = z.object({
 type PgError = { code?: string; message: string };
 
 function statusForPgError(error: PgError): number {
+  // Gateway-/nätverkstimeouts saknar ofta Postgres-kod; de är tillfälliga och ska retryas.
+  if (/timeout|timed out|upstream|ECONNRESET|fetch failed|connection/i.test(error.message ?? "")) return 503;
   switch (error.code) {
     case "57014":
     case "55P03":
