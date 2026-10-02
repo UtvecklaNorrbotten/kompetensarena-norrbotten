@@ -155,6 +155,13 @@
       "when": 1790922993359,
       "tag": "0021_afr_store_chunk_timeout",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1790925262025,
+      "tag": "0022_afr_hybrid_sni_columns",
+      "breakpoints": true
     }
   ]
 }

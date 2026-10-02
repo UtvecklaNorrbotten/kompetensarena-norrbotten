@@ -59,6 +59,7 @@ export type Database = {
           lan: string | null
           nord_sw: number | null
           ost_sw: number | null
+          primary_sni: string | null
           removed_observed_at: string | null
           row_hash: string
           slut_dat: string | null
@@ -82,6 +83,7 @@ export type Database = {
           lan?: string | null
           nord_sw?: number | null
           ost_sw?: number | null
+          primary_sni?: string | null
           removed_observed_at?: string | null
           row_hash: string
           slut_dat?: string | null
@@ -105,6 +107,7 @@ export type Database = {
           lan?: string | null
           nord_sw?: number | null
           ost_sw?: number | null
+          primary_sni?: string | null
           removed_observed_at?: string | null
           row_hash?: string
           slut_dat?: string | null
@@ -148,6 +151,7 @@ export type Database = {
           ost_sw: number | null
           row_hash: string
           slut_dat: string | null
+          sni: Json | null
           start_dat: string | null
           sync_id: string
           tat_ort_sma_ort_ben: string | null
@@ -172,6 +176,7 @@ export type Database = {
           ost_sw?: number | null
           row_hash: string
           slut_dat?: string | null
+          sni?: Json | null
           start_dat?: string | null
           sync_id: string
           tat_ort_sma_ort_ben?: string | null
@@ -196,6 +201,7 @@ export type Database = {
           ost_sw?: number | null
           row_hash?: string
           slut_dat?: string | null
+          sni?: Json | null
           start_dat?: string | null
           sync_id?: string
           tat_ort_sma_ort_ben?: string | null
@@ -392,6 +398,7 @@ export type Database = {
           moms_stat: string | null
           oms_ar: number | null
           oms_kl: string | null
+          primary_sni: string | null
           priv_publ: string | null
           reg_dat: string | null
           removed_observed_at: string | null
@@ -419,6 +426,7 @@ export type Database = {
           moms_stat?: string | null
           oms_ar?: number | null
           oms_kl?: string | null
+          primary_sni?: string | null
           priv_publ?: string | null
           reg_dat?: string | null
           removed_observed_at?: string | null
@@ -446,6 +454,7 @@ export type Database = {
           moms_stat?: string | null
           oms_ar?: number | null
           oms_kl?: string | null
+          primary_sni?: string | null
           priv_publ?: string | null
           reg_dat?: string | null
           removed_observed_at?: string | null
@@ -496,6 +505,7 @@ export type Database = {
           row_hash: string
           sektor: string | null
           slut_dat: string | null
+          sni: Json | null
           start_dat: string | null
           sync_id: string
           valid_from: string
@@ -524,6 +534,7 @@ export type Database = {
           row_hash: string
           sektor?: string | null
           slut_dat?: string | null
+          sni?: Json | null
           start_dat?: string | null
           sync_id: string
           valid_from: string
@@ -552,6 +563,7 @@ export type Database = {
           row_hash?: string
           sektor?: string | null
           slut_dat?: string | null
+          sni?: Json | null
           start_dat?: string | null
           sync_id?: string
           valid_from?: string
@@ -1390,6 +1402,8 @@ export type Database = {
       afr_hash: { Args: { p_text: string }; Returns: string }
       afr_je_canonical: { Args: { p: Json }; Returns: string }
       afr_reopen_initial_sync: { Args: { p_sync_id: string }; Returns: Json }
+      afr_sni_primary: { Args: { snap: Json }; Returns: string }
+      afr_sni_snapshot: { Args: { p: Json }; Returns: Json }
       afr_start_sync: {
         Args: {
           p_ae_source_count: number
