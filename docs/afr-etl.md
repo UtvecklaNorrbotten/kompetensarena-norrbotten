@@ -29,3 +29,6 @@ Daily: api-info → jämför med `data_source_state.latest_successful_period` �
 ## Att göra själv
 - Lägg `SCB_AFR_API_KEY` som GitHub Actions-secret.
 - Kör `count-only` manuellt, granska volym, kör sedan `initial-load`.
+
+## Första laddningen: pausade index
+Hjälpindex och kopplingskontroller (lista i `afr_deferred_ddl`) är borttagna medan första laddningen pågår. Före finalisering kör ETL `afr/maintenance` (fyller i `primary_sni` och bygger sedan ett index per anrop). En trigger på `afr_syncs` gör att ingen synk kan få status `succeeded`, och ingen daglig synk kan starta, förrän alla index finns och alla kopplingar är validerade. Om återuppbyggnaden misslyckas förblir AFR opublicerat; nästa körning fortsätter där den slutade.
