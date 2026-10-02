@@ -33,6 +33,7 @@ import { Route as ApiPublicJobsAfrCleanupRouteImport } from './routes/api/public
 import { Route as ApiPublicJobsAfrCodesRouteImport } from './routes/api/public/jobs/afr/codes'
 import { Route as ApiPublicJobsAfrFinalizeRouteImport } from './routes/api/public/jobs/afr/finalize'
 import { Route as ApiPublicJobsAfrHashesRouteImport } from './routes/api/public/jobs/afr/hashes'
+import { Route as ApiPublicJobsAfrMaintenanceRouteImport } from './routes/api/public/jobs/afr/maintenance'
 import { Route as ApiPublicJobsAfrResumeRouteImport } from './routes/api/public/jobs/afr/resume'
 import { Route as ApiPublicJobsAfrStartRouteImport } from './routes/api/public/jobs/afr/start'
 import { Route as ApiPublicJobsEtlBatchAbortRouteImport } from './routes/api/public/jobs/etl-batch/abort'
@@ -167,6 +168,12 @@ const ApiPublicJobsAfrHashesRoute = ApiPublicJobsAfrHashesRouteImport.update({
   path: '/api/public/jobs/afr/hashes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicJobsAfrMaintenanceRoute =
+  ApiPublicJobsAfrMaintenanceRouteImport.update({
+    id: '/api/public/jobs/afr/maintenance',
+    path: '/api/public/jobs/afr/maintenance',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicJobsAfrResumeRoute = ApiPublicJobsAfrResumeRouteImport.update({
   id: '/api/public/jobs/afr/resume',
   path: '/api/public/jobs/afr/resume',
@@ -239,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/api/public/jobs/afr/codes': typeof ApiPublicJobsAfrCodesRoute
   '/api/public/jobs/afr/finalize': typeof ApiPublicJobsAfrFinalizeRoute
   '/api/public/jobs/afr/hashes': typeof ApiPublicJobsAfrHashesRoute
+  '/api/public/jobs/afr/maintenance': typeof ApiPublicJobsAfrMaintenanceRoute
   '/api/public/jobs/afr/resume': typeof ApiPublicJobsAfrResumeRoute
   '/api/public/jobs/afr/start': typeof ApiPublicJobsAfrStartRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
@@ -273,6 +281,7 @@ export interface FileRoutesByTo {
   '/api/public/jobs/afr/codes': typeof ApiPublicJobsAfrCodesRoute
   '/api/public/jobs/afr/finalize': typeof ApiPublicJobsAfrFinalizeRoute
   '/api/public/jobs/afr/hashes': typeof ApiPublicJobsAfrHashesRoute
+  '/api/public/jobs/afr/maintenance': typeof ApiPublicJobsAfrMaintenanceRoute
   '/api/public/jobs/afr/resume': typeof ApiPublicJobsAfrResumeRoute
   '/api/public/jobs/afr/start': typeof ApiPublicJobsAfrStartRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
@@ -308,6 +317,7 @@ export interface FileRoutesById {
   '/api/public/jobs/afr/codes': typeof ApiPublicJobsAfrCodesRoute
   '/api/public/jobs/afr/finalize': typeof ApiPublicJobsAfrFinalizeRoute
   '/api/public/jobs/afr/hashes': typeof ApiPublicJobsAfrHashesRoute
+  '/api/public/jobs/afr/maintenance': typeof ApiPublicJobsAfrMaintenanceRoute
   '/api/public/jobs/afr/resume': typeof ApiPublicJobsAfrResumeRoute
   '/api/public/jobs/afr/start': typeof ApiPublicJobsAfrStartRoute
   '/api/public/jobs/etl-batch/abort': typeof ApiPublicJobsEtlBatchAbortRoute
@@ -344,6 +354,7 @@ export interface FileRouteTypes {
     | '/api/public/jobs/afr/codes'
     | '/api/public/jobs/afr/finalize'
     | '/api/public/jobs/afr/hashes'
+    | '/api/public/jobs/afr/maintenance'
     | '/api/public/jobs/afr/resume'
     | '/api/public/jobs/afr/start'
     | '/api/public/jobs/etl-batch/abort'
@@ -378,6 +389,7 @@ export interface FileRouteTypes {
     | '/api/public/jobs/afr/codes'
     | '/api/public/jobs/afr/finalize'
     | '/api/public/jobs/afr/hashes'
+    | '/api/public/jobs/afr/maintenance'
     | '/api/public/jobs/afr/resume'
     | '/api/public/jobs/afr/start'
     | '/api/public/jobs/etl-batch/abort'
@@ -412,6 +424,7 @@ export interface FileRouteTypes {
     | '/api/public/jobs/afr/codes'
     | '/api/public/jobs/afr/finalize'
     | '/api/public/jobs/afr/hashes'
+    | '/api/public/jobs/afr/maintenance'
     | '/api/public/jobs/afr/resume'
     | '/api/public/jobs/afr/start'
     | '/api/public/jobs/etl-batch/abort'
@@ -447,6 +460,7 @@ export interface RootRouteChildren {
   ApiPublicJobsAfrCodesRoute: typeof ApiPublicJobsAfrCodesRoute
   ApiPublicJobsAfrFinalizeRoute: typeof ApiPublicJobsAfrFinalizeRoute
   ApiPublicJobsAfrHashesRoute: typeof ApiPublicJobsAfrHashesRoute
+  ApiPublicJobsAfrMaintenanceRoute: typeof ApiPublicJobsAfrMaintenanceRoute
   ApiPublicJobsAfrResumeRoute: typeof ApiPublicJobsAfrResumeRoute
   ApiPublicJobsAfrStartRoute: typeof ApiPublicJobsAfrStartRoute
   ApiPublicJobsEtlBatchAbortRoute: typeof ApiPublicJobsEtlBatchAbortRoute
@@ -627,6 +641,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicJobsAfrHashesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/afr/maintenance': {
+      id: '/api/public/jobs/afr/maintenance'
+      path: '/api/public/jobs/afr/maintenance'
+      fullPath: '/api/public/jobs/afr/maintenance'
+      preLoaderRoute: typeof ApiPublicJobsAfrMaintenanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/jobs/afr/resume': {
       id: '/api/public/jobs/afr/resume'
       path: '/api/public/jobs/afr/resume'
@@ -711,6 +732,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicJobsAfrCodesRoute: ApiPublicJobsAfrCodesRoute,
   ApiPublicJobsAfrFinalizeRoute: ApiPublicJobsAfrFinalizeRoute,
   ApiPublicJobsAfrHashesRoute: ApiPublicJobsAfrHashesRoute,
+  ApiPublicJobsAfrMaintenanceRoute: ApiPublicJobsAfrMaintenanceRoute,
   ApiPublicJobsAfrResumeRoute: ApiPublicJobsAfrResumeRoute,
   ApiPublicJobsAfrStartRoute: ApiPublicJobsAfrStartRoute,
   ApiPublicJobsEtlBatchAbortRoute: ApiPublicJobsEtlBatchAbortRoute,

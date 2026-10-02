@@ -105,6 +105,25 @@ afr_fetch_entity <- function(entity, count_before) {
   list(df = afr_sort(df, entity), pages = tr$page_count, unique = unique_n)
 }
 
+afr_rebuild_indexes <- function() {
+  repeat {
+    r <- afr_post("/api/public/jobs/afr/maintenance", list(action = "rebuild_indexes"))
+    if (!is.null(r$built)) message(sprintf("Byggde %s (%d ms), %d kvar", r$built, as.integer(r$ms), as.integer(r$remaining)))
+    if (isTRUE(r$done)) break
+    if (is.null(r$built)) stop("Index/kopplingar kunde inte byggas: ", r$remaining, " kvar")
+  }
+}
+
+afr_backfill_primary_sni <- function() {
+  from <- 0L
+  repeat {
+    r <- afr_post("/api/public/jobs/afr/maintenance", list(action = "backfill_primary_sni", from_page = from, pages = 1000L))
+    from <- as.integer(r$next_page)
+    if (isTRUE(r$done)) break
+  }
+  message("primary_sni ifylld")
+}
+
 sync_id <- NULL
 source_date <- NULL
 
@@ -217,7 +236,11 @@ result <- tryCatch({
     }
     afr_send_chunks(sync_id, "je", je$df, je_chunks, skip_je)
     afr_send_chunks(sync_id, "ae", ae$df, ae_chunks, skip_ae)
+    # Hjälpindex och kopplingar är pausade under första laddningen; databasen vägrar finalisera utan dem.
+    afr_backfill_primary_sni()
+    afr_rebuild_indexes()
   } else {
+    afr_rebuild_indexes()
     old_je <- afr_fetch_hashes("je")
     old_ae <- afr_fetch_hashes("ae")
 
