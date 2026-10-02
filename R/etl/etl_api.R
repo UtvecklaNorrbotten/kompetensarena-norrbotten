@@ -27,7 +27,7 @@ etl_request <- function(path) {
     req_headers("Accept" = "application/json")
 }
 
-etl_perform_json <- function(req, retry_safe = FALSE) {
+etl_perform_json <- function(req, retry_safe = FALSE, timeout = 60) {
   # Start/no-change kan skapa nya poster och får inte upprepas automatiskt
   # efter ett tappat svar. Chunk/finalize/abort och läsning tål återförsök.
   if (retry_safe) {
@@ -40,7 +40,7 @@ etl_perform_json <- function(req, retry_safe = FALSE) {
   }
 
   resp <- req |>
-    req_timeout(60) |>
+    req_timeout(timeout) |>
     req_error(is_error = function(resp) FALSE) |>
     req_perform()
 

@@ -23,13 +23,13 @@ afr_mode <- Sys.getenv("AFR_MODE", unset = "daily")
 afr_confirm_removal <- tolower(Sys.getenv("AFR_CONFIRM_LARGE_REMOVAL", unset = "false")) == "true"
 started <- Sys.time()
 
-afr_post <- function(path, body, retry_safe = TRUE) {
+afr_post <- function(path, body, retry_safe = TRUE, timeout = 300) {
   payload <- toJSON(body, auto_unbox = TRUE, na = "null", null = "null", digits = NA)
   if (nchar(payload, type = "bytes") > 5800000) stop("Chunk för stor: ", nchar(payload, type = "bytes"), " byte")
   etl_request(path) |>
     req_method("POST") |>
     req_body_raw(payload, type = "application/json") |>
-    etl_perform_json(retry_safe = retry_safe)
+    etl_perform_json(retry_safe = retry_safe, timeout = timeout)
 }
 
 afr_log_check <- function(status, source_date = NULL, details = list(), error_message = NULL) {
@@ -74,8 +74,11 @@ afr_build_chunks <- function(df, removed) {
   chunks
 }
 
-afr_send_chunks <- function(sync_id, entity, df, chunks) {
+afr_send_chunks <- function(sync_id, entity, df, chunks, skip = 0L) {
+  # Chunkar skickas i ordning; de första `skip` finns redan i databasen.
+  if (skip > 0) message(sprintf("%s: hoppar över %d redan mottagna chunkar", entity, skip))
   for (i in seq_along(chunks)) {
+    if (i <= skip) next
     ch <- chunks[[i]]
     recs <- df[ch$rows, , drop = FALSE]
     rownames(recs) <- NULL
@@ -198,6 +201,8 @@ result <- tryCatch({
       if (!same) stop("En ofullbordad första laddning finns från ett annat källdatum – kör cleanup-initial först")
       if (open$status == "failed") afr_post("/api/public/jobs/afr/resume", list(sync_id = open$id))
       sync_id <- open$id
+      skip_je <- as.integer(open$received_je_chunks %||% 0L)
+      skip_ae <- as.integer(open$received_ae_chunks %||% 0L)
       message("Återupptar första laddning ", sync_id)
     } else {
       start <- afr_post("/api/public/jobs/afr/start", list(
@@ -208,9 +213,10 @@ result <- tryCatch({
         details = base_stats
       ), retry_safe = FALSE)
       sync_id <- start$sync_id
+      skip_je <- 0L; skip_ae <- 0L
     }
-    afr_send_chunks(sync_id, "je", je$df, je_chunks)
-    afr_send_chunks(sync_id, "ae", ae$df, ae_chunks)
+    afr_send_chunks(sync_id, "je", je$df, je_chunks, skip_je)
+    afr_send_chunks(sync_id, "ae", ae$df, ae_chunks, skip_ae)
   } else {
     old_je <- afr_fetch_hashes("je")
     old_ae <- afr_fetch_hashes("ae")

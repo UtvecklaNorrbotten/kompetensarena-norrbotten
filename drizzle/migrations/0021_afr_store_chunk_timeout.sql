@@ -1,0 +1,1 @@
+ALTER FUNCTION public.afr_store_chunk(uuid, text, integer, jsonb, jsonb, text) SET statement_timeout = '300s';
