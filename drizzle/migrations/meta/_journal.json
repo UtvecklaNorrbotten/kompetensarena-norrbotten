@@ -176,6 +176,20 @@
       "when": 1790926510111,
       "tag": "0024_afr_finalize_hybrid_sni",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1790928005342,
+      "tag": "0025_afr_initial_load_deferred_indexes",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1790928027352,
+      "tag": "0026_afr_finalize_requires_deferred",
+      "breakpoints": true
     }
   ]
 }
