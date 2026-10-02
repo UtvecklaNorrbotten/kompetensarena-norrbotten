@@ -1386,6 +1386,10 @@ export type Database = {
         Returns: Json
       }
       afr_ae_canonical: { Args: { p: Json }; Returns: string }
+      afr_backfill_primary_sni: {
+        Args: { p_from_page: number; p_pages?: number }
+        Returns: Json
+      }
       afr_canonical_sni: { Args: { p: Json }; Returns: string }
       afr_cleanup_failed_initial: {
         Args: { p_max_rows?: number; p_sync_id: string }

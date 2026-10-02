@@ -162,6 +162,13 @@
       "when": 1790925262025,
       "tag": "0022_afr_hybrid_sni_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1790926431143,
+      "tag": "0023_afr_set_based_store_chunk",
+      "breakpoints": true
     }
   ]
 }
