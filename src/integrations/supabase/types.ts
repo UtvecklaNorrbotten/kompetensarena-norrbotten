@@ -119,6 +119,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "afr_ae_current_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: false
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
+          },
+          {
             foreignKeyName: "afr_ae_current_sync_id_fkey"
             columns: ["sync_id"]
             isOneToOne: false
@@ -205,6 +212,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "afr_ae_history_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: false
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
+          },
+          {
             foreignKeyName: "afr_ae_history_sync_id_fkey"
             columns: ["sync_id"]
             isOneToOne: false
@@ -235,7 +249,22 @@ export type Database = {
           naringsgren?: string
           rangordning?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "afr_ae_sni_current_cfar_nr_fkey"
+            columns: ["cfar_nr"]
+            isOneToOne: false
+            referencedRelation: "afr_ae_analysis"
+            referencedColumns: ["cfar_nr"]
+          },
+          {
+            foreignKeyName: "afr_ae_sni_current_cfar_nr_fkey"
+            columns: ["cfar_nr"]
+            isOneToOne: false
+            referencedRelation: "afr_ae_current"
+            referencedColumns: ["cfar_nr"]
+          },
+        ]
       }
       afr_ae_sni_history: {
         Row: {
@@ -455,6 +484,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "afr_je_current_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: true
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
+          },
+          {
             foreignKeyName: "afr_je_current_sync_id_fkey"
             columns: ["sync_id"]
             isOneToOne: false
@@ -553,6 +589,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "afr_je_history_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: false
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
+          },
+          {
             foreignKeyName: "afr_je_history_sync_id_fkey"
             columns: ["sync_id"]
             isOneToOne: false
@@ -604,7 +647,15 @@ export type Database = {
           naringsgren?: string
           rangordning?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "afr_je_sni_current_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: false
+            referencedRelation: "afr_je_current"
+            referencedColumns: ["je_id"]
+          },
+        ]
       }
       afr_je_sni_history: {
         Row: {
@@ -1336,7 +1387,15 @@ export type Database = {
           tat_ort_sma_ort_kod: string | null
           tat_sma_typ_kod: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "afr_ae_current_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: false
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
+          },
+        ]
       }
     }
     Functions: {
