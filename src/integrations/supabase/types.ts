@@ -836,6 +836,197 @@ export type Database = {
           },
         ]
       }
+      agg_af_totals: {
+        Row: {
+          geo_code: string
+          geo_level: Database["public"]["Enums"]["geo_level"]
+          indicator_id: string
+          measure_code: string
+          measure_label: string | null
+          period: string
+          sex: string
+          value: number | null
+        }
+        Insert: {
+          geo_code: string
+          geo_level: Database["public"]["Enums"]["geo_level"]
+          indicator_id: string
+          measure_code: string
+          measure_label?: string | null
+          period: string
+          sex?: string
+          value?: number | null
+        }
+        Update: {
+          geo_code?: string
+          geo_level?: Database["public"]["Enums"]["geo_level"]
+          indicator_id?: string
+          measure_code?: string
+          measure_label?: string | null
+          period?: string
+          sex?: string
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agg_af_totals_indicator_id_fkey"
+            columns: ["indicator_id"]
+            isOneToOne: false
+            referencedRelation: "indicators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agg_afr_ae_dynamics: {
+        Row: {
+          ended: number
+          geo_code: string
+          geo_level: Database["public"]["Enums"]["geo_level"]
+          month: string
+          started: number
+        }
+        Insert: {
+          ended?: number
+          geo_code: string
+          geo_level: Database["public"]["Enums"]["geo_level"]
+          month: string
+          started?: number
+        }
+        Update: {
+          ended?: number
+          geo_code?: string
+          geo_level?: Database["public"]["Enums"]["geo_level"]
+          month?: string
+          started?: number
+        }
+        Relationships: []
+      }
+      agg_afr_ae_structure: {
+        Row: {
+          anst_kl: number
+          arbetsstallen: number
+          geo_code: string
+          geo_level: Database["public"]["Enums"]["geo_level"]
+          sni_avdelning: string
+          sni2: string
+        }
+        Insert: {
+          anst_kl: number
+          arbetsstallen: number
+          geo_code: string
+          geo_level: Database["public"]["Enums"]["geo_level"]
+          sni_avdelning: string
+          sni2: string
+        }
+        Update: {
+          anst_kl?: number
+          arbetsstallen?: number
+          geo_code?: string
+          geo_level?: Database["public"]["Enums"]["geo_level"]
+          sni_avdelning?: string
+          sni2?: string
+        }
+        Relationships: []
+      }
+      agg_afr_je_sector: {
+        Row: {
+          anst_kl: string
+          enheter: number
+          geo_code: string
+          geo_level: Database["public"]["Enums"]["geo_level"]
+          jurform: string
+          priv_publ: string
+        }
+        Insert: {
+          anst_kl: string
+          enheter: number
+          geo_code: string
+          geo_level: Database["public"]["Enums"]["geo_level"]
+          jurform: string
+          priv_publ: string
+        }
+        Update: {
+          anst_kl?: string
+          enheter?: number
+          geo_code?: string
+          geo_level?: Database["public"]["Enums"]["geo_level"]
+          jurform?: string
+          priv_publ?: string
+        }
+        Relationships: []
+      }
+      agg_e3_matchning: {
+        Row: {
+          delvis: number | null
+          geo_code: string
+          geo_level: Database["public"]["Enums"]["geo_level"]
+          helt: number | null
+          inte: number | null
+          period: string
+          saknas: number | null
+          sni_code: string
+          sni_label: string | null
+          totalt: number | null
+          utbildning_code: string
+          utbildning_label: string | null
+        }
+        Insert: {
+          delvis?: number | null
+          geo_code: string
+          geo_level: Database["public"]["Enums"]["geo_level"]
+          helt?: number | null
+          inte?: number | null
+          period: string
+          saknas?: number | null
+          sni_code: string
+          sni_label?: string | null
+          totalt?: number | null
+          utbildning_code: string
+          utbildning_label?: string | null
+        }
+        Update: {
+          delvis?: number | null
+          geo_code?: string
+          geo_level?: Database["public"]["Enums"]["geo_level"]
+          helt?: number | null
+          inte?: number | null
+          period?: string
+          saknas?: number | null
+          sni_code?: string
+          sni_label?: string | null
+          totalt?: number | null
+          utbildning_code?: string
+          utbildning_label?: string | null
+        }
+        Relationships: []
+      }
+      agg_refresh_state: {
+        Row: {
+          duration_ms: number | null
+          name: string
+          refreshed_at: string
+          row_count: number
+          scope: string | null
+          source_marker: string | null
+        }
+        Insert: {
+          duration_ms?: number | null
+          name: string
+          refreshed_at?: string
+          row_count?: number
+          scope?: string | null
+          source_marker?: string | null
+        }
+        Update: {
+          duration_ms?: number | null
+          name?: string
+          refreshed_at?: string
+          row_count?: number
+          scope?: string | null
+          source_marker?: string | null
+        }
+        Relationships: []
+      }
       data_source_runs: {
         Row: {
           details: Json | null
@@ -1459,6 +1650,19 @@ export type Database = {
         Args: { p_rows: Json; p_table: string }
         Returns: Json
       }
+      agg_mark: {
+        Args: {
+          p_marker: string
+          p_name: string
+          p_rows: number
+          p_scope: string
+          p_started: string
+        }
+        Returns: undefined
+      }
+      agg_refresh_af: { Args: { p_indicator_id: string }; Returns: Json }
+      agg_refresh_afr: { Args: never; Returns: Json }
+      agg_refresh_e3: { Args: never; Returns: Json }
       etl_abort_batch: {
         Args: { p_batch_id: string; p_reason?: string }
         Returns: Json
