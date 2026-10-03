@@ -204,6 +204,13 @@
       "when": 1791053408337,
       "tag": "0028_agg_refresh_geo_level_casts",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1791053620189,
+      "tag": "0029_agg_pk_and_af_total_rules",
+      "breakpoints": true
     }
   ]
 }
