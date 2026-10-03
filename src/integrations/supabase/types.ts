@@ -1662,6 +1662,7 @@ export type Database = {
       }
       agg_refresh_af: { Args: { p_indicator_id: string }; Returns: Json }
       agg_refresh_afr: { Args: never; Returns: Json }
+      agg_refresh_due: { Args: never; Returns: Json }
       agg_refresh_e3: { Args: never; Returns: Json }
       etl_abort_batch: {
         Args: { p_batch_id: string; p_reason?: string }
