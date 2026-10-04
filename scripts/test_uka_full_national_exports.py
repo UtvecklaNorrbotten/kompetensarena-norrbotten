@@ -2,7 +2,7 @@ import csv, io, json, re, urllib.parse, urllib.request
 from pathlib import Path
 
 BASE="https://statistik-www.uka.se/export"
-INDICATORS=[31,33,97,99,108,136]
+INDICATORS=[13,31,33,97,99,108,136]
 OUT=Path("uka_core_export_summary"); OUT.mkdir(exist_ok=True)
 
 def req(url,data=None,timeout=300):
