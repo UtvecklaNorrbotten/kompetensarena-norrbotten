@@ -1,0 +1,22 @@
+name: Test UKA export discovery
+
+on:
+  push:
+    branches:
+      - "test/uka-api-inventory"
+    paths:
+      - ".github/workflows/test-uka-export-discovery.yml"
+      - "scripts/test_uka_export_discovery.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect UKA export frontend
+        run: python3 scripts/test_uka_export_discovery.py
