@@ -7,7 +7,7 @@ suppressPackageStartupMessages({
 })
 
 # Samma gräns finns i API-valideringen och databasens check constraint.
-ETL_MAX_CHUNKS <- 2000L
+ETL_MAX_CHUNKS <- 10000L
 
 etl_base_url <- function() {
   x <- Sys.getenv("ETL_BASE_URL", unset = "")
@@ -116,9 +116,9 @@ etl_upsert_af_revision_fingerprints <- function(
     etl_perform_json(retry_safe = TRUE)
 }
 
-etl_get_resumable_history_batch <- function(indicator_id) {
+etl_get_resumable_history_batch <- function(indicator_id, import_key = NULL) {
   etl_request("/api/public/jobs/etl-batch/resume-history") |>
-    req_url_query(indicator_id = indicator_id) |>
+    req_url_query(indicator_id = indicator_id, import_key = import_key) |>
     etl_perform_json(retry_safe = TRUE)
 }
 
@@ -197,7 +197,8 @@ etl_start_batch <- function(
   expected_chunks,
   expected_rows,
   mode = "full",
-  replace_period = NULL
+  replace_period = NULL,
+  import_key = NULL
 ) {
   if (!mode %in% c("full", "replace_period")) {
     stop("Ogiltigt batchläge: ", mode)
@@ -210,6 +211,8 @@ etl_start_batch <- function(
     expected_rows = expected_rows,
     mode = mode
   )
+
+  if (!is.null(import_key)) start_body$import_key <- import_key
 
   if (!is.null(replace_period) && !is.na(replace_period) && nzchar(replace_period)) {
     start_body$replace_period <- replace_period

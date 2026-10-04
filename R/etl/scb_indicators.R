@@ -2,6 +2,12 @@
 # Lägg till nya indikatorer här först när deras egna R-skript är verifierade.
 
 scb_indicators <- list(
+  e3_kommun = list(
+    indicator_id = "e3-matchning-utbildning-kommun",
+    table_id = "TAB6929",
+    script = "R/etl/e3_municipal.R",
+    label = "E3 - alla kommuner, utbildningsgrupper och näringsgrenar"
+  ),
   e3 = list(
     indicator_id = "e3-matchning-utbildning",
     table_id = "TAB6929",

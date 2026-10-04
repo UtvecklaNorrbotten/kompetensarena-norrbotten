@@ -1241,6 +1241,7 @@ export type Database = {
           error_message: string | null
           expected_chunks: number
           expected_rows: number | null
+          import_key: string | null
           id: string
           indicator_id: string
           kalla_uppdaterad_datum: string | null
@@ -1258,6 +1259,7 @@ export type Database = {
           error_message?: string | null
           expected_chunks: number
           expected_rows?: number | null
+          import_key?: string | null
           id?: string
           indicator_id: string
           kalla_uppdaterad_datum?: string | null
@@ -1275,6 +1277,7 @@ export type Database = {
           error_message?: string | null
           expected_chunks?: number
           expected_rows?: number | null
+          import_key?: string | null
           id?: string
           indicator_id?: string
           kalla_uppdaterad_datum?: string | null
@@ -1675,6 +1678,22 @@ export type Database = {
       }
       etl_finalize_batch: { Args: { p_batch_id: string }; Returns: Json }
       etl_reopen_failed_batch: { Args: { p_batch_id: string }; Returns: Json }
+      etl_snapshot_progress: {
+        Args: { p_batch_id: string; p_import_key: string }
+        Returns: Json
+      }
+      etl_start_snapshot_batch: {
+        Args: {
+          p_expected_chunks: number
+          p_expected_rows?: number
+          p_import_key: string
+          p_indicator_id: string
+          p_kalla_uppdaterad_datum?: string
+          p_run_id?: string
+          p_source: string
+        }
+        Returns: string
+      }
       etl_start_batch: {
         Args: {
           p_expected_chunks: number
@@ -1886,3 +1905,4 @@ export const Constants = {
     },
   },
 } as const
+

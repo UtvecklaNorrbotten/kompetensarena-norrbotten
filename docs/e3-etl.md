@@ -1,5 +1,81 @@
 # E3 – SCB TAB6929
 
+## Kommunimport (2026-10-04)
+
+Kommunhämtningen är en separat indikator, `e3-matchning-utbildning-kommun`,
+med entrypoint `R/etl/e3_municipal.R` och workflow **ETL - E3 alla kommuner**.
+Den befintliga länsimporten behåller sina utbildningsnivåer och könskategorier.
+Kommunimporten väljer:
+
+- alla 290 kommuner via `vs_CKM03Kommun`
+- alla år (vid metadata-kontroll: 2019–2024)
+- alla 87 värden i `vs_UtbildningsgruppE2-3N1-2`, inklusive totalgruppen
+- alla 17 näringsgrensvärden, inklusive total och uppgift saknas
+- alla innehåll utom `000008QW` (skillnad mellan förvärvsgrader)
+- endast `totalt` i den obligatoriska kön/ålder/födelseland-variabeln
+
+Inriktning och nivå hämtas inte separat. De sju innehållen inkluderar D
+(`000008QS`), justerad förvärvsgrad och matchad förvärvsgrad.
+Aktuell full cellprodukt är **18 014 220 rader**. Tomma/sekretessmarkerade
+celler bevaras som null, aldrig som noll. De kan inte antas minska radantalet.
+Totaler och undergrupper får inte summeras tillsammans.
+
+### Strömning och återstart
+
+En SCB-del omfattar ett år, en utbildningsgrupp och normalt alla kommuner:
+34 510 celler, under cellgränsen 150 000. Kommunlistan delas ytterligare om
+dimensionerna växer. Enbart aktuell del ligger i minnet och skrivs sekventiellt
+i högst 5 000 rader per chunk. Planen har för närvarande 522 SCB-delar och
+3 654 chunkar (avrundning sker per SCB-del).
+
+Migration **0031** höjer batchgränsen till 10 000 i databas, API och R-klient.
+Chunkstorlek och HTTP-gränser höjs inte. Den lägger till importnyckel,
+kontrollindikator och två nyckelskyddade RPC-funktioner. Importnyckeln är SHA-256
+över källans versionsdatum, hela urvalet, indikator, testläge och planversion.
+Återstart väljer endast en batch med identisk nyckel och verifierad,
+sammanhängande chunkföljd. En delvis sparad SCB-del spelas om; befintliga
+checksummor måste stämma. Färdiga delar behöver inte hämtas igen.
+
+SCB:s versionsdatum kontrolleras inför varje del och före finalisering.
+Om det ändras stoppas publiceringen och ett nytt snapshot får byggas.
+Skyddet förutsätter att SCB ändrar metadata vid en revision; det kan inte
+upptäcka en ändring som SCB gör utan uppdaterad versionsmarkör.
+Planen förutsätter en komplett cellprodukt inklusive nullvärden. Avvikande
+radantal eller dubbletter stoppas innan den delen skrivs.
+
+Vid fel behålls sparade chunkar för återstart. Workflowet pausar kontrollerat
+efter fyra timmars importtid och fortsätter automatiskt nästa körning.
+Ingen delimport publiceras. Finaliseringen verifierar totalsumman och byter
+aktiv version atomiskt. Samma SCB-version hämtas inte igen efter en lyckad
+publicering om inte `force_refresh` väljs.
+
+### Driftsättning och verifiering
+
+1. Driftsätt backend och applicera **0031_e3_municipal_snapshot.sql** och
+   **0032_e3_municipal_aggregates.sql** via Lovable. Uppdatera befintlig
+   migrationsjournal; skapa inte dubbletter av migrationerna.
+2. PR-workflowet **Validate E3 municipal** kontrollerar R-syntax, syntetiska
+   regressionsexempel och ett faktiskt SCB-prov utan databasåtkomst.
+3. Merge av importkoden till main startar kommunworkflowet. Det väntar i upp
+   till tio minuter på backend/migration 0031. Om driftsättningen dröjer ska
+   körningen köras om efter driftsättning.
+4. Manuellt `test_mode=true` stagedar två kommuner och två utbildningsgrupper
+   på en separat adminindikator och avbryter utan publicering.
+   `finalize_test=true` prövar atomisk publicering på samma adminindikator.
+5. Fullimport använder båda testflaggorna false. Verifiera workflowloggen:
+   18 014 220 rader, status succeeded och aktiv batch för kommunindikatorn.
+   En lyckad körning med meddelandet **Import pausad** är endast en checkpoint.
+6. Migration 0032 inkluderar kommunerna i `agg_e3_matchning` och dess timvisa
+   uppdateringskontroll. D samt SCB:s två andelar bevaras. Kommuner summeras
+   inte till län/Riket; dessa fortsätter komma från befintliga länsdata.
+   Endast utbildningsgrupper används i detta aggregat för att undvika att
+   alternativa utbildningsindelningar blandas.
+
+Schemat kontrollerar källan dagligen omkring **05:30 svensk tid** och
+fortsätter ofullständiga importer. Lagringsbehov och faktisk inskrivningstid
+måste verifieras i drift: 18 miljoner observationer med dimensioner och index
+kan kräva flera GB. Regressionstester visar inte produktionsprestanda.
+
 Första riktiga ETL-indikatorn är **Matchning – utbildning (E3)** från SCB:s PxWeb2-tabell `TAB6929`.
 
 ## Geografisk omfattning i första steget
