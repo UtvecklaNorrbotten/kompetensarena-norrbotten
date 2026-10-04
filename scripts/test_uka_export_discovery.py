@@ -24,3 +24,12 @@ for pat in [r'<form[^>]*action=["\\\']([^"\\\']*)',r'url\s*[:=]\s*["\\\']([^"\\\
     vals=re.findall(pat,html,re.I)
     if vals:
         print("HTML_PATTERN",pat,json.dumps(vals[:100],ensure_ascii=False))
+
+# Targeted extraction of form.js export logic
+form_url="https://statistik-www.uka.se/export/js/form.js"
+form=urllib.request.urlopen(urllib.request.Request(form_url,headers={"User-Agent":"Mozilla/5.0"}),timeout=60).read().decode("utf-8","replace")
+for needle in ["APP_BASE_URL", "function exportQuery", "$.ajax({"]:
+    pos=form.find(needle)
+    print("\nTARGET",needle,"POS",pos)
+    if pos >= 0:
+        print(form[max(0,pos-2500):pos+7000])
