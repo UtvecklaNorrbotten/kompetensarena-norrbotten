@@ -56,7 +56,7 @@ print("LATEST",latest)
 print("FILTERS",len(filters))
 print("DYNAMIC",json.dumps(dyn_summary,ensure_ascii=False))
 
-url,headers,raw=req(f"{BASE}/api/index.php",{"indicator":INDICATOR,"filters":filters})
+url,headers,raw=req(f"{BASE}/api/index.php",{"indicator":INDICATOR,"filters[]":filters})
 print("POST_RESPONSE",raw.decode("utf-8","replace")[:4000])
 j=json.loads(raw)
 file_url=j["fileUrl"]
