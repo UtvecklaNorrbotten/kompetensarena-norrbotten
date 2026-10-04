@@ -38,17 +38,19 @@ filters=[latest, latest.replace("from:","to:",1), "uni:1"]
 filters += input_values(gender_html,"gender:")
 filters += input_values(age_html,"age:")
 
-starts=list(re.finditer(r'<div class=["\\\']groupTitles[^>]*>',group_html,re.I))
-dyn_summary=[]
-for i,m in enumerate(starts):
-    end=starts[i+1].start() if i+1 < len(starts) else len(group_html)
-    block=group_html[m.start():end]
-    im=re.search(r'dynamic-filter-index["\\\']>\\s*([^<]+)',block,re.I)
-    if not im: continue
-    idx=im.group(1).strip()
-    vals=input_values(block,"dynamic:")
-    dyn_summary.append({"index":idx,"n":len(vals),"sample":vals[:5]})
-    filters += [idx+v for v in vals]
+p1=group_html.find("groupTitles Studieform")
+p2=group_html.find("groupTitles Ämnesområde")
+assert p1 >= 0 and p2 > p1, (p1,p2,len(group_html))
+study_block=group_html[p1:p2]
+subject_block=group_html[p2:]
+study_vals=input_values(study_block,"dynamic:")
+subject_vals=input_values(subject_block,"dynamic:")
+dyn_summary=[
+    {"index":"6.","n":len(study_vals),"sample":study_vals[:5]},
+    {"index":"7.","n":len(subject_vals),"sample":subject_vals[:5]},
+]
+filters += ["6."+v for v in study_vals]
+filters += ["7."+v for v in subject_vals]
 
 print("LATEST",latest)
 print("FILTERS",len(filters))
