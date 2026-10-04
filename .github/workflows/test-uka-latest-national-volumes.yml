@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        indicator: [31, 33, 97, 99, 108, 136]
+        indicator: [13, 31, 33, 97, 99, 108, 136]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
