@@ -1,4 +1,4 @@
-name: ETL - AF månadskontroll
+name: 10 · Data · AF – månadsuppdatering
 
 on:
   workflow_dispatch:

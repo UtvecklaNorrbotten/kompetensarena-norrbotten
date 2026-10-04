@@ -1,4 +1,4 @@
-name: ETL - SCB-data
+name: 10 · Data · E3 – län och Riket
 
 run-name: >-
   SCB ETL – ${{ github.event.inputs.indicator || 'e3' }} –

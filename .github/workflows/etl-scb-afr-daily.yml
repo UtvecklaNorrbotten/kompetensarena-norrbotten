@@ -1,4 +1,4 @@
-name: ETL - SCB Allmänna företagsregistret (AFR)
+name: 10 · Data · AFR – daglig uppdatering
 
 on:
   workflow_dispatch:

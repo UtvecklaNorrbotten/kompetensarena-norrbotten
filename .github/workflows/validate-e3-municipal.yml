@@ -1,4 +1,4 @@
-name: Validate E3 municipal
+name: 90 · Test · E3 – kommunimport
 on:
   pull_request:
     paths:
