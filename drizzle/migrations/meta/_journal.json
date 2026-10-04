@@ -246,6 +246,13 @@
       "when": 1791106896790,
       "tag": "0034_e3_municipal_aggregates",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1791116304202,
+      "tag": "0035_e3_agg_backward_compatible_indelning",
+      "breakpoints": true
     }
   ]
 }
