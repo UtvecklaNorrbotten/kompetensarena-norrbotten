@@ -1,0 +1,29 @@
+name: Test UKA full national exports
+
+on:
+  push:
+    branches:
+      - "test/uka-api-inventory"
+    paths:
+      - ".github/workflows/test-uka-full-national-exports.yml"
+      - "scripts/test_uka_full_national_exports.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Export complete UKA histories
+        run: python3 scripts/test_uka_full_national_exports.py
+      - name: Upload summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uka-full-national-export-summary
+          path: uka_core_export_summary/
+          if-no-files-found: warn
