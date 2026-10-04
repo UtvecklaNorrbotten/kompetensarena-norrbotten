@@ -1,0 +1,22 @@
+name: Test UKA export filters
+
+on:
+  push:
+    branches:
+      - "test/uka-api-inventory"
+    paths:
+      - ".github/workflows/test-uka-export-filters.yml"
+      - "scripts/test_uka_export_filters.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe UKA export filters
+        run: python3 scripts/test_uka_export_filters.py
