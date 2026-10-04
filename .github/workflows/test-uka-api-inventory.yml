@@ -1,0 +1,29 @@
+name: Test UKA API inventory
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/test-uka-api-inventory.yml"
+      - "scripts/test_uka_api_inventory.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Probe UKA indicators
+        run: python3 scripts/test_uka_api_inventory.py
+
+      - name: Upload raw API responses
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uka-api-probe
+          path: uka_api_probe/
+          if-no-files-found: warn
