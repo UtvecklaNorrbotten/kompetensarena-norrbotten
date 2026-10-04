@@ -1,0 +1,28 @@
+name: Test UKA latest national volumes
+
+on:
+  push:
+    branches:
+      - "test/uka-api-inventory"
+    paths:
+      - ".github/workflows/test-uka-latest-national-volumes.yml"
+      - "scripts/test_uka_latest_national_volume.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  volume:
+    strategy:
+      fail-fast: false
+      matrix:
+        indicator: [31, 33, 97, 99, 108, 136]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Measure latest national export
+        env:
+          UKA_INDICATOR: ${{ matrix.indicator }}
+        run: python3 scripts/test_uka_latest_national_volume.py
