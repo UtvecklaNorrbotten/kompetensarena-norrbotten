@@ -14,7 +14,7 @@ import { authorize, createRateLimiter, json } from "./etl-auth.server";
 
 const MAX_BODY_BYTES = 6_000_000; // ~6 MB per chunk-anrop
 const MAX_OBS_PER_CHUNK = 20_000;
-const MAX_CHUNKS = 2_000;
+const MAX_CHUNKS = 10_000;
 
 const controlRate = createRateLimiter(30);
 const chunkRate = createRateLimiter(240);
@@ -23,7 +23,9 @@ const observationSchema = z.object({
   geo_code: z.string().min(1).max(20),
   period: z.string().min(1).max(20),
   value: z.number().finite().nullable().optional(),
-  dimensions: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+  dimensions: z
+    .record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
+    .optional(),
 });
 
 const startSchema = z
@@ -34,6 +36,10 @@ const startSchema = z
     expected_rows: z.number().int().min(0).optional(),
     mode: z.enum(["full", "replace_period"]).default("full"),
     replace_period: z.string().min(1).max(20).optional(),
+    import_key: z
+      .string()
+      .regex(/^[a-f0-9]{64}$/)
+      .optional(),
     kalla_uppdaterad_datum: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, "Datum måste vara YYYY-MM-DD")
@@ -45,6 +51,13 @@ const startSchema = z
         code: z.ZodIssueCode.custom,
         path: ["replace_period"],
         message: "replace_period krävs i replace_period-läge",
+      });
+    }
+    if (value.mode === "replace_period" && value.import_key) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["import_key"],
+        message: "import_key gäller endast fulla batchar",
       });
     }
     if (value.mode === "replace_period" && value.expected_rows === undefined) {
@@ -59,12 +72,19 @@ const startSchema = z
 const chunkSchema = z.object({
   batch_id: z.string().uuid(),
   indicator_id: z.string().min(1).max(100),
-  chunk_index: z.number().int().min(0).max(MAX_CHUNKS - 1),
+  chunk_index: z
+    .number()
+    .int()
+    .min(0)
+    .max(MAX_CHUNKS - 1),
   observations: z.array(observationSchema).min(1).max(MAX_OBS_PER_CHUNK),
 });
 
 const finalizeSchema = z.object({ batch_id: z.string().uuid() });
-const abortSchema = z.object({ batch_id: z.string().uuid(), reason: z.string().max(500).optional() });
+const abortSchema = z.object({
+  batch_id: z.string().uuid(),
+  reason: z.string().max(500).optional(),
+});
 const cleanupSchema = z.object({
   batch_id: z.string().uuid(),
   max_rows: z.number().int().min(1).max(50000).default(5000),
@@ -99,7 +119,8 @@ async function readBody<T>(
   schema: z.ZodType<T>,
 ): Promise<{ ok: true; data: T } | { ok: false; response: Response }> {
   const raw = await request.text();
-  if (raw.length > MAX_BODY_BYTES) return { ok: false, response: json({ error: "Payload too large" }, 413) };
+  if (raw.length > MAX_BODY_BYTES)
+    return { ok: false, response: json({ error: "Payload too large" }, 413) };
 
   let parsedJson: unknown;
   try {
@@ -115,7 +136,10 @@ async function readBody<T>(
       response: json(
         {
           error: "Invalid payload",
-          issues: parsed.error.issues.map((i) => ({ path: i.path, message: i.message })),
+          issues: parsed.error.issues.map((i) => ({
+            path: i.path,
+            message: i.message,
+          })),
         },
         400,
       ),
@@ -124,8 +148,12 @@ async function readBody<T>(
   return { ok: true, data: parsed.data };
 }
 
-async function guard(request: Request, rateLimited: () => boolean): Promise<Response | null> {
-  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+async function guard(
+  request: Request,
+  rateLimited: () => boolean,
+): Promise<Response | null> {
+  if (request.method !== "POST")
+    return json({ error: "Method not allowed" }, 405);
   const denied = await authorize(request);
   if (denied) return denied;
   if (rateLimited()) return json({ error: "Too many requests" }, 429);
@@ -141,7 +169,8 @@ export async function handleBatchStart(request: Request): Promise<Response> {
   if (!body.ok) return body.response;
   const payload = body.data;
 
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } =
+    await import("@/integrations/supabase/client.server");
 
   const { data: indicator, error: lookupError } = await supabaseAdmin
     .from("indicators")
@@ -149,7 +178,10 @@ export async function handleBatchStart(request: Request): Promise<Response> {
     .eq("id", payload.indicator_id)
     .maybeSingle();
   if (lookupError) {
-    console.error("[etl-batch] uppslag av indikator misslyckades:", lookupError.message);
+    console.error(
+      "[etl-batch] uppslag av indikator misslyckades:",
+      lookupError.message,
+    );
     return json({ error: "Lookup failed" }, 500);
   }
   if (!indicator) return json({ error: "Unknown indicator" }, 404);
@@ -178,22 +210,39 @@ export async function handleBatchStart(request: Request): Promise<Response> {
             : {}),
           ...(run?.id ? { p_run_id: run.id } : {}),
         })
-      : await supabaseAdmin.rpc("etl_start_batch", {
-          p_indicator_id: payload.indicator_id,
-          p_source: payload.source,
-          p_expected_chunks: payload.expected_chunks,
-          ...(payload.expected_rows !== undefined ? { p_expected_rows: payload.expected_rows } : {}),
-          ...(payload.kalla_uppdaterad_datum
-            ? { p_kalla_uppdaterad_datum: payload.kalla_uppdaterad_datum }
-            : {}),
-          ...(run?.id ? { p_run_id: run.id } : {}),
-        });
+      : payload.import_key
+        ? await supabaseAdmin.rpc("etl_start_snapshot_batch", {
+            p_indicator_id: payload.indicator_id,
+            p_source: payload.source,
+            p_expected_chunks: payload.expected_chunks,
+            ...(payload.expected_rows !== undefined ? { p_expected_rows: payload.expected_rows } : {}),
+            p_import_key: payload.import_key,
+            ...(payload.kalla_uppdaterad_datum
+              ? { p_kalla_uppdaterad_datum: payload.kalla_uppdaterad_datum }
+              : {}),
+            ...(run?.id ? { p_run_id: run.id } : {}),
+          })
+        : await supabaseAdmin.rpc("etl_start_batch", {
+            p_indicator_id: payload.indicator_id,
+            p_source: payload.source,
+            p_expected_chunks: payload.expected_chunks,
+            ...(payload.expected_rows !== undefined
+              ? { p_expected_rows: payload.expected_rows }
+              : {}),
+            ...(payload.kalla_uppdaterad_datum
+              ? { p_kalla_uppdaterad_datum: payload.kalla_uppdaterad_datum }
+              : {}),
+            ...(run?.id ? { p_run_id: run.id } : {}),
+          });
 
   const { data: batchId, error } = rpcResult;
 
   if (error) {
     console.error("[etl-batch] kunde inte starta batch:", error.message);
-    return json({ error: "Batch start failed", message: error.message }, statusForPgError(error));
+    return json(
+      { error: "Batch start failed", message: error.message },
+      statusForPgError(error),
+    );
   }
 
   return json(
@@ -222,9 +271,12 @@ export async function handleBatchChunk(request: Request): Promise<Response> {
   // Checksumma för idempotens: samma chunk två gånger med identiskt innehåll
   // accepteras, annat innehåll på samma index avvisas.
   const { createHash } = await import("node:crypto");
-  const checksum = createHash("sha256").update(JSON.stringify(payload.observations), "utf8").digest("hex");
+  const checksum = createHash("sha256")
+    .update(JSON.stringify(payload.observations), "utf8")
+    .digest("hex");
 
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } =
+    await import("@/integrations/supabase/client.server");
   const rpcStarted = performance.now();
   const { data, error } = await supabaseAdmin.rpc("etl_store_chunk", {
     p_batch_id: payload.batch_id,
@@ -245,7 +297,15 @@ export async function handleBatchChunk(request: Request): Promise<Response> {
 
   if (error) {
     console.error("[etl-batch] chunk avvisad:", error.message);
-    return json({ error: "Chunk rejected", message: error.message, code: error.code, rpc_ms: rpcMs }, statusForPgError(error));
+    return json(
+      {
+        error: "Chunk rejected",
+        message: error.message,
+        code: error.code,
+        rpc_ms: rpcMs,
+      },
+      statusForPgError(error),
+    );
   }
 
   return json({ ...(data as Record<string, unknown>), rpc_ms: rpcMs }, 200);
@@ -259,20 +319,32 @@ export async function handleBatchFinalize(request: Request): Promise<Response> {
   const body = await readBody(request, finalizeSchema);
   if (!body.ok) return body.response;
 
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data, error } = await supabaseAdmin.rpc("etl_finalize_batch", { p_batch_id: body.data.batch_id });
+  const { supabaseAdmin } =
+    await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin.rpc("etl_finalize_batch", {
+    p_batch_id: body.data.batch_id,
+  });
 
   if (error) {
     console.error("[etl-batch] finalisering misslyckades:", error.message);
     // Transaktionen rullas tillbaka i databasen — publicerad data är oförändrad.
     await supabaseAdmin
       .from("etl_batches")
-      .update({ error_message: error.message, last_activity_at: new Date().toISOString() })
+      .update({
+        error_message: error.message,
+        last_activity_at: new Date().toISOString(),
+      })
       .eq("id", body.data.batch_id);
-    return json({ error: "Finalize failed", message: error.message }, statusForPgError(error));
+    return json(
+      { error: "Finalize failed", message: error.message },
+      statusForPgError(error),
+    );
   }
 
-  return json({ status: "succeeded", ...(data as Record<string, unknown>) }, 200);
+  return json(
+    { status: "succeeded", ...(data as Record<string, unknown>) },
+    200,
+  );
 }
 
 /** POST /api/public/jobs/etl-batch/abort */
@@ -283,7 +355,8 @@ export async function handleBatchAbort(request: Request): Promise<Response> {
   const body = await readBody(request, abortSchema);
   if (!body.ok) return body.response;
 
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } =
+    await import("@/integrations/supabase/client.server");
   const { data, error } = await supabaseAdmin.rpc("etl_abort_batch", {
     p_batch_id: body.data.batch_id,
     ...(body.data.reason ? { p_reason: body.data.reason } : {}),
@@ -291,25 +364,30 @@ export async function handleBatchAbort(request: Request): Promise<Response> {
 
   if (error) {
     console.error("[etl-batch] avbrott misslyckades:", error.message);
-    return json({ error: "Abort failed", message: error.message }, statusForPgError(error));
+    return json(
+      { error: "Abort failed", message: error.message },
+      statusForPgError(error),
+    );
   }
 
   return json(data, 200);
 }
 
-
 /** POST /api/public/jobs/etl-batch/cleanup-failed
  * Tar bort en begränsad mängd observationsrader från en redan misslyckad,
  * osynlig batch. Klienten upprepar anropet tills remaining=false.
  */
-export async function handleBatchCleanupFailed(request: Request): Promise<Response> {
+export async function handleBatchCleanupFailed(
+  request: Request,
+): Promise<Response> {
   const denied = await guard(request, chunkRate);
   if (denied) return denied;
 
   const body = await readBody(request, cleanupSchema);
   if (!body.ok) return body.response;
 
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } =
+    await import("@/integrations/supabase/client.server");
   const { data, error } = await supabaseAdmin.rpc("etl_cleanup_failed_batch", {
     p_batch_id: body.data.batch_id,
     p_max_rows: body.data.max_rows ?? 5000,
@@ -326,24 +404,29 @@ export async function handleBatchCleanupFailed(request: Request): Promise<Respon
   return json(data, 200);
 }
 
-
 /** GET /api/public/jobs/etl-batch/cleanup-failed
  * Listar misslyckade AF-batchar som inte är aktiva, för kontrollerad städning.
  */
-export async function handleBatchListFailed(request: Request): Promise<Response> {
-  if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
+export async function handleBatchListFailed(
+  request: Request,
+): Promise<Response> {
+  if (request.method !== "GET")
+    return json({ error: "Method not allowed" }, 405);
   const denied = await authorize(request);
   if (denied) return denied;
   if (controlRate()) return json({ error: "Too many requests" }, 429);
 
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } =
+    await import("@/integrations/supabase/client.server");
 
   const { data: activeRows, error: activeError } = await supabaseAdmin
     .from("indicator_active_batches")
     .select("active_batch_id");
   if (activeError) return json({ error: "Lookup failed" }, 500);
 
-  const activeIds = new Set((activeRows ?? []).map((row) => row.active_batch_id));
+  const activeIds = new Set(
+    (activeRows ?? []).map((row) => row.active_batch_id),
+  );
 
   const { data, error } = await supabaseAdmin
     .from("etl_batches")
@@ -354,7 +437,10 @@ export async function handleBatchListFailed(request: Request): Promise<Response>
     .limit(100);
 
   if (error) {
-    console.error("[etl-batch] kunde inte lista misslyckade batchar:", error.message);
+    console.error(
+      "[etl-batch] kunde inte lista misslyckade batchar:",
+      error.message,
+    );
     return json({ error: "Lookup failed" }, 500);
   }
 
@@ -364,24 +450,32 @@ export async function handleBatchListFailed(request: Request): Promise<Response>
   );
 }
 
-
 /** GET/POST /api/public/jobs/etl-batch/resume-history
  * GET: hittar senaste ofullbordade fulla AF-batch för en indikator.
  * POST: återöppnar en misslyckad full historikbatch för idempotent fortsättning.
  */
-export async function handleBatchResumeHistory(request: Request): Promise<Response> {
+export async function handleBatchResumeHistory(
+  request: Request,
+): Promise<Response> {
   const denied = await authorize(request);
   if (denied) return denied;
 
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } =
+    await import("@/integrations/supabase/client.server");
 
   if (request.method === "GET") {
     if (controlRate()) return json({ error: "Too many requests" }, 429);
 
-    const indicatorId = new URL(request.url).searchParams.get("indicator_id")?.trim();
+    const indicatorId = new URL(request.url).searchParams
+      .get("indicator_id")
+      ?.trim();
     if (!indicatorId) return json({ error: "indicator_id krävs" }, 400);
 
-    const { data, error } = await supabaseAdmin
+    const importKey = new URL(request.url).searchParams.get("import_key");
+    if (importKey && !/^[a-f0-9]{64}$/.test(importKey))
+      return json({ error: "Invalid import_key" }, 400);
+
+    let lookup = supabaseAdmin
       .from("etl_batches")
       .select(
         "id, indicator_id, expected_chunks, expected_rows, received_chunks, received_rows, status, replace_period, source, created_at, last_activity_at",
@@ -389,15 +483,29 @@ export async function handleBatchResumeHistory(request: Request): Promise<Respon
       .eq("indicator_id", indicatorId)
       .is("replace_period", null)
       .in("status", ["failed", "started", "receiving", "ready"])
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .order("created_at", { ascending: false });
+    if (importKey) lookup = lookup.eq("import_key", importKey);
+    const { data, error } = await lookup.limit(1).maybeSingle();
 
     if (error) {
       console.error("[etl-batch] resume-uppslag misslyckades:", error.message);
       return json({ error: "Lookup failed" }, 500);
     }
 
+    if (data && importKey) {
+      // Säkerställ att återstartspunkten är en sammanhängande följd från index 0.
+      // RPC:n granskar hela mängden, utan PostgRESTs standardgräns på 1000 rader.
+      const { data: progress, error: progressError } = await supabaseAdmin.rpc(
+        "etl_snapshot_progress",
+        { p_batch_id: data.id, p_import_key: importKey },
+      );
+      if (progressError)
+        return json(
+          { error: "Resume progress failed", message: progressError.message },
+          statusForPgError(progressError),
+        );
+      return json({ ...data, ...(progress as Record<string, unknown>) }, 200);
+    }
     return json(data ?? null, 200);
   }
 
