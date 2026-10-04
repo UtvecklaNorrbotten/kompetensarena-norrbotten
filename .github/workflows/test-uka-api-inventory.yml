@@ -1,6 +1,12 @@
 name: Test UKA API inventory
 
 on:
+  push:
+    branches:
+      - "test/uka-api-inventory"
+    paths:
+      - ".github/workflows/test-uka-api-inventory.yml"
+      - "scripts/test_uka_api_inventory.py"
   pull_request:
     paths:
       - ".github/workflows/test-uka-api-inventory.yml"
