@@ -7,6 +7,7 @@ on:
       - drizzle/migrations/0031_e3_municipal_snapshot.sql
       - drizzle/migrations/0032_e3_municipal_aggregates.sql
       - tests/e3-snapshot-*.sql
+      - tests/e3-aggregates-checks.sql
       - .github/workflows/validate-e3-municipal.yml
   workflow_dispatch:
 permissions:
@@ -34,7 +35,9 @@ jobs:
           psql -h localhost -U postgres -d e3_test -v ON_ERROR_STOP=1 \
             -f tests/e3-snapshot-fixture.sql \
             -f drizzle/migrations/0031_e3_municipal_snapshot.sql \
-            -f tests/e3-snapshot-checks.sql
+            -f tests/e3-snapshot-checks.sql \
+            -f drizzle/migrations/0032_e3_municipal_aggregates.sql \
+            -f tests/e3-aggregates-checks.sql
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true

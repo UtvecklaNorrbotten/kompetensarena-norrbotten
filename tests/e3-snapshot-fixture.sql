@@ -29,3 +29,21 @@ begin
   returning id into v_id;
   return v_id;
 end $$;
+
+create type public.geo_level as enum ('riket','län','kommun');
+create table public.indicator_active_batches (indicator_id text primary key, active_batch_id uuid);
+create table public.observations (batch_id uuid, indicator_id text, geo_code text, period text,
+  value double precision, dimensions jsonb);
+create table public.agg_e3_matchning (
+  geo_code text, geo_level public.geo_level, period text, utbildning_code text,
+  utbildning_label text, sni_code text, sni_label text,
+  helt double precision, delvis double precision, inte double precision,
+  saknas double precision, totalt double precision,
+  primary key (geo_code,period,utbildning_code,sni_code)
+);
+create table public.agg_refresh_state (name text primary key, source_marker text);
+create function public.agg_mark(text,text,integer,timestamptz,text) returns void
+language sql as $$
+  insert into public.agg_refresh_state(name,source_marker) values($1,$5)
+  on conflict(name) do update set source_marker=excluded.source_marker;
+$$;
