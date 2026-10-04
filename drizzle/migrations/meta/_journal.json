@@ -232,6 +232,13 @@
       "when": 1791100800001,
       "tag": "0032_e3_municipal_aggregates",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1791106111411,
+      "tag": "0033_e3_municipal_snapshot",
+      "breakpoints": true
     }
   ]
 }
