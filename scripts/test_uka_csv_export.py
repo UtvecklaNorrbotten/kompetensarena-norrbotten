@@ -38,9 +38,11 @@ filters=[latest, latest.replace("from:","to:",1), "uni:1"]
 filters += input_values(gender_html,"gender:")
 filters += input_values(age_html,"age:")
 
-blocks=re.findall(r'<div class=["\\\']groupTitles[^>]*>(.*?)(?=<div class=["\\\']groupTitles|$)',group_html,re.I|re.S)
+starts=list(re.finditer(r'<div class=["\\\']groupTitles[^>]*>',group_html,re.I))
 dyn_summary=[]
-for block in blocks:
+for i,m in enumerate(starts):
+    end=starts[i+1].start() if i+1 < len(starts) else len(group_html)
+    block=group_html[m.start():end]
     im=re.search(r'dynamic-filter-index["\\\']>\\s*([^<]+)',block,re.I)
     if not im: continue
     idx=im.group(1).strip()
