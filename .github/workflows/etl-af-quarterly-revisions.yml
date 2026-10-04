@@ -1,4 +1,4 @@
-name: ETL - AF kvartalsvis revisionskontroll
+name: 20 · Kontroll · AF – historikrevision
 
 on:
   workflow_dispatch:

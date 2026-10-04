@@ -16,6 +16,7 @@ Här samlas vägledning för den som ska utveckla eller vidareförvalta plattfor
 | `README.md` | Denna översikt. |
 | `komponenter.md` | Katalog över återanvändbara komponenter: layout, ui och charts. |
 | `utveckla.md` | Kom igång lokalt, konventioner och GitHub-arbetsflöde. |
+| [workflows.md](workflows.md) | Workflow-grupper, scheman och hur pausade kommunimporter fortsätter. |
 
 ## Var viktiga saker finns
 

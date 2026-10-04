@@ -1,4 +1,4 @@
-name: ETL - E3 alla kommuner
+name: 10 · Data · E3 – kommuner
 
 on:
   workflow_dispatch:
