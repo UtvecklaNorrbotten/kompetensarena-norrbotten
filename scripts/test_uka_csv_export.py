@@ -25,6 +25,7 @@ def input_values(txt,prefix):
 
 from_html=get_filter("academic_term.php?direction=from")
 to_html=get_filter("academic_term.php?direction=to")
+university_html=get_filter("university.php")
 gender_html=get_filter("gender.php")
 age_html=get_filter("age.php")
 group_html=get_filter("group.php")
@@ -34,7 +35,8 @@ tos=input_values(to_html,"to:")
 latest=froms[0]
 assert latest.replace("from:","to:",1) in tos
 
-filters=[latest, latest.replace("from:","to:",1), "uni:1"]
+universities=input_values(university_html,"uni:")
+filters=[latest, latest.replace("from:","to:",1)] + universities
 filters += input_values(gender_html,"gender:")
 filters += input_values(age_html,"age:")
 
@@ -53,6 +55,7 @@ filters += ["6."+v for v in study_vals]
 filters += ["7."+v for v in subject_vals]
 
 print("LATEST",latest)
+print("UNIVERSITIES",len(universities))
 print("FILTERS",len(filters))
 print("DYNAMIC",json.dumps(dyn_summary,ensure_ascii=False))
 
@@ -61,7 +64,7 @@ print("POST_RESPONSE",raw.decode("utf-8","replace")[:4000])
 j=json.loads(raw)
 file_url=j["fileUrl"]
 final_url,h,csvraw=req(file_url)
-(OUT/"indicator33_latest_riket.csv").write_bytes(csvraw)
+(OUT/"indicator33_latest_all_universities.csv").write_bytes(csvraw)
 text=csvraw.decode("utf-8-sig","replace")
 rows=list(csv.reader(text.splitlines(),delimiter=";"))
 print("CSV_URL",final_url)
