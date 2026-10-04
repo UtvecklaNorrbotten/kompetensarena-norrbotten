@@ -958,10 +958,12 @@ export type Database = {
       agg_e3_matchning: {
         Row: {
           delvis: number | null
+          forvarvsgrad: number | null
           geo_code: string
           geo_level: Database["public"]["Enums"]["geo_level"]
           helt: number | null
           inte: number | null
+          matchad_forvarvsgrad: number | null
           period: string
           saknas: number | null
           sni_code: string
@@ -972,10 +974,12 @@ export type Database = {
         }
         Insert: {
           delvis?: number | null
+          forvarvsgrad?: number | null
           geo_code: string
           geo_level: Database["public"]["Enums"]["geo_level"]
           helt?: number | null
           inte?: number | null
+          matchad_forvarvsgrad?: number | null
           period: string
           saknas?: number | null
           sni_code: string
@@ -986,10 +990,12 @@ export type Database = {
         }
         Update: {
           delvis?: number | null
+          forvarvsgrad?: number | null
           geo_code?: string
           geo_level?: Database["public"]["Enums"]["geo_level"]
           helt?: number | null
           inte?: number | null
+          matchad_forvarvsgrad?: number | null
           period?: string
           saknas?: number | null
           sni_code?: string
@@ -1242,6 +1248,7 @@ export type Database = {
           expected_chunks: number
           expected_rows: number | null
           id: string
+          import_key: string | null
           indicator_id: string
           kalla_uppdaterad_datum: string | null
           last_activity_at: string
@@ -1259,6 +1266,7 @@ export type Database = {
           expected_chunks: number
           expected_rows?: number | null
           id?: string
+          import_key?: string | null
           indicator_id: string
           kalla_uppdaterad_datum?: string | null
           last_activity_at?: string
@@ -1276,6 +1284,7 @@ export type Database = {
           expected_chunks?: number
           expected_rows?: number | null
           id?: string
+          import_key?: string | null
           indicator_id?: string
           kalla_uppdaterad_datum?: string | null
           last_activity_at?: string
@@ -1675,6 +1684,10 @@ export type Database = {
       }
       etl_finalize_batch: { Args: { p_batch_id: string }; Returns: Json }
       etl_reopen_failed_batch: { Args: { p_batch_id: string }; Returns: Json }
+      etl_snapshot_progress: {
+        Args: { p_batch_id: string; p_import_key: string }
+        Returns: Json
+      }
       etl_start_batch: {
         Args: {
           p_expected_chunks: number
@@ -1693,6 +1706,18 @@ export type Database = {
           p_indicator_id: string
           p_kalla_uppdaterad_datum?: string
           p_replace_period: string
+          p_run_id?: string
+          p_source: string
+        }
+        Returns: string
+      }
+      etl_start_snapshot_batch: {
+        Args: {
+          p_expected_chunks: number
+          p_expected_rows?: number
+          p_import_key: string
+          p_indicator_id: string
+          p_kalla_uppdaterad_datum?: string
           p_run_id?: string
           p_source: string
         }
