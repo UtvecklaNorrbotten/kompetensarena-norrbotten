@@ -1,0 +1,29 @@
+name: Test UKA CSV export
+
+on:
+  push:
+    branches:
+      - "test/uka-api-inventory"
+    paths:
+      - ".github/workflows/test-uka-csv-export.yml"
+      - "scripts/test_uka_csv_export.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Export indicator 33
+        run: python3 scripts/test_uka_csv_export.py
+      - name: Upload CSV
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uka-csv-test
+          path: uka_export_test/
+          if-no-files-found: warn
