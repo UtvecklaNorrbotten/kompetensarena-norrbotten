@@ -1,7 +1,27 @@
-import { BriefcaseBusiness, createLucideIcon, GraduationCap, MapPinned, Shapes } from "lucide-react";
+import { BriefcaseBusiness, createLucideIcon, MapPinned } from "lucide-react";
 
 const IndustryIcon = createLucideIcon("IndustryIcon", [
   ["path", { d: "M3 21H21V3H17V12L10 8V12L3 8Z", key: "factory-outline" }],
+]);
+
+const CompetenceIcon = createLucideIcon("CompetenceIcon", [
+  ["path", {
+    d: "M5 6H10V5C8 3 10 1.5 12 1.5C14 1.5 16 3 14 5V6H19V11H20C22 9 23.5 11 23.5 13C23.5 15 22 17 20 15H19V20H14V19C16 17 14 15.5 12 15.5C10 15.5 8 17 10 19V20H5V15H6C8 17 9.5 15 9.5 13C9.5 11 8 9 6 11H5Z",
+    transform: "translate(1 1) scale(0.9)",
+    key: "puzzle-outline",
+  }],
+]);
+
+const EducationIcon = createLucideIcon("EducationIcon", [
+  ["path", { d: "M3 12C0 4 24 4 21 12", key: "cap-crown" }],
+  ["path", {
+    d: "M3 12H21V15H19C16 20 8 20 5 15H3ZM13.15 13.4a1.15 1.15 0 1 0-2.3 0a1.15 1.15 0 1 0 2.3 0Z",
+    fill: "currentColor",
+    fillRule: "evenodd",
+    stroke: "none",
+    key: "cap-band-and-visor",
+  }],
+  ["circle", { cx: "12", cy: "13.4", r: "0.38", fill: "currentColor", stroke: "none", key: "cap-cockade" }],
 ]);
 
 export const areas = [
@@ -17,11 +37,11 @@ export const areas = [
     { slug: "rekryteringsbehov", title: "Rekryteringsbehov" },
     { slug: "befolkningsutveckling", title: "Befolkningsutveckling" },
   ] },
-  { slug: "utbildning", title: "Utbildning", icon: GraduationCap, description: "Utbildningsutbud och behov.", topics: [
+  { slug: "utbildning", title: "Utbildning", icon: EducationIcon, description: "Utbildningsutbud och behov.", topics: [
     { slug: "utbildningsniva", title: "Utbildningsnivå" },
     { slug: "samverkan", title: "Samverkan med utbildning" },
   ] },
-  { slug: "kompetenser", title: "Kompetenser", icon: Shapes, description: "Kompetenser som efterfrågas.", topics: [
+  { slug: "kompetenser", title: "Kompetenser", icon: CompetenceIcon, description: "Kompetenser som efterfrågas.", topics: [
     { slug: "kompetensutveckling", title: "Kompetensutveckling" },
     { slug: "framtida-behov", title: "Framtida behov" },
   ] },
