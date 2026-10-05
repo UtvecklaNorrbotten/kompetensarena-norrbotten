@@ -18,7 +18,9 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
   const restoreFocus = useRef<HTMLElement | null>(null);
   const activeArea = areas.find((area) => pathname.startsWith(areaPath(area.slug) + "/") || pathname === areaPath(area.slug))?.slug;
   const expanded = pinned || hovered || focused;
-  const rowClass = "flex h-10 items-center gap-3 whitespace-nowrap rounded-md p-2 hover:bg-brand-light";
+  const rowClass = "relative flex h-10 items-center gap-3 whitespace-nowrap rounded-md p-2 hover:bg-brand-light";
+  const activeRowClass = "bg-brand-light font-semibold text-brand-dark before:absolute before:inset-y-2 before:left-0 before:w-[3px] before:rounded-full before:bg-brand-dark before:content-[\'\']";
+  const navRowClass = (active: boolean) => `${rowClass} ${active ? activeRowClass : ""}`;
 
 
   useEffect(() => {
@@ -65,7 +67,7 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
         )}
       </div>
       <ul className="space-y-1 px-2">
-        <li><AppLink href="/" onClick={blurOnClick} aria-label="Startsida" title="Startsida" className={rowClass}><Home className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Startsida</span></AppLink></li>
+        <li><AppLink href="/" onClick={blurOnClick} aria-label="Startsida" title="Startsida" className={navRowClass(pathname === "/")}><Home className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Startsida</span></AppLink></li>
         {areas.map((area) => {
           const Icon = area.icon;
           const open = activeArea === area.slug;
@@ -74,7 +76,7 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
           const showSub = open;
           return (
             <li key={area.slug}>
-              <AppLink href={areaPath(area.slug)} onClick={blurOnClick} activeOptions={{ exact: true }} title={area.title} className={rowClass}>
+              <AppLink href={areaPath(area.slug)} onClick={blurOnClick} activeOptions={{ exact: true }} title={area.title} className={navRowClass(open)}>
                 <Icon className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>{area.title}</span>
               </AppLink>
               {showSub && (
@@ -91,8 +93,8 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
       </ul>
       <div className="mt-5 border-t border-border px-2 pt-3">
         <p aria-hidden={!expanded && !mobile} className={`h-6 whitespace-nowrap px-2 pb-2 text-xs font-semibold uppercase text-ink-muted ${expanded || mobile ? "" : "invisible"}`}>Data och metod</p>
-        <AppLink href="/om" onClick={blurOnClick} title="Om" className={rowClass}><BookOpen className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Om</span></AppLink>
-        <AppLink href="/ladda-ned-data" onClick={blurOnClick} title="Ladda ned data" className={rowClass}><Download className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Ladda ned data</span></AppLink>
+        <AppLink href="/om" onClick={blurOnClick} title="Om" className={navRowClass(pathname === "/om")}><BookOpen className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Om</span></AppLink>
+        <AppLink href="/ladda-ned-data" onClick={blurOnClick} title="Ladda ned data" className={navRowClass(pathname === "/ladda-ned-data")}><Download className="size-5 shrink-0" /><span className={expanded || mobile ? "" : "sr-only"}>Ladda ned data</span></AppLink>
       </div>
     </nav>
   );
