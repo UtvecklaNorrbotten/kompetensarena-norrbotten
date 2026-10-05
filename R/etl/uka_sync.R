@@ -320,12 +320,15 @@ build_observations <- function(df) {
     observation <- list(
       period = df$period[[i]],
       university = df$university_name[[i]],
-      value = df$value[[i]],
-      dimensions = dims
+      value = df$value[[i]]
     )
 
     if (!is.na(df$gender[[i]]) && nzchar(df$gender[[i]])) {
       observation$gender <- df$gender[[i]]
+    }
+
+    if (length(dims) > 0L) {
+      observation$dimensions <- dims
     }
 
     observation
