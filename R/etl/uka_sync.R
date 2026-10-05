@@ -170,7 +170,8 @@ uka_export <- function(uka_id, from_value, to_value, universities, genders, age_
     ) |>
     req_body_form(
       indicator = as.character(uka_id),
-      `filters[]` = filters
+      `filters[]` = filters,
+      .multi = "explode"
     ) |>
     req_timeout(300) |>
     req_retry(
