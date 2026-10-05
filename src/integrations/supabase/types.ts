@@ -1033,6 +1033,44 @@ export type Database = {
         }
         Relationships: []
       }
+      agg_uka_university: {
+        Row: {
+          breakdown: string
+          category: string
+          gender: string
+          indicator_id: string
+          period: string
+          university: string
+          value: number | null
+        }
+        Insert: {
+          breakdown?: string
+          category?: string
+          gender?: string
+          indicator_id: string
+          period: string
+          university: string
+          value?: number | null
+        }
+        Update: {
+          breakdown?: string
+          category?: string
+          gender?: string
+          indicator_id?: string
+          period?: string
+          university?: string
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agg_uka_university_indicator_id_fkey"
+            columns: ["indicator_id"]
+            isOneToOne: false
+            referencedRelation: "indicators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       data_source_runs: {
         Row: {
           details: Json | null
@@ -1849,6 +1887,7 @@ export type Database = {
       agg_refresh_afr: { Args: never; Returns: Json }
       agg_refresh_due: { Args: never; Returns: Json }
       agg_refresh_e3: { Args: never; Returns: Json }
+      agg_refresh_uka: { Args: never; Returns: Json }
       etl_abort_batch: {
         Args: { p_batch_id: string; p_reason?: string }
         Returns: Json

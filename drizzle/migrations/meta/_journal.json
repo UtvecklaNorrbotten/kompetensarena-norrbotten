@@ -260,6 +260,13 @@
       "when": 1791184509562,
       "tag": "0036_0037_uka_nongeographic_storage",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1791199520702,
+      "tag": "0037_uka_university_aggregates",
+      "breakpoints": true
     }
   ]
 }
