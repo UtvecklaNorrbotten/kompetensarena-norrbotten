@@ -1,11 +1,11 @@
-import { BriefcaseBusiness, Building2, GraduationCap, MapPinned, Shapes } from "lucide-react";
+import { BriefcaseBusiness, Factory, GraduationCap, MapPinned, Shapes } from "lucide-react";
 
 export const areas = [
   { slug: "yrken", title: "Yrken", icon: BriefcaseBusiness, description: "Yrken och kompetensbehov i Norrbotten.", topics: [
     { slug: "rekryteringsbehov", title: "Rekryteringsbehov" },
     { slug: "pensionsavgangar", title: "Pensionsavgångar" },
   ] },
-  { slug: "branscher", title: "Branscher", icon: Building2, description: "Branscher och arbetsgivarnas behov.", topics: [
+  { slug: "branscher", title: "Branscher", icon: Factory, description: "Branscher och arbetsgivarnas behov.", topics: [
     { slug: "rekryteringsbehov", title: "Rekryteringsbehov" },
     { slug: "kompetensutveckling", title: "Kompetensutveckling" },
   ] },
