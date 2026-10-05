@@ -1546,6 +1546,182 @@ export type Database = {
         }
         Relationships: []
       }
+      uka_active_batches: {
+        Row: {
+          activated_at: string
+          active_batch_id: string
+          indicator_id: string
+        }
+        Insert: {
+          activated_at?: string
+          active_batch_id: string
+          indicator_id: string
+        }
+        Update: {
+          activated_at?: string
+          active_batch_id?: string
+          indicator_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "uka_active_batches_active_batch_id_fkey"
+            columns: ["active_batch_id"]
+            isOneToOne: false
+            referencedRelation: "uka_batches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "uka_active_batches_indicator_id_fkey"
+            columns: ["indicator_id"]
+            isOneToOne: true
+            referencedRelation: "indicators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      uka_batch_chunks: {
+        Row: {
+          batch_id: string
+          checksum: string
+          chunk_index: number
+          created_at: string
+          row_count: number
+        }
+        Insert: {
+          batch_id: string
+          checksum: string
+          chunk_index: number
+          created_at?: string
+          row_count: number
+        }
+        Update: {
+          batch_id?: string
+          checksum?: string
+          chunk_index?: number
+          created_at?: string
+          row_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "uka_batch_chunks_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "uka_batches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      uka_batches: {
+        Row: {
+          created_at: string
+          expected_chunks: number
+          expected_rows: number
+          finalized_at: string | null
+          id: string
+          indicator_id: string
+          kalla_uppdaterad_datum: string | null
+          last_activity_at: string
+          received_chunks: number
+          received_rows: number
+          run_id: string | null
+          source: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          expected_chunks: number
+          expected_rows: number
+          finalized_at?: string | null
+          id?: string
+          indicator_id: string
+          kalla_uppdaterad_datum?: string | null
+          last_activity_at?: string
+          received_chunks?: number
+          received_rows?: number
+          run_id?: string | null
+          source?: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          expected_chunks?: number
+          expected_rows?: number
+          finalized_at?: string | null
+          id?: string
+          indicator_id?: string
+          kalla_uppdaterad_datum?: string | null
+          last_activity_at?: string
+          received_chunks?: number
+          received_rows?: number
+          run_id?: string | null
+          source?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "uka_batches_indicator_id_fkey"
+            columns: ["indicator_id"]
+            isOneToOne: false
+            referencedRelation: "indicators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "uka_batches_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "data_source_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      uka_observations: {
+        Row: {
+          batch_id: string
+          dimensions: Json
+          gender: string | null
+          id: number
+          indicator_id: string
+          period: string
+          university: string
+          value: number | null
+        }
+        Insert: {
+          batch_id: string
+          dimensions?: Json
+          gender?: string | null
+          id?: never
+          indicator_id: string
+          period: string
+          university: string
+          value?: number | null
+        }
+        Update: {
+          batch_id?: string
+          dimensions?: Json
+          gender?: string | null
+          id?: never
+          indicator_id?: string
+          period?: string
+          university?: string
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "uka_observations_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "uka_batches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "uka_observations_indicator_id_fkey"
+            columns: ["indicator_id"]
+            isOneToOne: false
+            referencedRelation: "indicators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -1757,6 +1933,32 @@ export type Database = {
           title: string
           url: string
         }[]
+      }
+      uka_abort_batch: {
+        Args: { p_batch_id: string; p_reason?: string }
+        Returns: Json
+      }
+      uka_finalize_batch: { Args: { p_batch_id: string }; Returns: Json }
+      uka_start_batch: {
+        Args: {
+          p_expected_chunks: number
+          p_expected_rows: number
+          p_indicator_id: string
+          p_kalla_uppdaterad_datum?: string
+          p_run_id?: string
+          p_source: string
+        }
+        Returns: string
+      }
+      uka_store_chunk: {
+        Args: {
+          p_batch_id: string
+          p_checksum: string
+          p_chunk_index: number
+          p_indicator_id: string
+          p_observations: Json
+        }
+        Returns: Json
       }
     }
     Enums: {

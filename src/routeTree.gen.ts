@@ -42,6 +42,10 @@ import { Route as ApiPublicJobsEtlBatchCleanupFailedRouteImport } from './routes
 import { Route as ApiPublicJobsEtlBatchFinalizeRouteImport } from './routes/api/public/jobs/etl-batch/finalize'
 import { Route as ApiPublicJobsEtlBatchResumeHistoryRouteImport } from './routes/api/public/jobs/etl-batch/resume-history'
 import { Route as ApiPublicJobsEtlBatchStartRouteImport } from './routes/api/public/jobs/etl-batch/start'
+import { Route as ApiPublicJobsUkaAbortRouteImport } from './routes/api/public/jobs/uka/abort'
+import { Route as ApiPublicJobsUkaChunkRouteImport } from './routes/api/public/jobs/uka/chunk'
+import { Route as ApiPublicJobsUkaFinalizeRouteImport } from './routes/api/public/jobs/uka/finalize'
+import { Route as ApiPublicJobsUkaStartRouteImport } from './routes/api/public/jobs/uka/start'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -220,6 +224,27 @@ const ApiPublicJobsEtlBatchStartRoute =
     path: '/api/public/jobs/etl-batch/start',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicJobsUkaAbortRoute = ApiPublicJobsUkaAbortRouteImport.update({
+  id: '/api/public/jobs/uka/abort',
+  path: '/api/public/jobs/uka/abort',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicJobsUkaChunkRoute = ApiPublicJobsUkaChunkRouteImport.update({
+  id: '/api/public/jobs/uka/chunk',
+  path: '/api/public/jobs/uka/chunk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicJobsUkaFinalizeRoute =
+  ApiPublicJobsUkaFinalizeRouteImport.update({
+    id: '/api/public/jobs/uka/finalize',
+    path: '/api/public/jobs/uka/finalize',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicJobsUkaStartRoute = ApiPublicJobsUkaStartRouteImport.update({
+  id: '/api/public/jobs/uka/start',
+  path: '/api/public/jobs/uka/start',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -255,6 +280,10 @@ export interface FileRoutesByFullPath {
   '/api/public/jobs/etl-batch/finalize': typeof ApiPublicJobsEtlBatchFinalizeRoute
   '/api/public/jobs/etl-batch/resume-history': typeof ApiPublicJobsEtlBatchResumeHistoryRoute
   '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
+  '/api/public/jobs/uka/abort': typeof ApiPublicJobsUkaAbortRoute
+  '/api/public/jobs/uka/chunk': typeof ApiPublicJobsUkaChunkRoute
+  '/api/public/jobs/uka/finalize': typeof ApiPublicJobsUkaFinalizeRoute
+  '/api/public/jobs/uka/start': typeof ApiPublicJobsUkaStartRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -290,6 +319,10 @@ export interface FileRoutesByTo {
   '/api/public/jobs/etl-batch/finalize': typeof ApiPublicJobsEtlBatchFinalizeRoute
   '/api/public/jobs/etl-batch/resume-history': typeof ApiPublicJobsEtlBatchResumeHistoryRoute
   '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
+  '/api/public/jobs/uka/abort': typeof ApiPublicJobsUkaAbortRoute
+  '/api/public/jobs/uka/chunk': typeof ApiPublicJobsUkaChunkRoute
+  '/api/public/jobs/uka/finalize': typeof ApiPublicJobsUkaFinalizeRoute
+  '/api/public/jobs/uka/start': typeof ApiPublicJobsUkaStartRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -326,6 +359,10 @@ export interface FileRoutesById {
   '/api/public/jobs/etl-batch/finalize': typeof ApiPublicJobsEtlBatchFinalizeRoute
   '/api/public/jobs/etl-batch/resume-history': typeof ApiPublicJobsEtlBatchResumeHistoryRoute
   '/api/public/jobs/etl-batch/start': typeof ApiPublicJobsEtlBatchStartRoute
+  '/api/public/jobs/uka/abort': typeof ApiPublicJobsUkaAbortRoute
+  '/api/public/jobs/uka/chunk': typeof ApiPublicJobsUkaChunkRoute
+  '/api/public/jobs/uka/finalize': typeof ApiPublicJobsUkaFinalizeRoute
+  '/api/public/jobs/uka/start': typeof ApiPublicJobsUkaStartRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -363,6 +400,10 @@ export interface FileRouteTypes {
     | '/api/public/jobs/etl-batch/finalize'
     | '/api/public/jobs/etl-batch/resume-history'
     | '/api/public/jobs/etl-batch/start'
+    | '/api/public/jobs/uka/abort'
+    | '/api/public/jobs/uka/chunk'
+    | '/api/public/jobs/uka/finalize'
+    | '/api/public/jobs/uka/start'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -398,6 +439,10 @@ export interface FileRouteTypes {
     | '/api/public/jobs/etl-batch/finalize'
     | '/api/public/jobs/etl-batch/resume-history'
     | '/api/public/jobs/etl-batch/start'
+    | '/api/public/jobs/uka/abort'
+    | '/api/public/jobs/uka/chunk'
+    | '/api/public/jobs/uka/finalize'
+    | '/api/public/jobs/uka/start'
   id:
     | '__root__'
     | '/'
@@ -433,6 +478,10 @@ export interface FileRouteTypes {
     | '/api/public/jobs/etl-batch/finalize'
     | '/api/public/jobs/etl-batch/resume-history'
     | '/api/public/jobs/etl-batch/start'
+    | '/api/public/jobs/uka/abort'
+    | '/api/public/jobs/uka/chunk'
+    | '/api/public/jobs/uka/finalize'
+    | '/api/public/jobs/uka/start'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -469,6 +518,10 @@ export interface RootRouteChildren {
   ApiPublicJobsEtlBatchFinalizeRoute: typeof ApiPublicJobsEtlBatchFinalizeRoute
   ApiPublicJobsEtlBatchResumeHistoryRoute: typeof ApiPublicJobsEtlBatchResumeHistoryRoute
   ApiPublicJobsEtlBatchStartRoute: typeof ApiPublicJobsEtlBatchStartRoute
+  ApiPublicJobsUkaAbortRoute: typeof ApiPublicJobsUkaAbortRoute
+  ApiPublicJobsUkaChunkRoute: typeof ApiPublicJobsUkaChunkRoute
+  ApiPublicJobsUkaFinalizeRoute: typeof ApiPublicJobsUkaFinalizeRoute
+  ApiPublicJobsUkaStartRoute: typeof ApiPublicJobsUkaStartRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -704,6 +757,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicJobsEtlBatchStartRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/uka/abort': {
+      id: '/api/public/jobs/uka/abort'
+      path: '/api/public/jobs/uka/abort'
+      fullPath: '/api/public/jobs/uka/abort'
+      preLoaderRoute: typeof ApiPublicJobsUkaAbortRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/uka/chunk': {
+      id: '/api/public/jobs/uka/chunk'
+      path: '/api/public/jobs/uka/chunk'
+      fullPath: '/api/public/jobs/uka/chunk'
+      preLoaderRoute: typeof ApiPublicJobsUkaChunkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/uka/finalize': {
+      id: '/api/public/jobs/uka/finalize'
+      path: '/api/public/jobs/uka/finalize'
+      fullPath: '/api/public/jobs/uka/finalize'
+      preLoaderRoute: typeof ApiPublicJobsUkaFinalizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/uka/start': {
+      id: '/api/public/jobs/uka/start'
+      path: '/api/public/jobs/uka/start'
+      fullPath: '/api/public/jobs/uka/start'
+      preLoaderRoute: typeof ApiPublicJobsUkaStartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -743,6 +824,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicJobsEtlBatchResumeHistoryRoute:
     ApiPublicJobsEtlBatchResumeHistoryRoute,
   ApiPublicJobsEtlBatchStartRoute: ApiPublicJobsEtlBatchStartRoute,
+  ApiPublicJobsUkaAbortRoute: ApiPublicJobsUkaAbortRoute,
+  ApiPublicJobsUkaChunkRoute: ApiPublicJobsUkaChunkRoute,
+  ApiPublicJobsUkaFinalizeRoute: ApiPublicJobsUkaFinalizeRoute,
+  ApiPublicJobsUkaStartRoute: ApiPublicJobsUkaStartRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

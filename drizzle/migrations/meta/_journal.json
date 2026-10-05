@@ -253,6 +253,13 @@
       "when": 1791116304202,
       "tag": "0035_e3_agg_backward_compatible_indelning",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1791184509562,
+      "tag": "0036_0037_uka_nongeographic_storage",
+      "breakpoints": true
     }
   ]
 }
