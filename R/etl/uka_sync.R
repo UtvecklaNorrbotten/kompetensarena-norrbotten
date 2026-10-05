@@ -73,10 +73,11 @@ uka_get_text <- function(url) {
 }
 
 uka_indicator_meta <- function(uka_id) {
-  uka_request(sprintf("%s/%s/", uka_api, uka_id)) |>
+  body <- uka_request(sprintf("%s/%s/", uka_api, uka_id)) |>
     req_perform() |>
-    resp_body_json(simplifyVector = TRUE) |>
-    ((x) x$indicator)()
+    resp_body_json(simplifyVector = TRUE)
+
+  body$indicator
 }
 
 uka_filter_html <- function(uka_id, endpoint) {
