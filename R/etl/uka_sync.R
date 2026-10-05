@@ -308,13 +308,7 @@ build_observations <- function(df) {
   )
 
   lapply(seq_len(nrow(df)), function(i) {
-    dims <- list(
-      university = df$university_name[[i]]
-    )
-
-    if (!is.na(df$gender[[i]]) && nzchar(df$gender[[i]])) {
-      dims$gender <- df$gender[[i]]
-    }
+    dims <- list()
 
     for (col in dimension_cols) {
       value <- df[[col]][[i]]
@@ -323,13 +317,90 @@ build_observations <- function(df) {
       }
     }
 
-    list(
-      geo_code = "00",
+    observation <- list(
       period = df$period[[i]],
+      university = df$university_name[[i]],
       value = df$value[[i]],
       dimensions = dims
     )
+
+    if (!is.na(df$gender[[i]]) && nzchar(df$gender[[i]])) {
+      observation$gender <- df$gender[[i]]
+    }
+
+    observation
   })
+}
+
+uka_etl_request <- function(path) {
+  etl_request(paste0("/api/public/jobs/uka/", path))
+}
+
+uka_publish_batch <- function(indicator_id, source, source_updated_date, observations) {
+  chunks <- etl_split_observations(observations, max_rows = 5000L)
+  if (length(chunks) == 0L) stop("Inga UKÄ-observationer att publicera")
+
+  start <- uka_etl_request("start") |>
+    req_method("POST") |>
+    req_body_json(
+      list(
+        indicator_id = indicator_id,
+        source = source,
+        expected_chunks = length(chunks),
+        expected_rows = length(observations),
+        kalla_uppdaterad_datum = source_updated_date
+      ),
+      auto_unbox = TRUE,
+      null = "null"
+    ) |>
+    etl_perform_json()
+
+  batch_id <- start$batch_id
+  if (is.null(batch_id) || !nzchar(batch_id)) stop("UKÄ-start returnerade inget batch_id")
+
+  ok <- FALSE
+  on.exit({
+    if (!ok) {
+      try(
+        uka_etl_request("abort") |>
+          req_method("POST") |>
+          req_body_json(
+            list(batch_id = batch_id, reason = "R-jobbet avbröts före lyckad finalisering"),
+            auto_unbox = TRUE
+          ) |>
+          etl_perform_json(retry_safe = TRUE),
+        silent = TRUE
+      )
+    }
+  }, add = TRUE)
+
+  for (i in seq_along(chunks)) {
+    uka_etl_request("chunk") |>
+      req_method("POST") |>
+      req_body_json(
+        list(
+          batch_id = batch_id,
+          indicator_id = indicator_id,
+          chunk_index = i - 1L,
+          observations = chunks[[i]]
+        ),
+        auto_unbox = TRUE,
+        null = "null",
+        na = "null",
+        digits = NA
+      ) |>
+      etl_perform_json(retry_safe = TRUE, timeout = 180)
+
+    message(sprintf("UKÄ %s: publicerade chunk %d/%d", indicator_id, i, length(chunks)))
+  }
+
+  result <- uka_etl_request("finalize") |>
+    req_method("POST") |>
+    req_body_json(list(batch_id = batch_id), auto_unbox = TRUE) |>
+    etl_perform_json(retry_safe = TRUE, timeout = 180)
+
+  ok <- TRUE
+  result
 }
 
 # ---- Kör indikator ----
@@ -439,7 +510,7 @@ run_uka_indicator <- function(uka_id, indicator_id, label) {
     return(invisible(list(rows = nrow(data), periods = sort(unique(data$period)))))
   }
 
-  result <- etl_publish_batch(
+  result <- uka_publish_batch(
     indicator_id = indicator_id,
     source = source_name,
     source_updated_date = as.character(Sys.Date()),

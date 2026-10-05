@@ -1,4 +1,4 @@
-name: 20 · Data · UKÄ – högskolan i siffror
+name: 10 · Data · UKÄ – högskolan i siffror
 
 run-name: >-
   UKÄ ETL – ${{ github.event.inputs.indicator || 'alla' }} –
