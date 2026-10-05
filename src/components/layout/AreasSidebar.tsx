@@ -19,7 +19,7 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
   const activeArea = areas.find((area) => pathname.startsWith(areaPath(area.slug) + "/") || pathname === areaPath(area.slug))?.slug;
   const expanded = pinned || hovered || focused;
   const rowClass = "relative flex h-10 items-center gap-3 whitespace-nowrap rounded-md p-2 hover:bg-brand-light";
-  const activeRowClass = "bg-brand-light font-semibold text-brand-dark before:absolute before:inset-y-2 before:left-0 before:w-[3px] before:rounded-full before:bg-brand-dark before:content-[\'\']";
+  const activeRowClass = "bg-brand-light font-semibold text-brand-dark before:absolute before:inset-y-2 before:left-0 before:w-[3px] before:rounded-full before:bg-brand-dark before:content-['']";
   const navRowClass = (active: boolean) => `${rowClass} ${active ? activeRowClass : ""}`;
 
 
