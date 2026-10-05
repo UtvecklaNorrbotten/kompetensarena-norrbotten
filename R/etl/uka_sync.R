@@ -8,7 +8,8 @@
 # - hela Sverige: Riket + lärosäten
 # - exakt senaste 5 år (10 terminer för terminsdata)
 # - lärosäten måste ha förekommit under senaste 3 år
-# - endast Kön = Kvinnor/Män; Total lagras aldrig
+# - om Kvinnor/Män finns sparas Kvinnor, Män och Total
+# - om endast Total finns används det tekniskt men könsdimensionen lagras inte
 # - ålder hämtas endast som tekniskt Total-filter och lagras aldrig
 # - full snapshot per indikator gör att äldre perioder/lärosäten rensas
 # -------------------------------------------------------------------
@@ -224,7 +225,7 @@ dimension_code <- function(x) {
     str_replace_all("(^-|-$)", "")
 }
 
-normalize_uka <- function(df, uka_id) {
+normalize_uka <- function(df, uka_id, store_gender) {
   names(df) <- names(df) |>
     str_replace_all("\\[0\\]$", "") |>
     str_replace_all("\\[1\\]$", "") |>
@@ -238,10 +239,16 @@ normalize_uka <- function(df, uka_id) {
     mutate(
       period = clean_period(Tidsperiod),
       university_name = if_else(is.na(Lärosäte) | Lärosäte == "", "Riket", Lärosäte),
-      gender = as.character(Kön),
+      gender = if (store_gender) as.character(Kön) else NA_character_,
       value = clean_value(Värde)
-    ) |>
-    filter(gender %in% c("Kvinnor", "Män")) |>
+    )
+
+  if (store_gender) {
+    df <- df |>
+      filter(gender %in% c("Kvinnor", "Män", "Total"))
+  }
+
+  df <- df |>
     select(-any_of(c("Tidsperiod", "Lärosäte", "Kön", "Värde", "Åldersgrupp")))
 
   # Dimensionskolumner från UKÄ utöver period/lärosäte/kön/värde.
@@ -302,9 +309,12 @@ build_observations <- function(df) {
 
   lapply(seq_len(nrow(df)), function(i) {
     dims <- list(
-      university = df$university_name[[i]],
-      gender = df$gender[[i]]
+      university = df$university_name[[i]]
     )
+
+    if (!is.na(df$gender[[i]]) && nzchar(df$gender[[i]])) {
+      dims$gender <- df$gender[[i]]
+    }
 
     for (col in dimension_cols) {
       value <- df[[col]][[i]]
@@ -345,12 +355,18 @@ run_uka_indicator <- function(uka_id, indicator_id, label) {
     stop("UKÄ ", uka_id, ": saknar periodfilter")
   }
 
-  # Kön: endast kvinnor/män. Total ska aldrig lagras.
-  gender_keep <- gender_values[gender_values %in% c("gender:Kvinnor", "gender:Män")]
-  if (length(gender_keep) == 0L) {
-    # Om en framtida indikator saknar könsuppdelning används dess enda tekniska värde,
-    # men könsdimensionen tas senare bort om CSV:n inte innehåller Kvinnor/Män.
-    gender_keep <- gender_values
+  # Kön:
+  # - finns Kvinnor och Män sparas Kvinnor, Män och Total (om Total finns)
+  # - finns bara Total används den tekniskt i hämtningen men lagras inte som dimension
+  has_gender_breakdown <- all(c("gender:Kvinnor", "gender:Män") %in% gender_values)
+
+  if (has_gender_breakdown) {
+    gender_keep <- gender_values[
+      gender_values %in% c("gender:Kvinnor", "gender:Män", "gender:Total")
+    ]
+  } else {
+    gender_keep <- gender_values[gender_values == "gender:Total"]
+    if (length(gender_keep) == 0L) gender_keep <- gender_values
   }
 
   # Ålder: endast tekniskt Total-värde, dimensionen lagras aldrig.
@@ -385,13 +401,17 @@ run_uka_indicator <- function(uka_id, indicator_id, label) {
     dynamic_filters = dynamic_filters
   )
 
-  data <- normalize_uka(raw, uka_id)
+  data <- normalize_uka(raw, uka_id, store_gender = has_gender_breakdown)
 
   if (nrow(data) == 0L) stop("UKÄ ", uka_id, ": inga rader efter filtrering")
 
-  # Kön=Total får aldrig finnas kvar.
-  if (any(data$gender == "Total", na.rm = TRUE)) {
-    stop("UKÄ ", uka_id, ": Kön=Total finns kvar efter normalisering")
+  if (has_gender_breakdown) {
+    invalid_gender <- setdiff(unique(stats::na.omit(data$gender)), c("Kvinnor", "Män", "Total"))
+    if (length(invalid_gender) > 0L) {
+      stop("UKÄ ", uka_id, ": oväntade könsvärden: ", paste(invalid_gender, collapse = ", "))
+    }
+  } else if (any(!is.na(data$gender))) {
+    stop("UKÄ ", uka_id, ": könsdimension lagrades trots att endast Total finns")
   }
   if ("Åldersgrupp" %in% names(data)) {
     stop("UKÄ ", uka_id, ": åldersdimensionen har inte tagits bort")
@@ -459,7 +479,7 @@ if (!test_mode) {
         indicators = uka_indicators$uka_id,
         retention_years = 5,
         active_institution_years = 3,
-        gender = c("Kvinnor", "Män"),
+        gender_rule = "Spara Kvinnor/Män/Total om könsuppdelning finns; annars ingen könsdimension",
         age_stored = FALSE
       )
     ),
