@@ -5,12 +5,6 @@ run-name: >-
   ${{ github.event_name == 'schedule' && 'schemalagd' || 'manuell' }}
 
 on:
-  push:
-    branches:
-      - "fix/uka-empty-dimensions"
-    paths:
-      - "R/etl/uka_sync.R"
-      - ".github/workflows/etl-uka.yml"
   workflow_dispatch:
     inputs:
       indicator:
@@ -76,8 +70,8 @@ jobs:
         env:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
           ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
-          UKA_INDICATOR: all
-          ETL_TEST_MODE: false
+          UKA_INDICATOR: ${{ github.event_name == 'workflow_dispatch' && inputs.indicator || 'all' }}
+          ETL_TEST_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.test_mode || 'false' }}
         shell: Rscript {0}
         run: |
           source("R/etl/uka_sync.R")
