@@ -93,7 +93,7 @@ export async function handleUkaStart(request: Request) {
   }).select("id").single();
   if (runError) return json({ error: "Run log failed" }, 500);
 
-  const { data, error } = await db.rpc("uka_start_batch", {
+  const { data, error } = await (db.rpc as any)("uka_start_batch", {
     p_indicator_id: p.indicator_id,
     p_source: p.source,
     p_expected_chunks: p.expected_chunks,
@@ -114,7 +114,7 @@ export async function handleUkaChunk(request: Request) {
   const { createHash } = await import("node:crypto");
   const checksum = createHash("sha256").update(JSON.stringify(p.observations), "utf8").digest("hex");
   const db = await admin();
-  const { data, error } = await db.rpc("uka_store_chunk", {
+  const { data, error } = await (db.rpc as any)("uka_store_chunk", {
     p_batch_id: p.batch_id,
     p_indicator_id: p.indicator_id,
     p_chunk_index: p.chunk_index,
@@ -131,7 +131,7 @@ export async function handleUkaFinalize(request: Request) {
   const body = await readBody(request, finalizeSchema);
   if (!body.ok) return body.response;
   const db = await admin();
-  const { data, error } = await db.rpc("uka_finalize_batch", { p_batch_id: body.data.batch_id });
+  const { data, error } = await (db.rpc as any)("uka_finalize_batch", { p_batch_id: body.data.batch_id });
   if (error) return json({ error: "UKA finalize failed", message: error.message }, statusFor(error));
   return json(data, 200);
 }
@@ -142,7 +142,7 @@ export async function handleUkaAbort(request: Request) {
   const body = await readBody(request, abortSchema);
   if (!body.ok) return body.response;
   const db = await admin();
-  const { data, error } = await db.rpc("uka_abort_batch", {
+  const { data, error } = await (db.rpc as any)("uka_abort_batch", {
     p_batch_id: body.data.batch_id,
     ...(body.data.reason ? { p_reason: body.data.reason } : {}),
   });
