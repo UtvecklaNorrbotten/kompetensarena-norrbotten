@@ -56,10 +56,13 @@ jobs:
       - name: Checka ut repo
         uses: actions/checkout@v5
 
+      - name: Installera Bun
+        uses: oven-sh/setup-bun@v2
+
       - name: Verifiera webb/server-build
         run: |
-          npm ci
-          npm run build
+          bun install --frozen-lockfile
+          bun run build
 
       - name: Installera R
         uses: r-lib/actions/setup-r@v2
