@@ -62,10 +62,8 @@ export const areas = [
     icon: EducationIcon,
     description: "Högre utbildning – från ansökan och studier till examen och arbetsmarknad.",
     topics: [
-      { slug: "sokande-antagna", title: "Sökande och antagna" },
-      { slug: "studenter", title: "Studenter" },
-      { slug: "examina", title: "Examina" },
-      { slug: "etablering", title: "Efter examen" },
+      { slug: "hogskolan", title: "Högskolan" },
+      { slug: "yrkesexamensprogram", title: "Yrkesexamensprogram" },
     ],
   },
   {

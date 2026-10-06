@@ -9,10 +9,20 @@ export const Route = createFileRoute("/omraden/$area/$topic")({
   loader: ({ params }) => {
     const area = getArea(params.area);
     const topic = getTopic(params.area, params.topic);
-    if (params.area === "utbildning" && ["utbildningsniva", "samverkan"].includes(params.topic))
+    if (
+      params.area === "utbildning" &&
+      [
+        "utbildningsniva",
+        "samverkan",
+        "sokande-antagna",
+        "studenter",
+        "examina",
+        "etablering",
+      ].includes(params.topic)
+    )
       return {
         area: { slug: "utbildning", title: "Utbildning" },
-        topic: { slug: "", title: "Utbildning" },
+        topic: { slug: params.topic, title: "Utbildning" },
       };
     if (!area || !topic) throw notFound();
     // Ikonkomponenten kan inte serialiseras från servern – skicka bara data.

@@ -1,33 +1,22 @@
 export const educationSections = [
   {
-    slug: "sokande-antagna",
-    title: "Sökande och antagna",
+    slug: "hogskolan",
+    title: "Högskolan – studier, examina och arbetsmarknad",
     intro:
-      "Hur stort är intresset för utbildningarna, och hur många erbjuds en plats? Här visas program som leder till yrkesexamen.",
+      "Följ utbildningens omfattning, antalet examinerade och etableringen på arbetsmarknaden efter examen.",
   },
   {
-    slug: "studenter",
-    title: "Studenter",
+    slug: "yrkesexamensprogram",
+    title: "Yrkesexamensprogram i högskolan",
     intro:
-      "Följ utbildningsvolymen och hur många som börjar studera. Nybörjare och helårsstudenter beskriver olika delar av verksamheten.",
-  },
-  {
-    slug: "examina",
-    title: "Examina",
-    intro: "Se hur många som har tagit examen och vilka examina utbildningen har lett till.",
-  },
-  {
-    slug: "etablering",
-    title: "Arbetsmarknad efter examen",
-    intro:
-      "Följ examinerades ställning på arbetsmarknaden 1–1,5 år efter examen. Uppföljningen kan därför inte beskriva de allra senaste examenskullarna.",
+      "Här samlas sökande, antagna, söktryck och nybörjare på program som leder till yrkesexamen. Dessa är högskoleutbildningar, exempelvis till lärare, sjuksköterska eller ingenjör.",
   },
 ] as const;
 
 export const educationIndicators = [
   {
     id: "uka-forstahandssokande-yrkesprogram",
-    section: "sokande-antagna",
+    section: "yrkesexamensprogram",
     title: "Förstahandssökande",
     unit: "antal",
     ukaId: 13,
@@ -37,7 +26,7 @@ export const educationIndicators = [
   },
   {
     id: "uka-antagna-yrkesprogram",
-    section: "sokande-antagna",
+    section: "yrkesexamensprogram",
     title: "Antagna",
     unit: "antal",
     ukaId: 97,
@@ -47,7 +36,7 @@ export const educationIndicators = [
   },
   {
     id: "uka-soktryck-yrkesprogram",
-    section: "sokande-antagna",
+    section: "yrkesexamensprogram",
     title: "Söktryck",
     unit: "sökande per antagen",
     ukaId: 99,
@@ -58,7 +47,7 @@ export const educationIndicators = [
   },
   {
     id: "uka-nyborjare-yrkesprogram",
-    section: "studenter",
+    section: "yrkesexamensprogram",
     title: "Nybörjare på yrkesexamensprogram",
     unit: "antal",
     ukaId: 31,
@@ -68,7 +57,7 @@ export const educationIndicators = [
   },
   {
     id: "uka-hst",
-    section: "studenter",
+    section: "hogskolan",
     title: "Helårsstudenter",
     unit: "HST",
     ukaId: 33,
@@ -78,7 +67,7 @@ export const educationIndicators = [
   },
   {
     id: "uka-examinerade",
-    section: "examina",
+    section: "hogskolan",
     title: "Examinerade",
     unit: "antal",
     ukaId: 108,
@@ -88,7 +77,7 @@ export const educationIndicators = [
   },
   {
     id: "uka-etablering",
-    section: "etablering",
+    section: "hogskolan",
     title: "Etablering på arbetsmarknaden",
     unit: "%",
     ukaId: 136,

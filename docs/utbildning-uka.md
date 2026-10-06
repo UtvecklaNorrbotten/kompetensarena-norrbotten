@@ -1,17 +1,19 @@
 # Utbildning med UKÄ-data
 
-Utbildning är en sammanhängande sida med fyra avsnitt: Sökande och antagna,
-Studenter, Examina och Arbetsmarknad efter examen. Vänstermenyn använder ankarlänkar
-på sidan och markerar aktuellt avsnitt under scrollning. Direkta ämneslänkar visar
-hela sidan och scrollar till respektive avsnitt; gamla platshållarlänkar fungerar fortfarande.
+Utbildning är en sammanhängande sida med två grupper: Högskolan – studier,
+examina och arbetsmarknad samt Yrkesexamensprogram i högskolan. Den senare
+samlar förstahandssökande, antagna, söktryck och nybörjare. Yrkesexamensprogram
+är högskoleutbildningar och ska inte märkas som yrkeshögskola (YH).
+Vänstermenyn använder ankarlänkar och markerar aktuell grupp under scrollning.
+Tidigare ämneslänkar öppnar motsvarande grupp på den kompletta sidan.
 
 ## Sidfilter och figurer
 
 - Filterkolumnen ligger intill områdesmenyn och är fast vid scrollning på stora skärmar.
   På mobilen ligger den före innehållet. Lärosätet gäller samtliga figurer; Luleå tekniska
   universitet är förval, med Riket som reserv om LTU saknas.
-- Kön och tidsomfång är gemensamma. Fler filter visar uppdelningarna i aktuellt
-  lärosätes data. När lärosäte byts återställs dimensionsurvalen. Kön/tidsomfång behålls.
+- Kön är gemensamt. Tidsomfångsfiltret är borttaget; alla lagrade perioder visas. Fler filter visar uppdelningarna i aktuellt
+  lärosätes data. När lärosäte byts återställs dimensionsurvalen. Kön behålls.
 - Dimensionsfilter gäller endast indikatorer med motsvarande dimension; figuren
   förklarar när ett urval saknar motsvarighet. Filtreringen innehåller ingen geografisk
   mappning av lärosäten till kommuner eller län.
@@ -20,6 +22,23 @@ hela sidan och scrollar till respektive avsnitt; gamla platshållarlänkar funge
   De tolv högsta värdena visas först; användaren kan visa alla grupper och hela tabellen.
 - Begrepp med streckad understrykning öppnar en förklarande popover. Ett frågetecken
   visas vid hovring och tangentbordsfokus; funktionerna fungerar också på pekskärm.
+
+## Nedladdning och läsbarhet
+
+Varje figur har en Spara figur-knapp uppe till höger. PNG-exporten använder
+aktuellt diagramläge och visar titel, urval, enhet, källa och hämtningsdatum.
+Fördjupningens begränsning till tolv grupper följer med i bilden när den är aktiv.
+Kvinnor/män markeras även i den exporterade bildens förklaring.
+
+CSV-knappen ligger till höger om Visa värden som tabell. Exporten använder
+exakt tabellens rader, inte diagrammets begränsning till tolv grupper.
+CSV har UTF-8 BOM, semikolon, decimalcomma och citattecken; null blir tomt fält.
+Mått, lärosäte, period, grupp, kön, värde, enhet och källa följer med.
+
+Brödtexten är 16 px och normal textvikt, även begreppsförklaringar.
+Långa kategorietiketter radbryts utan avkortning och radhöjden följer texten.
+På smala skärmar kan själva diagramytan skrollas horisontellt för att behålla
+läsbara etiketter. Axeltexter har större marginaler och större text.
 
 ## Dataläsning och skydd mot dubbelräkning
 
@@ -38,6 +57,11 @@ Saknade värden förblir saknade. Fem år av terminsdata betyder tio terminer;
 läsårs- och kalenderårsdata använder fem perioder.
 
 ## Kontroller
+
+- `node --import tsx tests/education-export.test.ts`: syntetiska exempel för
+  CSV-rader, decimaler, citering, svenska tecken, saknade värden och radbrytning.
+- PNG-exportens webbläsarflöde och den visuella layouten behöver kontrolleras
+  i Lovables förhandsvisning; en fungerande lokal webbläsare saknas i exekveringsmiljön.
 
 - `node --import tsx tests/uka-view.test.ts`: syntetiska exempel för totaler,
   hierarkier, överlappande grupper, kön, saknade värden och terminsgränser.

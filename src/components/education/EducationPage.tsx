@@ -44,7 +44,14 @@ export function EducationPage({ initialSection = "" }: { initialSection?: string
 
   useEffect(() => {
     // Även gamla länkar till de två tidigare platshållarna öppnar den kompletta sidan.
-    const id = window.location.hash.slice(1) || initialSection;
+    const requested = window.location.hash.slice(1) || initialSection;
+    const aliases: Record<string, string> = {
+      "sokande-antagna": "yrkesexamensprogram",
+      studenter: "hogskolan",
+      examina: "hogskolan",
+      etablering: "hogskolan",
+    };
+    const id = aliases[requested] ?? requested;
     if (!id || !dataQuery.isSuccess) return;
     const frame = requestAnimationFrame(() =>
       document.getElementById(id)?.scrollIntoView({ block: "start", behavior: "instant" }),
@@ -75,19 +82,19 @@ export function EducationPage({ initialSection = "" }: { initialSection?: string
   }, []);
 
   return (
-    <>
+    <div className="font-normal">
       <Section tone="light" className="py-9 md:py-12">
         <PageHeader
           eyebrow="Utbildning · UKÄ"
           title="Från utbildning till arbetsliv"
           intro="Utforska högre utbildning – från ansökan och studiestart till examen och etablering på arbetsmarknaden."
         />
-        <p className="mt-4 max-w-3xl text-sm leading-relaxed text-ink-muted">
+        <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-muted">
           Uppgifterna gäller lärosäten i hela Sverige. Luleå tekniska universitet är förvalt.
           Studenter vid lärosätet kan bo och arbeta i andra delar av landet.
         </p>
         <a
-          href="#sokande-antagna"
+          href="#hogskolan"
           className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-brand-dark"
         >
           Utforska alla avsnitt <ArrowDown className="size-4" aria-hidden />
@@ -126,12 +133,12 @@ export function EducationPage({ initialSection = "" }: { initialSection?: string
             className="scroll-mt-28 rounded-xl border border-border bg-surface p-5"
           >
             <h2 className="text-xl">Så läser du sidan</h2>
-            <p className="mt-3 text-sm leading-relaxed">
-              Filtren till vänster gäller sidan. Växla varje figur från översiktens tidsserie till
-              fördjupningens grupper i den senaste perioden. Begrepp med streckad understrykning går
-              att klicka på.
+            <p className="mt-3 text-base leading-relaxed">
+              Filtren till vänster gäller sidan. Alla tillgängliga perioder visas. Växla varje figur
+              från översiktens tidsserie till fördjupningens grupper i den senaste perioden. Begrepp
+              med streckad understrykning går att klicka på.
             </p>
-            <p className="mt-3 text-sm leading-relaxed">
+            <p className="mt-3 text-base leading-relaxed">
               <ExplainedTerm
                 term="Läsår"
                 explanation="Ett läsår omfattar höstterminen och följande vårtermin, till exempel 2024/25. Kalenderår avser januari–december. Terminsuppgifter märks VT (vårtermin) och HT (hösttermin). Jämför helst samma typ av period."
@@ -161,12 +168,12 @@ export function EducationPage({ initialSection = "" }: { initialSection?: string
             >
               <div className="mb-6 border-t border-border pt-6">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">
-                  {String(index + 1).padStart(2, "0")} / 04
+                  {String(index + 1).padStart(2, "0")} / 02
                 </p>
                 <h2 id={`${section.slug}-heading`} className="text-2xl md:text-3xl">
                   {section.title}
                 </h2>
-                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-muted">
+                <p className="mt-3 max-w-2xl text-base leading-relaxed text-ink-muted">
                   {section.intro}
                 </p>
               </div>
@@ -201,13 +208,13 @@ export function EducationPage({ initialSection = "" }: { initialSection?: string
               </div>
             </section>
           ))}
-          <p className="pb-6 text-xs leading-relaxed text-ink-muted">
+          <p className="pb-6 text-sm leading-relaxed text-ink-muted">
             Källa: Universitetskanslersämbetet (UKÄ), Högskolan i siffror. Endast publicerade värden
             visas. Antal, andelar och utbildningsvolym ska tolkas var för sig; sökande, antagna och
             examinerade är inte en uppföljning av samma personer.
           </p>
         </div>
       </div>
-    </>
+    </div>
   );
 }
