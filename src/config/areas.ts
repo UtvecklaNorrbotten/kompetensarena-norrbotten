@@ -6,16 +6,12 @@ const IndustryIcon = createLucideIcon("IndustryIcon", [
 
 const CompetenceIcon = Puzzle;
 
+// Svensk studentmössa i profil, ren linjestil: mjuk kulle, band, kokard och böjd skärm.
 const EducationIcon = createLucideIcon("EducationIcon", [
-  ["path", { d: "M3 12C0 4 24 4 21 12", key: "cap-crown" }],
-  ["path", {
-    d: "M3 12H21V15H19C16 20 8 20 5 15H3ZM13.15 13.4a1.15 1.15 0 1 0-2.3 0a1.15 1.15 0 1 0 2.3 0Z",
-    fill: "currentColor",
-    fillRule: "evenodd",
-    stroke: "none",
-    key: "cap-band-and-visor",
-  }],
-  ["circle", { cx: "12", cy: "13.4", r: "0.38", fill: "currentColor", stroke: "none", key: "cap-cockade" }],
+  ["path", { d: "M5 11C5 7.5 8 5.5 12 5.5s7 2 7 5.5", key: "cap-crown" }],
+  ["rect", { x: "3.5", y: "11", width: "17", height: "3.4", rx: "1.2", key: "cap-band" }],
+  ["circle", { cx: "12", cy: "12.7", r: "1.1", fill: "currentColor", stroke: "none", key: "cap-cockade" }],
+  ["path", { d: "M4 14.4C2.6 15 2.4 16.3 4.2 16.6c2.3.4 5.3.4 7.8.4", key: "cap-visor" }],
 ]);
 
 export const areas = [
