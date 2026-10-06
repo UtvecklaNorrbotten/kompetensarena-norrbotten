@@ -1,0 +1,47 @@
+name: 11 · Data · Skolverket – probe
+
+on:
+  push:
+    branches:
+      - test-skolverket-data
+    paths:
+      - "R/etl/skolverket_probe.R"
+      - ".github/workflows/probe-skolverket.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checka ut repo
+        uses: actions/checkout@v5
+
+      - name: Installera R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Installera beroenden
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::httr2
+            any::jsonlite
+          install-pandoc: false
+          install-quarto: false
+
+      - name: Testa Skolverkets datakällor
+        shell: Rscript {0}
+        run: source("R/etl/skolverket_probe.R")
+
+      - name: Ladda upp testresultat
+        uses: actions/upload-artifact@v4
+        with:
+          name: skolverket-probe
+          path: artifacts/skolverket_probe/
+          if-no-files-found: error
