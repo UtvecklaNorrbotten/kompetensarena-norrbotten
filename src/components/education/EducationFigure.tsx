@@ -24,6 +24,7 @@ import { Switch } from "@/components/ui/switch";
 import type { EducationIndicator } from "@/config/education";
 import {
   dimensionLabels,
+  formatUkaValue as format,
   periodLabel,
   periodOrder,
   selectUkaRows,
@@ -33,10 +34,6 @@ import {
   type UkaRow,
 } from "@/lib/uka-view";
 
-const format = (value: number | null | undefined, unit: string) =>
-  value == null
-    ? "Uppgift saknas"
-    : `${new Intl.NumberFormat("sv-SE", { maximumFractionDigits: unit === "antal" ? 0 : 1 }).format(value)}${unit === "%" ? " %" : ""}`;
 const colors = ["var(--chart-1)", "var(--chart-4)", "var(--chart-3)"];
 
 function CategoryTick({
@@ -129,12 +126,12 @@ export function EducationFigure({
   const tableRows = selected.rows.filter((r) => (detail ? r.period === latestPeriod : true));
   const filename =
     exportFilename(indicator.id, university) + (detail ? "-fordjupning" : "-oversikt");
-  const contextText = `${university} · ${useGenders ? "Kvinnor och män" : "Samtliga"}${selectedFilters
+  const contextText = `${university} · ${useGenders ? (series.includes("Total") ? "Kvinnor, män och total" : "Kvinnor och män") : "Samtliga"}${selectedFilters
     .filter(([key]) => selected.applied.includes(key))
     .map(([key, value]) => ` · ${dimensionLabels[key] ?? key}: ${value}`)
     .join("")}`;
   const rowHeight = Math.max(
-    useGenders ? 60 : 48,
+    useGenders ? 90 : 48,
     ...bars.map((r) => wrapChartLabel(String(r["category"]), 26).length * 18 + 20),
   );
   async function saveFigure() {
@@ -149,7 +146,11 @@ export function EducationFigure({
       await saveEducationPng(svg, filename, indicator.title, [
         contextText,
         indicator.explanation,
-        ...(useGenders ? ["Grön: Kvinnor. Grå: Män (streckad linje i översikt)."] : []),
+        ...(useGenders
+          ? [
+              `Grön: Kvinnor. Grå: Män (streckad linje i översikt).${series.includes("Total") ? " Gul: Samtliga." : ""}`,
+            ]
+          : []),
         `Enhet: ${indicator.unit}. ${detail ? `Period: ${periodLabel(latestPeriod ?? "")}. ${!showAll && allBars.length > 12 ? "De 12 högsta värdena visas." : "Alla grupper visas."}` : "Samtliga tillgängliga perioder visas."}`,
         ...(ignored.length
           ? [
@@ -223,7 +224,12 @@ export function EducationFigure({
         </div>
       )}
       <p className="mt-4 text-sm text-ink-muted">
-        {university} · {useGenders ? "Kvinnor och män" : "Samtliga"}
+        {university} ·{" "}
+        {useGenders
+          ? series.includes("Total")
+            ? "Kvinnor, män och total"
+            : "Kvinnor och män"
+          : "Samtliga"}
         {selectedFilters
           .filter(([key]) => selected.applied.includes(key))
           .map(([key, value]) => ` · ${dimensionLabels[key] ?? key}: ${value}`)

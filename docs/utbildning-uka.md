@@ -80,3 +80,14 @@ Fördjupningen visar parallella staplar med samma färger. Totalvärdet visas so
 Samtliga i nyckeltalet; tabell och CSV behåller kvinnor, män och källans total.
 Om könsuppdelning saknas visas Samtliga med förklarande text. Saknade könsvärden
 förblir luckor. Andelar och söktryck för könen beräknas aldrig från totalen.
+
+## Total och söktryck
+
+Totalen visas som tredje serie (gul) vid sidan av kvinnor (grön) och män (grå).
+Alla serier använder samma kronologiska terminssortering; tidigare totalserie
+följde CSV/databasens textsortering med alla HT före alla VT.
+
+Söktryck visas med exakt en decimal. UKÄ:s decimaler bevaras i importen genom
+`uka_values.R`; tidigare omtolkades redan numeriska värden med svensk locale,
+vilket tappade decimaldelen. Importändringar på main startar UKÄ-workflowet
+för att ersätta felaktiga snapshotar; parserns R-tester körs före publicering.

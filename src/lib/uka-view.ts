@@ -88,7 +88,7 @@ export function dimensionOptions(
 /** Visa kön samtidigt. Saknat könsvärde blir en lucka, aldrig en beräknad nolla. */
 export function ukaGenderSeries(rows: UkaRow[]): string[] {
   return rows.some((row) => row.gender === "Kvinnor" || row.gender === "Män")
-    ? ["Kvinnor", "Män"]
+    ? ["Kvinnor", "Män", ...(rows.some((row) => row.gender === "Total") ? ["Total"] : [])]
     : ["Total"];
 }
 
@@ -104,4 +104,10 @@ export function ukaGenderTimeline(rows: UkaRow[], series: string[]) {
     }
     return point;
   });
+}
+
+export function formatUkaValue(value: number | null | undefined, unit: string): string {
+  if (value == null) return "Uppgift saknas";
+  const ratio = unit === "sökande per antagen";
+  return `${new Intl.NumberFormat("sv-SE", { minimumFractionDigits: ratio ? 1 : 0, maximumFractionDigits: unit === "antal" ? 0 : 1 }).format(value)}${unit === "%" ? " %" : ""}`;
 }

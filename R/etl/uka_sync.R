@@ -211,11 +211,7 @@ clean_period <- function(x) {
     str_remove('"$')
 }
 
-clean_value <- function(x) {
-  x <- as.character(x)
-  x[x %in% c("", "..", ".", "-", "NA")] <- NA_character_
-  readr::parse_number(x, locale = locale(decimal_mark = ",", grouping_mark = " "))
-}
+source("R/etl/uka_values.R")
 
 dimension_code <- function(x) {
   x |>
@@ -560,3 +556,4 @@ if (!test_mode) {
     silent = TRUE
   )
 }
+
