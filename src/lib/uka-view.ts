@@ -111,3 +111,25 @@ export function formatUkaValue(value: number | null | undefined, unit: string): 
   const ratio = unit === "sökande per antagen";
   return `${new Intl.NumberFormat("sv-SE", { minimumFractionDigits: ratio ? 1 : 0, maximumFractionDigits: unit === "antal" ? 0 : 1 }).format(value)}${unit === "%" ? " %" : ""}`;
 }
+
+/** Kalenderår för terminer, källans periodetikett för års-/läsårsdata. */
+export function ukaDetailPeriods(rows: UkaRow[], requestedYear = "", term = "all") {
+  const periods = [...new Set(rows.map((r) => r.period))].sort(
+    (a, b) => periodOrder(a) - periodOrder(b),
+  );
+  const semester = periods.some((p) => /^(HT|VT)\d{4}$/.test(p));
+  const yearOf = (p: string) => (semester ? p.slice(2) : p);
+  const years = [...new Set(periods.map(yearOf))].reverse();
+  const complete = years.find((y) => periods.includes(`VT${y}`) && periods.includes(`HT${y}`));
+  const year = years.includes(requestedYear) ? requestedYear : (complete ?? years[0] ?? "");
+  const chosen = periods.filter(
+    (p) => yearOf(p) === year && (!semester || term === "all" || p.startsWith(term)),
+  );
+  return {
+    semester,
+    years,
+    year,
+    periods: chosen,
+    rows: rows.filter((r) => chosen.includes(r.period)),
+  };
+}

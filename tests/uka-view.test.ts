@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   dimensionOptions,
+  ukaDetailPeriods,
   formatUkaValue,
   periodOrder,
   selectUkaRows,
@@ -134,3 +135,13 @@ assert.deepEqual(
   chronological.map((point) => point["Total"]),
   [40, 100, 50],
 );
+
+// Exempel: senaste kompletta kalenderår, separat HT/VT och inget summerat värde.
+const detailPeriods = ukaDetailPeriods(semesters);
+assert.equal(detailPeriods.year, "2025");
+assert.deepEqual(detailPeriods.periods, ["VT2025", "HT2025"]);
+assert.equal(detailPeriods.rows.length, 2);
+assert.deepEqual(ukaDetailPeriods(semesters, "2026").periods, ["VT2026"]);
+assert.equal(ukaDetailPeriods(semesters, "2026", "HT").rows.length, 0);
+assert.deepEqual(ukaDetailPeriods(semesters, "2025", "HT").periods, ["HT2025"]);
+assert.deepEqual(ukaDetailPeriods([row()], "").periods, ["2024/25"]);
