@@ -80,11 +80,69 @@ export function wrapChartLabel(text: string, maxChars = 28): string[] {
 }
 
 export async function saveEducationPng(
-  chart: SVGSVGElement,
+  chart: SVGSVGElement | SVGSVGElement[],
   filename: string,
   title: string,
   notes: string[],
 ) {
+  if (Array.isArray(chart)) {
+    if (chart.length === 1) return saveEducationPng(chart[0]!, filename, title, notes);
+    if (!chart.length) throw new Error("Figuren har inte laddats färdigt.");
+    const ns = "http://www.w3.org/2000/svg";
+    const combined = document.createElementNS(ns, "svg");
+    let x = 0;
+    let height = 0;
+    for (const source of chart) {
+      const width = source.viewBox.baseVal.width || source.getBoundingClientRect().width;
+      const chartHeight = source.viewBox.baseVal.height || source.getBoundingClientRect().height;
+      const clone = source.cloneNode(true) as SVGSVGElement;
+      const originals = [source, ...source.querySelectorAll<SVGElement>("*")];
+      const copies = [clone, ...clone.querySelectorAll<SVGElement>("*")];
+      originals.forEach((element, i) => {
+        const copy = copies[i];
+        if (!copy) return;
+        const style = getComputedStyle(element);
+        for (const property of [
+          "fill",
+          "stroke",
+          "stroke-width",
+          "font-size",
+          "font-weight",
+          "opacity",
+          "text-anchor",
+          "dominant-baseline",
+        ])
+          copy.style.setProperty(property, style.getPropertyValue(property));
+      });
+      clone.setAttribute("x", String(x));
+      clone.setAttribute("y", "30");
+      const heading = document.createElementNS(ns, "text");
+      heading.setAttribute("x", String(x + 16));
+      heading.setAttribute("y", "22");
+      heading.setAttribute(
+        "fill",
+        getComputedStyle(document.documentElement).getPropertyValue("--ink").trim(),
+      );
+      heading.setAttribute("font-size", "16");
+      heading.textContent =
+        source.closest("[data-export-title]")?.getAttribute("data-export-title") ?? "";
+      combined.append(heading, clone);
+      x += width + 24;
+      height = Math.max(height, chartHeight + 30);
+    }
+    combined.setAttribute("width", String(x - 24));
+    combined.setAttribute("height", String(height));
+    combined.setAttribute("viewBox", `0 0 ${x - 24} ${height}`);
+    combined.style.position = "absolute";
+    combined.style.left = "-100000px";
+    document.body.append(combined);
+    try {
+      await saveEducationPng(combined, filename, title, notes);
+    } finally {
+      combined.remove();
+    }
+    return;
+  }
   await document.fonts.ready;
   const ns = "http://www.w3.org/2000/svg";
   const clone = chart.cloneNode(true) as SVGSVGElement;
@@ -109,6 +167,8 @@ export async function saveEducationPng(
       copy.style.setProperty(property, style.getPropertyValue(property));
     copy.style.fontFamily = "Arial, sans-serif";
   }
+  clone.style.removeProperty("position");
+  clone.style.removeProperty("left");
   const width = Math.ceil(chart.viewBox.baseVal.width || chart.getBoundingClientRect().width);
   const height = Math.ceil(chart.viewBox.baseVal.height || chart.getBoundingClientRect().height);
   if (!width || !height) throw new Error("Figuren har inte laddats färdigt.");

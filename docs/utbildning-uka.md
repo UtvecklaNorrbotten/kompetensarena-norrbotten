@@ -101,3 +101,14 @@ och en saknad terminsrad skapas inte som noll. Års-/läsårsdata behåller käl
 periodindelning. Tabell och CSV följer periodvalet, PNG anger valda perioder.
 Grupper sorteras alfabetiskt så samma program och dess terminer ligger intill
 varandra; fler än 12 program kan visas med Visa alla.
+
+
+Översiktens terminsserier visas som VT till vänster och HT till höger (staplade
+på mobil) med samma årtal och gemensam y-skala. Hover-tabellen visar båda
+terminerna för samma år. Klickbara legendknappar styr serierna i båda panelerna;
+saknade termin-/årsvärden förblir null. Årsdata visas i en enda panel.
+I programfördjupningen finns Jämför program över tid med val av 1–3 program.
+Program skiljs med färg och kön med linjetyp. Kvinnor, män och källans total
+behålls; programmens värden summeras aldrig. Tabell och CSV följer valda program
+över alla publicerade perioder. PNG-exporten omfattar båda terminsdiagrammen
+med rubriker, färger och linjetyper beskrivna i bildtexten.

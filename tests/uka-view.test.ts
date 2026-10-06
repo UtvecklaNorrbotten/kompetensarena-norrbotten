@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import {
   dimensionOptions,
   ukaDetailPeriods,
+  ukaComparisonTimeline,
   formatUkaValue,
   periodOrder,
   selectUkaRows,
@@ -145,3 +146,20 @@ assert.deepEqual(ukaDetailPeriods(semesters, "2026").periods, ["VT2026"]);
 assert.equal(ukaDetailPeriods(semesters, "2026", "HT").rows.length, 0);
 assert.deepEqual(ukaDetailPeriods(semesters, "2025", "HT").periods, ["HT2025"]);
 assert.deepEqual(ukaDetailPeriods([row()], "").periods, ["2024/25"]);
+
+// Exempel: VT/HT får samma år och null för saknad termin; program blandas aldrig.
+const comparisonData = ukaComparisonTimeline(
+  [
+    row({ period: "VT2025", category: "A", value: 40 }),
+    row({ period: "HT2025", category: "A", value: 100 }),
+    row({ period: "VT2026", category: "A", value: 50 }),
+    row({ period: "HT2025", category: "B", value: 70 }),
+  ],
+  ["A", "B"],
+);
+assert.deepEqual(comparisonData.labels, ["2025", "2026"]);
+assert.equal(comparisonData.panels[0]?.rows[0]?.["s0-Total"], 40);
+assert.equal(comparisonData.panels[1]?.rows[0]?.["s0-Total"], 100);
+assert.equal(comparisonData.panels[1]?.rows[0]?.["s1-Total"], 70);
+assert.equal(comparisonData.panels[1]?.rows[1]?.["s0-Total"], null);
+assert.equal(ukaComparisonTimeline([row()]).panels.length, 1);
