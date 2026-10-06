@@ -1,15 +1,10 @@
-import { BriefcaseBusiness, createLucideIcon, MapPinned } from "lucide-react";
+import { BriefcaseBusiness, createLucideIcon, MapPinned, Puzzle } from "lucide-react";
 
 const IndustryIcon = createLucideIcon("IndustryIcon", [
   ["path", { d: "M3 21H21V3H17V12L10 8V12L3 8Z", key: "factory-outline" }],
 ]);
 
-const CompetenceIcon = createLucideIcon("CompetenceIcon", [
-  ["path", {
-    d: "M4 7h4.5a2.5 2.5 0 0 1 7 0H20v4.5a2.5 2.5 0 0 0 0 7V20h-4.5a2.5 2.5 0 0 1-7 0H4v-4.5a2.5 2.5 0 0 1 0-7V7Z",
-    key: "puzzle-outline",
-  }],
-]);
+const CompetenceIcon = Puzzle;
 
 const EducationIcon = createLucideIcon("EducationIcon", [
   ["path", { d: "M3 12C0 4 24 4 21 12", key: "cap-crown" }],
