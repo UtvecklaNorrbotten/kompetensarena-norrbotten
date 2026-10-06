@@ -2,9 +2,15 @@ name: 10 · Data · UKÄ – högskolan i siffror
 
 run-name: >-
   UKÄ ETL – ${{ github.event.inputs.indicator || 'alla' }} –
-  ${{ github.event_name == 'schedule' && 'schemalagd' || 'manuell' }}
+  ${{ github.event_name == 'schedule' && 'schemalagd' || github.event_name == 'push' && 'importändring' || 'manuell' }}
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "R/etl/uka_sync.R"
+      - "R/etl/uka_values.R"
+      - "tests/uka-values.R"
   workflow_dispatch:
     inputs:
       indicator:
@@ -66,6 +72,10 @@ jobs:
           install-pandoc: false
           install-quarto: false
 
+      - name: Kontrollera tal och decimaler
+        shell: Rscript {0}
+        run: source("tests/uka-values.R")
+
       - name: Hämta och publicera UKÄ
         env:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
@@ -75,3 +85,4 @@ jobs:
         shell: Rscript {0}
         run: |
           source("R/etl/uka_sync.R")
+

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   dimensionOptions,
+  formatUkaValue,
   periodOrder,
   selectUkaRows,
   ukaGenderSeries,
@@ -103,7 +104,7 @@ const genderExample = [
   row({ value: 100 }),
   row({ period: "2023/24", gender: "Kvinnor", value: null }),
 ];
-assert.deepEqual(ukaGenderSeries(genderExample), ["Kvinnor", "Män"]);
+assert.deepEqual(ukaGenderSeries(genderExample), ["Kvinnor", "Män", "Total"]);
 const genderTimeline = ukaGenderTimeline(genderExample, ukaGenderSeries(genderExample));
 assert.equal(genderTimeline[1]?.["Kvinnor"], 60);
 assert.equal(genderTimeline[1]?.["Män"], 40);
@@ -112,3 +113,24 @@ assert.equal(genderTimeline[0]?.["Män"], null);
 assert.deepEqual(ukaGenderSeries([row()]), ["Total"]);
 assert.equal(ukaGenderTimeline([row()], ["Total"])[0]?.["Total"], 100);
 assert.deepEqual(ukaGenderSeries([row({ gender: "Kvinnor" })]), ["Kvinnor", "Män"]);
+
+assert.equal(genderTimeline[1]?.["Total"], 100);
+assert.equal(formatUkaValue(3.3, "sökande per antagen"), "3,3");
+assert.equal(formatUkaValue(3, "sökande per antagen"), "3,0");
+// Exempel: totalen följer samma kronologiska HT/VT-axel som kvinnorna och männen.
+const chronological = ukaGenderTimeline(
+  [
+    row({ period: "HT2025", value: 100 }),
+    row({ period: "VT2025", value: 40 }),
+    row({ period: "VT2026", value: 50 }),
+  ],
+  ["Total"],
+);
+assert.deepEqual(
+  chronological.map((point) => point["period"]),
+  ["VT 2025", "HT 2025", "VT 2026"],
+);
+assert.deepEqual(
+  chronological.map((point) => point["Total"]),
+  [40, 100, 50],
+);
