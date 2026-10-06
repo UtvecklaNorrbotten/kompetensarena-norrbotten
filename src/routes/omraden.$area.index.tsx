@@ -1,3 +1,4 @@
+import { EducationPage } from "@/components/education/EducationPage";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { AppLink } from "@/components/layout/AppLink";
 import { Section } from "@/components/layout/Section";
@@ -9,13 +10,21 @@ export const Route = createFileRoute("/omraden/$area/")({
     const area = getArea(params.area);
     if (!area) throw notFound();
     // Ikonkomponenten kan inte serialiseras från servern – skicka bara data.
-    return { slug: area.slug, title: area.title, description: area.description, topics: area.topics };
+    return {
+      slug: area.slug,
+      title: area.title,
+      description: area.description,
+      topics: area.topics,
+    };
   },
   head: ({ loaderData }) => ({
     meta: [
       { title: `${loaderData?.title ?? "Område"} – Kompetensarena Norrbotten` },
       { name: "description", content: loaderData?.description ?? "" },
-      { property: "og:title", content: `${loaderData?.title ?? "Område"} – Kompetensarena Norrbotten` },
+      {
+        property: "og:title",
+        content: `${loaderData?.title ?? "Område"} – Kompetensarena Norrbotten`,
+      },
       { property: "og:description", content: loaderData?.description ?? "" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -26,17 +35,23 @@ export const Route = createFileRoute("/omraden/$area/")({
 
 function AreaOverview() {
   const area = Route.useLoaderData();
+  if (area.slug === "utbildning") return <EducationPage />;
   return (
     <>
       <Section tone="light" className="py-12 md:py-16">
         <PageHeader eyebrow="Översikt" title={area.title} intro={area.description} />
       </Section>
       <Section className="py-10">
-        <p className="mb-6 text-ink-muted">Området byggs ut stegvis. Fördjupningarna nedan innehåller ännu inga resultat.</p>
+        <p className="mb-6 text-ink-muted">
+          Området byggs ut stegvis. Fördjupningarna nedan innehåller ännu inga resultat.
+        </p>
         <ul className="grid gap-4 md:grid-cols-2">
           {area.topics.map((topic) => (
             <li key={topic.slug}>
-              <AppLink href={areaPath(area.slug, topic.slug)} className="block rounded-lg border border-border bg-surface p-6 hover:bg-brand-light focus-visible:outline">
+              <AppLink
+                href={areaPath(area.slug, topic.slug)}
+                className="block rounded-lg border border-border bg-surface p-6 hover:bg-brand-light focus-visible:outline"
+              >
                 <h2 className="text-xl">{topic.title}</h2>
                 <p className="mt-2 text-sm text-ink-muted">Platshållare · innehåll kommer senare</p>
               </AppLink>
