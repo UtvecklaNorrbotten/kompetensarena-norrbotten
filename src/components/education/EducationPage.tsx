@@ -134,9 +134,10 @@ export function EducationPage({ initialSection = "" }: { initialSection?: string
           >
             <h2 className="text-xl">Så läser du sidan</h2>
             <p className="mt-3 text-base leading-relaxed">
-              Filtren till vänster gäller sidan. Alla tillgängliga perioder visas. Växla varje figur
-              från översiktens tidsserie till fördjupningens grupper i den senaste perioden. Begrepp
-              med streckad understrykning går att klicka på.
+              Filtren till vänster gäller sidan. Alla tillgängliga perioder visas. Kvinnor och män
+              visas tillsammans i figurerna där uppdelningen finns. Växla varje figur från
+              översiktens tidsserie till fördjupningens grupper i den senaste perioden. Begrepp med
+              streckad understrykning går att klicka på.
             </p>
             <p className="mt-3 text-base leading-relaxed">
               <ExplainedTerm
