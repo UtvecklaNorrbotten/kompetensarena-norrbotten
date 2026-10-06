@@ -10,7 +10,7 @@ const CompetenceIcon = Puzzle;
 const EducationIcon = createLucideIcon("EducationIcon", [
   ["path", { d: "M5 11C5 7.5 8 5.5 12 5.5s7 2 7 5.5", key: "cap-crown" }],
   ["rect", { x: "3.5", y: "11", width: "17", height: "3.4", rx: "1.2", key: "cap-band" }],
-  ["circle", { cx: "12", cy: "12.7", r: "1.1", fill: "currentColor", stroke: "none", key: "cap-cockade" }],
+  ["circle", { cx: "12", cy: "12.7", r: "1.1", fill: "none", key: "cap-cockade" }],
   ["path", { d: "M4 14.4C2.6 15 2.4 16.3 4.2 16.6c2.3.4 5.3.4 7.8.4", key: "cap-visor" }],
 ]);
 
