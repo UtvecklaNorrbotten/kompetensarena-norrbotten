@@ -1,3 +1,4 @@
+import { EducationTimeline } from "./EducationTimeline";
 import { Download } from "lucide-react";
 import {
   educationCsv,
@@ -12,8 +13,6 @@ import {
   BarChart,
   CartesianGrid,
   Legend,
-  Line,
-  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -30,7 +29,6 @@ import {
   selectUkaRows,
   ukaDetailPeriods,
   ukaGenderSeries,
-  ukaGenderTimeline,
   type UkaFilters,
   type UkaRow,
 } from "@/lib/uka-view";
@@ -74,6 +72,9 @@ export function EducationFigure({
   fetched: string | null;
 }) {
   const [detail, setDetail] = useState(false);
+  const [comparePrograms, setComparePrograms] = useState(false);
+  const [chosenPrograms, setChosenPrograms] = useState<string[]>([]);
+  const [hiddenGenders, setHiddenGenders] = useState<string[]>([]);
   const [showAll, setShowAll] = useState(false);
   const [detailYear, setDetailYear] = useState("");
   const [detailTerm, setDetailTerm] = useState("all");
@@ -115,17 +116,30 @@ export function EducationFigure({
       periodOrder(String(a["period"])) - periodOrder(String(b["period"])),
   );
   const bars = allBars.filter((r) => visibleGroups.includes(String(r["group"])));
-  const lineData = ukaGenderTimeline(selected.rows, series);
+  const programOptions = [...new Set(selected.rows.map((r) => r.category))].sort((a, b) =>
+    a.localeCompare(b, "sv"),
+  );
+  const comparison = detail && comparePrograms && selected.breakdown === "program";
+  const comparisonPrograms = chosenPrograms.filter((p) => programOptions.includes(p));
+  const activePrograms = comparisonPrograms.length
+    ? comparisonPrograms
+    : programOptions.slice(0, 2);
+  const comparisonRows = selected.rows.filter((r) => activePrograms.includes(r.category));
   const selectedFilters = Object.entries(filters.dimensions).filter(([, v]) => v);
   const ignored = selectedFilters.filter(([key]) => !selected.applied.includes(key));
   const hasValues = (
-    detail ? detailSelection.rows.filter((r) => series.includes(r.gender)) : genderRows
+    comparison
+      ? comparisonRows
+      : detail
+        ? detailSelection.rows.filter((r) => series.includes(r.gender))
+        : genderRows
   ).some((r) => r.value !== null);
   const domain: [number, number | "auto"] = indicator.unit === "%" ? [0, 100] : [0, "auto"];
 
-  const tableRows = detail ? detailSelection.rows : selected.rows;
+  const tableRows = comparison ? comparisonRows : detail ? detailSelection.rows : selected.rows;
   const filename =
-    exportFilename(indicator.id, university) + (detail ? "-fordjupning" : "-oversikt");
+    exportFilename(indicator.id, university) +
+    (comparison ? "-programjamforelse" : detail ? "-fordjupning" : "-oversikt");
   const contextText = `${university} · ${useGenders ? (series.includes("Total") ? "Kvinnor, män och total" : "Kvinnor och män") : "Samtliga"}${selectedFilters
     .filter(([key]) => selected.applied.includes(key))
     .map(([key, value]) => ` · ${dimensionLabels[key] ?? key}: ${value}`)
@@ -135,8 +149,10 @@ export function EducationFigure({
     ...bars.map((r) => wrapChartLabel(String(r["category"]), 26).length * 18 + 20),
   );
   async function saveFigure() {
-    const svg = chartRef.current?.querySelector<SVGSVGElement>("svg.recharts-surface");
-    if (!svg) {
+    const svg = Array.from(
+      chartRef.current?.querySelectorAll<SVGSVGElement>("svg.recharts-surface") ?? [],
+    );
+    if (!svg.length) {
       setSaveError("Figuren har inte laddats färdigt. Försök igen.");
       return;
     }
@@ -146,12 +162,20 @@ export function EducationFigure({
       await saveEducationPng(svg, filename, indicator.title, [
         contextText,
         indicator.explanation,
-        ...(useGenders
-          ? [
-              `Grön: Kvinnor. Grå: Män (streckad linje i översikt).${series.includes("Total") ? " Gul: Samtliga." : ""}`,
-            ]
+        ...(comparison
+          ? [`Program: ${activePrograms.join(", ")}. Samtliga publicerade perioder visas.`]
           : []),
-        `Enhet: ${indicator.unit}. ${detail ? `Period: ${periodText}. ${!showAll && groupNames.length > 12 ? "De första 12 grupperna visas." : "Alla grupper visas."}` : "Samtliga tillgängliga perioder visas."}`,
+        ...(comparison
+          ? [
+              ...activePrograms.map((p, i) => `${["Grön", "Grå", "Gul"][i]}: ${p}.`),
+              "Kvinnor: heldragen; män: streckad; samtliga: prickad.",
+            ]
+          : useGenders
+            ? [
+                `Grön: Kvinnor. Grå: Män (streckad linje i översikt).${series.includes("Total") ? " Gul: Samtliga." : ""}`,
+              ]
+            : []),
+        `Enhet: ${indicator.unit}. ${detail && !comparison ? `Period: ${periodText}. ${!showAll && groupNames.length > 12 ? "De första 12 grupperna visas." : "Alla grupper visas."}` : "Samtliga tillgängliga perioder visas."}`,
         ...(ignored.length
           ? [
               `Urval utan motsvarighet i måttet: ${ignored.map(([key]) => dimensionLabels[key] ?? key).join(", ")}.`,
@@ -246,7 +270,45 @@ export function EducationFigure({
           uppdelningen och visas utan det urvalet.
         </p>
       )}
-      {detail && (
+      {detail && selected.breakdown === "program" && (
+        <div className="mt-5">
+          <button
+            type="button"
+            aria-pressed={comparePrograms}
+            onClick={() => setComparePrograms(!comparePrograms)}
+            className="rounded-md border border-border px-3 py-2 text-sm font-semibold text-brand-dark"
+          >
+            {comparePrograms ? "Visa staplar per år" : "Jämför program över tid"}
+          </button>
+          {comparePrograms && (
+            <fieldset className="mt-3">
+              <legend className="mb-2 text-sm font-medium">Välj upp till tre program</legend>
+              <div className="flex max-h-48 flex-wrap gap-3 overflow-y-auto">
+                {programOptions.map((program) => (
+                  <label key={program} className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={activePrograms.includes(program)}
+                      disabled={
+                        (!activePrograms.includes(program) && activePrograms.length >= 3) ||
+                        (activePrograms.includes(program) && activePrograms.length === 1)
+                      }
+                      onChange={() => {
+                        const next = activePrograms.includes(program)
+                          ? activePrograms.filter((p) => p !== program)
+                          : [...activePrograms, program];
+                        if (next.length) setChosenPrograms(next);
+                      }}
+                    />
+                    {program}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          )}
+        </div>
+      )}
+      {detail && !comparison && (
         <div className="mt-5 flex flex-wrap items-end gap-4">
           <label className="text-sm font-medium">
             {detailSelection.semester ? "År" : "Period"}
@@ -294,7 +356,16 @@ export function EducationFigure({
         </div>
       ) : (
         <figure className="mt-6" aria-label={`${indicator.title}, ${university}`}>
-          {detail ? (
+          {comparison ? (
+            <div ref={chartRef}>
+              <EducationTimeline
+                key={activePrograms.join("|")}
+                rows={comparisonRows}
+                unit={indicator.unit}
+                programs={activePrograms}
+              />
+            </div>
+          ) : detail ? (
             <>
               <p className="mb-4 text-sm">
                 {dimensionLabels[selected.breakdown.split("|").at(-1) ?? ""] ?? "Uppdelning"} ·{" "}
@@ -338,12 +409,21 @@ export function EducationFigure({
                           borderRadius: "var(--radius)",
                         }}
                       />
-                      <Legend />
+                      <Legend
+                        onClick={(item) => {
+                          const key = String(item.dataKey);
+                          setHiddenGenders((old) =>
+                            old.includes(key) ? old.filter((g) => g !== key) : [...old, key],
+                          );
+                        }}
+                        wrapperStyle={{ cursor: "pointer" }}
+                      />
                       {series.map((gender, i) => (
                         <Bar
                           key={gender}
                           name={gender === "Total" ? "Samtliga" : gender}
                           dataKey={gender}
+                          hide={hiddenGenders.includes(gender)}
                           fill={colors[i] ?? colors[0]}
                           isAnimationActive={false}
                           radius={[0, 3, 3, 0]}
@@ -366,59 +446,13 @@ export function EducationFigure({
               )}
             </>
           ) : (
-            <div className="overflow-x-auto">
-              <div ref={chartRef} className="h-72 min-w-[620px] md:h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    accessibilityLayer
-                    data={lineData}
-                    margin={{ left: 16, right: 32, top: 16, bottom: 16 }}
-                  >
-                    <CartesianGrid stroke="var(--border)" vertical={false} />
-                    <XAxis
-                      dataKey="period"
-                      tick={{ fill: "var(--ink)", fontSize: 14 }}
-                      minTickGap={20}
-                      padding={{ left: 16, right: 24 }}
-                      height={42}
-                    />
-                    <YAxis domain={domain} tick={{ fill: "var(--ink)", fontSize: 14 }} width={90} />
-                    <Tooltip
-                      formatter={(value: number, name: string) => [
-                        format(value, indicator.unit),
-                        name === "Total" ? "Samtliga" : name,
-                      ]}
-                      contentStyle={{
-                        background: "var(--surface)",
-                        maxWidth: 280,
-                        whiteSpace: "normal",
-                        overflowWrap: "anywhere",
-                        border: "1px solid var(--border)",
-                        borderRadius: "var(--radius)",
-                      }}
-                    />
-                    <Legend />
-                    {series.map((gender, i) => (
-                      <Line
-                        key={gender}
-                        dataKey={gender}
-                        name={gender === "Total" ? "Samtliga" : gender}
-                        stroke={colors[i] ?? colors[0]}
-                        strokeWidth={3}
-                        strokeDasharray={gender === "Män" ? "7 4" : undefined}
-                        dot={{ r: 3 }}
-                        isAnimationActive={false}
-                        connectNulls={false}
-                      />
-                    ))}
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
+            <div ref={chartRef}>
+              <EducationTimeline rows={selected.rows} unit={indicator.unit} />
             </div>
           )}
           <figcaption className="mt-3 text-sm text-ink-muted">
             Enhet: {indicator.unit}.{" "}
-            {detail
+            {detail && !comparison
               ? "Varje termin visas separat. Terminerna summeras inte och saknade värden är inte noll."
               : "Varje punkt motsvarar en publicerad period. Saknade värden visas som luckor."}
           </figcaption>
@@ -430,7 +464,7 @@ export function EducationFigure({
                   new Blob([educationCsv(tableRows, indicator.title, indicator.unit)], {
                     type: "text/csv;charset=utf-8",
                   }),
-                  `${filename}${detail ? "-" + detailSelection.year + "-" + detailTerm : ""}.csv`,
+                  `${filename}${detail && !comparison ? "-" + detailSelection.year + "-" + detailTerm : ""}.csv`,
                 )
               }
               className="absolute right-0 top-3 inline-flex items-center gap-1 text-sm font-medium text-brand-dark hover:underline"

@@ -133,3 +133,39 @@ export function ukaDetailPeriods(rows: UkaRow[], requestedYear = "", term = "all
     rows: rows.filter((r) => chosen.includes(r.period)),
   };
 }
+
+/** Gemensam tidsaxel, med explicita luckor för år/termin utan källvärden. */
+export function ukaComparisonTimeline(rows: UkaRow[], programs: string[] = []) {
+  const semester = rows.some((r) => /^(VT|HT)\d{4}$/.test(r.period));
+  const genders = ukaGenderSeries(rows);
+  const groups = programs.length ? programs : [""];
+  const series = groups.flatMap((group, index) =>
+    genders.map((gender) => ({
+      key: `s${index}-${gender}`,
+      gender,
+      label: `${group ? group.replaceAll("|", " · ") + " · " : ""}${gender === "Total" ? "Samtliga" : gender}`,
+      category: group,
+    })),
+  );
+  const labels = [...new Set(rows.map((r) => (semester ? r.period.slice(2) : r.period)))].sort(
+    (a, b) => periodOrder(a) - periodOrder(b),
+  );
+  const panels = (semester ? ["VT", "HT"] : [""]).map((term) => ({
+    name:
+      term === "VT" ? "Vårtermin (VT)" : term === "HT" ? "Hösttermin (HT)" : "Utveckling över tid",
+    rows: labels.map((label) => {
+      const period = term + label;
+      const point: Record<string, string | number | null> = { period: label };
+      for (const s of series)
+        point[s.key] =
+          rows.find(
+            (r) =>
+              r.period === period &&
+              r.gender === s.gender &&
+              (!programs.length || r.category === s.category),
+          )?.value ?? null;
+      return point;
+    }),
+  }));
+  return { semester, labels, series, panels };
+}
