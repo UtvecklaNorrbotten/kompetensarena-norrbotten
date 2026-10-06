@@ -1,4 +1,12 @@
-import { useId, useMemo, useState } from "react";
+import { Download } from "lucide-react";
+import {
+  educationCsv,
+  downloadBlob,
+  exportFilename,
+  saveEducationPng,
+  wrapChartLabel,
+} from "@/lib/education-export";
+import { useId, useMemo, useRef, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -29,6 +37,29 @@ const format = (value: number | null | undefined, unit: string) =>
     : `${new Intl.NumberFormat("sv-SE", { maximumFractionDigits: unit === "antal" ? 0 : 1 }).format(value)}${unit === "%" ? " %" : ""}`;
 const colors = ["var(--chart-1)", "var(--chart-4)", "var(--chart-3)"];
 
+function CategoryTick({
+  x = 0,
+  y = 0,
+  payload,
+}: {
+  x?: number;
+  y?: number;
+  payload?: { value?: string };
+}) {
+  const lines = wrapChartLabel(String(payload?.value ?? ""), 26);
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text textAnchor="end" fontSize={13} fontWeight={400} fill="var(--ink)">
+        {lines.map((line, i) => (
+          <tspan key={i} x={-10} dy={i === 0 ? 4 - (lines.length - 1) * 9 : 18}>
+            {line}
+          </tspan>
+        ))}
+      </text>
+    </g>
+  );
+}
+
 export function EducationFigure({
   indicator,
   rows,
@@ -45,6 +76,9 @@ export function EducationFigure({
   const [detail, setDetail] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const switchId = useId();
+  const chartRef = useRef<HTMLDivElement>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const source = useMemo(
     () => rows.filter((r) => r.indicator_id === indicator.id),
     [rows, indicator.id],
@@ -95,35 +129,92 @@ export function EducationFigure({
   ).some((r) => r.value !== null);
   const domain: [number, number | "auto"] = indicator.unit === "%" ? [0, 100] : [0, "auto"];
 
+  const tableRows = selected.rows.filter((r) =>
+    detail ? r.period === latestPeriod && series.includes(r.gender) : r.gender === filters.gender,
+  );
+  const filename =
+    exportFilename(indicator.id, university) + (detail ? "-fordjupning" : "-oversikt");
+  const contextText = `${university} · ${filters.gender === "Total" ? "Samtliga" : filters.gender}${selectedFilters
+    .filter(([key]) => selected.applied.includes(key))
+    .map(([key, value]) => ` · ${dimensionLabels[key] ?? key}: ${value}`)
+    .join("")}`;
+  const rowHeight = Math.max(
+    useGenders ? 60 : 48,
+    ...bars.map((r) => wrapChartLabel(String(r["category"]), 26).length * 18 + 20),
+  );
+  async function saveFigure() {
+    const svg = chartRef.current?.querySelector<SVGSVGElement>("svg.recharts-surface");
+    if (!svg) {
+      setSaveError("Figuren har inte laddats färdigt. Försök igen.");
+      return;
+    }
+    setSaving(true);
+    setSaveError("");
+    try {
+      await saveEducationPng(svg, filename, indicator.title, [
+        contextText,
+        indicator.explanation,
+        `Enhet: ${indicator.unit}. ${detail ? `Period: ${periodLabel(latestPeriod ?? "")}. ${useGenders ? "Grön: Kvinnor. Grå: Män. " : ""}${!showAll && allBars.length > 12 ? "De 12 högsta värdena visas." : "Alla grupper visas."}` : "Samtliga tillgängliga perioder visas."}`,
+        ...(ignored.length
+          ? [
+              `Urval utan motsvarighet i måttet: ${ignored.map(([key]) => dimensionLabels[key] ?? key).join(", ")}.`,
+            ]
+          : []),
+        `Källa: UKÄ, Högskolan i siffror${fetched ? `. Senast hämtad: ${fetched.slice(0, 10)}` : ""}`,
+      ]);
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "Figuren kunde inte sparas.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <article className="rounded-xl border border-border bg-surface p-5 md:p-7">
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1 basis-60">
           <h3 className="text-xl md:text-2xl">
             <ExplainedTerm term={indicator.title} explanation={indicator.definition} />
           </h3>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-muted">
+          <p className="mt-3 max-w-2xl text-base leading-relaxed text-ink">
             {indicator.explanation}
           </p>
         </div>
-        <div className="flex shrink-0 items-center gap-2 text-xs">
-          <span className={!detail ? "font-semibold text-brand-dark" : "text-ink-muted"}>
-            Översikt
-          </span>
-          <Switch
-            id={switchId}
-            checked={detail}
-            onCheckedChange={setDetail}
-            aria-label={`Visa fördjupning för ${indicator.title}`}
-          />
-          <label
-            htmlFor={switchId}
-            className={`cursor-pointer ${detail ? "font-semibold text-brand-dark" : "text-ink-muted"}`}
+        <div className="flex shrink-0 flex-col items-end gap-4">
+          <button
+            type="button"
+            onClick={saveFigure}
+            disabled={!hasValues || saving}
+            className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 text-sm font-medium text-brand-dark hover:bg-brand-light disabled:opacity-50"
+            aria-label={`Spara figur: ${indicator.title}`}
           >
-            Fördjupning
-          </label>
+            <Download className="size-4" aria-hidden />
+            {saving ? "Sparar…" : "Spara figur"}
+          </button>
+          <div className="flex shrink-0 items-center gap-2 text-sm">
+            <span className={!detail ? "font-semibold text-brand-dark" : "text-ink-muted"}>
+              Översikt
+            </span>
+            <Switch
+              id={switchId}
+              checked={detail}
+              onCheckedChange={setDetail}
+              aria-label={`Visa fördjupning för ${indicator.title}`}
+            />
+            <label
+              htmlFor={switchId}
+              className={`cursor-pointer ${detail ? "font-semibold text-brand-dark" : "text-ink-muted"}`}
+            >
+              Fördjupning
+            </label>
+          </div>
         </div>
       </div>
+      {saveError && (
+        <p role="alert" className="mt-3 text-sm text-destructive">
+          {saveError}
+        </p>
+      )}
       {latestOverview && !detail && (
         <div className="mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <strong className="text-3xl text-brand-dark">
@@ -135,7 +226,7 @@ export function EducationFigure({
           </span>
         </div>
       )}
-      <p className="mt-4 text-xs text-ink-muted">
+      <p className="mt-4 text-sm text-ink-muted">
         {university} · {filters.gender === "Total" ? "Samtliga" : filters.gender}
         {selectedFilters
           .filter(([key]) => selected.applied.includes(key))
@@ -143,7 +234,7 @@ export function EducationFigure({
           .join("")}
       </p>
       {ignored.length > 0 && (
-        <p className="mt-1 text-xs text-ink-muted">
+        <p className="mt-1 text-sm text-ink-muted">
           {ignored.map(([key]) => dimensionLabels[key] ?? key).join(", ")}: detta mått saknar
           uppdelningen och visas utan det urvalet.
         </p>
@@ -163,49 +254,57 @@ export function EducationFigure({
                 {periodLabel(latestPeriod ?? "")}
                 {!showAll && allBars.length > 12 ? " · de 12 högsta värdena" : ""}
               </p>
-              <div style={{ height: Math.max(240, bars.length * (useGenders ? 54 : 40) + 70) }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    accessibilityLayer
-                    data={bars}
-                    layout="vertical"
-                    margin={{ left: 0, right: 16, top: 8, bottom: 8 }}
-                  >
-                    <CartesianGrid stroke="var(--border)" horizontal={false} />
-                    <XAxis
-                      type="number"
-                      domain={domain}
-                      tick={{ fill: "var(--ink-muted)", fontSize: 12 }}
-                    />
-                    <YAxis
-                      type="category"
-                      dataKey="category"
-                      width={140}
-                      tick={{ fill: "var(--ink-muted)", fontSize: 11 }}
-                      tickFormatter={(v: string) => (v.length > 24 ? `${v.slice(0, 22)}…` : v)}
-                      interval={0}
-                    />
-                    <Tooltip
-                      formatter={(value: number) => format(value, indicator.unit)}
-                      contentStyle={{
-                        background: "var(--surface)",
-                        border: "1px solid var(--border)",
-                        borderRadius: "var(--radius)",
-                      }}
-                    />
-                    {useGenders && <Legend />}
-                    {series.map((gender, i) => (
-                      <Bar
-                        key={gender}
-                        name={gender === "Total" ? "Samtliga" : gender}
-                        dataKey={gender}
-                        fill={colors[i] ?? colors[0]}
-                        isAnimationActive={false}
-                        radius={[0, 3, 3, 0]}
+              <div className="overflow-x-auto">
+                <div
+                  ref={chartRef}
+                  className="min-w-[620px]"
+                  style={{ height: Math.max(260, bars.length * rowHeight + 80) }}
+                >
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      accessibilityLayer
+                      data={bars}
+                      layout="vertical"
+                      margin={{ left: 16, right: 32, top: 16, bottom: 16 }}
+                    >
+                      <CartesianGrid stroke="var(--border)" horizontal={false} />
+                      <XAxis
+                        type="number"
+                        domain={domain}
+                        tick={{ fill: "var(--ink)", fontSize: 14 }}
                       />
-                    ))}
-                  </BarChart>
-                </ResponsiveContainer>
+                      <YAxis
+                        type="category"
+                        dataKey="category"
+                        width={230}
+                        tick={<CategoryTick />}
+                        interval={0}
+                      />
+                      <Tooltip
+                        formatter={(value: number) => format(value, indicator.unit)}
+                        contentStyle={{
+                          background: "var(--surface)",
+                          maxWidth: 280,
+                          whiteSpace: "normal",
+                          overflowWrap: "anywhere",
+                          border: "1px solid var(--border)",
+                          borderRadius: "var(--radius)",
+                        }}
+                      />
+                      {useGenders && <Legend />}
+                      {series.map((gender, i) => (
+                        <Bar
+                          key={gender}
+                          name={gender === "Total" ? "Samtliga" : gender}
+                          dataKey={gender}
+                          fill={colors[i] ?? colors[0]}
+                          isAnimationActive={false}
+                          radius={[0, 3, 3, 0]}
+                        />
+                      ))}
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
               {allBars.length > 12 && (
                 <button
@@ -218,84 +317,101 @@ export function EducationFigure({
               )}
             </>
           ) : (
-            <div className="h-64 md:h-72">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  accessibilityLayer
-                  data={lineData}
-                  margin={{ left: 0, right: 16, top: 8, bottom: 8 }}
-                >
-                  <CartesianGrid stroke="var(--border)" vertical={false} />
-                  <XAxis
-                    dataKey="period"
-                    tick={{ fill: "var(--ink-muted)", fontSize: 12 }}
-                    minTickGap={20}
-                  />
-                  <YAxis
-                    domain={domain}
-                    tick={{ fill: "var(--ink-muted)", fontSize: 12 }}
-                    width={60}
-                  />
-                  <Tooltip
-                    formatter={(value: number) => [format(value, indicator.unit), indicator.title]}
-                    contentStyle={{
-                      background: "var(--surface)",
-                      border: "1px solid var(--border)",
-                      borderRadius: "var(--radius)",
-                    }}
-                  />
-                  <Line
-                    dataKey="value"
-                    name={indicator.title}
-                    stroke="var(--chart-1)"
-                    strokeWidth={3}
-                    dot={{ r: 3 }}
-                    isAnimationActive={false}
-                    connectNulls={false}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+            <div className="overflow-x-auto">
+              <div ref={chartRef} className="h-72 min-w-[620px] md:h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    accessibilityLayer
+                    data={lineData}
+                    margin={{ left: 16, right: 32, top: 16, bottom: 16 }}
+                  >
+                    <CartesianGrid stroke="var(--border)" vertical={false} />
+                    <XAxis
+                      dataKey="period"
+                      tick={{ fill: "var(--ink)", fontSize: 14 }}
+                      minTickGap={20}
+                      padding={{ left: 16, right: 24 }}
+                      height={42}
+                    />
+                    <YAxis domain={domain} tick={{ fill: "var(--ink)", fontSize: 14 }} width={90} />
+                    <Tooltip
+                      formatter={(value: number) => [
+                        format(value, indicator.unit),
+                        indicator.title,
+                      ]}
+                      contentStyle={{
+                        background: "var(--surface)",
+                        maxWidth: 280,
+                        whiteSpace: "normal",
+                        overflowWrap: "anywhere",
+                        border: "1px solid var(--border)",
+                        borderRadius: "var(--radius)",
+                      }}
+                    />
+                    <Line
+                      dataKey="value"
+                      name={indicator.title}
+                      stroke="var(--chart-1)"
+                      strokeWidth={3}
+                      dot={{ r: 3 }}
+                      isAnimationActive={false}
+                      connectNulls={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           )}
-          <figcaption className="mt-3 text-xs text-ink-muted">
+          <figcaption className="mt-3 text-sm text-ink-muted">
             Enhet: {indicator.unit}.{" "}
             {detail
-              ? "Uppdelningen visar senaste perioden inom tidsurvalet. Fullständiga namn och värden finns i tabellen."
+              ? "Uppdelningen visar senaste tillgängliga perioden. Hela gruppnamnen visas med radbrytning."
               : "Varje punkt motsvarar en publicerad period. Saknade värden visas som luckor."}
           </figcaption>
-          <details className="mt-5 border-t border-border pt-3">
-            <summary className="cursor-pointer text-sm text-brand-dark">
-              Visa värden som tabell
-            </summary>
-            <div className="mt-3 max-h-80 overflow-auto">
-              <table className="w-full text-left text-xs">
-                <caption className="sr-only">
-                  {indicator.title} för {university}
-                </caption>
-                <thead>
-                  <tr>
-                    <th scope="col" className="p-2">
-                      Period
-                    </th>
-                    <th scope="col" className="p-2">
-                      Grupp
-                    </th>
-                    <th scope="col" className="p-2">
-                      Kön
-                    </th>
-                    <th scope="col" className="p-2 text-right">
-                      {indicator.unit}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {selected.rows
-                    .filter((r) =>
-                      detail
-                        ? r.period === latestPeriod && series.includes(r.gender)
-                        : r.gender === filters.gender,
-                    )
-                    .map((r) => (
+          <div className="relative mt-5 border-t border-border pt-3">
+            <button
+              type="button"
+              onClick={() =>
+                downloadBlob(
+                  new Blob([educationCsv(tableRows, indicator.title, indicator.unit)], {
+                    type: "text/csv;charset=utf-8",
+                  }),
+                  `${filename}.csv`,
+                )
+              }
+              className="absolute right-0 top-3 inline-flex items-center gap-1 text-sm font-medium text-brand-dark hover:underline"
+              aria-label={`Ladda ned tabelldata som CSV: ${indicator.title}`}
+            >
+              <Download className="size-4" aria-hidden />
+              <span className="hidden sm:inline">Ladda ned </span>CSV
+            </button>
+            <details>
+              <summary className="cursor-pointer pr-36 text-sm font-medium text-brand-dark">
+                Visa värden som tabell
+              </summary>
+              <div className="mt-3 max-h-80 overflow-auto">
+                <table className="w-full text-left text-sm">
+                  <caption className="sr-only">
+                    {indicator.title} för {university}
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th scope="col" className="p-2">
+                        Period
+                      </th>
+                      <th scope="col" className="p-2">
+                        Grupp
+                      </th>
+                      <th scope="col" className="p-2">
+                        Kön
+                      </th>
+                      <th scope="col" className="p-2 text-right">
+                        {indicator.unit}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tableRows.map((r) => (
                       <tr
                         key={`${r.period}|${r.category}|${r.gender}`}
                         className="border-t border-border"
@@ -310,13 +426,14 @@ export function EducationFigure({
                         </td>
                       </tr>
                     ))}
-                </tbody>
-              </table>
-            </div>
-          </details>
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          </div>
         </figure>
       )}
-      <div className="mt-5 flex flex-wrap justify-between gap-2 border-t border-border pt-3 text-xs text-ink-muted">
+      <div className="mt-5 flex flex-wrap justify-between gap-2 border-t border-border pt-3 text-sm text-ink-muted">
         <a
           href={`https://statistik-www.uka.se/export/?indicator=${indicator.ukaId}`}
           target="_blank"

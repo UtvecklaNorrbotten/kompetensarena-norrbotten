@@ -18,9 +18,12 @@ export function ExplainedTerm({ term, explanation }: { term: string; explanation
           />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-[min(340px,calc(100vw-32px))] leading-relaxed" side="top">
+      <PopoverContent
+        className="w-[min(340px,calc(100vw-32px))] font-normal leading-relaxed"
+        side="top"
+      >
         <p className="mb-2 font-semibold text-brand-dark">{term}</p>
-        <p className="text-sm">{explanation}</p>
+        <p className="text-base">{explanation}</p>
         <a
           className="mt-3 block text-xs text-brand-dark underline"
           href="https://www.uka.se/statistik-och-analys/om-var-statistik/information-om-statistiken"

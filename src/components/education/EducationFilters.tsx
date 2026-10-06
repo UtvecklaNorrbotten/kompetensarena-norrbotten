@@ -27,7 +27,7 @@ export function EducationFilters({
       className="rounded-xl border border-border bg-surface p-5 lg:sticky lg:top-24 lg:max-h-[calc(100vh-112px)] lg:overflow-y-auto"
     >
       <h2 className="text-lg">Filtrera sidan</h2>
-      <p className="mt-2 text-xs leading-relaxed text-ink-muted">
+      <p className="mt-2 text-sm leading-relaxed text-ink-muted">
         Välj lärosäte för hela sidan. Övriga urval gäller de mått som har uppdelningen.
       </p>
       <label className="mt-5 block text-sm font-medium">
@@ -55,21 +55,6 @@ export function EducationFilters({
           <option>Män</option>
         </select>
       </label>
-      <label className="mt-5 block text-sm font-medium">
-        Tidsomfång
-        <select
-          value={filters.years}
-          onChange={(e) => onFilters({ ...filters, years: Number(e.target.value) })}
-          className={selectClass}
-        >
-          <option value={5}>Senaste fem tillgängliga åren</option>
-          <option value={3}>Senaste tre tillgängliga åren</option>
-          <option value={1}>Senaste tillgängliga året</option>
-        </select>
-      </label>
-      <p className="mt-2 text-xs text-ink-muted">
-        Perioderna kan skilja sig mellan måtten. Terminsdata behåller vår- och hösttermin separat.
-      </p>
       <details className="mt-5" open={Object.values(filters.dimensions).some(Boolean)}>
         <summary className="cursor-pointer text-sm font-semibold text-brand-dark">
           Fler filter
@@ -109,7 +94,7 @@ export function EducationFilters({
           </div>
         ))}
         {!Object.keys(options).length && (
-          <p className="mt-3 text-xs text-ink-muted">
+          <p className="mt-3 text-sm text-ink-muted">
             {loading
               ? "Läser tillgängliga uppdelningar…"
               : "Inga ytterligare uppdelningar finns i urvalet."}
