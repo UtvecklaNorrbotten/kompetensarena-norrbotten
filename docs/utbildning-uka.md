@@ -12,13 +12,13 @@ Tidigare ämneslänkar öppnar motsvarande grupp på den kompletta sidan.
 - Filterkolumnen ligger intill områdesmenyn och är fast vid scrollning på stora skärmar.
   På mobilen ligger den före innehållet. Lärosätet gäller samtliga figurer; Luleå tekniska
   universitet är förval, med Riket som reserv om LTU saknas.
-- Kön är gemensamt. Tidsomfångsfiltret är borttaget; alla lagrade perioder visas. Fler filter visar uppdelningarna i aktuellt
-  lärosätes data. När lärosäte byts återställs dimensionsurvalen. Kön behålls.
+- Könsfiltret är borttaget. Kvinnor och män visas samtidigt i båda diagramlägena. Tidsomfångsfiltret är borttaget; alla lagrade perioder visas. Fler filter visar uppdelningarna i aktuellt
+  lärosätes data. När lärosäte byts återställs dimensionsurvalen.
 - Dimensionsfilter gäller endast indikatorer med motsvarande dimension; figuren
   förklarar när ett urval saknar motsvarighet. Filtreringen innehåller ingen geografisk
   mappning av lärosäten till kommuner eller län.
 - Översikt visar en tidsserie. Fördjupning visar senaste tillgängliga perioden i urvalet,
-  uppdelad på källans grupper och, när Samtliga har valts och data finns, kvinnor/män.
+  uppdelad på källans grupper med separata staplar för kvinnor/män när data finns.
   De tolv högsta värdena visas först; användaren kan visa alla grupper och hela tabellen.
 - Begrepp med streckad understrykning öppnar en förklarande popover. Ett frågetecken
   visas vid hovring och tangentbordsfokus; funktionerna fungerar också på pekskärm.
@@ -72,3 +72,11 @@ läsårs- och kalenderårsdata använder fem perioder.
 Källor för begrepp: UKÄ:s [statistikinformation](https://www.uka.se/statistik-och-analys/om-var-statistik/information-om-statistiken),
 [statistik om utbildning](https://www.uka.se/statistik-och-analys/hogskolan-i-siffror/utbildning-pa-grundniva-och-avancerad-niva)
 och [etableringsstatistik](https://www.uka.se/om-oss/aktuellt/nyheter/nyhetsartiklar/2026-05-27-nagot-lagre-etablering-bland-nyexaminerade).
+
+## Kön i figurerna
+
+Översikten visar Kvinnor (grön linje) och Män (grå streckad linje) med legend.
+Fördjupningen visar parallella staplar med samma färger. Totalvärdet visas som
+Samtliga i nyckeltalet; tabell och CSV behåller kvinnor, män och källans total.
+Om könsuppdelning saknas visas Samtliga med förklarande text. Saknade könsvärden
+förblir luckor. Andelar och söktryck för könen beräknas aldrig från totalen.

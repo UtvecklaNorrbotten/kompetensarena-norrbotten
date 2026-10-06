@@ -27,6 +27,8 @@ import {
   periodLabel,
   periodOrder,
   selectUkaRows,
+  ukaGenderSeries,
+  ukaGenderTimeline,
   type UkaFilters,
   type UkaRow,
 } from "@/lib/uka-view";
@@ -85,8 +87,9 @@ export function EducationFigure({
   );
   const overview = useMemo(() => selectUkaRows(source, filters), [source, filters]);
   const selected = detail ? selectUkaRows(source, filters, true) : overview;
-  const genderRows = selected.rows.filter((r) => r.gender === filters.gender);
-  const periods = [...new Set(genderRows.map((r) => r.period))].sort(
+  const series = ukaGenderSeries(selected.rows);
+  const genderRows = selected.rows.filter((r) => series.includes(r.gender));
+  const periods = [...new Set(selected.rows.map((r) => r.period))].sort(
     (a, b) => periodOrder(a) - periodOrder(b),
   );
   const latestPeriod = periods.at(-1);
@@ -94,13 +97,7 @@ export function EducationFigure({
     .filter((r) => r.gender === filters.gender)
     .sort((a, b) => periodOrder(a.period) - periodOrder(b.period))
     .at(-1);
-  const useGenders =
-    detail &&
-    filters.gender === "Total" &&
-    ["Kvinnor", "Män"].every((g) =>
-      selected.rows.some((r) => r.period === latestPeriod && r.gender === g),
-    );
-  const series = useGenders ? ["Kvinnor", "Män"] : [filters.gender];
+  const useGenders = series.includes("Kvinnor");
   const barRows = new Map<string, Record<string, string | number | null>>();
   for (const r of selected.rows) {
     if (r.period !== latestPeriod || !series.includes(r.gender)) continue;
@@ -119,7 +116,7 @@ export function EducationFigure({
     return bValue - aValue;
   });
   const bars = showAll ? allBars : allBars.slice(0, 12);
-  const lineData = genderRows.map((r) => ({ period: periodLabel(r.period), value: r.value }));
+  const lineData = ukaGenderTimeline(selected.rows, series);
   const selectedFilters = Object.entries(filters.dimensions).filter(([, v]) => v);
   const ignored = selectedFilters.filter(([key]) => !selected.applied.includes(key));
   const hasValues = (
@@ -129,12 +126,10 @@ export function EducationFigure({
   ).some((r) => r.value !== null);
   const domain: [number, number | "auto"] = indicator.unit === "%" ? [0, 100] : [0, "auto"];
 
-  const tableRows = selected.rows.filter((r) =>
-    detail ? r.period === latestPeriod && series.includes(r.gender) : r.gender === filters.gender,
-  );
+  const tableRows = selected.rows.filter((r) => (detail ? r.period === latestPeriod : true));
   const filename =
     exportFilename(indicator.id, university) + (detail ? "-fordjupning" : "-oversikt");
-  const contextText = `${university} · ${filters.gender === "Total" ? "Samtliga" : filters.gender}${selectedFilters
+  const contextText = `${university} · ${useGenders ? "Kvinnor och män" : "Samtliga"}${selectedFilters
     .filter(([key]) => selected.applied.includes(key))
     .map(([key, value]) => ` · ${dimensionLabels[key] ?? key}: ${value}`)
     .join("")}`;
@@ -154,7 +149,8 @@ export function EducationFigure({
       await saveEducationPng(svg, filename, indicator.title, [
         contextText,
         indicator.explanation,
-        `Enhet: ${indicator.unit}. ${detail ? `Period: ${periodLabel(latestPeriod ?? "")}. ${useGenders ? "Grön: Kvinnor. Grå: Män. " : ""}${!showAll && allBars.length > 12 ? "De 12 högsta värdena visas." : "Alla grupper visas."}` : "Samtliga tillgängliga perioder visas."}`,
+        ...(useGenders ? ["Grön: Kvinnor. Grå: Män (streckad linje i översikt)."] : []),
+        `Enhet: ${indicator.unit}. ${detail ? `Period: ${periodLabel(latestPeriod ?? "")}. ${!showAll && allBars.length > 12 ? "De 12 högsta värdena visas." : "Alla grupper visas."}` : "Samtliga tillgängliga perioder visas."}`,
         ...(ignored.length
           ? [
               `Urval utan motsvarighet i måttet: ${ignored.map(([key]) => dimensionLabels[key] ?? key).join(", ")}.`,
@@ -221,18 +217,23 @@ export function EducationFigure({
             {format(latestOverview.value, indicator.unit)}
           </strong>
           <span className="text-sm text-ink-muted">
-            {indicator.unit !== "%" ? indicator.unit : "etablerade"} ·{" "}
+            Samtliga · {indicator.unit !== "%" ? indicator.unit : "etablerade"} ·{" "}
             {periodLabel(latestOverview.period)}
           </span>
         </div>
       )}
       <p className="mt-4 text-sm text-ink-muted">
-        {university} · {filters.gender === "Total" ? "Samtliga" : filters.gender}
+        {university} · {useGenders ? "Kvinnor och män" : "Samtliga"}
         {selectedFilters
           .filter(([key]) => selected.applied.includes(key))
           .map(([key, value]) => ` · ${dimensionLabels[key] ?? key}: ${value}`)
           .join("")}
       </p>
+      {!useGenders && hasValues && (
+        <p className="mt-1 text-sm text-ink-muted">
+          UKÄ saknar könsuppdelning i detta urval. Figuren visar samtliga.
+        </p>
+      )}
       {ignored.length > 0 && (
         <p className="mt-1 text-sm text-ink-muted">
           {ignored.map(([key]) => dimensionLabels[key] ?? key).join(", ")}: detta mått saknar
@@ -291,7 +292,7 @@ export function EducationFigure({
                           borderRadius: "var(--radius)",
                         }}
                       />
-                      {useGenders && <Legend />}
+                      <Legend />
                       {series.map((gender, i) => (
                         <Bar
                           key={gender}
@@ -335,9 +336,9 @@ export function EducationFigure({
                     />
                     <YAxis domain={domain} tick={{ fill: "var(--ink)", fontSize: 14 }} width={90} />
                     <Tooltip
-                      formatter={(value: number) => [
+                      formatter={(value: number, name: string) => [
                         format(value, indicator.unit),
-                        indicator.title,
+                        name === "Total" ? "Samtliga" : name,
                       ]}
                       contentStyle={{
                         background: "var(--surface)",
@@ -348,15 +349,20 @@ export function EducationFigure({
                         borderRadius: "var(--radius)",
                       }}
                     />
-                    <Line
-                      dataKey="value"
-                      name={indicator.title}
-                      stroke="var(--chart-1)"
-                      strokeWidth={3}
-                      dot={{ r: 3 }}
-                      isAnimationActive={false}
-                      connectNulls={false}
-                    />
+                    <Legend />
+                    {series.map((gender, i) => (
+                      <Line
+                        key={gender}
+                        dataKey={gender}
+                        name={gender === "Total" ? "Samtliga" : gender}
+                        stroke={colors[i] ?? colors[0]}
+                        strokeWidth={3}
+                        strokeDasharray={gender === "Män" ? "7 4" : undefined}
+                        dot={{ r: 3 }}
+                        isAnimationActive={false}
+                        connectNulls={false}
+                      />
+                    ))}
                   </LineChart>
                 </ResponsiveContainer>
               </div>

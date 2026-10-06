@@ -43,18 +43,6 @@ export function EducationFilters({
           ))}
         </select>
       </label>
-      <label className="mt-5 block text-sm font-medium">
-        Kön
-        <select
-          value={filters.gender}
-          onChange={(e) => onFilters({ ...filters, gender: e.target.value })}
-          className={selectClass}
-        >
-          <option value="Total">Samtliga</option>
-          <option>Kvinnor</option>
-          <option>Män</option>
-        </select>
-      </label>
       <details className="mt-5" open={Object.values(filters.dimensions).some(Boolean)}>
         <summary className="cursor-pointer text-sm font-semibold text-brand-dark">
           Fler filter

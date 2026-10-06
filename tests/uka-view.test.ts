@@ -3,6 +3,8 @@ import {
   dimensionOptions,
   periodOrder,
   selectUkaRows,
+  ukaGenderSeries,
+  ukaGenderTimeline,
   type UkaFilters,
   type UkaRow,
 } from "../src/lib/uka-view";
@@ -93,3 +95,20 @@ assert.deepEqual(
   selectUkaRows(semesters, { ...filters, years: 1 }).rows.map((r) => r.period),
   ["HT2025", "VT2026"],
 );
+
+// Exempel: kön visas samtidigt utan att totalen räknas om.
+const genderExample = [
+  row({ gender: "Kvinnor", value: 60 }),
+  row({ gender: "Män", value: 40 }),
+  row({ value: 100 }),
+  row({ period: "2023/24", gender: "Kvinnor", value: null }),
+];
+assert.deepEqual(ukaGenderSeries(genderExample), ["Kvinnor", "Män"]);
+const genderTimeline = ukaGenderTimeline(genderExample, ukaGenderSeries(genderExample));
+assert.equal(genderTimeline[1]?.["Kvinnor"], 60);
+assert.equal(genderTimeline[1]?.["Män"], 40);
+assert.equal(genderTimeline[0]?.["Kvinnor"], null);
+assert.equal(genderTimeline[0]?.["Män"], null);
+assert.deepEqual(ukaGenderSeries([row()]), ["Total"]);
+assert.equal(ukaGenderTimeline([row()], ["Total"])[0]?.["Total"], 100);
+assert.deepEqual(ukaGenderSeries([row({ gender: "Kvinnor" })]), ["Kvinnor", "Män"]);

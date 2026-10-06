@@ -84,3 +84,24 @@ export function dimensionOptions(
     ]),
   );
 }
+
+/** Visa kön samtidigt. Saknat könsvärde blir en lucka, aldrig en beräknad nolla. */
+export function ukaGenderSeries(rows: UkaRow[]): string[] {
+  return rows.some((row) => row.gender === "Kvinnor" || row.gender === "Män")
+    ? ["Kvinnor", "Män"]
+    : ["Total"];
+}
+
+export function ukaGenderTimeline(rows: UkaRow[], series: string[]) {
+  const periods = [...new Set(rows.map((row) => row.period))].sort(
+    (a, b) => periodOrder(a) - periodOrder(b),
+  );
+  return periods.map((period) => {
+    const point: Record<string, string | number | null> = { period: periodLabel(period) };
+    for (const gender of series) {
+      const matches = rows.filter((row) => row.period === period && row.gender === gender);
+      point[gender] = matches.length === 1 ? matches[0]!.value : null;
+    }
+    return point;
+  });
+}
