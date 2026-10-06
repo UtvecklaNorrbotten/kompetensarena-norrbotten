@@ -6,8 +6,7 @@ const IndustryIcon = createLucideIcon("IndustryIcon", [
 
 const CompetenceIcon = createLucideIcon("CompetenceIcon", [
   ["path", {
-    d: "M5 6H10V5C8 3 10 1.5 12 1.5C14 1.5 16 3 14 5V6H19V11H20C22 9 23.5 11 23.5 13C23.5 15 22 17 20 15H19V20H14V19C16 17 14 15.5 12 15.5C10 15.5 8 17 10 19V20H5V15H6C8 17 9.5 15 9.5 13C9.5 11 8 9 6 11H5Z",
-    transform: "translate(1 1) scale(0.9)",
+    d: "M4 7h4.5a2.5 2.5 0 0 1 7 0H20v4.5a2.5 2.5 0 0 0 0 7V20h-4.5a2.5 2.5 0 0 1-7 0H4v-4.5a2.5 2.5 0 0 1 0-7V7Z",
     key: "puzzle-outline",
   }],
 ]);
