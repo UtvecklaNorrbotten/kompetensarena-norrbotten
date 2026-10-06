@@ -1,0 +1,95 @@
+import assert from "node:assert/strict";
+import {
+  dimensionOptions,
+  periodOrder,
+  selectUkaRows,
+  type UkaFilters,
+  type UkaRow,
+} from "../src/lib/uka-view";
+
+// Exempel: syntetiska data för att kontrollera överlapp och urval.
+const row = (changes: Partial<UkaRow> = {}): UkaRow => ({
+  indicator_id: "uka-hst",
+  university: "Exempeluniversitet",
+  period: "2024/25",
+  gender: "Total",
+  breakdown: "",
+  category: "",
+  value: 100,
+  ...changes,
+});
+const filters: UkaFilters = { gender: "Total", years: 5, dimensions: {} };
+const rows = [
+  row(),
+  row({ gender: "Kvinnor", value: 60 }),
+  row({ gender: "Män", value: 40 }),
+  row({ breakdown: "amnesomrade", category: "Teknik", value: 70 }),
+  row({ breakdown: "amnesomrade", category: "Vård", value: 30 }),
+  row({ breakdown: "amnesgrupp|amnesomrade", category: "Maskinteknik|Teknik", value: 50 }),
+];
+assert.equal(selectUkaRows(rows, filters).rows.find((r) => r.gender === "Total")?.value, 100);
+assert.equal(selectUkaRows(rows, filters, true).breakdown, "amnesomrade");
+assert.equal(
+  selectUkaRows(rows, { ...filters, dimensions: { amnesomrade: "Teknik" } }).rows[0]?.value,
+  70,
+);
+assert.equal(
+  selectUkaRows(rows, { ...filters, dimensions: { amnesgrupp: "Maskinteknik" } }).rows[0]?.value,
+  50,
+);
+assert.equal(
+  selectUkaRows(rows, { ...filters, dimensions: { amnesomrade: "Finns inte" } }).rows.length,
+  0,
+);
+assert.equal(
+  selectUkaRows(rows, { ...filters, dimensions: { program: "Exempelprogram" } }).applied.length,
+  0,
+);
+const overlapping = [
+  row({ breakdown: "examen|inriktning", category: "A|X" }),
+  row({ breakdown: "examen|inriktning", category: "B|X" }),
+];
+assert.equal(
+  selectUkaRows(overlapping, { ...filters, dimensions: { inriktning: "X" } }).ambiguous,
+  true,
+);
+assert.equal(
+  selectUkaRows(overlapping, { ...filters, dimensions: { inriktning: "X" } }).rows.length,
+  0,
+);
+const nullRows = selectUkaRows([row({ value: null })], filters).rows;
+assert.equal(nullRows[0]?.value, null);
+assert.equal(
+  selectUkaRows([row({ gender: "Total" })], { ...filters, gender: "Män" }).rows.filter(
+    (r) => r.gender === "Män",
+  ).length,
+  0,
+);
+assert.ok(periodOrder("VT2026") > periodOrder("HT2025"));
+assert.ok(periodOrder("HT2025") > periodOrder("VT2025"));
+assert.equal(
+  selectUkaRows([row({ period: "2024/25" }), row({ period: "2023/24" })], { ...filters, years: 1 })
+    .rows.length,
+  1,
+);
+assert.deepEqual(dimensionOptions(rows, {})["amnesomrade"], ["Teknik", "Vård"]);
+console.log("UKÄ: totaler, kön, hierarkier, saknade värden och perioder godkända.");
+
+// Exempel: fem år från vårterminen omfattar också höstterminen fem år bakåt.
+const semesters = [
+  "HT2021",
+  "VT2022",
+  "HT2022",
+  "VT2023",
+  "HT2023",
+  "VT2024",
+  "HT2024",
+  "VT2025",
+  "HT2025",
+  "VT2026",
+].map((period) => row({ period }));
+assert.equal(selectUkaRows(semesters, filters).rows.length, 10);
+assert.deepEqual(
+  selectUkaRows(semesters, { ...filters, years: 1 }).rows.map((r) => r.period),
+  ["HT2025", "VT2026"],
+);
