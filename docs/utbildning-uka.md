@@ -91,3 +91,13 @@ Söktryck visas med exakt en decimal. UKÄ:s decimaler bevaras i importen genom
 `uka_values.R`; tidigare omtolkades redan numeriska värden med svensk locale,
 vilket tappade decimaldelen. Importändringar på main startar UKÄ-workflowet
 för att ersätta felaktiga snapshotar; parserns R-tester körs före publicering.
+
+
+Fördjupningens periodval: terminsdata visas för ett kalenderår med VT och HT som
+separata stapelgrupper per program och kvinnor/män/total inom varje termin.
+Förvalet är senaste året med båda terminerna; senare år kan väljas även med en
+enda publicerad termin. Val av enbart HT eller VT finns. Terminer summeras aldrig,
+och en saknad terminsrad skapas inte som noll. Års-/läsårsdata behåller källans
+periodindelning. Tabell och CSV följer periodvalet, PNG anger valda perioder.
+Grupper sorteras alfabetiskt så samma program och dess terminer ligger intill
+varandra; fler än 12 program kan visas med Visa alla.
