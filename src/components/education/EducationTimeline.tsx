@@ -1,3 +1,4 @@
+import { educationAxis } from "@/lib/education-axis";
 import { useId, useState } from "react";
 import {
   CartesianGrid,
@@ -31,7 +32,7 @@ export function EducationTimeline({
       visible.map((s) => r[s.key]).filter((v): v is number => typeof v === "number"),
     ),
   );
-  const maximum = unit === "%" ? 100 : Math.max(1, ...values) * 1.08;
+  const axis = educationAxis(values, unit);
   const active = data.labels.includes(hover ?? "") ? hover! : data.labels.at(-1);
   return (
     <>
@@ -99,7 +100,9 @@ export function EducationTimeline({
                     padding={{ left: 12, right: 12 }}
                   />
                   <YAxis
-                    domain={[0, maximum]}
+                    domain={[0, axis.maximum]}
+                    ticks={axis.ticks}
+                    interval={0}
                     width={75}
                     tick={{ fill: "var(--ink)", fontSize: 14 }}
                     tickFormatter={(v) => formatUkaValue(v, unit)}
