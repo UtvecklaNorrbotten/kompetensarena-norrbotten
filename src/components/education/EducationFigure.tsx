@@ -1,12 +1,6 @@
 import { EducationTimeline } from "./EducationTimeline";
+import { EducationHistoryPreview } from "./EducationHistoryPreview";
 import { educationGenderColor } from "@/lib/education-colors";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
 import { Download } from "lucide-react";
 import {
   educationCsv,
@@ -79,7 +73,7 @@ function CategoryTick({
   x?: number;
   y?: number;
   payload?: { value?: string };
-  onSelect?: (group: string) => void;
+  onSelect?: (group: string, x: number, y: number) => void;
 }) {
   const lines = wrapChartLabel(String(payload?.value ?? ""), 26);
   return (
@@ -89,11 +83,16 @@ function CategoryTick({
       tabIndex={0}
       aria-label={`${payload?.value ?? "Grupp"}: klicka för att se historik`}
       style={{ cursor: "pointer" }}
-      onClick={() => onSelect?.(String(payload?.value ?? ""))}
+      onClick={(event) => {
+        event.stopPropagation();
+        onSelect?.(String(payload?.value ?? ""), event.clientX, event.clientY);
+      }}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
-          onSelect?.(String(payload?.value ?? ""));
+          event.stopPropagation();
+          const bounds = event.currentTarget.getBoundingClientRect();
+          onSelect?.(String(payload?.value ?? ""), bounds.right, bounds.top);
         }
       }}
     >
@@ -131,6 +130,8 @@ export function EducationFigure({
   const [historySelection, setHistorySelection] = useState<{
     category: string;
     context: string;
+    x: number;
+    y: number;
   } | null>(null);
   const switchId = useId();
   const chartRef = useRef<HTMLDivElement>(null);
@@ -151,8 +152,8 @@ export function EducationFigure({
   const historyCategory =
     historySelection?.context === historyContext ? historySelection.category : null;
   const historyRows = selected.rows.filter((row) => row.category === historyCategory);
-  function openHistory(category: string) {
-    setHistorySelection({ category, context: historyContext });
+  function openHistory(category: string, x: number, y: number) {
+    setHistorySelection({ category, context: historyContext, x, y });
   }
   const series = ukaGenderSeries(selected.rows);
   const genderRows = selected.rows.filter((r) => series.includes(r.gender));
@@ -470,6 +471,14 @@ export function EducationFigure({
                       accessibilityLayer
                       data={bars}
                       layout="vertical"
+                      onClick={(state, event) => {
+                        const target = event.target;
+                        if (target instanceof Element && target.closest(".recharts-legend-wrapper"))
+                          return;
+                        const category = state?.activePayload?.[0]?.payload?.rawCategory;
+                        if (typeof category === "string")
+                          openHistory(category, event.clientX, event.clientY);
+                      }}
                       style={{ cursor: "pointer" }}
                       margin={{ left: 16, right: 32, top: 16, bottom: 16 }}
                     >
@@ -503,11 +512,11 @@ export function EducationFigure({
                         }}
                         tick={
                           <CategoryTick
-                            onSelect={(group) => {
+                            onSelect={(group, x, y) => {
                               const row = selected.rows.find(
                                 (r) => (r.category.replaceAll("|", " · ") || "Samtliga") === group,
                               );
-                              if (row) openHistory(row.category);
+                              if (row) openHistory(row.category, x, y);
                             }}
                           />
                         }
@@ -543,10 +552,6 @@ export function EducationFigure({
                           key={gender}
                           name={gender === "Total" ? "Samtliga" : gender}
                           dataKey={gender}
-                          onClick={(data) => {
-                            const category = data.payload?.rawCategory;
-                            if (typeof category === "string") openHistory(category);
-                          }}
                           hide={hiddenGenders.includes(gender)}
                           fill={educationGenderColor(gender)}
                           isAnimationActive={false}
@@ -643,35 +648,20 @@ export function EducationFigure({
           </div>
         </figure>
       )}
-      <Sheet
-        open={historyCategory !== null && historyRows.length > 0}
-        onOpenChange={(open) => {
-          if (!open) setHistorySelection(null);
-        }}
-      >
-        <SheetContent
-          side="right"
-          className="overflow-y-auto"
-          style={{ width: "min(100vw, 760px)", maxWidth: "none" }}
-        >
-          <SheetHeader className="pr-8 text-left">
-            <SheetTitle>
-              Historik – {historyCategory?.replaceAll("|", " · ") || "Samtliga"}
-            </SheetTitle>
-            <SheetDescription>
-              {indicator.title} · {university}
-            </SheetDescription>
-          </SheetHeader>
-          <div className="mt-6">
-            <EducationTimeline
-              key={`${historyContext}|${historyCategory}`}
-              rows={historyRows}
-              unit={indicator.unit}
-              valueAxisLabel={valueAxisLabel}
-            />
-          </div>
-        </SheetContent>
-      </Sheet>
+      {detail &&
+        !comparison &&
+        historyCategory !== null &&
+        historySelection &&
+        historyRows.length > 0 && (
+          <EducationHistoryPreview
+            rows={historyRows}
+            category={historyCategory}
+            unit={indicator.unit}
+            x={historySelection.x}
+            y={historySelection.y}
+            onClose={() => setHistorySelection(null)}
+          />
+        )}
       <div className="mt-5 flex flex-wrap justify-between gap-2 border-t border-border pt-3 text-sm text-ink-muted">
         <a
           href={`https://statistik-www.uka.se/export/?indicator=${indicator.ukaId}`}
