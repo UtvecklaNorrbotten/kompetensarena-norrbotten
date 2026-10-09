@@ -526,6 +526,10 @@ export function EducationFigure({
                         }}
                       />
                       <Legend
+                        onDoubleClick={(item) => {
+                          const key = String(item.dataKey);
+                          setHiddenGenders(series.filter((gender) => gender !== key));
+                        }}
                         onClick={(item) => {
                           const key = String(item.dataKey);
                           setHiddenGenders((old) =>

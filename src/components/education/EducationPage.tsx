@@ -209,11 +209,6 @@ export function EducationPage({ initialSection = "" }: { initialSection?: string
               </div>
             </section>
           ))}
-          <p className="pb-6 text-sm leading-relaxed text-ink-muted">
-            Källa: Universitetskanslersämbetet (UKÄ), Högskolan i siffror. Endast publicerade värden
-            visas. Antal, andelar och utbildningsvolym ska tolkas var för sig; sökande, antagna och
-            examinerade är inte en uppföljning av samma personer.
-          </p>
         </div>
       </div>
     </div>

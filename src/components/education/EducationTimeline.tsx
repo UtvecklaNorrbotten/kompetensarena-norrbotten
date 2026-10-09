@@ -43,6 +43,12 @@ export function EducationTimeline({
           <button
             key={s.key}
             type="button"
+            title="Klicka för att visa eller dölja. Dubbelklicka för att endast visa denna serie."
+            onDoubleClick={() =>
+              setHidden(
+                data.series.filter((other) => other.key !== s.key).map((other) => other.key),
+              )
+            }
             aria-pressed={!hidden.includes(s.key)}
             onClick={() =>
               setHidden((old) =>
