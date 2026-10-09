@@ -1,5 +1,6 @@
 import { educationAxis } from "@/lib/education-axis";
 import { educationGenderColor } from "@/lib/education-colors";
+import { useLegendClick } from "@/lib/legend-click";
 import { useId, useState } from "react";
 import {
   CartesianGrid,
@@ -27,6 +28,11 @@ export function EducationTimeline({
   const id = useId();
   const [hidden, setHidden] = useState<string[]>([]);
   const data = ukaComparisonTimeline(rows, programs);
+  const clickLegend = useLegendClick(
+    data.series.map((s) => s.key),
+    hidden,
+    setHidden,
+  );
   const visible = data.series.filter((s) => !hidden.includes(s.key));
   const values = data.panels.flatMap((panel) =>
     panel.rows.flatMap((r) =>
@@ -43,18 +49,9 @@ export function EducationTimeline({
           <button
             key={s.key}
             type="button"
-            title="Klicka för att visa eller dölja. Dubbelklicka för att endast visa denna serie."
-            onDoubleClick={() =>
-              setHidden(
-                data.series.filter((other) => other.key !== s.key).map((other) => other.key),
-              )
-            }
+            title="Klicka för att visa eller dölja. Dubbelklicka för att isolera, dubbelklicka igen för att visa alla."
             aria-pressed={!hidden.includes(s.key)}
-            onClick={() =>
-              setHidden((old) =>
-                old.includes(s.key) ? old.filter((k) => k !== s.key) : [...old, s.key],
-              )
-            }
+            onClick={(event) => clickLegend(s.key, event.detail === 0)}
             className={`rounded-md border border-border px-3 py-2 text-sm text-left ${hidden.includes(s.key) ? "opacity-50" : "font-semibold"}`}
           >
             <span

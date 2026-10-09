@@ -1,6 +1,7 @@
 import { EducationTimeline } from "./EducationTimeline";
 import { EducationHistoryPreview } from "./EducationHistoryPreview";
 import { educationGenderColor } from "@/lib/education-colors";
+import { useLegendClick } from "@/lib/legend-click";
 import { Download } from "lucide-react";
 import {
   educationCsv,
@@ -161,6 +162,7 @@ export function EducationFigure({
     setHistorySelection({ category, context: historyContext, x, y });
   }
   const series = ukaGenderSeries(selected.rows);
+  const clickLegend = useLegendClick(series, hiddenGenders, setHiddenGenders);
   const genderRows = selected.rows.filter((r) => series.includes(r.gender));
   const detailSelection = ukaDetailPeriods(selected.rows, detailYear, detailTerm);
   const periodText = detailSelection.periods.map(periodLabel).join(" och ");
@@ -551,17 +553,10 @@ export function EducationFigure({
                         }}
                       />
                       <Legend
-                        onDoubleClick={(item) => {
-                          const key = String(item.dataKey);
-                          setHiddenGenders(series.filter((gender) => gender !== key));
-                        }}
-                        onClick={(item) => {
-                          const key = String(item.dataKey);
-                          setHiddenGenders((old) =>
-                            old.includes(key) ? old.filter((g) => g !== key) : [...old, key],
-                          );
-                        }}
-                        wrapperStyle={{ cursor: "pointer" }}
+                        onClick={(item, _index, event) =>
+                          clickLegend(String(item.dataKey), event.detail === 0)
+                        }
+                        wrapperStyle={{ cursor: "pointer", userSelect: "none" }}
                       />
                       {series.map((gender) => (
                         <Bar
