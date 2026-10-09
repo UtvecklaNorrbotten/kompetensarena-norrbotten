@@ -399,6 +399,7 @@ export function EducationFigure({
                         interval={0}
                       />
                       <Tooltip
+                        isAnimationActive={false}
                         formatter={(value: number) => format(value, indicator.unit)}
                         contentStyle={{
                           background: "var(--surface)",

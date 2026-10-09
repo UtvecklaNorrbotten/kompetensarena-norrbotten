@@ -103,8 +103,13 @@ export function EducationTimeline({
                     }
                   />
                   <Tooltip
+                    isAnimationActive={false}
                     formatter={(value: number, name: string) => [formatUkaValue(value, unit), name]}
-                    labelFormatter={(label) => `${panel.name} · ${label}`}
+                    labelFormatter={(label) =>
+                      data.semester
+                        ? `Period: ${panel.name.startsWith("Vår") ? "VT" : "HT"} ${label}`
+                        : `${/^\d{4}$/.test(String(label)) ? "År" : "Period"}: ${label}`
+                    }
                     contentStyle={{
                       background: "var(--surface)",
                       maxWidth: 280,
