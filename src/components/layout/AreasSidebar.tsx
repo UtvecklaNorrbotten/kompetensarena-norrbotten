@@ -19,16 +19,11 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
   const restoreFocus = useRef<HTMLElement | null>(null);
   const desktopNav = useRef<HTMLElement>(null);
   const activeSlot = useRef<HTMLDivElement>(null);
-  const [railLayout, setRailLayout] = useState({ height: 108, title: false, topic: false });
+  const [railLayout, setRailLayout] = useState({ height: 108, title: false });
   const activeArea = areas.find(
     (area) => pathname.startsWith(areaPath(area.slug) + "/") || pathname === areaPath(area.slug),
   )?.slug;
   const selectedArea = areas.find((area) => area.slug === activeArea);
-  const selectedTopic = selectedArea?.topics.find((topic) =>
-    activeArea === "utbildning"
-      ? educationSection === topic.slug
-      : pathname === areaPath(selectedArea.slug, topic.slug),
-  );
   const expanded = pinned || hovered || focused;
 
   useEffect(() => {
@@ -48,27 +43,19 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
         - parseFloat(padding.paddingTop) - parseFloat(padding.paddingBottom)
         - contentHeight + slot.getBoundingClientRect().height);
       const titleHeight = Array.from(selectedArea.title).length * 14 + 12;
-      const textMeasure = document.createElement("canvas").getContext("2d");
-      if (textMeasure) textMeasure.font = `11px ${padding.fontFamily}`;
-      const topicHeight = selectedTopic
-        ? Math.ceil(textMeasure?.measureText(selectedTopic.title).width
-          ?? Array.from(selectedTopic.title).length * 7) + 12
-        : 0;
       const title = available >= titleHeight;
-      // The topic uses the same vertical space as the area, never extra row height.
       const height = Math.max(108, title ? titleHeight : 0);
-      const topic = title && !!selectedTopic && topicHeight <= height;
       setRailLayout((previous) =>
-        previous.height === height && previous.title === title && previous.topic === topic
+        previous.height === height && previous.title === title
           ? previous
-          : { height, title, topic },
+          : { height, title },
       );
     };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(nav);
     return () => observer.disconnect();
-  }, [selectedArea, selectedTopic]);
+  }, [selectedArea]);
   const rowClass =
     "relative flex h-10 items-center gap-3 whitespace-nowrap rounded-md p-2 hover:bg-brand-light";
   const activeRowClass =
@@ -179,7 +166,6 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
         </li>
         {areas.map((area) => {
           const Icon = area.icon;
-          const TopicLink = area.slug === "utbildning" ? "a" : AppLink;
           const open = activeArea === area.slug;
           // Behåll det aktiva områdets undermeny i layouten även när sidomenyn är hopfälld.
           // Annars flyttar ikonerna nedåt när menyn expanderas vid hovring.
@@ -203,7 +189,7 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
                   style={mobile ? undefined : { minHeight: railLayout.height }}
                 >
                   {!mobile && !expanded && railLayout.title && (
-                    <div className="absolute left-2 top-0 flex w-[39px] items-start gap-1 pt-1.5">
+                    <div className="absolute left-2 top-0 flex w-5 flex-col items-center pt-1.5">
                       <AppLink
                         href={areaPath(area.slug)}
                         onClick={blurOnClick}
@@ -217,25 +203,6 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
                           ))}
                         </span>
                       </AppLink>
-                      {railLayout.topic && selectedTopic && (
-                        <TopicLink
-                          href={area.slug === "utbildning"
-                            ? "#" + selectedTopic.slug
-                            : areaPath(area.slug, selectedTopic.slug)}
-                          onClick={blurOnClick}
-                          aria-label={selectedTopic.title}
-                          title={selectedTopic.title}
-                          className="flex w-[15px] shrink-0 flex-col items-center border-l border-border pl-1 text-[11px] leading-[13px] text-ink-muted"
-                        >
-                          <span
-                            aria-hidden="true"
-                            className="whitespace-nowrap"
-                            style={{ writingMode: "vertical-rl" }}
-                          >
-                            {selectedTopic.title}
-                          </span>
-                        </TopicLink>
-                      )}
                     </div>
                   )}
                   <ul
