@@ -1,4 +1,5 @@
 import { EducationTimeline } from "./EducationTimeline";
+import { EducationLegend } from "./EducationLegend";
 import { EducationHistoryPreview } from "./EducationHistoryPreview";
 import { educationGenderColor } from "@/lib/education-colors";
 import { useLegendClick } from "@/lib/legend-click";
@@ -15,7 +16,6 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -472,11 +472,22 @@ export function EducationFigure({
             </div>
           ) : detail ? (
             <>
-              <p className="mb-4 text-sm">
-                {dimensionLabels[selected.breakdown.split("|").at(-1) ?? ""] ?? "Uppdelning"} ·{" "}
-                {periodText}
-                {!showAll && groupNames.length > 5 ? " · topp 5" : ""}
+              <h4 className="mb-1 text-lg font-semibold">
+                {showAll ? "Alla grupper" : `Topp ${Math.min(5, groupNames.length)}`}
+              </h4>
+              <p className="mb-4 text-sm text-ink-muted">
+                {groupAxisLabel} · {periodText}
               </p>
+              <EducationLegend
+                items={series.map((gender) => ({
+                  key: gender,
+                  gender,
+                  label: gender === "Total" ? "Samtliga" : gender,
+                  lineStyle: gender === "Män" ? "dashed" : "solid",
+                }))}
+                hidden={hiddenGenders}
+                onClick={clickLegend}
+              />
               <div className="overflow-x-auto">
                 <div
                   ref={chartRef}
@@ -552,12 +563,6 @@ export function EducationFigure({
                           borderRadius: "var(--radius)",
                         }}
                       />
-                      <Legend
-                        onClick={(item, _index, event) =>
-                          clickLegend(String(item.dataKey), event.detail === 0)
-                        }
-                        wrapperStyle={{ cursor: "pointer", userSelect: "none" }}
-                      />
                       {series.map((gender) => (
                         <Bar
                           key={gender}
@@ -574,13 +579,17 @@ export function EducationFigure({
                 </div>
               </div>
               {groupNames.length > 5 && (
-                <button
-                  type="button"
-                  onClick={() => setShowAll(!showAll)}
-                  className="mt-3 text-sm text-brand-dark underline"
-                >
-                  {showAll ? "Visa topp 5" : `Visa alla ${groupNames.length} grupper`}
-                </button>
+                <div className="mt-5 flex items-center gap-4">
+                  <span aria-hidden className="h-px flex-1 bg-border" />
+                  <button
+                    type="button"
+                    onClick={() => setShowAll(!showAll)}
+                    className="shrink-0 px-2 py-1 text-sm font-medium text-brand-dark hover:underline"
+                  >
+                    {showAll ? "Visa topp 5" : `Visa alla ${groupNames.length} grupper`}
+                  </button>
+                  <span aria-hidden className="h-px flex-1 bg-border" />
+                </div>
               )}
             </>
           ) : (

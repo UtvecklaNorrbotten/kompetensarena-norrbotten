@@ -1,6 +1,7 @@
 import { educationAxis } from "@/lib/education-axis";
 import { educationGenderColor } from "@/lib/education-colors";
 import { useLegendClick } from "@/lib/legend-click";
+import { EducationLegend } from "./EducationLegend";
 import { useId, useState } from "react";
 import {
   CartesianGrid,
@@ -44,34 +45,20 @@ export function EducationTimeline({
     data.semester || data.labels.every((label) => /^\d{4}$/.test(label)) ? "År" : "Period";
   return (
     <>
-      <div className="mb-4 flex flex-wrap gap-2" aria-label="Visa eller dölj serier">
-        {data.series.map((s) => (
-          <button
-            key={s.key}
-            type="button"
-            title="Klicka för att visa eller dölja. Dubbelklicka för att isolera, dubbelklicka igen för att visa alla."
-            aria-pressed={!hidden.includes(s.key)}
-            onClick={(event) => clickLegend(s.key, event.detail === 0)}
-            className={`rounded-md border border-border px-3 py-2 text-sm text-left ${hidden.includes(s.key) ? "opacity-50" : "font-semibold"}`}
-          >
-            <span
-              aria-hidden
-              style={{
-                borderTopWidth: 3,
-                borderTopStyle: programs.length
-                  ? (["solid", "dashed", "dotted"][programs.indexOf(s.category)] as
-                      "solid" | "dashed" | "dotted")
-                  : s.gender === "Män"
-                    ? "dashed"
-                    : "solid",
-                borderTopColor: educationGenderColor(s.gender),
-              }}
-              className="mr-2 inline-block w-5 align-middle"
-            />
-            {s.label}
-          </button>
-        ))}
-      </div>
+      <EducationLegend
+        items={data.series.map((s) => ({
+          key: s.key,
+          label: s.label,
+          gender: s.gender,
+          lineStyle: programs.length
+            ? ((["solid", "dashed", "dotted"] as const)[programs.indexOf(s.category)] ?? "solid")
+            : s.gender === "Män"
+              ? "dashed"
+              : "solid",
+        }))}
+        hidden={hidden}
+        onClick={clickLegend}
+      />
       <div
         className="grid gap-6 lg:grid-cols-2"
         style={!data.semester ? { gridTemplateColumns: "minmax(0, 1fr)" } : undefined}
