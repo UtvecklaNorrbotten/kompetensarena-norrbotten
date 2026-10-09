@@ -133,6 +133,10 @@ export async function handleUkaFinalize(request: Request) {
   const db = await admin();
   const { data, error } = await (db.rpc as any)("uka_finalize_batch", { p_batch_id: body.data.batch_id });
   if (error) return json({ error: "UKA finalize failed", message: error.message }, statusFor(error));
+  // En lyckad publicering ska även göra de nya värdena tillgängliga för figurerna.
+  // Finalisering är idempotent: om omräkningen misslyckas kan ETL göra om anropet.
+  const { error: refreshError } = await db.rpc("agg_refresh_uka");
+  if (refreshError) return json({ error: "UKA aggregate refresh failed", message: refreshError.message }, 503);
   return json(data, 200);
 }
 
@@ -149,3 +153,4 @@ export async function handleUkaAbort(request: Request) {
   if (error) return json({ error: "UKA abort failed", message: error.message }, statusFor(error));
   return json(data, 200);
 }
+

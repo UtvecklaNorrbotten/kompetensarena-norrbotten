@@ -98,7 +98,9 @@ export function EducationTimeline({
                     interval={0}
                     width={75}
                     tick={{ fill: "var(--ink)", fontSize: 14 }}
-                    tickFormatter={(v) => formatUkaValue(v, unit)}
+                    tickFormatter={(v: number) =>
+                      v.toLocaleString("sv-SE", { maximumFractionDigits: 0 })
+                    }
                   />
                   <Tooltip
                     formatter={(value: number, name: string) => [formatUkaValue(value, unit), name]}
