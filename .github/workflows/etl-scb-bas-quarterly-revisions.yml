@@ -1,0 +1,40 @@
+name: 20 · Kontroll · BAS – historikrevision
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Efter AF:s 1–15-fönster och morgonjobben, före BAS månadsfönster.
+    - cron: "15 12 18 1,4,7,10 *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: etl-scb-bas
+  cancel-in-progress: false
+
+jobs:
+  revision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Testa BAS-import
+        run: python -m unittest discover -s tests -p 'test_bas_etl.py' -v
+      - name: Hämta och publicera hela BAS-historiken
+        env:
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+          BAS_RUN_BUDGET_SECONDS: "14400"
+        run: python scripts/etl_scb_bas.py --mode full
+      - name: Spara revisionsrapport
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bas-revisions-${{ github.run_number }}
+          path: artifacts/bas
+          if-no-files-found: warn
+          retention-days: 90
