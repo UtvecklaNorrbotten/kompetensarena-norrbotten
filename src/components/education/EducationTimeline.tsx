@@ -79,8 +79,10 @@ export function EducationTimeline({
       >
         {data.panels.map((panel) => (
           <section key={panel.name} aria-label={panel.name}>
-            <h4 className="mb-2 text-base font-semibold">{panel.name}</h4>
-            <div className="h-80 w-full" data-export-title={panel.name}>
+            {data.semester && (
+              <h4 className="mb-2 text-base font-semibold">{panel.name}</h4>
+            )}
+            <div className="h-80 w-full" data-export-title={data.semester ? panel.name : undefined}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={panel.rows}
