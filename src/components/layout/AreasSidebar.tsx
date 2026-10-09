@@ -48,12 +48,16 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
         - parseFloat(padding.paddingTop) - parseFloat(padding.paddingBottom)
         - contentHeight + slot.getBoundingClientRect().height);
       const titleHeight = Array.from(selectedArea.title).length * 14 + 12;
+      const textMeasure = document.createElement("canvas").getContext("2d");
+      if (textMeasure) textMeasure.font = `11px ${padding.fontFamily}`;
       const topicHeight = selectedTopic
-        ? Array.from(selectedTopic.title).length * 13 + 20
+        ? Math.ceil(textMeasure?.measureText(selectedTopic.title).width
+          ?? Array.from(selectedTopic.title).length * 7) + 12
         : 0;
       const title = available >= titleHeight;
-      const topic = title && !!selectedTopic && available >= titleHeight + topicHeight;
-      const height = Math.max(108, title ? titleHeight + (topic ? topicHeight : 0) : 0);
+      // The topic uses the same vertical space as the area, never extra row height.
+      const height = Math.max(108, title ? titleHeight : 0);
+      const topic = title && !!selectedTopic && topicHeight <= height;
       setRailLayout((previous) =>
         previous.height === height && previous.title === title && previous.topic === topic
           ? previous
@@ -199,13 +203,13 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
                   style={mobile ? undefined : { minHeight: railLayout.height }}
                 >
                   {!mobile && !expanded && railLayout.title && (
-                    <div className="absolute left-2 top-0 flex w-5 flex-col items-center pt-1.5">
+                    <div className="absolute left-2 top-0 flex w-[39px] items-start gap-1 pt-1.5">
                       <AppLink
                         href={areaPath(area.slug)}
                         onClick={blurOnClick}
                         aria-label={area.title}
                         title={area.title}
-                        className="flex flex-col items-center text-[13px] font-semibold leading-[14px] text-brand-dark"
+                        className="flex w-5 shrink-0 flex-col items-center text-[13px] font-semibold leading-[14px] text-brand-dark"
                       >
                         <span aria-hidden="true" className="flex flex-col items-center">
                           {Array.from(area.title).map((letter, index) => (
@@ -221,12 +225,14 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
                           onClick={blurOnClick}
                           aria-label={selectedTopic.title}
                           title={selectedTopic.title}
-                          className="mt-2 flex flex-col items-center border-t border-border pt-2 text-[11px] leading-[13px] text-ink-muted"
+                          className="flex w-[15px] shrink-0 flex-col items-center border-l border-border pl-1 text-[11px] leading-[13px] text-ink-muted"
                         >
-                          <span aria-hidden="true" className="flex flex-col items-center">
-                            {Array.from(selectedTopic.title).map((letter, index) => (
-                              <span key={index} className="h-[13px]">{letter === " " ? "\u00a0" : letter}</span>
-                            ))}
+                          <span
+                            aria-hidden="true"
+                            className="whitespace-nowrap"
+                            style={{ writingMode: "vertical-rl" }}
+                          >
+                            {selectedTopic.title}
                           </span>
                         </TopicLink>
                       )}
