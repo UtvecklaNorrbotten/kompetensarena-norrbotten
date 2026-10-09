@@ -115,6 +115,14 @@
   --chart-3: #f5c55c;
   --chart-4: #5a5f57;
   --chart-5: #b7d9a0;
+  --chart-total: #a8ada4;
+}
+
+/* Diagramytor ska inte få en ram vid klick; knappar och filter behåller sitt fokus. */
+.recharts-surface:focus,
+.recharts-wrapper:focus,
+.recharts-layer:focus {
+  outline: none;
 }
 
 @layer base {

@@ -1,4 +1,5 @@
 import { educationAxis } from "@/lib/education-axis";
+import { educationGenderColor } from "@/lib/education-colors";
 import { useId, useState } from "react";
 import {
   CartesianGrid,
@@ -11,7 +12,7 @@ import {
 } from "recharts";
 import { formatUkaValue, ukaComparisonTimeline, type UkaRow } from "@/lib/uka-view";
 
-const colors = ["var(--chart-1)", "var(--chart-4)", "var(--chart-3)"];
+const programDashes = [undefined, "7 4", "2 4"];
 export function EducationTimeline({
   rows,
   unit,
@@ -38,7 +39,7 @@ export function EducationTimeline({
   return (
     <>
       <div className="mb-4 flex flex-wrap gap-2" aria-label="Visa eller dölj serier">
-        {data.series.map((s, i) => (
+        {data.series.map((s) => (
           <button
             key={s.key}
             type="button"
@@ -54,18 +55,13 @@ export function EducationTimeline({
               aria-hidden
               style={{
                 borderTopWidth: 3,
-                borderTopStyle:
-                  s.gender === "Män"
+                borderTopStyle: programs.length
+                  ? (["solid", "dashed", "dotted"][programs.indexOf(s.category)] as
+                      "solid" | "dashed" | "dotted")
+                  : s.gender === "Män"
                     ? "dashed"
-                    : s.gender === "Total" && programs.length
-                      ? "dotted"
-                      : "solid",
-                borderTopColor:
-                  colors[
-                    programs.length
-                      ? programs.indexOf(s.category) % colors.length
-                      : i % colors.length
-                  ],
+                    : "solid",
+                borderTopColor: educationGenderColor(s.gender),
               }}
               className="mr-2 inline-block w-5 align-middle"
             />
@@ -79,9 +75,7 @@ export function EducationTimeline({
       >
         {data.panels.map((panel) => (
           <section key={panel.name} aria-label={panel.name}>
-            {data.semester && (
-              <h4 className="mb-2 text-base font-semibold">{panel.name}</h4>
-            )}
+            {data.semester && <h4 className="mb-2 text-base font-semibold">{panel.name}</h4>}
             <div className="h-80 w-full" data-export-title={data.semester ? panel.name : undefined}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
@@ -143,25 +137,19 @@ export function EducationTimeline({
                     }}
                     itemStyle={{ whiteSpace: "normal" }}
                   />
-                  {data.series.map((s, i) => (
+                  {data.series.map((s) => (
                     <Line
                       key={s.key}
                       dataKey={s.key}
                       name={s.label}
                       hide={hidden.includes(s.key)}
-                      stroke={
-                        colors[
-                          programs.length
-                            ? programs.indexOf(s.category) % colors.length
-                            : i % colors.length
-                        ]
-                      }
+                      stroke={educationGenderColor(s.gender)}
                       strokeWidth={3}
                       strokeDasharray={
-                        s.gender === "Män"
-                          ? "7 4"
-                          : s.gender === "Total" && programs.length
-                            ? "2 4"
+                        programs.length
+                          ? programDashes[programs.indexOf(s.category)]
+                          : s.gender === "Män"
+                            ? "7 4"
                             : undefined
                       }
                       dot={{ r: 3 }}

@@ -1,4 +1,12 @@
 import { EducationTimeline } from "./EducationTimeline";
+import { educationGenderColor } from "@/lib/education-colors";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Download } from "lucide-react";
 import {
   educationCsv,
@@ -17,6 +25,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  type TooltipProps,
 } from "recharts";
 import { ExplainedTerm } from "@/components/ui/ExplainedTerm";
 import { Switch } from "@/components/ui/switch";
@@ -33,20 +42,61 @@ import {
   type UkaRow,
 } from "@/lib/uka-view";
 
-const colors = ["var(--chart-1)", "var(--chart-4)", "var(--chart-3)"];
+function HistoryTooltip({
+  active,
+  payload,
+  unit,
+}: TooltipProps<number, string> & { unit: string }) {
+  if (!active || !payload?.length) return null;
+  const row = payload[0]?.payload;
+  return (
+    <div className="max-w-72 rounded-lg border border-border bg-surface p-3 text-sm text-ink shadow-md">
+      <p className="font-semibold">{row.group}</p>
+      <p className="mt-1 text-ink-muted">
+        {/^(\d{4})$/.test(String(row.period)) ? "År" : "Period"}: {periodLabel(String(row.period))}
+      </p>
+      {payload.map((item) => (
+        <p key={String(item.dataKey)} className="mt-2 flex items-center gap-2">
+          <span
+            aria-hidden
+            className="inline-block size-3 rounded-sm"
+            style={{ background: item.color }}
+          />
+          {item.name}: {format(item.value, unit)}
+        </p>
+      ))}
+      <p className="mt-3 font-medium text-brand-dark">Klicka för att se historik</p>
+    </div>
+  );
+}
 
 function CategoryTick({
   x = 0,
   y = 0,
   payload,
+  onSelect,
 }: {
   x?: number;
   y?: number;
   payload?: { value?: string };
+  onSelect?: (group: string) => void;
 }) {
   const lines = wrapChartLabel(String(payload?.value ?? ""), 26);
   return (
-    <g transform={`translate(${x},${y})`}>
+    <g
+      transform={`translate(${x},${y})`}
+      role="button"
+      tabIndex={0}
+      aria-label={`${payload?.value ?? "Grupp"}: klicka för att se historik`}
+      style={{ cursor: "pointer" }}
+      onClick={() => onSelect?.(String(payload?.value ?? ""))}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onSelect?.(String(payload?.value ?? ""));
+        }
+      }}
+    >
       <text textAnchor="end" fontSize={13} fontWeight={400} fill="var(--ink)">
         {lines.map((line, i) => (
           <tspan key={i} x={-10} dy={i === 0 ? 4 - (lines.length - 1) * 9 : 18}>
@@ -78,6 +128,10 @@ export function EducationFigure({
   const [showAll, setShowAll] = useState(false);
   const [detailYear, setDetailYear] = useState("");
   const [detailTerm, setDetailTerm] = useState("all");
+  const [historySelection, setHistorySelection] = useState<{
+    category: string;
+    context: string;
+  } | null>(null);
   const switchId = useId();
   const chartRef = useRef<HTMLDivElement>(null);
   const [saving, setSaving] = useState(false);
@@ -88,6 +142,18 @@ export function EducationFigure({
   );
   const overview = useMemo(() => selectUkaRows(source, filters), [source, filters]);
   const selected = detail ? selectUkaRows(source, filters, true) : overview;
+  const historyContext = JSON.stringify([
+    indicator.id,
+    university,
+    selected.breakdown,
+    filters.dimensions,
+  ]);
+  const historyCategory =
+    historySelection?.context === historyContext ? historySelection.category : null;
+  const historyRows = selected.rows.filter((row) => row.category === historyCategory);
+  function openHistory(category: string) {
+    setHistorySelection({ category, context: historyContext });
+  }
   const series = ukaGenderSeries(selected.rows);
   const genderRows = selected.rows.filter((r) => series.includes(r.gender));
   const detailSelection = ukaDetailPeriods(selected.rows, detailYear, detailTerm);
@@ -101,10 +167,15 @@ export function EducationFigure({
   for (const r of detailSelection.rows) {
     if (!series.includes(r.gender)) continue;
     const group = r.category.replaceAll("|", " · ") || "Samtliga";
-    const label = `${group} · ${periodLabel(r.period)}`;
-    const existing = barRows.get(label) ?? { category: label, group, period: r.period };
+    const key = `${r.category}|${r.period}`;
+    const existing = barRows.get(key) ?? {
+      category: group,
+      group,
+      rawCategory: r.category,
+      period: r.period,
+    };
     existing[r.gender] = r.value;
-    barRows.set(label, existing);
+    barRows.set(key, existing);
   }
   const groupNames = [...new Set([...barRows.values()].map((r) => String(r["group"])))].sort(
     (a, b) => a.localeCompare(b, "sv"),
@@ -148,7 +219,7 @@ export function EducationFigure({
       .map((key) => dimensionLabels[key] ?? key)
       .filter(Boolean)
       .join(" / ") || "Grupp"
-  } och period`;
+  }`;
   const domain: [number, number | "auto"] = indicator.unit === "%" ? [0, 100] : [0, "auto"];
 
   const tableRows = comparison ? comparisonRows : detail ? detailSelection.rows : selected.rows;
@@ -182,12 +253,12 @@ export function EducationFigure({
           : []),
         ...(comparison
           ? [
-              ...activePrograms.map((p, i) => `${["Grön", "Grå", "Gul"][i]}: ${p}.`),
-              "Kvinnor: heldragen; män: streckad; samtliga: prickad.",
+              ...activePrograms.map((p, i) => `${["Heldragen", "Streckad", "Prickad"][i]}: ${p}.`),
+              "Grön: kvinnor. Gul/orange: män. Ljusgrå: samtliga.",
             ]
           : useGenders
             ? [
-                `Grön: Kvinnor. Grå: Män (streckad linje i översikt).${series.includes("Total") ? " Gul: Samtliga." : ""}`,
+                `Grön: Kvinnor. Gul/orange: Män (streckad linje i översikt).${series.includes("Total") ? " Ljusgrå: Samtliga." : ""}`,
               ]
             : []),
         `Enhet: ${indicator.unit}. ${detail && !comparison ? `Period: ${periodText}. ${!showAll && groupNames.length > 12 ? "De första 12 grupperna visas." : "Alla grupper visas."}` : "Samtliga tillgängliga perioder visas."}`,
@@ -399,6 +470,7 @@ export function EducationFigure({
                       accessibilityLayer
                       data={bars}
                       layout="vertical"
+                      style={{ cursor: "pointer" }}
                       margin={{ left: 16, right: 32, top: 16, bottom: 16 }}
                     >
                       <CartesianGrid stroke="var(--border)" horizontal={false} />
@@ -418,6 +490,7 @@ export function EducationFigure({
                       <YAxis
                         type="category"
                         dataKey="category"
+                        allowDuplicatedCategory
                         width={270}
                         label={{
                           value: groupAxisLabel,
@@ -428,12 +501,21 @@ export function EducationFigure({
                           fontSize: 14,
                           style: { textAnchor: "middle" },
                         }}
-                        tick={<CategoryTick />}
+                        tick={
+                          <CategoryTick
+                            onSelect={(group) => {
+                              const row = selected.rows.find(
+                                (r) => (r.category.replaceAll("|", " · ") || "Samtliga") === group,
+                              );
+                              if (row) openHistory(row.category);
+                            }}
+                          />
+                        }
                         interval={0}
                       />
                       <Tooltip
                         isAnimationActive={false}
-                        formatter={(value: number) => format(value, indicator.unit)}
+                        content={<HistoryTooltip unit={indicator.unit} />}
                         contentStyle={{
                           background: "var(--surface)",
                           maxWidth: 280,
@@ -452,13 +534,17 @@ export function EducationFigure({
                         }}
                         wrapperStyle={{ cursor: "pointer" }}
                       />
-                      {series.map((gender, i) => (
+                      {series.map((gender) => (
                         <Bar
                           key={gender}
                           name={gender === "Total" ? "Samtliga" : gender}
                           dataKey={gender}
+                          onClick={(data) => {
+                            const category = data.payload?.rawCategory;
+                            if (typeof category === "string") openHistory(category);
+                          }}
                           hide={hiddenGenders.includes(gender)}
-                          fill={colors[i] ?? colors[0]}
+                          fill={educationGenderColor(gender)}
                           isAnimationActive={false}
                           radius={[0, 3, 3, 0]}
                         />
@@ -553,6 +639,35 @@ export function EducationFigure({
           </div>
         </figure>
       )}
+      <Sheet
+        open={historyCategory !== null && historyRows.length > 0}
+        onOpenChange={(open) => {
+          if (!open) setHistorySelection(null);
+        }}
+      >
+        <SheetContent
+          side="right"
+          className="overflow-y-auto"
+          style={{ width: "min(100vw, 760px)", maxWidth: "none" }}
+        >
+          <SheetHeader className="pr-8 text-left">
+            <SheetTitle>
+              Historik – {historyCategory?.replaceAll("|", " · ") || "Samtliga"}
+            </SheetTitle>
+            <SheetDescription>
+              {indicator.title} · {university}
+            </SheetDescription>
+          </SheetHeader>
+          <div className="mt-6">
+            <EducationTimeline
+              key={`${historyContext}|${historyCategory}`}
+              rows={historyRows}
+              unit={indicator.unit}
+              valueAxisLabel={valueAxisLabel}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
       <div className="mt-5 flex flex-wrap justify-between gap-2 border-t border-border pt-3 text-sm text-ink-muted">
         <a
           href={`https://statistik-www.uka.se/export/?indicator=${indicator.ukaId}`}
