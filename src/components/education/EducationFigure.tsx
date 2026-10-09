@@ -488,12 +488,6 @@ export function EducationFigure({
               />
             </div>
           )}
-          <figcaption className="mt-3 text-sm text-ink-muted">
-            Enhet: {indicator.unit}.{" "}
-            {detail && !comparison
-              ? "Varje termin visas separat. Terminerna summeras inte och saknade värden är inte noll."
-              : "Varje punkt motsvarar en publicerad period. Saknade värden visas som luckor."}
-          </figcaption>
           <div className="relative mt-5 border-t border-border pt-3">
             <button
               type="button"
