@@ -12,6 +12,7 @@ import {
   wrapChartLabel,
 } from "@/lib/education-export";
 import { useId, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import {
   Bar,
   BarChart,
@@ -583,7 +584,18 @@ export function EducationFigure({
                   <span aria-hidden className="h-px flex-1 bg-border" />
                   <button
                     type="button"
-                    onClick={() => setShowAll(!showAll)}
+                    onClick={(event) => {
+                      if (!showAll) {
+                        setShowAll(true);
+                        return;
+                      }
+                      // Behåll knappens läge i vyn när den långa listan krymper.
+                      const button = event.currentTarget;
+                      const topBefore = button.getBoundingClientRect().top;
+                      flushSync(() => setShowAll(false));
+                      const delta = button.getBoundingClientRect().top - topBefore;
+                      window.scrollBy({ top: delta, behavior: "instant" });
+                    }}
                     className="shrink-0 px-2 py-1 text-sm font-medium text-brand-dark hover:underline"
                   >
                     {showAll ? "Visa topp 5" : `Visa alla ${groupNames.length} grupper`}
