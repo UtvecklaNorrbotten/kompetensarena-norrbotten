@@ -12,6 +12,8 @@ oförändrade vid namnändringen.
 | 10 · Data · E3 – kommuner | [etl-e3-municipal.yml](../.github/workflows/etl-e3-municipal.yml) | Hämta eller återuppta kommunimporten och publicera först när den är komplett. | Dagligen omkring 05:30 svensk tid; även push till main som ändrar importskriptet eller workflow-filen. |
 | 20 · Kontroll · AF – historikrevision | [etl-af-quarterly-revisions.yml](../.github/workflows/etl-af-quarterly-revisions.yml) | Kontrollera historiska revisioner; manuell baseline vid behov. | Den 16 januari, april, juli och oktober, 05:15 UTC. |
 | 90 · Test · E3 – kommunimport | [validate-e3-municipal.yml](../.github/workflows/validate-e3-municipal.yml) | Testa R, databasens återstart/behörigheter och aggregat samt ett faktiskt SCB-prov. | Pull requests som berör de angivna filerna; även manuellt. |
+| 90 · Test · Skatteverket AGI – klient | [validate-skatteverket-agi.yml](../.github/workflows/validate-skatteverket-agi.yml) | Syntetiska regressionsexempel för paginering, filtrering och tidsstatus. | Relevanta pull requests och push till main; även manuellt. |
+| 90 · Test · Skatteverket AGI – datakälla | [probe-skatteverket-agi.yml](../.github/workflows/probe-skatteverket-agi.yml) | Inventera öppna data och prova Norrbotten, kommuner, bransch och storlek utan databasåtkomst. | Relevanta push till main; även manuellt. Ingen tidsstyrd körning. |
 
 Alla workflows kan startas manuellt. GitHub Actions scheman kan fördröjas.
 UTC-tider utan lokal tidskontroll flyttas en timme i svensk klocktid vid
@@ -41,3 +43,9 @@ checksumma. Om SCB-versionen har ändrats byggs en ny import; versioner blandas
 inte. Tidigare publicerade data påverkas inte av en pausad import.
 
 Detaljer finns i [E3-dokumentationen](e3-etl.md).
+
+## Skatteverket AGI – tekniskt prov
+
+Grönt datakälleprov betyder att hämtning och validering fungerade. Det betyder
+inte att senaste månad är komplett eller att data beskriver arbetsställenas
+lokala arbetsmarknad. [Kartläggning och begränsningar](skatteverket-agi.md).

@@ -1,0 +1,57 @@
+name: 90 · Test · Skatteverket AGI – datakälla
+
+on:
+  workflow_dispatch:
+    inputs:
+      period:
+        description: 'Kandidatmånad YYYYMM (tomt = två månader bakåt; ingen fullständighetsgaranti)'
+        required: false
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - scripts/probe_skatteverket_agi.py
+      - .github/workflows/probe-skatteverket-agi.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: skatteverket-agi-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validera klienten
+        run: python -m unittest discover -s tests -p test_agi_probe.py -v
+      - name: Inventera och testa öppna data (ingen publicering)
+        env:
+          PROBE_PERIOD: ${{ inputs.period }}
+        run: |
+          if [ -n "$PROBE_PERIOD" ]; then
+            python scripts/probe_skatteverket_agi.py --period "$PROBE_PERIOD"
+          else
+            python scripts/probe_skatteverket_agi.py
+          fi
+      - name: Sammanfattning
+        if: always()
+        run: |
+          if [ -f artifacts/agi-probe/summary.md ]; then
+            cat artifacts/agi-probe/summary.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Prov misslyckades. Se loggen och eventuella delresultat i artefakten.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: skatteverket-agi-probe-${{ github.run_id }}
+          path: artifacts/agi-probe/
+          retention-days: 30
+          if-no-files-found: warn
