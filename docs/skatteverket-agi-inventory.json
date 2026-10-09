@@ -1,0 +1,1400 @@
+{
+  "rows": 1451534,
+  "group_values": {
+    "Antal anställda": [
+      "0 st",
+      "1 - 4 st",
+      "10 - 19 st",
+      "20 - 49 st",
+      "250 - 499 st",
+      "5 - 9 st",
+      "50 - 249 st",
+      "500 - 999 st",
+      ">= 1000 st",
+      "Summering av ej redovisade rader"
+    ],
+    "Bransch": [
+      "Andra konsumenttjänster (96) - SNI 2007",
+      "Anläggningsarbeten (42) - SNI 2007",
+      "Anläggningsarbeten (42) - SNI 2025",
+      "Annan tillverkning (32) - SNI 2007",
+      "Annan tillverkning (32) - SNI 2025",
+      "Annan utvinning av mineral (08) - SNI 2007",
+      "Annan utvinning av mineral (08) - SNI 2025",
+      "Annan verksamhet inom juridik, ekonomi, vetenskap och teknik (74) - SNI 2007",
+      "Annan verksamhet inom juridik, ekonomi, vetenskap och teknik (74) - SNI 2025",
+      "Arbetsförmedling, bemanning och andra personalrelaterade tjänster (78) - SNI 2007",
+      "Arbetsförmedling, bemanning och annan personalrelaterad verksamhet (78) - SNI 2025",
+      "Arkitekt- och teknisk konsultverksamhet; teknisk provning och analys (71) - SNI 2007",
+      "Arkitekt- och teknisk konsultverksamhet; teknisk provning och analys (71) - SNI 2025",
+      "Avfallshantering; återvinning (38) - SNI 2007",
+      "Avloppsrening (37) - SNI 2007",
+      "Avloppsrening (37) - SNI 2025",
+      "Biblioteks-, arkiv- och museiverksamhet m.m. (91) - SNI 2007",
+      "Biblioteks-, arkiv- och museiverksamhet m.m. (91) - SNI 2025",
+      "Byggande av bostadshus och andra byggnader (41) - SNI 2025",
+      "Byggande av hus (41) - SNI 2007",
+      "Datainfrastruktur, databehandling, hosting och annan informationsverksamhet (63) - SNI 2025",
+      "Dataprogrammering, datakonsultverksamhet o.d. (62) - SNI 2007",
+      "Dataprogrammering, datakonsultverksamhet o.d. (62) - SNI 2025",
+      "Detaljhandel (47) - SNI 2025",
+      "Detaljhandel utom med motorfordon och motorcyklar (47) - SNI 2007",
+      "El-, gas- och ångförsörjning samt luftkonditionering (35) - SNI 2025",
+      "Fastighetsrelaterad stödverksamhet samt skötsel och underhåll av grönytor (81) - SNI 2025",
+      "Fastighetsservice samt skötsel och underhåll av grönytor (81) - SNI 2007",
+      "Fastighetsverksamhet (68) - SNI 2007",
+      "Fastighetsverksamhet (68) - SNI 2025",
+      "Film-, video- och tv-programverksamhet, ljudinspelning och musikutgivning (59) - SNI 2025",
+      "Film-, video- och tv-programverksamhet, ljudinspelningar och fonogramutgivning (59) - SNI 2007",
+      "Finansiell verksamhet utom försäkrings- och pensionsfondsverksamhet (64) - SNI 2025",
+      "Finansiella tjänster utom försäkring och pensionsfondsverksamhet (64) - SNI 2007",
+      "Fiske och vattenbruk (03) - SNI 2007",
+      "Fiske och vattenbruk (03) - SNI 2025",
+      "Framställning av drycker (11) - SNI 2007",
+      "Framställning av drycker (11) - SNI 2025",
+      "Förlagsverksamhet (58) - SNI 2007",
+      "Förlagsverksamhet (58) - SNI 2025",
+      "Försäkring, återförsäkring och pensionsfondsverksamhet utom obligatorisk socialförsäkring (65) - SNI 2007",
+      "Försäkrings-, återförsäkrings- och pensionsfondsverksamhet utom obligatorisk socialförsäkring (65) - SNI 2025",
+      "Försörjning av el, gas, värme och kyla (35) - SNI 2007",
+      "Förvärvsarbete i hushåll (97) - SNI 2007",
+      "Grafisk produktion och reproduktion av inspelningar (18) - SNI 2007",
+      "Grafisk produktion och reproduktion av inspelningar (18) - SNI 2025",
+      "Handel samt reparation av motorfordon och motorcyklar (45) - SNI 2007",
+      "Hotell- och logiverksamhet (55) - SNI 2007",
+      "Hotell- och logiverksamhet (55) - SNI 2025",
+      "Hälso- och sjukvård (86) - SNI 2007",
+      "Hälso- och sjukvård (86) - SNI 2025",
+      "Informationstjänster (63) - SNI 2007",
+      "Insamling av avfall, återvinning och bortskaffande (38) - SNI 2025",
+      "Intressebevakning; religiös verksamhet (94) - SNI 2007",
+      "Intressebevakning; religiös verksamhet (94) - SNI 2025",
+      "Jordbruk och jakt samt service i anslutning härtill (01) - SNI 2007",
+      "Jordbruk och jakt samt stödverksamhet i anslutning härtill (01) - SNI 2025",
+      "Juridisk och ekonomisk konsultverksamhet (69) - SNI 2007",
+      "Juridisk och ekonomisk konsultverksamhet (69) - SNI 2025",
+      "Konstnärlig och kulturell verksamhet samt underhållningsverksamhet (90) - SNI 2007",
+      "Konstnärligt skapande och scenkonst (90) - SNI 2025",
+      "Konsumenttjänster (96) - SNI 2025",
+      "Kontorstjänster och andra företagstjänster (82) - SNI 2007",
+      "Kontorstjänster och annan stödverksamhet till företag (82) - SNI 2025",
+      "Landtransport; transport i rörsystem (49) - SNI 2007",
+      "Landtransport; transport i rörsystem (49) - SNI 2025",
+      "Livsmedelsframställning (10) - SNI 2007",
+      "Livsmedelsframställning (10) - SNI 2025",
+      "Lufttransport (51) - SNI 2007",
+      "Lufttransport (51) - SNI 2025",
+      "Magasinering och stödtjänster till transport (52) - SNI 2007",
+      "Magasinering, varulagring och stödverksamhet avseende transport (52) - SNI 2025",
+      "Offentlig förvaltning och försvar;  obligatorisk socialförsäkring (84) - SNI 2007",
+      "Offentlig förvaltning och försvar; obligatorisk socialförsäkring (84) - SNI 2025",
+      "Pappers- och pappersvarutillverkning (17) - SNI 2007",
+      "Pappers- och pappersvarutillverkning (17) - SNI 2025",
+      "Parti- och provisionshandel (46) - SNI 2025",
+      "Parti- och provisionshandel utom med motorfordon (46) - SNI 2007",
+      "Planering och sändning av program (60) - SNI 2007",
+      "Planering, radio- och tv-sändning, nyhetsbyråer och annan distribution av medieinnehåll (60) - SNI 2025",
+      "Post- och kurirverksamhet (53) - SNI 2007",
+      "Post- och kurirverksamhet (53) - SNI 2025",
+      "Reklam och marknadsundersökning (73) - SNI 2007",
+      "Reklamverksamhet, marknadsundersökningar och PR (73) - SNI 2025",
+      "Reparation av datorer, hushållsartiklar och personliga artiklar (95) - SNI 2007",
+      "Reparation och installation av maskiner och apparater (33) - SNI 2007",
+      "Reparation och underhåll av datorer, hushållsartiklar och varor för personligt bruk samt motorfordon och motorcyklar (95) - SNI 2025",
+      "Reparation, underhåll och installation av maskiner och utrustning (33) - SNI 2025",
+      "Resebyrå- och researrangörsverksamhet och andra resetjänster och relaterade tjänster (79) - SNI 2007",
+      "Resebyrå- och researrangörsverksamhet samt annan boknings- och reserelaterad verksamhet (79) - SNI 2025",
+      "Restaurang-, catering- och barverksamhet (56) - SNI 2007",
+      "Restaurang-, catering- och barverksamhet (56) - SNI 2025",
+      "Sanering, efterbehandling av jord och vatten samt annan verksamhet för föroreningsbekämpning (39) - SNI 2007",
+      "Sanering, efterbehandling av jord och vatten samt annan verksamhet för föroreningsbekämpning (39) - SNI 2025",
+      "Service till utvinning (09) - SNI 2007",
+      "Sjötransport (50) - SNI 2007",
+      "Sjötransport (50) - SNI 2025",
+      "Skogsbruk (02) - SNI 2007",
+      "Skogsbruk (02) - SNI 2025",
+      "Specialiserad bygg- och anläggningsverksamhet (43) - SNI 2007",
+      "Specialiserad bygg- och anläggningsverksamhet (43) - SNI 2025",
+      "Spel- och vadhållningsverksamhet (92) - SNI 2007",
+      "Spel- och vadhållningsverksamhet (92) - SNI 2025",
+      "Sport-, fritids- och nöjesverksamhet (93) - SNI 2007",
+      "Sport-, fritids- och nöjesverksamhet (93) - SNI 2025",
+      "Stål- och metallframställning (24) - SNI 2007",
+      "Stål- och metallframställning (24) - SNI 2025",
+      "Stödtjänster till finansiella tjänster och försäkring (66) - SNI 2007",
+      "Stödverksamhet avseende finansiella tjänster och försäkringsverksamhet (66) - SNI 2025",
+      "Stödverksamhet avseende utvinning (09) - SNI 2025",
+      "Summering av ej redovisade rader",
+      "Säkerhets- och bevakningsverksamhet (80) - SNI 2007",
+      "Säkerhets- och bevakningsverksamhet (80) - SNI 2025",
+      "Telekommunikation (61) - SNI 2007",
+      "Telekommunikation (61) - SNI 2025",
+      "Textilvarutillverkning (13) - SNI 2007",
+      "Textilvarutillverkning (13) - SNI 2025",
+      "Tillverkning av andra icke-metalliska mineraliska produkter (23) - SNI 2007",
+      "Tillverkning av andra icke-metalliska mineraliska produkter (23) - SNI 2025",
+      "Tillverkning av andra transportmedel (30) - SNI 2007",
+      "Tillverkning av andra transportmedel (30) - SNI 2025",
+      "Tillverkning av datorer, elektronikvaror och optik (26) - SNI 2007",
+      "Tillverkning av datorer, elektronikvaror och optik (26) - SNI 2025",
+      "Tillverkning av elapparatur (27) - SNI 2007",
+      "Tillverkning av elapparatur (27) - SNI 2025",
+      "Tillverkning av farmaceutiska basprodukter och läkemedel (21) - SNI 2007",
+      "Tillverkning av gummi- och plastvaror (22) - SNI 2007",
+      "Tillverkning av gummi- och plastvaror (22) - SNI 2025",
+      "Tillverkning av kemikalier och kemiska produkter (20) - SNI 2007",
+      "Tillverkning av kemikalier och kemiska produkter (20) - SNI 2025",
+      "Tillverkning av kläder (14) - SNI 2007",
+      "Tillverkning av kläder (14) - SNI 2025",
+      "Tillverkning av läder, läder- och skinnvaror m.m. (15) - SNI 2007",
+      "Tillverkning av läder- och skinnvaror och liknande varor av andra material (15) - SNI 2025",
+      "Tillverkning av metallvaror utom maskiner och apparater (25) - SNI 2007",
+      "Tillverkning av metallvaror utom maskiner och apparater (25) - SNI 2025",
+      "Tillverkning av motorfordon, släpfordon och påhängsvagnar (29) - SNI 2007",
+      "Tillverkning av motorfordon, släpfordon och påhängsvagnar (29) - SNI 2025",
+      "Tillverkning av möbler (31) - SNI 2007",
+      "Tillverkning av möbler (31) - SNI 2025",
+      "Tillverkning av stenkolsprodukter och raffinerade petroleumprodukter (19) - SNI 2007",
+      "Tillverkning av trä och varor av trä och kork, utom möbler: tillverkning av varor av halm, rotting o.d. (16) - SNI 2025",
+      "Tillverkning av trä och varor av trä, kork, rotting o.d. utom möbler (16) - SNI 2007",
+      "Tillverkning av övriga maskiner (28) - SNI 2007",
+      "Tillverkning av övriga maskiner (28) - SNI 2025",
+      "Tobaksvarutillverkning (12) - SNI 2007",
+      "Tobaksvarutillverkning (12) - SNI 2025",
+      "Utbildning (85) - SNI 2007",
+      "Utbildning (85) - SNI 2025",
+      "Uthyrning och leasing (77) - SNI 2007",
+      "Uthyrning och leasing (77) - SNI 2025",
+      "Utvinning av metallmalmer (07) - SNI 2007",
+      "Utvinning av metallmalmer (07) - SNI 2025",
+      "Vattenförsörjning (36) - SNI 2007",
+      "Vattenförsörjning (36) - SNI 2025",
+      "Verksamhet vid internationella organisationer, utländska ambassader o.d. (99) - SNI 2007",
+      "Verksamheter som utövas av huvudkontor samt konsultverksamhet avseende företag (70) - SNI 2025",
+      "Verksamheter som utövas av huvudkontor; konsulttjänster till företag (70) - SNI 2007",
+      "Vetenskaplig forskning och utveckling (72) - SNI 2007",
+      "Vetenskaplig forskning och utveckling (72) - SNI 2025",
+      "Veterinärverksamhet (75) - SNI 2007",
+      "Veterinärverksamhet (75) - SNI 2025",
+      "Vård och omsorg med boende (87) - SNI 2007",
+      "Vård och omsorg med boende (87) - SNI 2025",
+      "Öppna sociala insatser (88) - SNI 2007",
+      "Öppna sociala insatser (88) - SNI 2025"
+    ],
+    "Inkomstnivå": [
+      "0 kr",
+      "1 kr - 100 tkr",
+      "100 - 200 tkr",
+      "200 - 300 tkr",
+      "300 - 400 tkr",
+      "400 - 500 tkr",
+      "500 - 600 tkr",
+      "500 tkr - 1 mnkr",
+      "600 - 700 tkr",
+      "700 - 800 tkr",
+      "800 - 900 tkr",
+      "900 - 1 mnkr",
+      ">= 1 mnkr",
+      "Summering av ej redovisade rader"
+    ],
+    "Juridisk form gruppering": [
+      "Aktiebolag",
+      "Ekonomiska föreningar m.fl.",
+      "Enskilda näringsidkare",
+      "Handelsbolag",
+      "Ideella föreningar m.fl.",
+      "Kommunalförbund",
+      "Kommuner",
+      "Regioner",
+      "Statliga myndigheter",
+      "Stiftelser",
+      "Summering av ej redovisade rader",
+      "Övriga juridiska former"
+    ],
+    "Kommun": [
+      "ALE",
+      "ALINGSÅS",
+      "ALVESTA",
+      "ANEBY",
+      "ARBOGA",
+      "ARJEPLOG",
+      "ARVIDSJAUR",
+      "ARVIKA",
+      "ASKERSUND",
+      "AVESTA",
+      "BENGTSFORS",
+      "BERG",
+      "BJURHOLM",
+      "BJUV",
+      "BODEN",
+      "BOLLEBYGD",
+      "BOLLNÄS",
+      "BORGHOLM",
+      "BORLÄNGE",
+      "BORÅS",
+      "BOTKYRKA",
+      "BOXHOLM",
+      "BROMÖLLA",
+      "BRÄCKE",
+      "BURLÖV",
+      "BÅSTAD",
+      "DALS-ED",
+      "DANDERYD",
+      "DEGERFORS",
+      "DOROTEA",
+      "EDA",
+      "EKERÖ",
+      "EKSJÖ",
+      "EMMABODA",
+      "ENKÖPING",
+      "ESKILSTUNA",
+      "ESLÖV",
+      "ESSUNGA",
+      "FAGERSTA",
+      "FALKENBERG",
+      "FALKÖPING",
+      "FALUN",
+      "FILIPSTAD",
+      "FINSPÅNG",
+      "FLEN",
+      "FORSHAGA",
+      "FÄRGELANDA",
+      "GAGNEF",
+      "GISLAVED",
+      "GNESTA",
+      "GNOSJÖ",
+      "GOTLAND",
+      "GRUMS",
+      "GRÄSTORP",
+      "GULLSPÅNG",
+      "GÄLLIVARE",
+      "GÄVLE",
+      "GÖTEBORG",
+      "GÖTENE",
+      "HABO",
+      "HAGFORS",
+      "HALLSBERG",
+      "HALLSTAHAMMAR",
+      "HALMSTAD",
+      "HAMMARÖ",
+      "HANINGE",
+      "HAPARANDA",
+      "HEBY",
+      "HEDEMORA",
+      "HELSINGBORG",
+      "HERRLJUNGA",
+      "HJO",
+      "HOFORS",
+      "HUDDINGE",
+      "HUDIKSVALL",
+      "HULTSFRED",
+      "HYLTE",
+      "HÄLLEFORS",
+      "HÄRJEDALEN",
+      "HÄRNÖSAND",
+      "HÄRRYDA",
+      "HÄSSLEHOLM",
+      "HÅBO",
+      "HÖGANÄS",
+      "HÖGSBY",
+      "HÖRBY",
+      "HÖÖR",
+      "JOKKMOKK",
+      "JÄRFÄLLA",
+      "JÖNKÖPING",
+      "KALIX",
+      "KALMAR",
+      "KARLSBORG",
+      "KARLSHAMN",
+      "KARLSKOGA",
+      "KARLSKRONA",
+      "KARLSTAD",
+      "KATRINEHOLM",
+      "KIL",
+      "KINDA",
+      "KIRUNA",
+      "KLIPPAN",
+      "KNIVSTA",
+      "KRAMFORS",
+      "KRISTIANSTAD",
+      "KRISTINEHAMN",
+      "KROKOM",
+      "KUMLA",
+      "KUNGSBACKA",
+      "KUNGSÖR",
+      "KUNGÄLV",
+      "KÄVLINGE",
+      "KÖPING",
+      "LAHOLM",
+      "LANDSKRONA",
+      "LAXÅ",
+      "LEKEBERG",
+      "LEKSAND",
+      "LERUM",
+      "LESSEBO",
+      "LIDINGÖ",
+      "LIDKÖPING",
+      "LILLA EDET",
+      "LINDESBERG",
+      "LINKÖPING",
+      "LJUNGBY",
+      "LJUSDAL",
+      "LJUSNARSBERG",
+      "LOMMA",
+      "LUDVIKA",
+      "LULEÅ",
+      "LUND",
+      "LYCKSELE",
+      "LYSEKIL",
+      "MALMÖ",
+      "MALUNG-SÄLEN",
+      "MALÅ",
+      "MARIESTAD",
+      "MARK",
+      "MARKARYD",
+      "MELLERUD",
+      "MJÖLBY",
+      "MORA",
+      "MOTALA",
+      "MULLSJÖ",
+      "MUNKEDAL",
+      "MUNKFORS",
+      "MÖLNDAL",
+      "MÖNSTERÅS",
+      "MÖRBYLÅNGA",
+      "NACKA",
+      "NORA",
+      "NORBERG",
+      "NORDANSTIG",
+      "NORDMALING",
+      "NORRKÖPING",
+      "NORRTÄLJE",
+      "NORSJÖ",
+      "NYBRO",
+      "NYKVARN",
+      "NYKÖPING",
+      "NYNÄSHAMN",
+      "NÄSSJÖ",
+      "OCKELBO",
+      "OLOFSTRÖM",
+      "ORSA",
+      "ORUST",
+      "OSBY",
+      "OSKARSHAMN",
+      "OVANÅKER",
+      "OXELÖSUND",
+      "PAJALA",
+      "PARTILLE",
+      "PERSTORP",
+      "PITEÅ",
+      "RAGUNDA",
+      "ROBERTSFORS",
+      "RONNEBY",
+      "RÄTTVIK",
+      "SALA",
+      "SALEM",
+      "SANDVIKEN",
+      "SIGTUNA",
+      "SIMRISHAMN",
+      "SJÖBO",
+      "SKARA",
+      "SKELLEFTEÅ",
+      "SKINNSKATTEBERG",
+      "SKURUP",
+      "SKÖVDE",
+      "SMEDJEBACKEN",
+      "SOLLEFTEÅ",
+      "SOLLENTUNA",
+      "SOLNA",
+      "SORSELE",
+      "SOTENÄS",
+      "STAFFANSTORP",
+      "STENUNGSUND",
+      "STOCKHOLM",
+      "STORFORS",
+      "STORUMAN",
+      "STRÄNGNÄS",
+      "STRÖMSTAD",
+      "STRÖMSUND",
+      "SUNDBYBERG",
+      "SUNDSVALL",
+      "SUNNE",
+      "SURAHAMMAR",
+      "SVALÖV",
+      "SVEDALA",
+      "SVENLJUNGA",
+      "Summering av ej redovisade rader",
+      "SÄFFLE",
+      "SÄTER",
+      "SÄVSJÖ",
+      "SÖDERHAMN",
+      "SÖDERKÖPING",
+      "SÖDERTÄLJE",
+      "SÖLVESBORG",
+      "TANUM",
+      "TIBRO",
+      "TIDAHOLM",
+      "TIERP",
+      "TIMRÅ",
+      "TINGSRYD",
+      "TJÖRN",
+      "TOMELILLA",
+      "TORSBY",
+      "TORSÅS",
+      "TRANEMO",
+      "TRANÅS",
+      "TRELLEBORG",
+      "TROLLHÄTTAN",
+      "TROSA",
+      "TYRESÖ",
+      "TÄBY",
+      "TÖREBODA",
+      "UDDEVALLA",
+      "ULRICEHAMN",
+      "UMEÅ",
+      "UPPLANDS VÄSBY",
+      "UPPLANDS-BRO",
+      "UPPSALA",
+      "UPPVIDINGE",
+      "VADSTENA",
+      "VAGGERYD",
+      "VALDEMARSVIK",
+      "VALLENTUNA",
+      "VANSBRO",
+      "VARA",
+      "VARBERG",
+      "VAXHOLM",
+      "VELLINGE",
+      "VETLANDA",
+      "VILHELMINA",
+      "VIMMERBY",
+      "VINDELN",
+      "VINGÅKER",
+      "VÄNERSBORG",
+      "VÄNNÄS",
+      "VÄRMDÖ",
+      "VÄRNAMO",
+      "VÄSTERVIK",
+      "VÄSTERÅS",
+      "VÄXJÖ",
+      "VÅRGÅRDA",
+      "YDRE",
+      "YSTAD",
+      "ÄLMHULT",
+      "ÄLVDALEN",
+      "ÄLVKARLEBY",
+      "ÄLVSBYN",
+      "ÄNGELHOLM",
+      "ÅMÅL",
+      "ÅNGE",
+      "ÅRE",
+      "ÅRJÄNG",
+      "ÅSELE",
+      "ÅSTORP",
+      "ÅTVIDABERG",
+      "ÖCKERÖ",
+      "ÖDESHÖG",
+      "ÖREBRO",
+      "ÖRKELLJUNGA",
+      "ÖRNSKÖLDSVIK",
+      "ÖSTERSUND",
+      "ÖSTERÅKER",
+      "ÖSTHAMMAR",
+      "ÖSTRA GÖINGE",
+      "ÖVERKALIX",
+      "ÖVERTORNEÅ"
+    ],
+    "Kön": [
+      "Kvinna",
+      "Man",
+      "Summering av ej redovisade rader"
+    ],
+    "Län": [
+      "BLEKINGE",
+      "DALARNA",
+      "GOTLAND",
+      "GÄVLEBORG",
+      "HALLAND",
+      "JÄMTLAND",
+      "JÖNKÖPING",
+      "KALMAR",
+      "KRONOBERG",
+      "NORRBOTTEN",
+      "SKÅNE",
+      "STOCKHOLM",
+      "Summering av ej redovisade rader",
+      "SÖDERMANLAND",
+      "UPPSALA",
+      "VÄRMLAND",
+      "VÄSTERBOTTEN",
+      "VÄSTERNORRLAND",
+      "VÄSTMANLAND",
+      "VÄSTRA GÖTALAND",
+      "ÖREBRO",
+      "ÖSTERGÖTLAND"
+    ],
+    "Lönesumma": [
+      "0 kr",
+      "1 - 5 mnkr",
+      "1 kr - 100 tkr",
+      "10 - 50 mnkr",
+      "100 tkr - 500 tkr",
+      "5 - 10 mnkr",
+      "50 - 100 mnkr",
+      "500 tkr - 1 mnkr",
+      ">= 100 mnkr",
+      "Summering av ej redovisade rader"
+    ],
+    "Omsättning": [
+      "0 kr",
+      "1 - 10 mnkr",
+      "1 kr - 1 mnkr",
+      "10 - 20 mnkr",
+      "100 - 500 mnkr",
+      "20 - 50 mnkr",
+      "50 - 100 mnkr",
+      "500 mnkr - 1 mdkr",
+      ">= 1 mdkr",
+      "Summering av ej redovisade rader"
+    ],
+    "Statlig inkomstskatt": [
+      "Betalar ej statlig inkomstskatt",
+      "Betalar statlig inkomstskatt",
+      "Uppgift saknas"
+    ],
+    "Total": [
+      "Ingen gruppering"
+    ],
+    "Typ av person": [
+      "Fysiska personer",
+      "Juridiska personer",
+      "Okänd",
+      "Summering av ej redovisade rader"
+    ],
+    "Åldersgrupp": [
+      "0 - 16 år",
+      "17 - 24 år",
+      "25 - 34 år",
+      "35 - 44 år",
+      "45 - 54 år",
+      "55 - 64 år",
+      "65 - 74 år",
+      "75 - 84 år",
+      "85 =<   år",
+      "Summering av ej redovisade rader"
+    ]
+  },
+  "period_ranges": {
+    "Månad": [
+      "201301",
+      "202610"
+    ],
+    "År": [
+      "2013",
+      "2026"
+    ]
+  },
+  "terms": {
+    "Arbetsgivaravgift, ambassader och företag utan fast driftsställe i Sverige samt särskild löneskatt vissa försäkringar": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202610"
+      ]
+    },
+    "Arbetsgivaravgift, utsända USA, Kanada, Québec": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202609"
+      ]
+    },
+    "Arbetsgivaravgift, ålderspensionsavgift, >65 år": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202610"
+      ]
+    },
+    "Avdrag forskning och utveckling": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201401",
+        "202609"
+      ]
+    },
+    "Avdrag för rederier p.g.a. regress vid arbetsgivarinträde": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201912",
+        "202608"
+      ]
+    },
+    "Avdrag för utgifter i arbetet": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202609"
+      ]
+    },
+    "Avdrag regionalt stöd": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202610"
+      ]
+    },
+    "Avdragen skatt på lön, förmåner och pension": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202610"
+      ]
+    },
+    "Avdragen skatt ränta och utdelning": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202610"
+      ]
+    },
+    "Bruttolön utom förmåner": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202610"
+      ]
+    },
+    "Full arbetsgivaravgift": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202610"
+      ]
+    },
+    "Förmåner": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202610"
+      ]
+    },
+    "Lönesumma": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202610"
+      ]
+    },
+    "Reducerad arbetsgivaravgift först anställd, växa stöd": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201701",
+        "202512"
+      ]
+    },
+    "Reducerad arbetsgivaravgift ungdom, 15-18 år": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201908",
+        "202312"
+      ]
+    },
+    "Reducerad arbetsgivaravgift ungdom, 18-25 år": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "201612"
+      ]
+    },
+    "Reducerad arbetsgivaravgift ungdom, 19-23 år": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "202101",
+        "202610"
+      ]
+    },
+    "Summa avdragen skatt att betala": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202610"
+      ]
+    },
+    "Summa avgifter att betala": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202610"
+      ]
+    },
+    "Summa underlag arbetsgivaravgift": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202610"
+      ]
+    },
+    "Särskild löneskatt (SLF) på bidrag till vinstandelsstiftelse och sjukpension": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201901",
+        "202609"
+      ]
+    },
+    "Särskild löneskatt för personer födda 1937 eller tidigare": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201601",
+        "201906"
+      ]
+    },
+    "Total sjuklönekostnad": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201901",
+        "202406"
+      ]
+    },
+    "Underlag arbetsgivaravgift ambassader m.fl.": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202610"
+      ]
+    },
+    "Underlag arbetsgivaravgift avdrag forskning och utveckling": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201401",
+        "202609"
+      ]
+    },
+    "Underlag arbetsgivaravgift avdrag regionalt stöd": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202610"
+      ]
+    },
+    "Underlag arbetsgivaravgift utsända USA, Kanada, Québec": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202609"
+      ]
+    },
+    "Underlag full arbetsgivaravgift": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202610"
+      ]
+    },
+    "Underlag för avdrag för rederier p.g.a. regress vid arbetsgivarinträde": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201912",
+        "202608"
+      ]
+    },
+    "Underlag för särskild löneskatt (SLF) på bidrag till vinstandelsstiftelse och sjukpension": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201901",
+        "202609"
+      ]
+    },
+    "Underlag för särskild löneskatt för personer födda 1937 eller tidigare": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201601",
+        "202609"
+      ]
+    },
+    "Underlag reducerad arbetsgivaravgift först anställd, växa stöd": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201701",
+        "202512"
+      ]
+    },
+    "Underlag reducerad arbetsgivaravgift ungdom, 15-18 år": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201908",
+        "202312"
+      ]
+    },
+    "Underlag reducerad arbetsgivaravgift ungdom, 18-25 år": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "201612"
+      ]
+    },
+    "Underlag reducerad arbetsgivaravgift ungdom, 19-23 år": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "202101",
+        "202610"
+      ]
+    },
+    "Underlag ålderspensionsavgift, >65 år": {
+      "groups": [
+        "Antal anställda",
+        "Bransch",
+        "Inkomstnivå",
+        "Juridisk form gruppering",
+        "Kommun",
+        "Kön",
+        "Län",
+        "Lönesumma",
+        "Omsättning",
+        "Statlig inkomstskatt",
+        "Total",
+        "Typ av person",
+        "Åldersgrupp"
+      ],
+      "monthly_range": [
+        "201301",
+        "202610"
+      ]
+    }
+  },
+  "updates_by_year": {
+    "2013": [
+      "2023-03-31"
+    ],
+    "2014": [
+      "2023-03-31"
+    ],
+    "2015": [
+      "2025-01-29"
+    ],
+    "2016": [
+      "2025-01-28"
+    ],
+    "2017": [
+      "2025-01-23"
+    ],
+    "2018": [
+      "2024-12-20"
+    ],
+    "2019": [
+      "2025-12-05"
+    ],
+    "2020": [
+      "2026-09-11"
+    ],
+    "2021": [
+      "2026-09-11"
+    ],
+    "2022": [
+      "2026-09-11"
+    ],
+    "2023": [
+      "2026-09-11"
+    ],
+    "2024": [
+      "2026-09-11"
+    ],
+    "2025": [
+      "2026-10-03"
+    ],
+    "2026": [
+      "2026-10-03"
+    ]
+  },
+  "nonnumeric_tokens": {}
+}

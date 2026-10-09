@@ -1,0 +1,69 @@
+{
+  "checked_at_utc": "2026-10-09T10:26:36.299841+00:00",
+  "candidate_period": "202608",
+  "api": "https://skatteverket.entryscape.net/rowstore/dataset/b72fcfe9-cacf-4859-8f57-38357f6306b0",
+  "counts": {
+    "norrbotten": 3,
+    "municipalities-norrbotten": 42,
+    "municipalities-national": 861,
+    "branches": 243,
+    "sizes": 27,
+    "national-current-year": 10,
+    "annual-norrbotten": 1,
+    "grouping-or": 103
+  },
+  "csv_inventory_rows": 1451534,
+  "available_latest_month": "202610",
+  "freshness": {
+    "202601": {
+      "days_after_month_end_at_source_update": 245,
+      "status": "candidate_not_verified_complete"
+    },
+    "202602": {
+      "days_after_month_end_at_source_update": 217,
+      "status": "candidate_not_verified_complete"
+    },
+    "202603": {
+      "days_after_month_end_at_source_update": 186,
+      "status": "candidate_not_verified_complete"
+    },
+    "202604": {
+      "days_after_month_end_at_source_update": 156,
+      "status": "candidate_not_verified_complete"
+    },
+    "202605": {
+      "days_after_month_end_at_source_update": 125,
+      "status": "candidate_not_verified_complete"
+    },
+    "202606": {
+      "days_after_month_end_at_source_update": 95,
+      "status": "candidate_not_verified_complete"
+    },
+    "202607": {
+      "days_after_month_end_at_source_update": 64,
+      "status": "candidate_not_verified_complete"
+    },
+    "202608": {
+      "days_after_month_end_at_source_update": 33,
+      "status": "candidate_not_verified_complete"
+    },
+    "202609": {
+      "days_after_month_end_at_source_update": 3,
+      "status": "immature"
+    },
+    "202610": {
+      "days_after_month_end_at_source_update": -28,
+      "status": "immature"
+    }
+  },
+  "source_hash": "bc40a77947982299b7c2a000f1ea46d9aed5d2c93279bc3c0898a272a23d96f2",
+  "technical_probe": "passed",
+  "ready_for_dashboard": false,
+  "limitations": [
+    "Geography is registered seat/address, not workplace.",
+    "API contains one grouping per row; no region x industry cube.",
+    "No source completeness flag; latest period must not drive trends.",
+    "SNI 2007 changes to SNI 2025 in 2026.",
+    "API monthly history before 2019 conflicts with portal definition."
+  ]
+}

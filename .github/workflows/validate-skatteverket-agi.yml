@@ -1,0 +1,30 @@
+name: 90 · Test · Skatteverket AGI – klient
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - scripts/probe_skatteverket_agi.py
+      - tests/test_agi_probe.py
+      - .github/workflows/validate-skatteverket-agi.yml
+      - .github/workflows/probe-skatteverket-agi.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/probe_skatteverket_agi.py
+      - tests/test_agi_probe.py
+      - .github/workflows/validate-skatteverket-agi.yml
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s tests -p test_agi_probe.py -v
