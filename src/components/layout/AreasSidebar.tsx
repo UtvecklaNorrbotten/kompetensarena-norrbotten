@@ -17,10 +17,54 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const panel = useRef<HTMLElement>(null);
   const restoreFocus = useRef<HTMLElement | null>(null);
+  const desktopNav = useRef<HTMLElement>(null);
+  const activeSlot = useRef<HTMLDivElement>(null);
+  const [railLayout, setRailLayout] = useState({ height: 108, title: false, topic: false });
   const activeArea = areas.find(
     (area) => pathname.startsWith(areaPath(area.slug) + "/") || pathname === areaPath(area.slug),
   )?.slug;
+  const selectedArea = areas.find((area) => area.slug === activeArea);
+  const selectedTopic = selectedArea?.topics.find((topic) =>
+    activeArea === "utbildning"
+      ? educationSection === topic.slug
+      : pathname === areaPath(selectedArea.slug, topic.slug),
+  );
   const expanded = pinned || hovered || focused;
+
+  useEffect(() => {
+    const nav = desktopNav.current;
+    const slot = activeSlot.current;
+    if (!nav || !slot || !selectedArea) return;
+
+    const measure = () => {
+      // Measure the full navigation, including its footer, before allocating text space.
+      const padding = getComputedStyle(nav);
+      const contentHeight = Array.from(nav.children).reduce((total, child) => {
+        const style = getComputedStyle(child);
+        return total + child.getBoundingClientRect().height
+          + parseFloat(style.marginTop) + parseFloat(style.marginBottom);
+      }, 0);
+      const available = Math.floor(nav.clientHeight
+        - parseFloat(padding.paddingTop) - parseFloat(padding.paddingBottom)
+        - contentHeight + slot.getBoundingClientRect().height);
+      const titleHeight = Array.from(selectedArea.title).length * 14 + 12;
+      const topicHeight = selectedTopic
+        ? Array.from(selectedTopic.title).length * 13 + 20
+        : 0;
+      const title = available >= titleHeight;
+      const topic = title && !!selectedTopic && available >= titleHeight + topicHeight;
+      const height = Math.max(108, title ? titleHeight + (topic ? topicHeight : 0) : 0);
+      setRailLayout((previous) =>
+        previous.height === height && previous.title === title && previous.topic === topic
+          ? previous
+          : { height, title, topic },
+      );
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(nav);
+    return () => observer.disconnect();
+  }, [selectedArea, selectedTopic]);
   const rowClass =
     "relative flex h-10 items-center gap-3 whitespace-nowrap rounded-md p-2 hover:bg-brand-light";
   const activeRowClass =
@@ -80,8 +124,12 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
   };
 
   const nav = (mobile: boolean) => (
-    <nav aria-label="Områden" className="flex h-full flex-col overflow-y-auto py-3">
-      <div className="mb-2 flex h-9 items-center justify-between px-2">
+    <nav
+      ref={mobile ? undefined : desktopNav}
+      aria-label="Områden"
+      className="flex h-full flex-col overflow-y-auto py-3"
+    >
+      <div className="mb-2 flex h-9 shrink-0 items-center justify-between px-2">
         <span
           aria-hidden={!expanded && !mobile}
           className={`px-2 text-sm font-semibold text-brand-dark ${expanded || mobile ? "" : "invisible"}`}
@@ -112,7 +160,7 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
           </Button>
         )}
       </div>
-      <ul className="space-y-1 px-2">
+      <ul className="shrink-0 space-y-1 px-2">
         <li>
           <AppLink
             href="/"
@@ -127,6 +175,7 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
         </li>
         {areas.map((area) => {
           const Icon = area.icon;
+          const TopicLink = area.slug === "utbildning" ? "a" : AppLink;
           const open = activeArea === area.slug;
           // Behåll det aktiva områdets undermeny i layouten även när sidomenyn är hopfälld.
           // Annars flyttar ikonerna nedåt när menyn expanderas vid hovring.
@@ -144,71 +193,111 @@ export function AreasSidebar({ mobileOpen, onMobileClose }: Props) {
                 <span className={expanded || mobile ? "" : "sr-only"}>{area.title}</span>
               </AppLink>
               {showSub && (
-                <ul
-                  aria-hidden={!expanded && !mobile}
-                  className={`ml-8 border-l border-border pl-2 text-sm ${expanded || mobile ? "" : "invisible"}`}
+                <div
+                  ref={mobile ? undefined : activeSlot}
+                  className="relative"
+                  style={mobile ? undefined : { minHeight: railLayout.height }}
                 >
-                  <li>
-                    {area.slug === "utbildning" ? (
-                      <a
-                        href="#utbildning-oversikt"
-                        tabIndex={expanded || mobile ? undefined : -1}
-                        onClick={(event) => {
-                          blurOnClick(event);
-                          onMobileClose();
-                        }}
-                        aria-current={!educationSection ? "location" : undefined}
-                        className={`flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light ${!educationSection ? "bg-brand-light text-brand-dark" : ""}`}
-                      >
-                        Översikt
-                      </a>
-                    ) : (
+                  {!mobile && !expanded && railLayout.title && (
+                    <div className="absolute left-2 top-0 flex w-5 flex-col items-center pt-1.5">
                       <AppLink
-                        tabIndex={expanded || mobile ? undefined : -1}
-                        onClick={blurOnClick}
                         href={areaPath(area.slug)}
-                        activeOptions={{ exact: true }}
-                        className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light"
+                        onClick={blurOnClick}
+                        aria-label={area.title}
+                        title={area.title}
+                        className="flex flex-col items-center text-[13px] font-semibold leading-[14px] text-brand-dark"
                       >
-                        Översikt
+                        <span aria-hidden="true" className="flex flex-col items-center">
+                          {Array.from(area.title).map((letter, index) => (
+                            <span key={index} className="h-[14px]">{letter === " " ? "\u00a0" : letter}</span>
+                          ))}
+                        </span>
                       </AppLink>
-                    )}
-                  </li>
-                  {area.topics.map((topic) => (
-                    <li key={topic.slug}>
+                      {railLayout.topic && selectedTopic && (
+                        <TopicLink
+                          href={area.slug === "utbildning"
+                            ? "#" + selectedTopic.slug
+                            : areaPath(area.slug, selectedTopic.slug)}
+                          onClick={blurOnClick}
+                          aria-label={selectedTopic.title}
+                          title={selectedTopic.title}
+                          className="mt-2 flex flex-col items-center border-t border-border pt-2 text-[11px] leading-[13px] text-ink-muted"
+                        >
+                          <span aria-hidden="true" className="flex flex-col items-center">
+                            {Array.from(selectedTopic.title).map((letter, index) => (
+                              <span key={index} className="h-[13px]">{letter === " " ? "\u00a0" : letter}</span>
+                            ))}
+                          </span>
+                        </TopicLink>
+                      )}
+                    </div>
+                  )}
+                  <ul
+                    aria-hidden={!expanded && !mobile}
+                    className={`ml-8 border-l border-border pl-2 text-sm ${expanded || mobile ? "" : "invisible"}`}
+                  >
+                    <li>
                       {area.slug === "utbildning" ? (
                         <a
-                          href={`#${topic.slug}`}
+                          href="#utbildning-oversikt"
                           tabIndex={expanded || mobile ? undefined : -1}
                           onClick={(event) => {
                             blurOnClick(event);
                             onMobileClose();
                           }}
-                          aria-current={educationSection === topic.slug ? "location" : undefined}
-                          className={`flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light ${educationSection === topic.slug ? "bg-brand-light font-semibold text-brand-dark" : ""}`}
+                          aria-current={!educationSection ? "location" : undefined}
+                          className={`flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light ${!educationSection ? "bg-brand-light text-brand-dark" : ""}`}
                         >
-                          {topic.title}
+                          Översikt
                         </a>
                       ) : (
                         <AppLink
                           tabIndex={expanded || mobile ? undefined : -1}
                           onClick={blurOnClick}
-                          href={areaPath(area.slug, topic.slug)}
+                          href={areaPath(area.slug)}
                           activeOptions={{ exact: true }}
                           className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light"
                         >
-                          {topic.title}
+                          Översikt
                         </AppLink>
                       )}
                     </li>
-                  ))}
-                </ul>
+                    {area.topics.map((topic) => (
+                      <li key={topic.slug}>
+                        {area.slug === "utbildning" ? (
+                          <a
+                            href={`#${topic.slug}`}
+                            tabIndex={expanded || mobile ? undefined : -1}
+                            onClick={(event) => {
+                              blurOnClick(event);
+                              onMobileClose();
+                            }}
+                            aria-current={educationSection === topic.slug ? "location" : undefined}
+                            className={`flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light ${educationSection === topic.slug ? "bg-brand-light font-semibold text-brand-dark" : ""}`}
+                          >
+                            {topic.title}
+                          </a>
+                        ) : (
+                          <AppLink
+                            tabIndex={expanded || mobile ? undefined : -1}
+                            onClick={blurOnClick}
+                            href={areaPath(area.slug, topic.slug)}
+                            activeOptions={{ exact: true }}
+                            className="flex h-9 items-center whitespace-nowrap rounded p-2 hover:bg-brand-light aria-[current=page]:bg-brand-light"
+                          >
+                            {topic.title}
+                          </AppLink>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </li>
           );
         })}
       </ul>
-      <div className="mt-5 border-t border-border px-2 pt-3">
+      <div className="mt-5 shrink-0 border-t border-border px-2 pt-3">
         <p
           aria-hidden={!expanded && !mobile}
           className={`h-6 whitespace-nowrap px-2 pb-2 text-xs font-semibold uppercase text-ink-muted ${expanded || mobile ? "" : "invisible"}`}
