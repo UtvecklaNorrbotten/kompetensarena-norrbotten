@@ -113,18 +113,19 @@ export function formatUkaValue(value: number | null | undefined, unit: string): 
 }
 
 /** Kalenderår för terminer, källans periodetikett för års-/läsårsdata. */
-export function ukaDetailPeriods(rows: UkaRow[], requestedYear = "", term = "all") {
+export function ukaDetailPeriods(rows: UkaRow[], requestedYear = "", term = "HT") {
   const periods = [...new Set(rows.map((r) => r.period))].sort(
     (a, b) => periodOrder(a) - periodOrder(b),
   );
   const semester = periods.some((p) => /^(HT|VT)\d{4}$/.test(p));
   const yearOf = (p: string) => (semester ? p.slice(2) : p);
-  const years = [...new Set(periods.map(yearOf))].reverse();
-  const complete = years.find((y) => periods.includes(`VT${y}`) && periods.includes(`HT${y}`));
-  const year = years.includes(requestedYear) ? requestedYear : (complete ?? years[0] ?? "");
-  const chosen = periods.filter(
-    (p) => yearOf(p) === year && (!semester || term === "all" || p.startsWith(term)),
+  const available = periods.filter(
+    (p) =>
+      (!semester || p.startsWith(term)) && rows.some((r) => r.period === p && r.value !== null),
   );
+  const years = [...new Set(available.map(yearOf))].reverse();
+  const year = years.includes(requestedYear) ? requestedYear : (years[0] ?? "");
+  const chosen = periods.filter((p) => yearOf(p) === year && (!semester || p.startsWith(term)));
   return {
     semester,
     years,
@@ -132,6 +133,28 @@ export function ukaDetailPeriods(rows: UkaRow[], requestedYear = "", term = "all
     periods: chosen,
     rows: rows.filter((r) => chosen.includes(r.period)),
   };
+}
+
+/** Rangordna inom en period: källans total först, annars högsta könsvärde. */
+export function ukaRankCategories(rows: UkaRow[]): string[] {
+  const groups = new Map<string, { total: number | null; fallback: number | null }>();
+  for (const row of rows) {
+    const group = groups.get(row.category) ?? { total: null, fallback: null };
+    if (row.value !== null && Number.isFinite(row.value)) {
+      if (row.gender === "Total") group.total = row.value;
+      group.fallback = group.fallback === null ? row.value : Math.max(group.fallback, row.value);
+    }
+    groups.set(row.category, group);
+  }
+  const value = (category: string) => {
+    const group = groups.get(category)!;
+    return group.total ?? group.fallback ?? -Infinity;
+  };
+  return [...groups.keys()].sort((a, b) => {
+    const av = value(a),
+      bv = value(b);
+    return av === bv ? a.localeCompare(b, "sv") : av > bv ? -1 : 1;
+  });
 }
 
 /** Gemensam tidsaxel, med explicita luckor för år/termin utan källvärden. */

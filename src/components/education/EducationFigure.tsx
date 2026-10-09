@@ -32,6 +32,7 @@ import {
   selectUkaRows,
   ukaDetailPeriods,
   ukaGenderSeries,
+  ukaRankCategories,
   type UkaFilters,
   type UkaRow,
 } from "@/lib/uka-view";
@@ -126,7 +127,7 @@ export function EducationFigure({
   const [hiddenGenders, setHiddenGenders] = useState<string[]>([]);
   const [showAll, setShowAll] = useState(false);
   const [detailYear, setDetailYear] = useState("");
-  const [detailTerm, setDetailTerm] = useState("all");
+  const [detailTerm, setDetailTerm] = useState("HT");
   const [historySelection, setHistorySelection] = useState<{
     category: string;
     context: string;
@@ -151,7 +152,11 @@ export function EducationFigure({
   ]);
   const historyCategory =
     historySelection?.context === historyContext ? historySelection.category : null;
-  const historyRows = selected.rows.filter((row) => row.category === historyCategory);
+  const historyRows = selected.rows.filter(
+    (row) =>
+      row.category === historyCategory &&
+      (!/^(HT|VT)/.test(row.period) || row.period.startsWith(detailTerm)),
+  );
   function openHistory(category: string, x: number, y: number) {
     setHistorySelection({ category, context: historyContext, x, y });
   }
@@ -178,16 +183,14 @@ export function EducationFigure({
     existing[r.gender] = r.value;
     barRows.set(key, existing);
   }
-  const groupNames = [...new Set([...barRows.values()].map((r) => String(r["group"])))].sort(
-    (a, b) => a.localeCompare(b, "sv"),
-  );
-  const visibleGroups = showAll ? groupNames : groupNames.slice(0, 12);
+  const groupNames = ukaRankCategories(detailSelection.rows);
+  const visibleGroups = new Set(showAll ? groupNames : groupNames.slice(0, 5));
   const allBars = [...barRows.values()].sort(
     (a, b) =>
-      String(a["group"]).localeCompare(String(b["group"]), "sv") ||
+      groupNames.indexOf(String(a["rawCategory"])) - groupNames.indexOf(String(b["rawCategory"])) ||
       periodOrder(String(a["period"])) - periodOrder(String(b["period"])),
   );
-  const bars = allBars.filter((r) => visibleGroups.includes(String(r["group"])));
+  const bars = allBars.filter((r) => visibleGroups.has(String(r["rawCategory"])));
   const programOptions = [...new Set(selected.rows.map((r) => r.category))].sort((a, b) =>
     a.localeCompare(b, "sv"),
   );
@@ -223,7 +226,17 @@ export function EducationFigure({
   }`;
   const domain: [number, number | "auto"] = indicator.unit === "%" ? [0, 100] : [0, "auto"];
 
-  const tableRows = comparison ? comparisonRows : detail ? detailSelection.rows : selected.rows;
+  const tableRows = comparison
+    ? comparisonRows
+    : detail
+      ? detailSelection.rows
+          .filter((r) => visibleGroups.has(r.category))
+          .sort(
+            (a, b) =>
+              groupNames.indexOf(a.category) - groupNames.indexOf(b.category) ||
+              series.indexOf(a.gender) - series.indexOf(b.gender),
+          )
+      : selected.rows;
   const filename =
     exportFilename(indicator.id, university) +
     (comparison ? "-programjamforelse" : detail ? "-fordjupning" : "-oversikt");
@@ -262,7 +275,7 @@ export function EducationFigure({
                 `Grön: Kvinnor. Gul/orange: Män (streckad linje i översikt).${series.includes("Total") ? " Ljusgrå: Samtliga." : ""}`,
               ]
             : []),
-        `Enhet: ${indicator.unit}. ${detail && !comparison ? `Period: ${periodText}. ${!showAll && groupNames.length > 12 ? "De första 12 grupperna visas." : "Alla grupper visas."}` : "Samtliga tillgängliga perioder visas."}`,
+        `Enhet: ${indicator.unit}. ${detail && !comparison ? `Period: ${periodText}. ${!showAll && groupNames.length > 5 ? "Topp 5 visas." : "Alla grupper visas."}` : "Samtliga tillgängliga perioder visas."}`,
         ...(ignored.length
           ? [
               `Urval utan motsvarighet i måttet: ${ignored.map(([key]) => dimensionLabels[key] ?? key).join(", ")}.`,
@@ -419,18 +432,20 @@ export function EducationFigure({
               Termin
               <select
                 value={detailTerm}
-                onChange={(e) => setDetailTerm(e.target.value)}
+                onChange={(e) => {
+                  setDetailTerm(e.target.value);
+                  setShowAll(false);
+                }}
                 className="mt-1 block rounded-md border border-border bg-surface p-2 text-base"
               >
-                <option value="all">HT och VT – separat</option>
-                <option value="HT">Hösttermin</option>
-                <option value="VT">Vårtermin</option>
+                <option value="HT">HT</option>
+                <option value="VT">VT</option>
               </select>
             </label>
           )}
           <p className="basis-full text-sm text-ink-muted">
             {detailSelection.semester
-              ? "Förvalt visas senaste året med data för både HT och VT, om ett sådant finns. Samma person kan förekomma båda terminerna; värdena summeras därför inte."
+              ? "Förvalt visas höstterminen i det senaste året med tillgängliga HT-data."
               : "Perioderna följer källans indelning."}
           </p>
         </div>
@@ -458,7 +473,7 @@ export function EducationFigure({
               <p className="mb-4 text-sm">
                 {dimensionLabels[selected.breakdown.split("|").at(-1) ?? ""] ?? "Uppdelning"} ·{" "}
                 {periodText}
-                {!showAll && groupNames.length > 12 ? " · de första 12 grupperna" : ""}
+                {!showAll && groupNames.length > 5 ? " · topp 5" : ""}
               </p>
               <div className="overflow-x-auto">
                 <div
@@ -523,6 +538,7 @@ export function EducationFigure({
                         interval={0}
                       />
                       <Tooltip
+                        key={`${detailSelection.year}|${detailTerm}`}
                         isAnimationActive={false}
                         content={<HistoryTooltip unit={indicator.unit} />}
                         contentStyle={{
@@ -562,15 +578,13 @@ export function EducationFigure({
                   </ResponsiveContainer>
                 </div>
               </div>
-              {groupNames.length > 12 && (
+              {groupNames.length > 5 && (
                 <button
                   type="button"
                   onClick={() => setShowAll(!showAll)}
                   className="mt-3 text-sm text-brand-dark underline"
                 >
-                  {showAll
-                    ? "Visa de första 12 grupperna"
-                    : `Visa alla ${groupNames.length} grupper`}
+                  {showAll ? "Visa topp 5" : `Visa alla ${groupNames.length} grupper`}
                 </button>
               )}
             </>
@@ -654,6 +668,7 @@ export function EducationFigure({
         historySelection &&
         historyRows.length > 0 && (
           <EducationHistoryPreview
+            key={`${historyContext}|${historyCategory}|${detailTerm}|${detailSelection.year}`}
             rows={historyRows}
             category={historyCategory}
             unit={indicator.unit}

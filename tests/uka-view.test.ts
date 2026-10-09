@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import {
   dimensionOptions,
   ukaDetailPeriods,
+  ukaRankCategories,
   ukaComparisonTimeline,
   formatUkaValue,
   periodOrder,
@@ -137,15 +138,43 @@ assert.deepEqual(
   [40, 100, 50],
 );
 
-// Exempel: senaste kompletta kalenderår, separat HT/VT och inget summerat värde.
+// Exempel: senaste tillgängliga HT-år, separat HT/VT och inget summerat värde.
 const detailPeriods = ukaDetailPeriods(semesters);
 assert.equal(detailPeriods.year, "2025");
-assert.deepEqual(detailPeriods.periods, ["VT2025", "HT2025"]);
-assert.equal(detailPeriods.rows.length, 2);
-assert.deepEqual(ukaDetailPeriods(semesters, "2026").periods, ["VT2026"]);
-assert.equal(ukaDetailPeriods(semesters, "2026", "HT").rows.length, 0);
+assert.deepEqual(detailPeriods.periods, ["HT2025"]);
+assert.equal(detailPeriods.rows.length, 1);
+assert.deepEqual(ukaDetailPeriods(semesters, "2026", "VT").periods, ["VT2026"]);
+assert.deepEqual(ukaDetailPeriods(semesters, "2026", "HT").periods, ["HT2025"]);
 assert.deepEqual(ukaDetailPeriods(semesters, "2025", "HT").periods, ["HT2025"]);
 assert.deepEqual(ukaDetailPeriods([row()], "").periods, ["2024/25"]);
+const onlyRecentAutumn = [
+  ...semesters,
+  row({ period: "HT2027" }),
+  row({ period: "HT2028", value: null }),
+];
+assert.equal(ukaDetailPeriods(onlyRecentAutumn).year, "2027");
+assert.deepEqual(ukaDetailPeriods(onlyRecentAutumn).years, [
+  "2027",
+  "2025",
+  "2024",
+  "2023",
+  "2022",
+  "2021",
+]);
+
+// Exempel: total prioriteras framför ett högre könsvärde; null hamnar sist.
+const ranked = ukaRankCategories([
+  row({ category: "A", value: 10 }),
+  row({ category: "A", gender: "Män", value: 99 }),
+  row({ category: "B", value: 40 }),
+  row({ category: "C", gender: "Kvinnor", value: 30 }),
+  row({ category: "D", value: null }),
+  row({ category: "E", value: 0 }),
+  row({ category: "F", value: 20 }),
+  row({ category: "G", value: 50 }),
+]);
+assert.deepEqual(ranked, ["G", "B", "C", "F", "A", "E", "D"]);
+assert.deepEqual(ranked.slice(0, 5), ["G", "B", "C", "F", "A"]);
 
 // Exempel: VT/HT får samma år och null för saknad termin; program blandas aldrig.
 const comparisonData = ukaComparisonTimeline(
