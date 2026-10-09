@@ -4,7 +4,6 @@ import {
   CartesianGrid,
   Line,
   LineChart,
-  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -24,7 +23,6 @@ export function EducationTimeline({
 }) {
   const id = useId();
   const [hidden, setHidden] = useState<string[]>([]);
-  const [hover, setHover] = useState<string | null>(null);
   const data = ukaComparisonTimeline(rows, programs);
   const visible = data.series.filter((s) => !hidden.includes(s.key));
   const values = data.panels.flatMap((panel) =>
@@ -33,7 +31,6 @@ export function EducationTimeline({
     ),
   );
   const axis = educationAxis(values, unit);
-  const active = data.labels.includes(hover ?? "") ? hover! : data.labels.at(-1);
   return (
     <>
       <div className="mb-4 flex flex-wrap gap-2" aria-label="Visa eller dölj serier">
@@ -87,10 +84,6 @@ export function EducationTimeline({
                   syncMethod="value"
                   accessibilityLayer
                   margin={{ left: 0, right: 18, top: 12, bottom: 12 }}
-                  onMouseMove={(state) => {
-                    if (state.activeLabel != null) setHover(String(state.activeLabel));
-                  }}
-                  onMouseLeave={() => setHover(null)}
                 >
                   <CartesianGrid stroke="var(--border)" vertical={false} />
                   <XAxis
@@ -107,10 +100,19 @@ export function EducationTimeline({
                     tick={{ fill: "var(--ink)", fontSize: 14 }}
                     tickFormatter={(v) => formatUkaValue(v, unit)}
                   />
-                  <Tooltip content={() => null} />
-                  {active && (
-                    <ReferenceLine x={active} stroke="var(--ink-muted)" strokeDasharray="3 3" />
-                  )}
+                  <Tooltip
+                    formatter={(value: number, name: string) => [formatUkaValue(value, unit), name]}
+                    labelFormatter={(label) => `${panel.name} · ${label}`}
+                    contentStyle={{
+                      background: "var(--surface)",
+                      maxWidth: 280,
+                      whiteSpace: "normal",
+                      overflowWrap: "anywhere",
+                      border: "1px solid var(--border)",
+                      borderRadius: "var(--radius)",
+                    }}
+                    itemStyle={{ whiteSpace: "normal" }}
+                  />
                   {data.series.map((s, i) => (
                     <Line
                       key={s.key}
@@ -144,48 +146,11 @@ export function EducationTimeline({
           </section>
         ))}
       </div>
-      <div className="mt-4 overflow-x-auto rounded-lg border border-border p-3">
-        <p className="mb-2 text-sm font-semibold">
-          {active ?? "Inga perioder"} · för musen över ett diagram för att jämföra samma år
+      {!visible.length && (
+        <p className="mt-3 text-sm">
+          Alla serier är dolda. Klicka på en serie ovanför diagrammen för att visa den.
         </p>
-        <table className="w-full text-sm text-left">
-          <thead>
-            <tr>
-              <th scope="col" className="p-2">
-                Serie
-              </th>
-              {data.panels.map((p) => (
-                <th key={p.name} scope="col" className="p-2 text-right">
-                  {p.name}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {visible.map((s) => (
-              <tr key={s.key} className="border-t border-border">
-                <th scope="row" className="p-2 font-normal">
-                  {s.label}
-                </th>
-                {data.panels.map((p) => (
-                  <td key={p.name} className="p-2 text-right whitespace-nowrap">
-                    {formatUkaValue(
-                      (p.rows.find((r) => r["period"] === active)?.[s.key] as number | null) ??
-                        null,
-                      unit,
-                    )}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {!visible.length && (
-          <p className="text-sm">
-            Alla serier är dolda. Klicka på en serie ovanför diagrammen för att visa den.
-          </p>
-        )}
-      </div>
+      )}
     </>
   );
 }
