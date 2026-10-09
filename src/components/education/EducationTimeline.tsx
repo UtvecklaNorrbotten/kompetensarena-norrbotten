@@ -15,10 +15,12 @@ const colors = ["var(--chart-1)", "var(--chart-4)", "var(--chart-3)"];
 export function EducationTimeline({
   rows,
   unit,
+  valueAxisLabel,
   programs = [],
 }: {
   rows: UkaRow[];
   unit: string;
+  valueAxisLabel: string;
   programs?: string[];
 }) {
   const id = useId();
@@ -31,6 +33,8 @@ export function EducationTimeline({
     ),
   );
   const axis = educationAxis(values, unit);
+  const timeAxisLabel =
+    data.semester || data.labels.every((label) => /^\d{4}$/.test(label)) ? "År" : "Period";
   return (
     <>
       <div className="mb-4 flex flex-wrap gap-2" aria-label="Visa eller dölj serier">
@@ -83,11 +87,19 @@ export function EducationTimeline({
                   syncId={id}
                   syncMethod="value"
                   accessibilityLayer
-                  margin={{ left: 0, right: 18, top: 12, bottom: 12 }}
+                  margin={{ left: 16, right: 18, top: 12, bottom: 12 }}
                 >
                   <CartesianGrid stroke="var(--border)" vertical={false} />
                   <XAxis
                     dataKey="period"
+                    height={50}
+                    label={{
+                      value: timeAxisLabel,
+                      position: "insideBottom",
+                      offset: 0,
+                      fill: "var(--ink)",
+                      fontSize: 14,
+                    }}
                     interval="preserveStartEnd"
                     tick={{ fill: "var(--ink)", fontSize: 14 }}
                     padding={{ left: 12, right: 12 }}
@@ -96,7 +108,16 @@ export function EducationTimeline({
                     domain={[0, axis.maximum]}
                     ticks={axis.ticks}
                     interval={0}
-                    width={75}
+                    width={100}
+                    label={{
+                      value: valueAxisLabel,
+                      angle: -90,
+                      position: "insideLeft",
+                      offset: 0,
+                      fill: "var(--ink)",
+                      fontSize: 14,
+                      style: { textAnchor: "middle" },
+                    }}
                     tick={{ fill: "var(--ink)", fontSize: 14 }}
                     tickFormatter={(v: number) =>
                       v.toLocaleString("sv-SE", { maximumFractionDigits: 0 })

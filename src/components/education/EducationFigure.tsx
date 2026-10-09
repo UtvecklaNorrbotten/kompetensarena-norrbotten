@@ -134,6 +134,21 @@ export function EducationFigure({
         ? detailSelection.rows.filter((r) => series.includes(r.gender))
         : genderRows
   ).some((r) => r.value !== null);
+  const valueAxisLabel =
+    indicator.unit === "%"
+      ? "Andel (%)"
+      : indicator.unit === "HST"
+        ? "Helårsstudenter (HST)"
+        : indicator.unit === "antal"
+          ? "Antal"
+          : "Sökande per antagen";
+  const groupAxisLabel = `${
+    selected.breakdown
+      .split("|")
+      .map((key) => dimensionLabels[key] ?? key)
+      .filter(Boolean)
+      .join(" / ") || "Grupp"
+  } och period`;
   const domain: [number, number | "auto"] = indicator.unit === "%" ? [0, 100] : [0, "auto"];
 
   const tableRows = comparison ? comparisonRows : detail ? detailSelection.rows : selected.rows;
@@ -362,6 +377,7 @@ export function EducationFigure({
                 key={activePrograms.join("|")}
                 rows={comparisonRows}
                 unit={indicator.unit}
+                valueAxisLabel={valueAxisLabel}
                 programs={activePrograms}
               />
             </div>
@@ -388,13 +404,30 @@ export function EducationFigure({
                       <CartesianGrid stroke="var(--border)" horizontal={false} />
                       <XAxis
                         type="number"
+                        height={50}
+                        label={{
+                          value: valueAxisLabel,
+                          position: "insideBottom",
+                          offset: 0,
+                          fill: "var(--ink)",
+                          fontSize: 14,
+                        }}
                         domain={domain}
                         tick={{ fill: "var(--ink)", fontSize: 14 }}
                       />
                       <YAxis
                         type="category"
                         dataKey="category"
-                        width={230}
+                        width={270}
+                        label={{
+                          value: groupAxisLabel,
+                          angle: -90,
+                          position: "insideLeft",
+                          offset: 0,
+                          fill: "var(--ink)",
+                          fontSize: 14,
+                          style: { textAnchor: "middle" },
+                        }}
                         tick={<CategoryTick />}
                         interval={0}
                       />
@@ -448,7 +481,11 @@ export function EducationFigure({
             </>
           ) : (
             <div ref={chartRef}>
-              <EducationTimeline rows={selected.rows} unit={indicator.unit} />
+              <EducationTimeline
+                rows={selected.rows}
+                unit={indicator.unit}
+                valueAxisLabel={valueAxisLabel}
+              />
             </div>
           )}
           <figcaption className="mt-3 text-sm text-ink-muted">
