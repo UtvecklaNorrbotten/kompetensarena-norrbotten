@@ -17,13 +17,13 @@ const results = [
   },
   {
     value: "15 500",
-    title: "anställda i offentlig sektor",
-    text: "Omfattas av behov av kompetensutveckling enligt kartläggningen.",
+    title: "kompetensutvecklingsbehov",
+    text: "I offentlig sektor enligt kartläggningen.",
   },
   {
     value: "6 200",
-    title: "personer i näringslivet",
-    text: "Omfattas av behov av kompetensutveckling enligt kartläggningen.",
+    title: "kompetensutvecklingsbehov",
+    text: "I näringslivet enligt kartläggningen.",
   },
 ];
 
