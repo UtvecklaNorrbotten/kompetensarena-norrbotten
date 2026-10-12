@@ -17,12 +17,12 @@ const results = [
   },
   {
     value: "15 500",
-    title: "kompetensutvecklingsbehov",
+    title: "kompetens\u00adutvecklings\u00adbehov",
     text: "I offentlig sektor enligt kartläggningen.",
   },
   {
     value: "6 200",
-    title: "kompetensutvecklingsbehov",
+    title: "kompetens\u00adutvecklings\u00adbehov",
     text: "I näringslivet enligt kartläggningen.",
   },
 ];
