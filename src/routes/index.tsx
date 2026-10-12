@@ -13,7 +13,7 @@ const results = [
   {
     value: "8 500",
     title: "personer behöver rekryteras",
-    text: "Rekryteringsbehov i privat och offentlig sektor under kartläggningens tvåårshorisont.",
+    text: "Rekryteringsbehov i privat och offentlig sektor under perioden 2026–2027.",
   },
   {
     value: "15 500",
@@ -147,8 +147,7 @@ function Startsida() {
           verksamhetsutveckling och omställningsförmåga.
         </p>
         <p className="mt-5 text-sm leading-relaxed text-ink-muted">
-          Rekryteringsbehovet avser kartläggningens tvåårshorisont, inte en löpande prognos från
-          dagens datum. Källa: Region Norrbotten, publicerad 18 mars 2026.{" "}
+          Rekryteringsbehovet avser perioden 2026–2027. Källa: Region Norrbotten, publicerad 18 mars 2026.{" "}
           <a
             href={sourceUrl}
             className="text-brand-dark underline underline-offset-4 hover:no-underline"
