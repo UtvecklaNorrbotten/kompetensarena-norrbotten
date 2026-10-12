@@ -1,0 +1,31 @@
+name: 10 · Data · AF – Yrkesbarometern (källarkiv)
+
+on:
+  workflow_dispatch:
+  schedule:
+    # AF publishes in June and December; check weekly in each publication month.
+    - cron: "20 5 * 6,12 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: etl-af-yrkesbarometer-archive
+  cancel-in-progress: false
+
+jobs:
+  source-archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checka ut repo
+        uses: actions/checkout@v5
+      - name: Hämta alla Yrkesbarometer-versioner från 2024
+        run: python scripts/etl_af_yrkesbarometer_archive.py
+      - name: Lagra fullständigt källarkiv och manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: af-yrkesbarometer-snapshots-${{ github.run_number }}
+          path: artifacts/af-yrkesbarometer/
+          if-no-files-found: error
+          retention-days: 90
