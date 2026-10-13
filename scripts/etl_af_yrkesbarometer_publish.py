@@ -16,6 +16,7 @@ import pathlib
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -126,9 +127,42 @@ def post(path, payload, safe=True):
         time.sleep(min(45, 3 * (2 ** attempt)))
 
 
+def state_get():
+    base = os.environ.get("ETL_BASE_URL", "").rstrip("/")
+    secret = os.environ.get("ETL_PUBLISH_KEY", "")
+    if not base or not secret:
+        raise ValueError("Missing ETL_BASE_URL or ETL_PUBLISH_KEY")
+    url = base + "/api/public/jobs/source-state?" + urllib.parse.urlencode(
+        {"source_id": "af-yrkesbarometer"})
+    req = urllib.request.Request(url, headers={
+        "User-Agent": "Kompetensarena-ETL/1.0",
+        "Authorization": "Bearer " + secret,
+        "Accept": "application/json"})
+    with urllib.request.urlopen(req, timeout=120) as response:
+        return json.load(response).get("state") or {}
+
+
+def record_source_status(status, period, fingerprints, rows, message=None):
+    body = {"source_id": "af-yrkesbarometer", "status": status,
+            "latest_available_period": period,
+            "details": {"file_sha256": fingerprints, "rows": rows,
+                        "schema": "yb-full-v2"}}
+    if status == "succeeded":
+        body["latest_successful_period"] = period
+    if message:
+        body["error_message"] = message[:500]
+    return post("source-state", body, safe=False)
+
+
+def should_publish(state, fingerprints):
+    details = state.get("details") or {}
+    return (state.get("last_status") != "succeeded"
+            or details.get("file_sha256") != fingerprints)
+
+
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--mode", choices=("validate", "publish"), default="validate")
+    p.add_argument("--mode", choices=("validate", "publish", "check"), default="validate")
     p.add_argument("--report", default="artifacts/af-yrkesbarometer-import-report.json")
     args = p.parse_args()
     entries = []
@@ -140,7 +174,19 @@ def main():
               "editions": {k: {"rows": len(v), "norrbotten": sum(r["geo_code"] == "25" for r in v)}
                            for k, v in grouped.items()}}
     print(canonical(report), flush=True)
-    if args.mode == "publish":
+    latest = max(grouped)
+    total_rows = sum(len(x) for x in grouped.values())
+    if args.mode == "check":
+        state = state_get()
+        if not should_publish(state, fingerprints):
+            print("Inga ändringar sedan senaste lyckade publicering", flush=True)
+            report["status"] = "no_change"
+            output = pathlib.Path(args.report)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(canonical(report) + "\n", encoding="utf-8")
+            return
+        print("Ny eller ändrad källdata: full snapshot behövs", flush=True)
+    if args.mode in ("publish", "check"):
         # A full snapshot supports the initial load as well as future new
         # editions. replace_period cannot add previously unseen editions.
         observations = [row for period in grouped for row in grouped[period]]
@@ -168,8 +214,14 @@ def main():
             post("etl-batch/finalize", {"batch_id": batch_id}, safe=False)
             batch_id = None
             report["published"] = list(grouped)
+            record_source_status("succeeded", latest, fingerprints, total_rows)
+            report["status"] = "succeeded"
         except Exception as error:
             report["error"] = str(error)
+            try:
+                record_source_status("failed", latest, fingerprints, total_rows, str(error))
+            except Exception:
+                print("Could not record source failure", flush=True)
             if batch_id:
                 try:
                     post("etl-batch/abort", {"batch_id": batch_id,
