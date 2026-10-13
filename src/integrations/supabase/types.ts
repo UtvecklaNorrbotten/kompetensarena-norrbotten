@@ -1610,6 +1610,42 @@ export type Database = {
           },
         ]
       }
+      rel_af_yb_ssyk: {
+        Row: {
+          antal_ssyk: number | null
+          del_av_ssyk: number | null
+          period: string
+          source_batch_id: string
+          ssyk4: string
+          taxonomi_version: string
+          updated_at: string
+          yb_beskrivning: string | null
+          yb_concept_id: string
+        }
+        Insert: {
+          antal_ssyk?: number | null
+          del_av_ssyk?: number | null
+          period: string
+          source_batch_id: string
+          ssyk4: string
+          taxonomi_version: string
+          updated_at?: string
+          yb_beskrivning?: string | null
+          yb_concept_id: string
+        }
+        Update: {
+          antal_ssyk?: number | null
+          del_av_ssyk?: number | null
+          period?: string
+          source_batch_id?: string
+          ssyk4?: string
+          taxonomi_version?: string
+          updated_at?: string
+          yb_beskrivning?: string | null
+          yb_concept_id?: string
+        }
+        Relationships: []
+      }
       search_index: {
         Row: {
           description: string | null
@@ -2021,6 +2057,7 @@ export type Database = {
         Returns: Json
       }
       refresh_agg_af_yrkesbarometer: { Args: never; Returns: undefined }
+      refresh_rel_af_yb_ssyk: { Args: never; Returns: undefined }
       search_site: {
         Args: { query_text: string }
         Returns: {
