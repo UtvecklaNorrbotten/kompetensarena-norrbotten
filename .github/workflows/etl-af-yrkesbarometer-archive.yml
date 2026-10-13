@@ -2,9 +2,6 @@ name: 10 · Data · AF – Yrkesbarometern (källarkiv)
 
 on:
   workflow_dispatch:
-  schedule:
-    # AF publishes in June and December; check weekly in each publication month.
-    - cron: "20 5 * 6,12 1"
 
 permissions:
   contents: read

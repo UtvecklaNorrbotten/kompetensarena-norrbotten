@@ -127,6 +127,33 @@ def post(path, payload, safe=True):
         time.sleep(min(45, 3 * (2 ** attempt)))
 
 
+def source_head():
+    """Cheap check against current file; falls back to full check if unreliable."""
+    url = BASE + "yrkesbarometer.json"
+    request = urllib.request.Request(url, method="HEAD", headers={
+        "User-Agent": "Kompetensarena-ETL/1.0"})
+    try:
+        with urllib.request.urlopen(request, timeout=25) as response:
+            headers = response.headers
+            return {
+                "etag": headers.get("ETag") or "",
+                "last_modified": headers.get("Last-Modified") or "",
+                "content_length": headers.get("Content-Length") or "",
+            }
+    except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError):
+        return None
+
+
+def head_is_unchanged(previous, current):
+    """Only trust HEAD if a version-bearing header exists on both sides."""
+    if not isinstance(previous, dict) or not isinstance(current, dict):
+        return False
+    version_keys = ("etag", "last_modified")
+    if not any(previous.get(k) and current.get(k) for k in version_keys):
+        return False
+    return previous == current
+
+
 def state_get():
     base = os.environ.get("ETL_BASE_URL", "").rstrip("/")
     secret = os.environ.get("ETL_PUBLISH_KEY", "")
@@ -146,7 +173,8 @@ def record_source_status(status, period, fingerprints, rows, message=None):
     body = {"source_id": "af-yrkesbarometer", "status": status,
             "latest_available_period": period,
             "details": {"file_sha256": fingerprints, "rows": rows,
-                        "schema": "yb-full-v2", "editions": sorted(EDITION_KEYS)}}
+                        "schema": "yb-full-v2", "editions": sorted(EDITION_KEYS),
+                        "current_head": CURRENT_HEAD}}
     if status == "succeeded":
         body["latest_successful_period"] = period
     if message:
@@ -162,9 +190,21 @@ def should_publish(state, fingerprints):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--mode", choices=("validate", "publish", "check"), default="validate")
+    p.add_argument("--mode", choices=("validate", "publish", "check", "review"), default="validate")
     p.add_argument("--report", default="artifacts/af-yrkesbarometer-import-report.json")
     args = p.parse_args()
+    global CURRENT_HEAD
+    CURRENT_HEAD = source_head() if args.mode in ("check", "publish", "review") else None
+    state = state_get() if args.mode in ("check", "review") else {}
+    # HEAD avoids downloading every historical file on ordinary check days.
+    if args.mode == "check" and state.get("last_status") == "succeeded" and head_is_unchanged(
+            (state.get("details") or {}).get("current_head"), CURRENT_HEAD):
+        print("Unchanged source HTTP metadata: no download or database write", flush=True)
+        report = {"mode": args.mode, "status": "no_change", "method": "head"}
+        output = pathlib.Path(args.report)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(canonical(report) + "\n", encoding="utf-8")
+        return
     entries = []
     for relative, edition in SOURCES:
         body, _, _ = fetch(BASE + relative)
@@ -191,8 +231,7 @@ def main():
     EDITION_KEYS = list(grouped)
     latest = max(grouped)
     total_rows = sum(len(x) for x in grouped.values())
-    if args.mode == "check":
-        state = state_get()
+    if args.mode in ("check", "review"):
         previous_editions = set((state.get("details") or {}).get("editions") or [])
         missing_editions = previous_editions - set(grouped)
         if missing_editions:
@@ -206,7 +245,7 @@ def main():
             output.write_text(canonical(report) + "\n", encoding="utf-8")
             return
         print("Ny eller ändrad källdata: full snapshot behövs", flush=True)
-    if args.mode in ("publish", "check"):
+    if args.mode in ("publish", "check", "review"):
         # A full snapshot supports the initial load as well as future new
         # editions. replace_period cannot add previously unseen editions.
         observations = [row for period in grouped for row in grouped[period]]
