@@ -28,7 +28,7 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v5
-      - name: Validera eller publicera Yrkesbarometern
+      - name: Syntaxkontroll\n        run: python -m compileall -q scripts/etl_af_yrkesbarometer_publish.py\n      - name: Validera eller publicera Yrkesbarometern
         env:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
           ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
