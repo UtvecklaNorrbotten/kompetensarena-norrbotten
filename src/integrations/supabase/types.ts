@@ -877,6 +877,62 @@ export type Database = {
           },
         ]
       }
+      agg_af_yrkesbarometer: {
+        Row: {
+          delvis_helt: string | null
+          geo_code: string
+          hogsta_bedomningsniva: string | null
+          jobbmojligheter: string | null
+          original: Json
+          period: string
+          prognos: string | null
+          refreshed_at: string
+          rekryteringssituation: string | null
+          source_batch_id: string
+          ssyk: Json | null
+          yb_concept_id: string
+          yrke: string | null
+        }
+        Insert: {
+          delvis_helt?: string | null
+          geo_code: string
+          hogsta_bedomningsniva?: string | null
+          jobbmojligheter?: string | null
+          original: Json
+          period: string
+          prognos?: string | null
+          refreshed_at?: string
+          rekryteringssituation?: string | null
+          source_batch_id: string
+          ssyk?: Json | null
+          yb_concept_id: string
+          yrke?: string | null
+        }
+        Update: {
+          delvis_helt?: string | null
+          geo_code?: string
+          hogsta_bedomningsniva?: string | null
+          jobbmojligheter?: string | null
+          original?: Json
+          period?: string
+          prognos?: string | null
+          refreshed_at?: string
+          rekryteringssituation?: string | null
+          source_batch_id?: string
+          ssyk?: Json | null
+          yb_concept_id?: string
+          yrke?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agg_af_yrkesbarometer_geo_code_fkey"
+            columns: ["geo_code"]
+            isOneToOne: false
+            referencedRelation: "geographies"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
       agg_afr_ae_dynamics: {
         Row: {
           ended: number
@@ -1964,6 +2020,7 @@ export type Database = {
         }
         Returns: Json
       }
+      refresh_agg_af_yrkesbarometer: { Args: never; Returns: undefined }
       search_site: {
         Args: { query_text: string }
         Returns: {

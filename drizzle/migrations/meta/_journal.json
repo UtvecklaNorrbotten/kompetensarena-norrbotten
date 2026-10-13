@@ -281,6 +281,13 @@
       "when": 1791819812154,
       "tag": "0039_0040_af_yrkesbarometer_source",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1791895887109,
+      "tag": "0040_0041_af_yrkesbarometer_aggregates",
+      "breakpoints": true
     }
   ]
 }
