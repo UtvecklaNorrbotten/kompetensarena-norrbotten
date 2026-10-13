@@ -6,9 +6,10 @@ on:
       mode:
         description: "Körläge"
         required: true
-        default: "validate"
+        default: "check"
         type: choice
         options:
+          - check
           - validate
           - publish
   schedule:
@@ -34,7 +35,7 @@ jobs:
         env:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
           ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
-          YB_MODE: ${{ github.event_name == 'schedule' && 'validate' || inputs.mode }}
+          YB_MODE: ${{ github.event_name == 'schedule' && 'check' || inputs.mode }}
         run: python scripts/etl_af_yrkesbarometer_publish.py --mode "$YB_MODE"
       - name: Spara valideringsrapport
         if: always()
