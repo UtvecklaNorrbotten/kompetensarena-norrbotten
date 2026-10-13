@@ -113,13 +113,13 @@ def post(path, payload, safe=True):
     for attempt in range(5 if safe else 1):
         try:
             req = urllib.request.Request(base + "/api/public/jobs/" + path, body,
-                  {"Content-Type": "application/json", "Authorization": "Bearer " + secret},
+                  {"Content-Type": "application/json", "User-Agent": "Kompetensarena-ETL/1.0", "Authorization": "Bearer " + secret},
                   method="POST")
             with urllib.request.urlopen(req, timeout=120) as response:
                 return json.load(response)
         except urllib.error.HTTPError as e:
             if not safe or attempt == 4 or e.code not in (429, 502, 503, 504):
-                raise RuntimeError(f"Import-API svarade HTTP {e.code}") from None
+                raise RuntimeError(f"Import-API {path} svarade HTTP {e.code}") from None
         except (urllib.error.URLError, TimeoutError):
             if not safe or attempt == 4:
                 raise RuntimeError("Import-API kunde inte nås") from None
@@ -141,23 +141,46 @@ def main():
                            for k, v in grouped.items()}}
     print(canonical(report), flush=True)
     if args.mode == "publish":
-        for period, rows in grouped.items():
-            nchunks = math.ceil(len(rows) / CHUNK_ROWS)
+        # A full snapshot supports the initial load as well as future new
+        # editions. replace_period cannot add previously unseen editions.
+        observations = [row for period in grouped for row in grouped[period]]
+        total_chunks = math.ceil(len(observations) / CHUNK_ROWS)
+        spec = {"schema": "yb-full-v2", "fingerprints": fingerprints,
+                "chunk_size": CHUNK_ROWS, "indicator": INDICATOR}
+        import_key = hashlib.sha256(canonical(spec).encode("utf-8")).hexdigest()
+        print(f"Full snapshot: {len(observations)} rows, {total_chunks} chunks", flush=True)
+        batch_id = None
+        try:
             batch = post("etl-batch/start", {
                 "indicator_id": INDICATOR, "source": "AF Yrkesbarometern",
-                "mode": "replace_period", "replace_period": period,
-                "expected_rows": len(rows), "expected_chunks": nchunks,
+                "mode": "full", "import_key": import_key,
+                "expected_rows": len(observations), "expected_chunks": total_chunks,
             }, safe=False)
             batch_id = batch["batch_id"]
-            for index in range(nchunks):
+            for index in range(total_chunks):
                 post("etl-batch/chunk", {
                     "batch_id": batch_id, "indicator_id": INDICATOR,
                     "chunk_index": index,
-                    "observations": rows[index * CHUNK_ROWS:(index + 1) * CHUNK_ROWS],
+                    "observations": observations[index * CHUNK_ROWS:(index + 1) * CHUNK_ROWS],
                 })
-            post("etl-batch/finalize", {"batch_id": batch_id})
-            print("Publicerad:", period, len(rows), flush=True)
-        report["published"] = list(grouped)
+                if (index + 1) % 10 == 0 or index + 1 == total_chunks:
+                    print(f"Staged {index + 1}/{total_chunks} chunks", flush=True)
+            post("etl-batch/finalize", {"batch_id": batch_id}, safe=False)
+            batch_id = None
+            report["published"] = list(grouped)
+        except Exception as error:
+            report["error"] = str(error)
+            if batch_id:
+                try:
+                    post("etl-batch/abort", {"batch_id": batch_id,
+                         "reason": "Yrkesbarometer full snapshot failed"})
+                except Exception:
+                    print("Warning: failed batch could not be aborted", flush=True)
+            raise
+        finally:
+            output = pathlib.Path(args.report)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(canonical(report) + "\n", encoding="utf-8")
     output = pathlib.Path(args.report)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(canonical(report) + "\n", encoding="utf-8")
