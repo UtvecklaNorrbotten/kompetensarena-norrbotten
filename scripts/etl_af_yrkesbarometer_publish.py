@@ -190,12 +190,12 @@ def should_publish(state, fingerprints):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--mode", choices=("validate", "publish", "check"), default="validate")
+    p.add_argument("--mode", choices=("validate", "publish", "check", "review"), default="validate")
     p.add_argument("--report", default="artifacts/af-yrkesbarometer-import-report.json")
     args = p.parse_args()
     global CURRENT_HEAD
-    CURRENT_HEAD = source_head() if args.mode == "check" else None
-    state = state_get() if args.mode == "check" else {}
+    CURRENT_HEAD = source_head() if args.mode in ("check", "publish", "review") else None
+    state = state_get() if args.mode in ("check", "review") else {}
     # HEAD avoids downloading every historical file on ordinary check days.
     if args.mode == "check" and state.get("last_status") == "succeeded" and head_is_unchanged(
             (state.get("details") or {}).get("current_head"), CURRENT_HEAD):
@@ -231,7 +231,7 @@ def main():
     EDITION_KEYS = list(grouped)
     latest = max(grouped)
     total_rows = sum(len(x) for x in grouped.values())
-    if args.mode == "check":
+    if args.mode in ("check", "review"):
         previous_editions = set((state.get("details") or {}).get("editions") or [])
         missing_editions = previous_editions - set(grouped)
         if missing_editions:
@@ -245,7 +245,7 @@ def main():
             output.write_text(canonical(report) + "\n", encoding="utf-8")
             return
         print("Ny eller ändrad källdata: full snapshot behövs", flush=True)
-    if args.mode in ("publish", "check"):
+    if args.mode in ("publish", "check", "review"):
         # A full snapshot supports the initial load as well as future new
         # editions. replace_period cannot add previously unseen editions.
         observations = [row for period in grouped for row in grouped[period]]
