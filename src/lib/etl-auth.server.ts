@@ -4,6 +4,10 @@
  * Nyckeln (`ETL_PUBLISH_KEY`, med valfri `ETL_PUBLISH_KEY_PREVIOUS` under
  * nyckelbyte) finns bara som hemlighet i Lovable och i GitHub Actions Secrets —
  * aldrig i repot, aldrig i klientkod, aldrig i databasen och aldrig i loggar.
+ *
+ * Obs: serverhemligheter läses in när serverfunktionen driftsätts. Efter en
+ * nyckelrotering krävs ett nytt bygge/driftsättning innan den nya nyckeln
+ * gäller mot den externa adressen.
  */
 
 export function json(body: unknown, status: number): Response {
