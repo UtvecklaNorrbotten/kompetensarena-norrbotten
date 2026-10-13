@@ -169,6 +169,19 @@ def main():
     for relative, edition in SOURCES:
         body, _, _ = fetch(BASE + relative)
         entries.append((pathlib.Path(relative).name, edition, body))
+    # When a newer current edition arrives, fetch earlier 2026+ editions
+    # from the historical archive before building the replacement snapshot.
+    provisional, _ = prepare(entries)
+    latest_current = max(provisional)
+    latest_year = int(latest_current[:4])
+    for year in range(2026, latest_year + 1):
+        for half in (1, 2):
+            edition = f"{year}-{half}"
+            if edition >= latest_current:
+                continue
+            relative = f"historiska/yrkesbarometer_{edition}.json"
+            body, _, _ = fetch(BASE + relative)
+            entries.append((pathlib.Path(relative).name, edition, body))
     grouped, fingerprints = prepare(entries)
     report = {"mode": args.mode, "file_sha256": fingerprints,
               "editions": {k: {"rows": len(v), "norrbotten": sum(r["geo_code"] == "25" for r in v)}
