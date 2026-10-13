@@ -12,6 +12,17 @@ spec.loader.exec_module(yb)
 
 
 class YrkesbarometerTest(unittest.TestCase):
+    def test_head_metadata_requires_reliable_version(self):
+        self.assertTrue(yb.head_is_unchanged(
+            {"etag": "abc", "last_modified": "", "content_length": "10"},
+            {"etag": "abc", "last_modified": "", "content_length": "10"}))
+        self.assertFalse(yb.head_is_unchanged(
+            {"etag": "", "last_modified": "", "content_length": "10"},
+            {"etag": "", "last_modified": "", "content_length": "10"}))
+        self.assertFalse(yb.head_is_unchanged(
+            {"etag": "abc", "last_modified": "", "content_length": "10"},
+            {"etag": "def", "last_modified": "", "content_length": "10"}))
+
     def test_source_state_detects_deltas(self):
         f = {"yrkesbarometer.json": "abc"}
         self.assertTrue(yb.should_publish({}, f))
