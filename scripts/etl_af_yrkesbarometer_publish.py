@@ -146,7 +146,7 @@ def record_source_status(status, period, fingerprints, rows, message=None):
     body = {"source_id": "af-yrkesbarometer", "status": status,
             "latest_available_period": period,
             "details": {"file_sha256": fingerprints, "rows": rows,
-                        "schema": "yb-full-v2"}}
+                        "schema": "yb-full-v2", "editions": sorted(EDITION_KEYS)}}
     if status == "succeeded":
         body["latest_successful_period"] = period
     if message:
@@ -174,10 +174,17 @@ def main():
               "editions": {k: {"rows": len(v), "norrbotten": sum(r["geo_code"] == "25" for r in v)}
                            for k, v in grouped.items()}}
     print(canonical(report), flush=True)
+    global EDITION_KEYS
+    EDITION_KEYS = list(grouped)
     latest = max(grouped)
     total_rows = sum(len(x) for x in grouped.values())
     if args.mode == "check":
         state = state_get()
+        previous_editions = set((state.get("details") or {}).get("editions") or [])
+        missing_editions = previous_editions - set(grouped)
+        if missing_editions:
+            raise ValueError("Previously published editions missing: " +
+                             ", ".join(sorted(missing_editions)))
         if not should_publish(state, fingerprints):
             print("Inga ändringar sedan senaste lyckade publicering", flush=True)
             report["status"] = "no_change"
