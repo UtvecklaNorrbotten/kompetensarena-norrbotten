@@ -1,4 +1,4 @@
-name: 10 · Data · E3 – kommuner
+name: 10 · Data · SCB E3 – matchning, kommuner (TAB6929)
 
 on:
   workflow_dispatch:

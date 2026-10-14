@@ -1,4 +1,4 @@
-name: 90 · Test · E3 – kommunimport
+name: 90 · Test · SCB E3 – kommunimport (TAB6929)
 on:
   pull_request:
     paths:

@@ -72,7 +72,7 @@ hela historiken; `validate` provar senaste månad utan databasåtkomst.
 
 ## Kvartalsrevision och återstart
 
-`20 · Kontroll · BAS – historikrevision` körs den 18 januari, april, juli
+`20 · Kontroll · SCB BAS – historikrevision (TAB3784, TAB2597)` körs den 18 januari, april, juli
 och oktober 12:15 UTC. Tiden ligger efter morgonjobben, efter AF:s 1–15-fönster
 och före BAS månadsfönster. Båda BAS-workflows har samma concurrency-grupp
 och kan inte publicera parallellt. Det låset omfattar BAS, inte manuella
