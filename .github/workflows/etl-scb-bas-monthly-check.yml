@@ -1,4 +1,4 @@
-name: 10 · Data · BAS – månadsuppdatering
+name: 10 · Data · SCB BAS – sysselsatta (TAB3784, TAB2597)
 
 on:
   workflow_dispatch:
