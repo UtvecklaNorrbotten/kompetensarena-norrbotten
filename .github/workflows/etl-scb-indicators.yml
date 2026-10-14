@@ -1,4 +1,4 @@
-name: 10 · Data · E3 – län och Riket
+name: 10 · Data · SCB E3 – matchning, län och Riket (TAB6929)
 
 run-name: >-
   SCB ETL – ${{ github.event.inputs.indicator || 'e3' }} –

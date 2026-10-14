@@ -1,4 +1,4 @@
-name: 90 · Test · BAS – import
+name: 90 · Test · SCB BAS – import (TAB3784, TAB2597)
 
 on:
   workflow_dispatch:

@@ -3,7 +3,7 @@
 ## Kommunimport (2026-10-04)
 
 Kommunhämtningen är en separat indikator, `e3-matchning-utbildning-kommun`,
-med entrypoint `R/etl/e3_municipal.R` och workflow **ETL - E3 alla kommuner**.
+med entrypoint `R/etl/e3_municipal.R` och workflow **10 · Data · SCB E3 – matchning, kommuner (TAB6929)**.
 Den befintliga länsimporten behåller sina utbildningsnivåer och könskategorier.
 Kommunimporten väljer:
 
@@ -54,7 +54,7 @@ publicering om inte `force_refresh` väljs.
 1. Driftsätt backend och applicera **0031_e3_municipal_snapshot.sql** och
    **0032_e3_municipal_aggregates.sql** via Lovable. Uppdatera befintlig
    migrationsjournal; skapa inte dubbletter av migrationerna.
-2. PR-workflowet **Validate E3 municipal** kontrollerar R-syntax, syntetiska
+2. PR-workflowet **90 · Test · SCB E3 – kommunimport (TAB6929)** kontrollerar R-syntax, syntetiska
    regressionsexempel och ett faktiskt SCB-prov utan databasåtkomst.
 3. Merge av importkoden till main startar kommunworkflowet. Det väntar i upp
    till tio minuter på backend/migration 0031. Om driftsättningen dröjer ska

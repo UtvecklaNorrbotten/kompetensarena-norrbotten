@@ -1,6 +1,6 @@
 # Skatteverket: arbetsgivaravgifter och avdragen skatt
 
-Granskad 2026-10-09. Källundersökning och läsande testworkflows, ingen produktionsimport.
+Granskad 2026-10-09. Källundersökning utan produktionsimport. Testworkflows avvecklade 2026-10-14.
 
 ## Bedömning för Kompetensarena
 
@@ -206,19 +206,18 @@ Läs om historiska år när respektive års källdatum förändrats; bara senast
 månaden räcker inte för att fånga revisioner. Lagra snapshots för att kunna
 mäta revisioner och tid till stabilitet. Ingen löpande körning är schemalagd nu.
 
-## Testworkflows
+## Avvecklade testworkflows
 
-- `90 · Test · Skatteverket AGI – klient`: syntetiska regressionsexempel för
-  paginering, förändrat radantal, utebliven filtrering, dubbletter och tidsstatus.
-- `90 · Test · Skatteverket AGI – datakälla`: laddar hela officiella CSV:n för
-  inventering och provar JSON-uttag för Norrbotten, dess 14 kommuner, alla kommuner,
-  SNI-branscher, storleksklasser, årsdata och Rikets senaste månader.
+AGI används inte som datakälla i projektet. Workflows för klienttest och
+källinventering togs bort 2026-10-14. Kartläggningen, skriptet
+`scripts/probe_skatteverket_agi.py` och testfallen i `tests/test_agi_probe.py`
+behålls. Ingen hämtning eller publicering schemaläggs.
 
-Båda kan köras manuellt och körs vid relevanta kodändringar enligt workflow-filerna.
-Datakälleprovet sparar inventering, Swagger, uttag, filter, källmetadata och en
-sammanfattning som Actions-artefakt i 30 dagar. Full CSV sparas inte i artefakten.
-Inga secrets, databasanslutningar eller publiceringsbehörigheter behövs.
-Grönt jobb betyder tekniskt prov godkänt; `ready_for_dashboard` är fortfarande false.
+Klienttesten kan fortfarande köras lokalt:
+
+```sh
+python -m unittest discover -s tests -p test_agi_probe.py -v
+```
 
 ## Källor och kontrollspår
 
