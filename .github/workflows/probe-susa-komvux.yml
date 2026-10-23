@@ -42,6 +42,8 @@ jobs:
           for origin,spec in specs:
             print("SPEC",origin,"SERVERS",json.dumps(spec.get("servers",[]),ensure_ascii=False),"BASE",spec.get("basePath"))
             print("PATH COUNT",len(spec.get("paths",{})))
+            print("SCHOOLTYPE_PARAM",json.dumps(spec.get("components",{}).get("parameters",{}).get("schoolType"),ensure_ascii=False,default=str))
+            print("SCHOOLTYPE_SCHEMAS",json.dumps({k:v for k,v in spec.get("components",{}).get("schemas",{}).items() if "school" in k.lower() or "komvux" in k.lower()},ensure_ascii=False,default=str)[:13000])
             for path,methods in spec.get("paths",{}).items():
               for method,op in methods.items():
                 if method.lower() not in ["get","post"]:continue
