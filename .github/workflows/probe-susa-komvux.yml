@@ -1,72 +1,69 @@
 name: "Probe · Skolverket SUSA komvux (engångskontroll)"
 on:
   push:
-    paths:
-      - ".github/workflows/probe-susa-komvux.yml"
+    paths: [".github/workflows/probe-susa-komvux.yml"]
   workflow_dispatch:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 25
     steps:
-      - name: Discover official API and sample data
+      - name: Audit all five Komvux school types by municipality
         shell: bash
         run: |
           python - <<'PY'
-          import requests,json,pathlib,yaml
-          from urllib.parse import urljoin
-          s=requests.Session();s.headers["User-Agent"]="Kompetensarena-Norrbotten/1.0 public API research"
+          import requests,json,concurrent.futures,collections,datetime,time,pathlib
+          s=requests.Session()
+          s.headers["User-Agent"]="Kompetensarena-Norrbotten/1.0 SUSA public research"
+          root="https://api.skolverket.se/susa-navet/emil3"
+          codes=["VUXGR","VUXGRAN","VUXGY","VUXGYAN","VUXSFI"]
+          municipalities={"2505":"Arvidsjaur","2506":"Arjeplog","2510":"Jokkmokk","2513":"Överkalix","2514":"Kalix","2518":"Övertorneå","2521":"Pajala","2523":"Gällivare","2560":"Älvsbyn","2580":"Luleå","2581":"Piteå","2582":"Boden","2583":"Haparanda","2584":"Kiruna"}
           out=pathlib.Path("susa-probe");out.mkdir(exist_ok=True)
-          urls=["https://api.skolverket.se/susa-navet-emil3.yaml","https://api.skolverket.se/susa-navet/susa-navet-emil3.yaml","https://api.skolverket.se/susa-navet/swagger-ui/swagger-initializer.js","https://api.skolverket.se/susa-navet/v3/api-docs/swagger-config"]
-          specs=[]
-          for u in urls:
-            try:
-              r=s.get(u,timeout=30);print("FETCH",u,r.status_code,r.url,r.headers.get("content-type"),len(r.content))
-              if r.ok:
-                (out/("source_"+str(len(specs))+"_"+u.split("/")[-1].replace(".","_")+".txt")).write_text(r.text,encoding="utf8")
-                if "openapi" in r.text[:1000] or "swagger:" in r.text[:1000]:
-                  try:specs.append((u,yaml.safe_load(r.text)))
-                  except Exception as e:print("YAML ERROR",repr(e))
-                elif u.endswith("swagger-config"):
-                  try:
-                    conf=r.json(); print("CONFIG",json.dumps(conf))
-                    if conf.get("url"): urls.append(urljoin("https://api.skolverket.se",conf["url"]))
-                  except Exception:pass
-                elif u.endswith("swagger-initializer.js"):
-                  import re
-                  for m in re.findall(r'url:\\s*["\x27]([^"\x27]+)',r.text):
-                    print("SWAGGER REF",m)
-                    nexturl=urljoin("https://api.skolverket.se",m)
-                    if nexturl not in urls:urls.append(nexturl)
-            except Exception as e:print("REQUEST ERROR",u,str(e))
-          for origin,spec in specs:
-            print("SPEC",origin,"SERVERS",json.dumps(spec.get("servers",[]),ensure_ascii=False),"BASE",spec.get("basePath"))
-            print("PATH COUNT",len(spec.get("paths",{})))
-            print("SCHOOLTYPE_PARAM",json.dumps(spec.get("components",{}).get("parameters",{}).get("schoolType"),ensure_ascii=False,default=str))
-            print("SCHOOLTYPE_SCHEMAS",json.dumps({k:v for k,v in spec.get("components",{}).get("schemas",{}).items() if "school" in k.lower() or "komvux" in k.lower()},ensure_ascii=False,default=str)[:13000])
-            for path,methods in spec.get("paths",{}).items():
-              for method,op in methods.items():
-                if method.lower() not in ["get","post"]:continue
-                params=op.get("parameters",[])
-                print("ENDPOINT",method.upper(),path,"SUMMARY",op.get("summary"),"PARAMS",json.dumps(params,ensure_ascii=False)[:5000])
-            (out/"api_schema.json").write_text(json.dumps(spec,ensure_ascii=False,indent=2,default=str),encoding="utf8")
-            bases=[spec.get("servers",[{"url":"https://api.skolverket.se/susa-navet/emil3"}])[0]["url"].rstrip("/")+"/"]
-            for path,methods in spec.get("paths",{}).items():
-              if "get" not in methods:continue
-              if "{" in path:continue
-              for base in bases[:1]:
-                target=urljoin(base,path.lstrip("/"))
-                try:
-                  rr=s.get(target,timeout=35,params={"page":0,"size":3})
-                  print("SAMPLE",target,rr.status_code,rr.headers.get("content-type"),len(rr.content),rr.text[:4000].replace(chr(10)," "))
-                  if rr.ok:(out/("sample_"+str(len(list(out.glob("sample_*"))))+".json")).write_text(rr.text[:30000],encoding="utf8")
-                except Exception as e:print("SAMPLE ERROR",target,str(e))
-          if not specs:raise RuntimeError("No usable OpenAPI schema discovered")
+          def fetch(code,page):
+            for attempt in range(4):
+              try:
+                r=requests.get(root+"/educationEvents",params={"schoolType":code,"page":page,"size":500},timeout=60,headers=s.headers)
+                r.raise_for_status();return r.json()
+              except Exception as ex:
+                if attempt==3:raise
+                time.sleep(1+attempt*2)
+          summary={};records=[];exceptions=[]
+          for code in codes:
+            first=fetch(code,0)
+            info=first.get("page",{})
+            pages=info.get("totalPages",0);count=info.get("totalElements",0)
+            print("TYPE",code,"total",count,"pages",pages,"first_ids",[x.get("id") for x in first.get("educationEvents",[])[:2]],flush=True)
+            summary[code]={"total":count,"pages":pages}
+            def process(j):
+              page,doc=j
+              for event in doc.get("educationEvents",[]):
+                content=event.get("content") or {}
+                places=content.get("locations") or []
+                for place in places:
+                  ac=str(place.get("areaCode","")).zfill(4)
+                  if ac in municipalities:
+                    records.append({"code":code,"municipality":municipalities[ac],"areaCode":ac,"eventId":event.get("id"),"status":event.get("status"),"location":place,"providerIds":content.get("providers",[]),"educationId":content.get("education"),"execution":content.get("execution"),"expires":content.get("expires")})
+            process((0,first))
+            with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
+              future={pool.submit(fetch,code,p):p for p in range(1,pages)}
+              for fu in concurrent.futures.as_completed(future):
+                try:process((future[fu],fu.result()))
+                except Exception as e:exceptions.append({"code":code,"page":future[fu],"error":str(e)})
+            print("TYPE_DONE",code,"Norrbotten records",sum(x["code"]==code for x in records),"errors",sum(x["code"]==code for x in exceptions),flush=True)
+          (out/"komvux_records_norrbotten.json").write_text(json.dumps(records,ensure_ascii=False,indent=2,default=str),encoding="utf8")
+          (out/"komvux_errors.json").write_text(json.dumps(exceptions,ensure_ascii=False,indent=2),encoding="utf8")
+          report={"api":root,"retrievedAt":datetime.datetime.now(datetime.timezone.utc).isoformat(),"schoolTypes":summary,"errors":exceptions,"municipalities":{}}
+          for area,name in municipalities.items():
+            subset=[x for x in records if x["areaCode"]==area]
+            report["municipalities"][name]={"areaCode":area,"events":len(set(x["eventId"] for x in subset)),"bySchoolType":{t:len(set(x["eventId"] for x in subset if x["code"]==t)) for t in codes},"providerIds":sorted(set(p for x in subset for p in x["providerIds"]))}
+          (out/"komvux_coverage_norrbotten.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf8")
+          print("COVERAGE_REPORT",json.dumps(report,ensure_ascii=False),flush=True)
+          if exceptions:raise RuntimeError(f"Incomplete pages: {len(exceptions)}")
           PY
-      - name: Upload diagnostics
+      - name: Upload coverage audit
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: susa-api-diagnostics
+          name: susa-komvux-coverage
           path: susa-probe/
-          if-no-files-found: ignore
+          if-no-files-found: error
