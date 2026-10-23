@@ -1,0 +1,48 @@
+name: "Probe · Skolverket SUSA komvux (engångskontroll)"
+on:
+  push:
+    paths:
+      - ".github/workflows/probe-susa-komvux.yml"
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Inspect SUSA API and save responses
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,requests,re,pathlib
+          from urllib.parse import urljoin
+          root='https://api.skolverket.se/susa-navet/'
+          s=requests.Session();s.headers['User-Agent']='Kompetensarena-Norrbotten/1.0 research contact via GitHub'
+          out=pathlib.Path('susa-probe');out.mkdir(exist_ok=True)
+          paths=['swagger-ui/swagger-initializer.js','v3/api-docs/swagger-config','v3/api-docs','api-docs','swagger.json','openapi.json']
+          for p in paths:
+            try:
+              r=s.get(urljoin(root,p),timeout=25)
+              print('PROBE',r.url,r.status_code,r.headers.get('content-type'),len(r.content),r.text[:250].replace(chr(10),' '))
+              if r.ok:
+                (out/(p.replace('/','_')+'.txt')).write_text(r.text[:3000000],encoding='utf-8')
+                try:
+                  j=r.json()
+                  if isinstance(j,dict):
+                    print('JSON KEYS',list(j)[:25])
+                    if 'paths' in j:
+                      print('API PATHS',json.dumps({k:list(v) for k,v in j['paths'].items()},ensure_ascii=False))
+                      for k,v in j['paths'].items():
+                        for meth,op in v.items():
+                          if meth.lower()=='get':
+                            print('GET',k,'OP',op.get('operationId'),'PARAMS',json.dumps(op.get('parameters',[]),ensure_ascii=False)[:2500])
+                    for x in j.get('urls',[]):print('SWAGGER URL',x)
+                except ValueError:pass
+            except Exception as e:print('ERROR',p,repr(e))
+          PY
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: susa-api-diagnostics
+          path: susa-probe/
+          if-no-files-found: ignore
