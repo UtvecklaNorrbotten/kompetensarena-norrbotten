@@ -3,68 +3,81 @@ on:
   push:
     paths: [".github/workflows/probe-susa-komvux.yml"]
   workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
 jobs:
-  coverage:
+  classify:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 25
     steps:
-      - name: Download and aggregate every SUSA education event
+      - name: Download prior complete SUSA results
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p susa-all
-          cat > /tmp/audit.py <<'PY'
+          python - <<'PY'
+          import os,requests,io,zipfile
+          api="https://api.github.com/repos/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/artifacts/124"
+          r=requests.get("https://api.github.com/repos/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/runs/39936499388/artifacts",headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"],"Accept":"application/vnd.github+json"},timeout=40)
+          r.raise_for_status()
+          artifacts=r.json()["artifacts"]
+          print("ARTIFACTS",[(x["id"],x["name"]) for x in artifacts])
+          art=next(x for x in artifacts if x["name"]=="susa-all-schooltypes-norrbotten")
+          q=requests.get(art["archive_download_url"],headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"]},timeout=60)
+          q.raise_for_status()
+          z=zipfile.ZipFile(io.BytesIO(q.content)); print("FILES",z.namelist());z.extractall("susa-all")
+          PY
+      - name: Classify matched events by official education information
+        run: |
+          cat > /tmp/classify.py <<'PY'
           import requests,concurrent.futures,collections,json,time,datetime,pathlib,sys
-          root="https://api.skolverket.se/susa-navet/emil3/educationEvents"
-          codes={"2505":"Arvidsjaur","2506":"Arjeplog","2510":"Jokkmokk","2513":"Överkalix","2514":"Kalix","2518":"Övertorneå","2521":"Pajala","2523":"Gällivare","2560":"Älvsbyn","2580":"Luleå","2581":"Piteå","2582":"Boden","2583":"Haparanda","2584":"Kiruna"}
-          def get(page):
+          out=pathlib.Path("susa-all")
+          events=json.loads((out/"norrbotten_events.json").read_text())
+          ids=sorted(set(x["educationId"] for x in events if x["educationId"]))
+          missing=[x for x in events if not x["educationId"]]
+          print("UNIQUE EDUCATION IDS",len(ids),"NO EDUCATION",len(missing),flush=True)
+          root="https://api.skolverket.se/susa-navet/emil3/educationInfos/"
+          def get(eid):
             for attempt in range(4):
               try:
-                r=requests.get(root,params={"page":page,"size":500},timeout=65,headers={"User-Agent":"Kompetensarena-Norrbotten public coverage research"})
+                r=requests.get(root+requests.utils.quote(eid,safe=""),timeout=45,headers={"User-Agent":"Kompetensarena-Norrbotten research"})
                 r.raise_for_status()
-                return r.json()
+                j=r.json()
+                return eid,j
               except Exception as e:
-                if attempt==3:raise
-                time.sleep(1+attempt*2)
-          first=get(0);pages=first["page"]["totalPages"];total=first["page"]["totalElements"]
-          print("SOURCE_TOTAL",total,"PAGES",pages,flush=True)
-          events={};all_codes=collections.Counter();missing=0;errors=[]
-          def aggregate(doc):
-            global missing
-            for ev in doc.get("educationEvents",[]):
-              c=ev.get("content") or {}
-              locations=c.get("locations") or []
-              if not locations:missing+=1
-              for loc in locations:
-                code=str(loc.get("areaCode") or "").zfill(4)
-                all_codes[code]+=1
-                if code in codes:
-                  eid=ev.get("id")
-                  k=(eid,code)
-                  if k not in events:
-                    events[k]={"id":eid,"municipalityCode":code,"municipality":codes[code],"status":ev.get("status"),"educationId":c.get("education"),"providers":c.get("providers",[]),"execution":c.get("execution",{}),"expires":c.get("expires"),"lastEdited":c.get("lastEdited"),"locations":locations,"url":c.get("url"),"extensions":c.get("extensions")}
-          aggregate(first)
-          with concurrent.futures.ThreadPoolExecutor(max_workers=8) as ex:
-            futures={ex.submit(get,p):p for p in range(1,pages)}
-            for i,f in enumerate(concurrent.futures.as_completed(futures),1):
-              try:aggregate(f.result())
-              except Exception as e:errors.append({"page":futures[f],"error":str(e)})
-              if i%100==0:print("PROGRESS",i,pages-1,"matched",len(events),"errors",len(errors),flush=True)
-          base=pathlib.Path("susa-all")
-          records=list(events.values())
-          (base/"norrbotten_events.json").write_text(json.dumps(records,ensure_ascii=False,indent=2),encoding="utf8")
-          educationids=sorted(set(x["educationId"] for x in records if x["educationId"]))
-          summary={"timestamp":datetime.datetime.now(datetime.timezone.utc).isoformat(),"totalEventsInSource":total,"pages":pages,"retrievalErrors":errors,"eventsWithoutLocations":missing,"areaCodeCountsAll":dict(all_codes),"matchedEventMunicipalityPairs":len(records),"municipalities":{},"distinctEducationIds":len(educationids)}
-          for code,name in codes.items():
-            sub=[x for x in records if x["municipalityCode"]==code]
-            summary["municipalities"][name]={"code":code,"events":len(sub),"uniqueEducationIds":len(set(x["educationId"] for x in sub)),"uniqueProviders":len(set(p for x in sub for p in x["providers"])),"status":dict(collections.Counter(x["status"] for x in sub)),"withStartDate":sum(bool((x["execution"] or {}).get("start")) for x in sub),"providerIds":sorted(set(p for x in sub for p in x["providers"]))}
-          (base/"summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding="utf8")
-          print("SUMMARY",json.dumps({k:v for k,v in summary.items() if k!="areaCodeCountsAll"},ensure_ascii=False),flush=True)
-          if errors:sys.exit(1)
+                if attempt==3:return eid,{"error":str(e)}
+                time.sleep(1+attempt)
+          fetched={}
+          with concurrent.futures.ThreadPoolExecutor(max_workers=12) as pool:
+            for i,pair in enumerate(pool.map(get,ids),1):
+              fetched[pair[0]]=pair[1]
+              if i%300==0:print("FETCHED",i,len(ids),flush=True)
+          report=json.loads((out/"summary.json").read_text())
+          errs={k:v["error"] for k,v in fetched.items() if "error" in v}
+          print("EDUCATION_ERRORS",len(errs),flush=True)
+          schooltype_by_id={}
+          for eid,d in fetched.items():
+            c=d.get("content") or {}
+            schooltype_by_id[eid]=(c.get("type") or {}).get("code","UNSPECIFIED")
+          report["schoolForms"]={}
+          for municipality,row in report["municipalities"].items():
+            sub=[x for x in events if x["municipality"]==municipality]
+            count=collections.Counter(schooltype_by_id.get(x["educationId"],"UNKNOWN") for x in sub)
+            unique={t:len(set(x["educationId"] for x in sub if schooltype_by_id.get(x["educationId"],"UNKNOWN")==t)) for t in count}
+            row["schoolForms"]={k:{"events":v,"uniqueEducations":unique[k]} for k,v in sorted(count.items())}
+            report["schoolForms"][municipality]=row["schoolForms"]
+          report["educationErrors"]=errs
+          (out/"education_info_norrbotten.json").write_text(json.dumps(fetched,ensure_ascii=False,indent=2),encoding="utf8")
+          (out/"schoolform_coverage.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf8")
+          print("SCHOOLFORM_SUMMARY",json.dumps(report["schoolForms"],ensure_ascii=False),flush=True)
+          if errs:sys.exit(1)
           PY
-          python /tmp/audit.py
-      - name: Upload results
+          python /tmp/classify.py
+      - name: Upload classified results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: susa-all-schooltypes-norrbotten
+          name: susa-norrbotten-schoolforms
           path: susa-all/
           if-no-files-found: error
