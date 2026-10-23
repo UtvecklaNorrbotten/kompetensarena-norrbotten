@@ -47,8 +47,8 @@ jobs:
                 if method.lower() not in ["get","post"]:continue
                 params=op.get("parameters",[])
                 print("ENDPOINT",method.upper(),path,"SUMMARY",op.get("summary"),"PARAMS",json.dumps(params,ensure_ascii=False)[:5000])
-            (out/"api_schema.json").write_text(json.dumps(spec,ensure_ascii=False,indent=2),encoding="utf8")
-            bases=[urljoin(origin,"/"),"https://api.skolverket.se/susa-navet/"]
+            (out/"api_schema.json").write_text(json.dumps(spec,ensure_ascii=False,indent=2,default=str),encoding="utf8")
+            bases=[spec.get("servers",[{"url":"https://api.skolverket.se/susa-navet/emil3"}])[0]["url"].rstrip("/")+"/"]
             for path,methods in spec.get("paths",{}).items():
               if "get" not in methods:continue
               if "{" in path:continue
