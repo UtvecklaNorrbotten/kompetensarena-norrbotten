@@ -4,66 +4,30 @@ on:
     paths: [".github/workflows/probe-susa-komvux.yml"]
   workflow_dispatch:
 jobs:
-  probe:
+  inspect:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 10
     steps:
-      - name: Audit all five Komvux school types by municipality
+      - name: Inspect filtered records, provider relations, and geography
         shell: bash
         run: |
           python - <<'PY'
-          import requests,json,concurrent.futures,collections,datetime,time,pathlib
-          s=requests.Session()
-          s.headers["User-Agent"]="Kompetensarena-Norrbotten/1.0 SUSA public research"
-          root="https://api.skolverket.se/susa-navet/emil3"
-          codes=["VUXGR","VUXGRAN","VUXGY","VUXGYAN","VUXSFI"]
-          municipalities={"2505":"Arvidsjaur","2506":"Arjeplog","2510":"Jokkmokk","2513":"Överkalix","2514":"Kalix","2518":"Övertorneå","2521":"Pajala","2523":"Gällivare","2560":"Älvsbyn","2580":"Luleå","2581":"Piteå","2582":"Boden","2583":"Haparanda","2584":"Kiruna"}
-          out=pathlib.Path("susa-probe");out.mkdir(exist_ok=True)
-          def fetch(code,page):
-            for attempt in range(4):
-              try:
-                r=requests.get(root+"/educationEvents",params={"schoolType":code,"page":page,"size":500},timeout=60,headers=s.headers)
-                r.raise_for_status();return r.json()
-              except Exception as ex:
-                if attempt==3:raise
-                time.sleep(1+attempt*2)
-          summary={};records=[];exceptions=[]
-          for code in codes:
-            first=fetch(code,0)
-            info=first.get("page",{})
-            pages=info.get("totalPages",0);count=info.get("totalElements",0)
-            print("TYPE",code,"total",count,"pages",pages,"first_ids",[x.get("id") for x in first.get("educationEvents",[])[:2]],flush=True)
-            summary[code]={"total":count,"pages":pages}
-            def process(j):
-              page,doc=j
-              for event in doc.get("educationEvents",[]):
-                content=event.get("content") or {}
-                places=content.get("locations") or []
-                for place in places:
-                  ac=str(place.get("areaCode","")).zfill(4)
-                  if ac in municipalities:
-                    records.append({"code":code,"municipality":municipalities[ac],"areaCode":ac,"eventId":event.get("id"),"status":event.get("status"),"location":place,"providerIds":content.get("providers",[]),"educationId":content.get("education"),"execution":content.get("execution"),"expires":content.get("expires")})
-            process((0,first))
-            with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
-              future={pool.submit(fetch,code,p):p for p in range(1,pages)}
-              for fu in concurrent.futures.as_completed(future):
-                try:process((future[fu],fu.result()))
-                except Exception as e:exceptions.append({"code":code,"page":future[fu],"error":str(e)})
-            print("TYPE_DONE",code,"Norrbotten records",sum(x["code"]==code for x in records),"errors",sum(x["code"]==code for x in exceptions),flush=True)
-          (out/"komvux_records_norrbotten.json").write_text(json.dumps(records,ensure_ascii=False,indent=2,default=str),encoding="utf8")
-          (out/"komvux_errors.json").write_text(json.dumps(exceptions,ensure_ascii=False,indent=2),encoding="utf8")
-          report={"api":root,"retrievedAt":datetime.datetime.now(datetime.timezone.utc).isoformat(),"schoolTypes":summary,"errors":exceptions,"municipalities":{}}
-          for area,name in municipalities.items():
-            subset=[x for x in records if x["areaCode"]==area]
-            report["municipalities"][name]={"areaCode":area,"events":len(set(x["eventId"] for x in subset)),"bySchoolType":{t:len(set(x["eventId"] for x in subset if x["code"]==t)) for t in codes},"providerIds":sorted(set(p for x in subset for p in x["providerIds"]))}
-          (out/"komvux_coverage_norrbotten.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf8")
-          print("COVERAGE_REPORT",json.dumps(report,ensure_ascii=False),flush=True)
-          if exceptions:raise RuntimeError(f"Incomplete pages: {len(exceptions)}")
+          import requests,json,collections
+          base="https://api.skolverket.se/susa-navet/emil3"
+          for code in ["VUXGY","VUXGR","VUXSFI"]:
+            r=requests.get(base+"/educationEvents",params={"schoolType":code,"page":0,"size":5},timeout=45);print("CODE",code,r.status_code)
+            j=r.json()
+            for x in j.get("educationEvents",[])[:5]:print("EVENT",json.dumps(x,ensure_ascii=False)[:4000])
+            for pid in set(p for x in j.get("educationEvents",[]) for p in x.get("content",{}).get("providers",[])):
+              rr=requests.get(base+"/educationProviders/"+pid,timeout=30);print("PROVIDER",pid,rr.status_code,rr.text[:2000])
+          r=requests.get(base+"/educationProviders",params={"schoolType":"VUXGY","page":0,"size":1000},timeout=60)
+          print("PROVIDERS",r.status_code,"PAGES",r.json().get("page"))
+          j=r.json()
+          matches=[]
+          for x in j.get("educationProviders",[]):
+            content=x.get("content") or {}
+            blob=json.dumps(content,ensure_ascii=False)
+            if any(t in blob.lower() for t in ["luleå","boden","piteå","kiruna","kalix","gällivare","haparanda","pajala","jokkmokk","överkalix","övertorneå","arjeplog","arvidsjaur","älvsbyn"]):
+              matches.append(x)
+          print("PROVIDER_NORRBOTTEN_FIRST_PAGE",json.dumps(matches,ensure_ascii=False)[:18000])
           PY
-      - name: Upload coverage audit
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: susa-komvux-coverage
-          path: susa-probe/
-          if-no-files-found: error
