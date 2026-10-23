@@ -7,37 +7,59 @@ on:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
-      - name: Inspect SUSA API and save responses
+      - name: Discover official API and sample data
         shell: bash
         run: |
           python - <<'PY'
-          import json,requests,re,pathlib
+          import requests,json,pathlib,yaml
           from urllib.parse import urljoin
-          root='https://api.skolverket.se/susa-navet/'
-          s=requests.Session();s.headers['User-Agent']='Kompetensarena-Norrbotten/1.0 research contact via GitHub'
-          out=pathlib.Path('susa-probe');out.mkdir(exist_ok=True)
-          paths=['swagger-ui/swagger-initializer.js','v3/api-docs/swagger-config','v3/api-docs','api-docs','swagger.json','openapi.json']
-          for p in paths:
+          s=requests.Session();s.headers["User-Agent"]="Kompetensarena-Norrbotten/1.0 public API research"
+          out=pathlib.Path("susa-probe");out.mkdir(exist_ok=True)
+          urls=["https://api.skolverket.se/susa-navet-emil3.yaml","https://api.skolverket.se/susa-navet/susa-navet-emil3.yaml","https://api.skolverket.se/susa-navet/swagger-ui/swagger-initializer.js","https://api.skolverket.se/susa-navet/v3/api-docs/swagger-config"]
+          specs=[]
+          for u in urls:
             try:
-              r=s.get(urljoin(root,p),timeout=25)
-              print('PROBE',r.url,r.status_code,r.headers.get('content-type'),len(r.content),r.text[:250].replace(chr(10),' '))
+              r=s.get(u,timeout=30);print("FETCH",u,r.status_code,r.url,r.headers.get("content-type"),len(r.content))
               if r.ok:
-                (out/(p.replace('/','_')+'.txt')).write_text(r.text[:3000000],encoding='utf-8')
+                (out/("source_"+str(len(specs))+"_"+u.split("/")[-1].replace(".","_")+".txt")).write_text(r.text,encoding="utf8")
+                if "openapi" in r.text[:1000] or "swagger:" in r.text[:1000]:
+                  try:specs.append((u,yaml.safe_load(r.text)))
+                  except Exception as e:print("YAML ERROR",repr(e))
+                elif u.endswith("swagger-config"):
+                  try:
+                    conf=r.json(); print("CONFIG",json.dumps(conf))
+                    if conf.get("url"): urls.append(urljoin("https://api.skolverket.se",conf["url"]))
+                  except Exception:pass
+                elif u.endswith("swagger-initializer.js"):
+                  import re
+                  for m in re.findall(r'url:\\s*["\x27]([^"\x27]+)',r.text):
+                    print("SWAGGER REF",m)
+                    nexturl=urljoin("https://api.skolverket.se",m)
+                    if nexturl not in urls:urls.append(nexturl)
+            except Exception as e:print("REQUEST ERROR",u,str(e))
+          for origin,spec in specs:
+            print("SPEC",origin,"SERVERS",json.dumps(spec.get("servers",[]),ensure_ascii=False),"BASE",spec.get("basePath"))
+            print("PATH COUNT",len(spec.get("paths",{})))
+            for path,methods in spec.get("paths",{}).items():
+              for method,op in methods.items():
+                if method.lower() not in ["get","post"]:continue
+                params=op.get("parameters",[])
+                print("ENDPOINT",method.upper(),path,"SUMMARY",op.get("summary"),"PARAMS",json.dumps(params,ensure_ascii=False)[:5000])
+            (out/"api_schema.json").write_text(json.dumps(spec,ensure_ascii=False,indent=2),encoding="utf8")
+            bases=[urljoin(origin,"/"),"https://api.skolverket.se/susa-navet/"]
+            for path,methods in spec.get("paths",{}).items():
+              if "get" not in methods:continue
+              if "{" in path:continue
+              for base in bases[:1]:
+                target=urljoin(base,path.lstrip("/"))
                 try:
-                  j=r.json()
-                  if isinstance(j,dict):
-                    print('JSON KEYS',list(j)[:25])
-                    if 'paths' in j:
-                      print('API PATHS',json.dumps({k:list(v) for k,v in j['paths'].items()},ensure_ascii=False))
-                      for k,v in j['paths'].items():
-                        for meth,op in v.items():
-                          if meth.lower()=='get':
-                            print('GET',k,'OP',op.get('operationId'),'PARAMS',json.dumps(op.get('parameters',[]),ensure_ascii=False)[:2500])
-                    for x in j.get('urls',[]):print('SWAGGER URL',x)
-                except ValueError:pass
-            except Exception as e:print('ERROR',p,repr(e))
+                  rr=s.get(target,timeout=35,params={"page":0,"size":3})
+                  print("SAMPLE",target,rr.status_code,rr.headers.get("content-type"),len(rr.content),rr.text[:4000].replace(chr(10)," "))
+                  if rr.ok:(out/("sample_"+str(len(list(out.glob("sample_*"))))+".json")).write_text(rr.text[:30000],encoding="utf8")
+                except Exception as e:print("SAMPLE ERROR",target,str(e))
+          if not specs:raise RuntimeError("No usable OpenAPI schema discovered")
           PY
       - name: Upload diagnostics
         if: always()
