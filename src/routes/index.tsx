@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@/components/icons";
 import { AppLink } from "@/components/layout/AppLink";
 import { Section } from "@/components/layout/Section";
 import { areas, areaPath } from "@/config/areas";

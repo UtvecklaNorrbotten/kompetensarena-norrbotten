@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { MouseEvent as ReactMouseEvent } from "react";
 import { useRouterState } from "@tanstack/react-router";
-import { BookOpen, Download, Home, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
+import { BookOpen, Download, Home, PanelLeftClose, PanelLeftOpen, X } from "@/components/icons";
 import { areas, areaPath } from "@/config/areas";
 import { Button } from "@/components/ui/button";
 import { AppLink } from "./AppLink";

@@ -1,5 +1,5 @@
 import { Root, Anchor, Content, Portal, Close } from "@radix-ui/react-popover";
-import { X } from "lucide-react";
+import { X } from "@/components/icons";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { educationGenderColor } from "@/lib/education-colors";
 import { formatUkaValue, ukaGenderSeries, ukaGenderTimeline, type UkaRow } from "@/lib/uka-view";

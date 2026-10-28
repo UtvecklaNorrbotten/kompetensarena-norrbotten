@@ -1,8 +1,6 @@
-import { BriefcaseBusiness, createLucideIcon, MapPinned, Puzzle } from "lucide-react";
+import { BriefcaseBusiness, createLucideIcon, Industry, MapPinned, Puzzle } from "@/components/icons";
 
-const IndustryIcon = createLucideIcon("IndustryIcon", [
-  ["path", { d: "M3 21H21V3H17V12L10 8V12L3 8Z", key: "factory-outline" }],
-]);
+const IndustryIcon = Industry;
 
 const CompetenceIcon = Puzzle;
 

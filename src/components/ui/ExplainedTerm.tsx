@@ -1,4 +1,4 @@
-import { CircleHelp } from "lucide-react";
+import { CircleHelp } from "@/components/icons";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
 /** Begreppshjälp som fungerar med mus, tangentbord och pekskärm. */

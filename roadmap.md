@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Byt sidans matchande ikoner till Nucleo Essential; behåll symboler som saknas i gratisurvalet.
 - [x] Laddningsskelett för nyckeltal, diagram och tabeller
 - [x] Aggregat AF (riket/län/kommun), AFR (riket/län/kommun), E3 (riket/län – SCB saknar kommun)
 - [x] Automatisk omräkning av aggregat efter ny data

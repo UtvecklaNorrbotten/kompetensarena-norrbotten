@@ -1,4 +1,4 @@
-import { Menu } from "lucide-react";
+import { Menu } from "@/components/icons";
 import { Logo } from "./Logo";
 import { AccountLink } from "./AccountLink";
 import { SiteSearch } from "./SiteSearch";

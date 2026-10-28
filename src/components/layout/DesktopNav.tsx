@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown } from "@/components/icons";
 import { mainNavigation } from "@/config/navigation";
 import { AppLink } from "./AppLink";
 
