@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Search, X } from "lucide-react";
+import { Search, X } from "@/components/icons";
 import { searchSite, type SearchHit } from "@/lib/search.functions";
 import { AppLink } from "./AppLink";
 

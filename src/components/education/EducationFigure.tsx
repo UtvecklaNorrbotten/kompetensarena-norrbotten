@@ -3,7 +3,7 @@ import { EducationLegend } from "./EducationLegend";
 import { EducationHistoryPreview } from "./EducationHistoryPreview";
 import { educationGenderColor } from "@/lib/education-colors";
 import { useLegendClick } from "@/lib/legend-click";
-import { Download } from "lucide-react";
+import { Download } from "@/components/icons";
 import {
   educationCsv,
   downloadBlob,

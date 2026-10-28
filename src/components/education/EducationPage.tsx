@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown } from "@/components/icons";
 import { Section } from "@/components/layout/Section";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ExplainedTerm } from "@/components/ui/ExplainedTerm";
