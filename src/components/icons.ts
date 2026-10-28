@@ -5,6 +5,7 @@ export {
   IconMapOutline18 as MapPinned,
   IconPuzzlePieceOutline18 as Puzzle,
   IconBookOpenOutline18 as BookOpen,
+  IconGraduationCapOutline18 as GraduationCap,
   IconHouse5Outline18 as Home,
   IconMagnifierOutline18 as Search,
   IconXmarkOutline18 as X,

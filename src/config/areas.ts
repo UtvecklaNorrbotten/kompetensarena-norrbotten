@@ -1,27 +1,10 @@
-import { BriefcaseBusiness, createLucideIcon, Industry, MapPinned, Puzzle } from "@/components/icons";
+import { BriefcaseBusiness, GraduationCap, Industry, MapPinned, Puzzle } from "@/components/icons";
 
 const IndustryIcon = Industry;
 
 const CompetenceIcon = Puzzle;
 
-// Svensk studentmössa (version från 2026-10-05): fylld band+skärm med ihålig kokard.
-const EducationIcon = createLucideIcon("EducationIcon", [
-  ["path", { d: "M3 12C0 4 24 4 21 12", key: "cap-crown" }],
-  [
-    "path",
-    {
-      d: "M3 12H21V15H19C16 20 8 20 5 15H3ZM13.15 13.4a1.15 1.15 0 1 0-2.3 0a1.15 1.15 0 1 0 2.3 0Z",
-      fill: "currentColor",
-      fillRule: "evenodd",
-      stroke: "none",
-      key: "cap-band-and-visor",
-    },
-  ],
-  [
-    "circle",
-    { cx: "12", cy: "13.4", r: "0.38", fill: "currentColor", stroke: "none", key: "cap-cockade" },
-  ],
-]);
+const EducationIcon = GraduationCap;
 
 export const areas = [
   {
