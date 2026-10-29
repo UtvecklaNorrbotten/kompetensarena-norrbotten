@@ -11,6 +11,11 @@ on:
         options:
           - baseline
           - check
+      target:
+        description: "Datamängd att revisionskontrollera"
+        type: choice
+        default: all
+        options: [all, sok, tid, svag, yrke, bas]
   schedule:
     # Full historikdiff fyra gånger per år, efter månadskontrollens 1-15-fönster.
     - cron: "15 5 16 1,4,7,10 *"
@@ -30,7 +35,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        target: [sok, tid, svag, yrke, bas]
+        target: ${{ fromJSON((github.event_name == 'schedule' || inputs.target == 'all' || inputs.target == '') && '["sok","tid","svag","yrke","bas"]' || format('["{0}"]', inputs.target)) }}
 
     steps:
       - name: Checka ut repo

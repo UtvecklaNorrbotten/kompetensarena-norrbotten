@@ -49,6 +49,29 @@ af_read_pivot_definition <- function(xlsx_path, cache_id = 1L) {
   list(field_names = field_names, shared = shared)
 }
 
+# Excel kan numrera om cacherna när AF sparar om arbetsboken. Identifiera
+# dimensionen via dess fält, och stoppa vid saknad eller tvetydig struktur.
+af_find_pivot_cache <- function(xlsx_path, required_fields) {
+  entries <- utils::unzip(xlsx_path, list = TRUE)$Name
+  definitions <- grep(
+    "^xl/pivotCache/pivotCacheDefinition[0-9]+[.]xml$",
+    entries, value = TRUE
+  )
+  ids <- as.integer(sub(".*Definition([0-9]+)[.]xml$", "\\1", definitions))
+  matches <- ids[vapply(ids, function(id) {
+    fields <- af_read_pivot_definition(xlsx_path, id)$field_names
+    all(required_fields %in% fields) && !anyDuplicated(fields)
+  }, logical(1))]
+  if (length(matches) != 1L) {
+    stop(
+      "Förväntade exakt en pivot-cache med fälten ",
+      paste(required_fields, collapse = ", "),
+      "; hittade ", length(matches)
+    )
+  }
+  matches[[1]]
+}
+
 af_read_pivot_cache <- function(
   xlsx_path,
   cache_id = 1L,
@@ -56,6 +79,10 @@ af_read_pivot_cache <- function(
   row_filter = NULL,
   chunk_size = 10000L
 ) {
+  if (is.null(cache_id)) {
+    if (is.null(keep_fields)) stop("Automatiskt cacheurval kräver keep_fields")
+    cache_id <- af_find_pivot_cache(xlsx_path, keep_fields)
+  }
   definition <- af_read_pivot_definition(xlsx_path, cache_id)
   field_names <- definition$field_names
   shared <- definition$shared

@@ -95,6 +95,9 @@ jobs:
           install-pandoc: false
           install-quarto: false
 
+      - name: Testa omnumrerade AF-cacher
+        run: Rscript tests/test_af_pivot_cache.R
+
       - name: Validera aktuell AF-period
         env:
           AF_VALIDATION_HISTORY: "false"
@@ -143,6 +146,9 @@ jobs:
             any::tidyr
           install-pandoc: false
           install-quarto: false
+
+      - name: Testa omnumrerade AF-cacher
+        run: Rscript tests/test_af_pivot_cache.R
 
       - name: Validera historisk struktur - ${{ matrix.target }}
         env:
@@ -333,6 +339,9 @@ jobs:
             any::tidyr
           install-pandoc: false
           install-quarto: false
+
+      - name: Testa omnumrerade AF-cacher
+        run: Rscript tests/test_af_pivot_cache.R
 
       - name: Validera ny AF-period före publicering
         env:

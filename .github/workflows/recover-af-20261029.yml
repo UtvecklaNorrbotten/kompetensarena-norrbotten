@@ -1,0 +1,24 @@
+name: 99 · Underhåll · återstart AF 2026-10-29
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/recover-af-20261029.yml]
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  restart:
+    # Engångsåterstart efter korrigering av omnumrerade pivot-cacher.
+    if: github.event.deleted == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Starta ordinarie AF-publicering och den misslyckade revisionsdelen
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh workflow run etl-af-monthly-check.yml --ref main -f mode=publish-current
+          gh workflow run etl-af-quarterly-revisions.yml --ref main -f mode=check -f target=sok
