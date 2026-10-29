@@ -166,23 +166,40 @@ class Client:
             headers["Content-Type"] = "application/json"
         if authenticated:
             headers["Authorization"] = f"Bearer {self.key}"
+        # Only known API paths are logged; never the configured host, query,
+        # request payload, credentials or arbitrary response text.
+        path = urllib.parse.urlsplit(url).path
+        operation = ("ETL " + path.removeprefix("/api/public/jobs/")
+                     if authenticated else "SCB " + path.removeprefix("/api/v2/tables/"))
         for attempt in range(6 if retry_safe else 1):
             try:
                 req = urllib.request.Request(url, data=None if body is None else encode(body), headers=headers)
                 with urllib.request.urlopen(req, timeout=180) as response:
                     return json.load(response)
             except urllib.error.HTTPError as error:
+                code = None
+                try:
+                    payload = json.loads(error.read(65536))
+                    code = payload.get("code") if isinstance(payload, dict) else None
+                except (ValueError, OSError):
+                    pass
+                code = code if isinstance(code, str) else None
+                reason = {"57014": "databasens tidsgräns", "55P03": "databaslås",
+                          "40P01": "deadlock", "40001": "transaktionskonflikt"}.get(code)
+                detail = f"; {reason}" if reason else ""
+                failure = f"HTTP {error.code} vid {operation}{detail}"
                 if not retry_safe or error.code not in (408, 429, 500, 502, 503, 504) or attempt == 5:
                     # Never print response bodies or request headers with credentials.
-                    raise RuntimeError(f"HTTP {error.code}: anropet misslyckades") from None
+                    raise RuntimeError(failure) from None
                 delay = min(60, 5 * 2 ** attempt)
                 retry_after = error.headers.get("Retry-After", "")
                 if retry_after.isdigit():
                     delay = min(60, int(retry_after))
+                print(f"{failure}; nytt försök om {delay}s", flush=True)
                 time.sleep(delay)
             except (urllib.error.URLError, TimeoutError):
                 if not retry_safe or attempt == 5:
-                    raise RuntimeError("Nätverksfel vid datahämtning") from None
+                    raise RuntimeError(f"Nätverksfel vid {operation}") from None
                 time.sleep(min(60, 5 * 2 ** attempt))
 
     def scb_metadata(self, table):

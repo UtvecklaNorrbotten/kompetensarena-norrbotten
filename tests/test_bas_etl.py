@@ -3,6 +3,7 @@ import copy
 from datetime import date
 import importlib.util
 import itertools
+import io
 from pathlib import Path
 import time
 import unittest
@@ -57,6 +58,29 @@ class FakeClient:
         if path == "etl-batch/finalize" and self.fail_finalize:
             raise RuntimeError("Exempel: finalisering misslyckades")
         return {}
+
+
+class RequestDiagnosticsTests(unittest.TestCase):
+    def test_error_identifies_operation_without_leaking_secrets(self):
+        client = bas.Client()
+        client.base = "https://example.invalid/private-host"
+        client.key = "example-secret-key"
+        url = "https://example.invalid/api/public/jobs/etl-batch/chunk?secret=query"
+        error = bas.urllib.error.HTTPError(url, 503, "unavailable", {}, io.BytesIO(
+            b'{"code":"57014","message":"example-secret-key private details"}'))
+        with patch.object(bas.urllib.request, "urlopen", side_effect=error):
+            with self.assertRaisesRegex(RuntimeError, "HTTP 503 vid ETL etl-batch/chunk; databasens tidsgräns") as caught:
+                client.request(url, {}, authenticated=True, retry_safe=False)
+        self.assertNotIn("example-secret-key", str(caught.exception))
+        self.assertNotIn("example.invalid", str(caught.exception))
+        self.assertNotIn("query", str(caught.exception))
+
+    def test_non_json_error_still_identifies_scb_operation(self):
+        url = "https://example.invalid/api/v2/tables/TAB3784/data?lang=sv"
+        error = bas.urllib.error.HTTPError(url, 503, "unavailable", {}, io.BytesIO(b"<html>private</html>"))
+        with patch.object(bas.urllib.request, "urlopen", side_effect=error):
+            with self.assertRaisesRegex(RuntimeError, "HTTP 503 vid SCB TAB3784/data"):
+                bas.Client().request(url, retry_safe=False)
 
 
 class ScheduleTests(unittest.TestCase):
