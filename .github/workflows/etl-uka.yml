@@ -11,6 +11,10 @@ on:
       - "R/etl/uka_sync.R"
       - "R/etl/uka_values.R"
       - "tests/uka-values.R"
+      - "scripts/uka_extended_sync.py"
+      - "tests/test_uka_extended.py"
+      - "config/uka_regional_sources.json"
+      - ".github/workflows/etl-uka.yml"
   workflow_dispatch:
     inputs:
       indicator:
@@ -27,14 +31,15 @@ on:
           - "99"
           - "108"
           - "136"
+          - extended
       test_mode:
         description: "Hämta och validera utan publicering"
         required: false
         type: boolean
         default: false
   schedule:
-    # UKÄ publicerar på olika datum. Veckokontroll räcker och snapshoten
-    # gör automatiskt att bara de senaste fem åren behålls.
+    # Veckovis metadatakontroll och kvartalsvis revisionshämtning i utökningen.
+    # De sju ursprungliga indikatorernas femårsregel behålls.
     - cron: "30 4 * * 1"
 
 permissions:
@@ -45,7 +50,65 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      legacy: ${{ steps.paths.outputs.legacy }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
+      - id: paths
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT" != push ] || git diff --name-only HEAD^ HEAD | grep -qE '^(R/etl/uka_|tests/uka-values.R)'; then
+            echo "legacy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "legacy=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  extended:
+    if: github.event_name != 'workflow_dispatch' || inputs.indicator == 'all' || inputs.indicator == 'extended'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Installera UKÄ-beroenden
+        run: |
+          python -m pip install requests beautifulsoup4 openpyxl pdfplumber
+          command -v pdftotext || (sudo apt-get update && sudo apt-get install -y poppler-utils)
+      - name: Testa struktur, dimensioner och publiceringsregler
+        run: python -m unittest discover -s tests -p 'test_uka_extended.py' -v
+      - name: Hämta och publicera genomströmning och regional statistik
+        env:
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+          TEST_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.test_mode || 'false' }}
+        shell: bash
+        run: |
+          if [ "$TEST_MODE" = true ]; then
+            python -u scripts/uka_extended_sync.py
+          else
+            python -u scripts/uka_extended_sync.py --publish
+          fi
+      - name: Spara källor, kontroller och importerade radantal
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uka-genomstromning-regional
+          path: output/uka_extended/summary.json
+          retention-days: 90
+
   uka:
+    needs: [changes, extended]
+    if: >-
+      always() && needs.changes.outputs.legacy == 'true' &&
+      (github.event_name != 'workflow_dispatch' || inputs.indicator != 'extended')
     runs-on: ubuntu-latest
     timeout-minutes: 180
 
