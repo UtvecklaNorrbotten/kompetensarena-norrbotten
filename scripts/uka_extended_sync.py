@@ -236,7 +236,7 @@ def regional_rows(content):
                 if l['top'] < anchor['top']-500 or l['top'] > anchor['top']+250:
                     continue
                 chars=sorted(l['chars'],key=lambda c:c['x0'])
-                name_match=re.match(r'^(.*?[A-Za-zÅÄÖåäö])(?:[1-9])?\s+\d',l['text'])
+                name_match=re.match(r'^(.*?[A-Za-zÅÄÖåäö])([1-9])?\s+\d',l['text'])
                 if not name_match:continue
                 name=name_match[1]
                 name=re.sub(r'\d+$','',name).strip()
@@ -254,17 +254,21 @@ def regional_rows(content):
                 for count,pct in [(vals[1],vals[3]),(vals[2],vals[4])]:
                     if abs(count/vals[0]*100-pct)>max(1.6,100*10/vals[0]):
                         raise ValueError(f'Antal/andel stämmer inte {name}: {vals}')
-                rows.append((name,vals))
-            if not 20<=len(rows)<=50 or len({n for n,_ in rows})!=len(rows):
+                rows.append((name,vals,name_match[2]))
+            if not 20<=len(rows)<=50 or len({r[0] for r in rows})!=len(rows):
                 raise ValueError(f'Oväntat antal regionala lärosäten: {len(rows)}')
-            for name,vals in rows:
-                # Publicerad fotnot växlar hemlänen för dessa lärosäten i 2024/25.
-                # Publicera ingen geografisk tolkning innan UKÄ har rett ut motsägelsen.
-                if title[2]=='2023/24' and name in ('Mälardalens högskola','Mittuniversitetet'):
-                    warnings.append(f'{name}: motsägande hemlänsfotnot; raden spärrad');continue
+            expected_counties={'Mälardalens högskola':['Södermanlands','Västmanlands'],
+                               'Mälardalens universitet':['Södermanlands','Västmanlands'],
+                               'Mittuniversitetet':['Västernorrlands','Jämtlands']}
+            for name,vals,note in rows:
+                if name in expected_counties and note:
+                    footnote=re.search(r'\b'+note+r'\)\s*(.*?)(?=\b\d\)|SLU|$)',normalized)
+                    if not footnote or any(c not in footnote[1] for c in expected_counties[name]):
+                        warnings.append(f'{name} {title[2]}: motsägande hemlänsfotnot; raden spärrad');continue
+                prose_share=re.search(r'Handelshögskolan i Stockholm där\s+(\d+)\s+procent',normalized)
                 for id,v in zip(REGIONAL_IDS,vals):
-                    if title[2]=='2023/24' and name=='Handelshögskolan i Stockholm' and id=='uka-regional-rekryterade-andel':
-                        warnings.append(f'{name}: tabell 45 %, löptext 35 %; andelen spärrad');continue
+                    if name=='Handelshögskolan i Stockholm' and id=='uka-regional-rekryterade-andel' and prose_share and int(prose_share[1])!=v:
+                        warnings.append(f'{name} {title[2]}: tabell {v} %, löptext {prose_share[1]} %; andelen spärrad');continue
                     result[id].append(dict(period=title[2],university=name,value=v,
                          dimensions={'uppfoljningsdatum':follow[1]}))
             found=True
@@ -305,6 +309,7 @@ class Publisher:
         try:
             for i,c in enumerate(chunks):
                 self.request('uka/chunk',dict(batch_id=batch,indicator_id=id,chunk_index=i,observations=c),retry=True)
+                print(f'{id}: chunk {i+1}/{len(chunks)}',flush=True)
             result=self.request('uka/finalize',dict(batch_id=batch),retry=True)
             if result.get('rows')!=len(rows):raise ValueError(f'Publicerat radantal avviker: {result}')
             return result
@@ -331,6 +336,7 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--publish',action='store_true')
     parser.add_argument('--force',action='store_true')
+    parser.add_argument('--expect-no-change',action='store_true',help='Verifiera att ingen ny batch behövs')
     parser.add_argument('--cache',help='Lokal källkatalog för reproducerbar kontroll; kan inte publiceras')
     args=parser.parse_args()
     if args.cache and args.publish:raise ValueError('Lokala kontrollfiler får inte publiceras')
@@ -353,11 +359,13 @@ def main():
         if not any(r['title'][-7:] in x['title'] for x in reports):reports.append(r)
     markers={f'api-{id}':api_metadata(id) for id in API_IDS}
     markers['performance']=http_marker(performance)
-    markers['regional']=[http_marker(r['url']) for r in reports]
+    markers['regional']={'parser_version':2,'reports':[http_marker(r['url']) for r in reports]}
     hashes={k:digest(v) for k,v in markers.items()}
     summary['sources']={'performance':performance,'regional':reports,'metadata_fingerprints':hashes,
                         'api':{str(id):markers[f'api-{id}']['indicator'] for id in API_IDS}}
     force=args.force or old.get('revision_quarter')!=quarter
+    if args.expect_no_change and (force or old.get('fingerprints')!=hashes):
+        raise ValueError('Källmarkörer har ändrats; oförändrad kontroll kan inte bekräftas')
     def publish(id,rows,updated=None):
         summary['indicators'][id]=summarize(rows)
         if pub:summary['indicators'][id]['publication']=pub.publish(id,rows,updated)
@@ -391,7 +399,9 @@ def main():
                 validate(rows,percentage=id.endswith('andel'))
                 publish(id,rows)
         if pub:
-            pub.request('source-state',dict(source_id=SOURCE_ID,status='succeeded' if summary['indicators'] else 'no_change',
+            period_report=summary['indicators'] or old.get('report',{}).get('indicators',{})
+            latest=max((p for v in period_report.values() for p in v['periods']),default=state.get('latest_available_period'))
+            pub.request('source-state',dict(source_id=SOURCE_ID,latest_available_period=latest,status='succeeded' if summary['indicators'] else 'no_change',
                 details={'fingerprints':hashes,'revision_quarter':quarter,'report':summary}))
     except Exception as e:
         summary['error']=str(e)

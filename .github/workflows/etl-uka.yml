@@ -89,19 +89,26 @@ jobs:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
           ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
           TEST_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.test_mode || 'false' }}
+          VERIFY_NO_CHANGE: ${{ github.event_name == 'push' }}
         shell: bash
         run: |
           if [ "$TEST_MODE" = true ]; then
             python -u scripts/uka_extended_sync.py
           else
             python -u scripts/uka_extended_sync.py --publish
+            if [ "$VERIFY_NO_CHANGE" = true ]; then
+              cp output/uka_extended/summary.json output/uka_extended/publication.json
+              python -u scripts/uka_extended_sync.py --publish --expect-no-change
+              cp output/uka_extended/summary.json output/uka_extended/no-change.json
+              cp output/uka_extended/publication.json output/uka_extended/summary.json
+            fi
           fi
       - name: Spara källor, kontroller och importerade radantal
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: uka-genomstromning-regional
-          path: output/uka_extended/summary.json
+          path: output/uka_extended/*.json
           retention-days: 90
 
   uka:
