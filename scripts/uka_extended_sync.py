@@ -361,7 +361,7 @@ def main():
     markers['performance']=http_marker(performance)
     markers['regional']={'parser_version':2,'reports':[http_marker(r['url']) for r in reports]}
     hashes={k:digest(v) for k,v in markers.items()}
-    summary['sources']={'performance':performance,'regional':reports,'metadata_fingerprints':hashes,
+    summary['sources']={'http_metadata':{'performance':markers['performance'],'regional':markers['regional']},'performance':performance,'regional':reports,'metadata_fingerprints':hashes,
                         'api':{str(id):markers[f'api-{id}']['indicator'] for id in API_IDS}}
     force=args.force or old.get('revision_quarter')!=quarter
     if args.expect_no_change and (force or old.get('fingerprints')!=hashes):
@@ -395,9 +395,11 @@ def main():
                 periods.add(period)
                 summary['warnings']+=warnings
                 for id,rows in data.items():all_rows[id]+=rows
+            dates=[parsedate_to_datetime(m['last_modified']).date().isoformat() for m in markers['regional']['reports'] if m['last_modified']]
+            updated=max(dates,default=None)
             for id,rows in all_rows.items():
                 validate(rows,percentage=id.endswith('andel'))
-                publish(id,rows)
+                publish(id,rows,updated)
         if pub:
             period_report=summary['indicators'] or old.get('report',{}).get('indicators',{})
             latest=max((p for v in period_report.values() for p in v['periods']),default=state.get('latest_available_period'))
