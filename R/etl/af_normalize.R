@@ -97,9 +97,9 @@ af_add_riket_from_counties <- function(data) {
 
 af_normalize_web_sok <- function(path, period = NULL) {
   caches <- list(
-    list(id = 3L, dimension_type = "ålder", dimension_field = "ALDGR"),
-    list(id = 2L, dimension_type = "födelseland", dimension_field = "FODLGRP"),
-    list(id = 1L, dimension_type = "utbildningsnivå", dimension_field = "UTBILDNING")
+    list(dimension_type = "ålder", dimension_field = "ALDGR"),
+    list(dimension_type = "födelseland", dimension_field = "FODLGRP"),
+    list(dimension_type = "utbildningsnivå", dimension_field = "UTBILDNING")
   )
 
   municipality_codes <- af_get_municipality_codes()
@@ -114,7 +114,7 @@ af_normalize_web_sok <- function(path, period = NULL) {
     # "Uppgift saknas" för att läns- och rikssummor ska bli exakta.
     raw <- af_read_pivot_cache(
       path,
-      cache_id = cfg$id,
+      cache_id = NULL,
       keep_fields = fields,
       row_filter = function(row) {
         af_period_matches(row[["PERIOD"]], period)
@@ -767,7 +767,7 @@ af_control_web_sok_total_by_sex <- function(path, period = NULL) {
   # per period/geografi/kön ska därför motsvara ARBETSLÖSA i tid-filen.
   af_read_pivot_cache(
     path,
-    cache_id = 3L,
+    cache_id = NULL,
     keep_fields = c("PERIOD", "KOEN", "LAN", "KOMMUN_BESKR", "ALDGR", "INSAL"),
     row_filter = function(row) {
       af_period_matches(row[["PERIOD"]], period) &&
