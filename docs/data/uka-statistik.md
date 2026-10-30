@@ -59,6 +59,40 @@ Den visar andelen av **de etablerade**, examinerade 2019/20, som arbetade i lär
 
 Denna statistik är inte indikator 136, som mäter andelen etablerade bland den relevanta examinerade populationen. Jag har inte verifierat ett komplett, återkommande maskinläsbart underlag till regionfigurerna. Stapellängder har inte mätts och inga osäkra procent har importerats. Nästa steg för en sådan import är ett officiellt tabellunderlag från UKÄ, med arbetslän, lärosäte, program, kön och uppföljningsår samt deras publiceringsrutin.
 
+
+### Fördjupad kontroll av arbetsregion, 30 oktober 2026
+
+Status: **inväntar verifierat tabellunderlag från UKÄ**. Ingen ny arbetsregionsindikator eller ETL-publicering har skapats. Det är en källbegränsning, inte en misslyckad GitHub-körning.
+
+Följande officiella underlag kontrollerades direkt:
+
+| Underlag | Kontroll | Resultat för arbetsregion |
+|---|---|---|
+| [Excelbilaga till rapport 2023:20](https://www.uka.se/download/18.1952a0b618cc6c4f1ac56ae/1704200289857/Etablering%202019-20%20Webbtabeller.xlsx), examinerade 2019/20 | Arbetsbokens blad och celltexter, inklusive innehållsförteckningen | Tabeller 1–5 avser arbetsmarknadsställning, sektor och etableringsgrad. Inget tabellunderlag till rapportens regionala figurer 12–14 hittades. |
+| [Excelbilaga publicerad 2025](https://www.uka.se/download/18.6d376bec1969f608fca4c/1747312467366/Tabellbilaga-etablering%20p%C3%A5%20arbetsmarknaden.xlsx), examinerade 2021/22 | Tabellrubriker och celltexter samt inbäddade objekt/pivotunderlag | Inget arbetsregionsunderlag hittades. |
+| [Excelbilaga publicerad 2026](https://www.uka.se/download/18.44ee87e019e634696534/1779784405696/Tabeller%20Etablering%20p%C3%A5%20arbetsmarknaden%20efter%20studier%20i%20h%C3%B6gskolan%20-%20Examinerade%20p%C3%A5%20grundniv%C3%A5%20och%20avancerad%20niv%C3%A5%202022-23.xlsx), examinerade 2022/23 | Blad, celltexter och pivotunderlag | Tabell 4a–c har kolumnen ”Andel i region (%)”. Den avser arbetsgivarsektor, tillsammans med näringsliv, kommun och stat. Den mäter inte arbete i lärosätets län. |
+| [Högskolan i siffrors export](https://statistik-www.uka.se/export/), indikator 136 | Indikatorförteckningen och `/export/filters/group.php?indicator=%5B%22136%22%5D` | Ingen separat arbetsregionsindikator identifierades. Gruppfiltret för 136 redovisar examen, inte arbetslän. |
+| Rapport 2023:20, PDF-sidor 50–54 | Text, bilagor inbäddade i PDF-filen och länkar vid de regionala figurerna | Inga inbäddade datafiler eller länkar till ett numeriskt tabellunderlag hittades. Figurerna har inte omvandlats till uppskattade procenttal. |
+
+Kontrollen bevisar inte att UKÄ saknar ett separat underlag eller en senare specialpublicering. Den visar att de granskade standardbilagorna och exporten inte gav ett verifierat underlag för denna import.
+
+**Ytterligare definitionsvillkor:** Rapportens arbetsregion avser huvudsakligt arbetsställes län under uppföljningsåret. Om arbetsställe saknas används bostadslän som reserv. För vissa kommunanställda med okänt eller växlande arbetsställe används arbetsgivarkommunens län. Ett sådant värde ska därför inte beskrivas som en alltid direkt observerad fysisk arbetsplats. Hemlän kan dessutom bestå av två län, och distansstudenter skiljs inte ut. Dessa villkor måste följa med en eventuell indikator.
+
+#### Underlag att begära från UKÄ
+
+Begär i första hand det officiella numeriska figurunderlaget till figurerna 12–14 i rapport 2023:20, särskilt figur 14 för lärosäten. Be också om senare årgångar och besked om uppgifterna uppdateras återkommande. Om UKÄ kan lämna ett mer detaljerat uttag behövs:
+
+- examensläsår och uppföljningsår, samt uppföljningstid efter examen;
+- lärosäteskod/-namn och definition av dess hemlän, inklusive lärosäten med flera hemlän;
+- antal etablerade i nämnaren, antal med arbetsregion i hemlänet och publicerad andel;
+- arbetslän, examen/program och kön där dessa kombinationer faktiskt finns publicerade;
+- sekretessmarkeringar, avrundningsregler, bortfall och hantering av saknat arbetsställe;
+- filformat, versionsdatum och stabil publiceringsadress/API eller annan uppdateringsrutin.
+
+Kravet på alla dessa dimensioner gäller ett eventuellt detaljerat uttag. Det hindrar inte en tydligt avgränsad import av det officiella figurunderlaget om endast lärosätesandelar finns tillgängliga. En engångstabell kan lagras som historiskt underlag men får inte presenteras som en årligen uppdaterad serie.
+
+Ingen kontakt med UKÄ har skickats inom denna kontroll. Nästa externa beroende är att få underlaget eller ett besked om var det publiceras.
+
 ## Drift, revideringar och lagring
 
 - Workflow: `10 · Data · UKÄ – högskolan i siffror`, `.github/workflows/etl-uka.yml`. Den nya delen kan väljas manuellt med `indicator=extended`, eller inkluderas med `all`. `test_mode=true` publicerar ingenting.
