@@ -18,6 +18,9 @@ obs <- build_observations(data)
 validate_uka_observations(obs, 13L, TRUE)
 stopifnot(length(obs) == 4L, is.null(obs[[1]]$dimensions$aldersgrupp), obs[[1]]$value == 120)
 stopifnot(identical(vapply(obs[-1], function(o) o$dimensions$aldersgrupp, character(1)), c('-24','25-34','35-')))
+# Total över alla program har inga övriga dimensioner. Tomma listor ska ge samma nyckel.
+all_programs <- raw; all_programs$Program <- ""
+validate_uka_observations(build_observations(normalize_uka(all_programs, 13L, TRUE, TRUE)), 13L, TRUE)
 # Oförändrad total jämfört med den tidigare importen utan ålder.
 old <- build_observations(normalize_uka(raw[1,], 13L, store_gender = TRUE))
 stopifnot(identical(obs[[1]], old[[1]]))

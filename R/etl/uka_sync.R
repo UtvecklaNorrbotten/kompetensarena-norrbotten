@@ -326,6 +326,7 @@ validate_uka_observations <- function(observations, uka_id, has_age_breakdown) {
   # Varje kombination av period/lärosäte/kön/övriga dimensioner måste ha en källtotal.
   age_keys <- vapply(observations, function(o) {
     dims <- o$dimensions %||% list(); dims$aldersgrupp <- NULL
+    if (!length(dims)) dims <- list()  # samma JSON-form som en total utan dimensionsnycklar
     jsonlite::toJSON(list(o$period, o$university, o$gender, dims[sort(names(dims))]), auto_unbox = TRUE)
   }, character(1))
   if (length(setdiff(age_keys, age_keys[ages == "Total"]))) stop("Ålderstotal saknas för en observationsgrupp")
