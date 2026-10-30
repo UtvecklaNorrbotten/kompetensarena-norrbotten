@@ -145,3 +145,7 @@ Statistik om svensk och utländsk bakgrund har inte valts ut eller implementerat
 - Före publicering kontrolleras att totalen finns för varje kombination av period, lärosäte, kön och övriga dimensioner. Dubbletter, okända åldersetiketter och orimliga värden stoppar aktuell indikator.
 - Ursprungliga sju behåller fem års historik och befintligt aktivt lärosätesurval. ID 77/134/135 behåller hela sin tidigare historik och historiska lärosäten. Ingen tioårsgräns eller avgränsning till norrlänen har införts.
 - Vid ändrad API-källa görs en ny export med samtliga tillgängliga åldersgrupper. Om nya gruppetiketter införs stoppar valideringen publicering tills indelningen granskats.
+
+### Omräkning efter större importer
+
+`0046_uka_incremental_refresh.sql` gör aggregatomräkningen idempotent och inkrementell: ett transaktionslås samordnar omräkningar, samma aktiva batchmarkör ger direkt `no_change`, och endast indikatorer med ändrad aktiv batch ersätts i aggregatet. Uppdatering av indikatorns aggregat och omräkningsmarkören sker i samma transaktion. Detta undviker full omräkning av samtliga indikatorer efter varje åldersimport eller HTTP-återförsök. API-importens finalisering tillåts vänta 1 200 sekunder, längre än databasfunktionens budget på 900 sekunder. Migrationen har applicerats i ansluten databas.

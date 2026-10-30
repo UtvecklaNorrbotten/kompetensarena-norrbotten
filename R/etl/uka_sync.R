@@ -437,7 +437,7 @@ uka_publish_batch <- function(indicator_id, source, source_updated_date, observa
   result <- uka_etl_request("finalize") |>
     req_method("POST") |>
     req_body_json(list(batch_id = batch_id), auto_unbox = TRUE) |>
-    etl_perform_json(retry_safe = TRUE, timeout = 180)
+    etl_perform_json(retry_safe = TRUE, timeout = 1200)
 
   if (!identical(as.numeric(result$rows), as.numeric(length(observations)))) stop("UKÄ: publicerat radantal avviker")
   ok <- TRUE
