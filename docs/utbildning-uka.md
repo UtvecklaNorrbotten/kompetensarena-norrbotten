@@ -112,3 +112,7 @@ Program skiljs med färg och kön med linjetyp. Kvinnor, män och källans total
 behålls; programmens värden summeras aldrig. Tabell och CSV följer valda program
 över alla publicerade perioder. PNG-exporten omfattar båda terminsdiagrammen
 med rubriker, färger och linjetyper beskrivna i bildtexten.
+
+## Åldersuppdelning i API-importen
+
+Åldersgrupper lagras där UKÄ erbjuder dem. Fler filter visar Åldersgrupp för indikatorer med uppdelningen. Utan åldersval används endast källans total utan åldersdimension. Åldersgrupper och total summeras aldrig. Alla tio API-indikatorer importeras i `R/etl/uka_sync.R`; utbildningssidans befintliga sju indikatorer är oförändrade.

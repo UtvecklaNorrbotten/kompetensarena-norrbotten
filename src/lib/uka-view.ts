@@ -3,6 +3,7 @@ import type { Database } from "@/integrations/supabase/types";
 export type UkaRow = Database["public"]["Tables"]["agg_uka_university"]["Row"];
 export type UkaFilters = { gender: string; years: number; dimensions: Record<string, string> };
 export const dimensionLabels: Record<string, string> = {
+  aldersgrupp: "Åldersgrupp",
   program: "Yrkesexamensprogram",
   studieform: "Studieform",
   examen: "Examen",
@@ -32,17 +33,21 @@ export function selectUkaRows(
   filters: UkaFilters,
   detail = false,
 ): { rows: UkaRow[]; breakdown: string; applied: string[]; ambiguous: boolean } {
+  // Åldersgrupper överlappar källans total. Utan åldersval används bara totalraderna.
+  const sourceRows = filters.dimensions["aldersgrupp"]
+    ? rows
+    : rows.filter((row) => !("aldersgrupp" in dimensions(row)));
   const available = new Set(rows.flatMap((r) => (r.breakdown ? r.breakdown.split("|") : [])));
   const selected = Object.entries(filters.dimensions).filter(([k, v]) => v && available.has(k));
   const keys = selected.map(([k]) => k);
-  const breakdowns = [...new Set(rows.map((r) => r.breakdown))].sort(
+  const breakdowns = [...new Set(sourceRows.map((r) => r.breakdown))].sort(
     (a, b) => (a ? a.split("|").length : 0) - (b ? b.split("|").length : 0) || a.localeCompare(b),
   );
   const target = breakdowns.find(
     (b) => keys.every((key) => b.split("|").includes(key)) && (!detail || b !== ""),
   );
   if (target === undefined) return { rows: [], breakdown: "", applied: keys, ambiguous: false };
-  const candidate = rows.filter(
+  const candidate = sourceRows.filter(
     (r) => r.breakdown === target && selected.every(([key, value]) => dimensions(r)[key] === value),
   );
   const periods = [...new Set(rows.map((r) => r.period))].sort(

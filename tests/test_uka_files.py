@@ -3,7 +3,7 @@ import importlib.util
 from pathlib import Path
 import unittest
 from unittest.mock import Mock
-spec=importlib.util.spec_from_file_location('uka',Path(__file__).parents[1]/'scripts/uka_extended_sync.py')
+spec=importlib.util.spec_from_file_location('uka',Path(__file__).parents[1]/'scripts/uka_files_sync.py')
 uka=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(uka)
 

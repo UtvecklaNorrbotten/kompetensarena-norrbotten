@@ -192,3 +192,21 @@ assert.equal(comparisonData.panels[1]?.rows[0]?.["s0-Total"], 100);
 assert.equal(comparisonData.panels[1]?.rows[0]?.["s1-Total"], 70);
 assert.equal(comparisonData.panels[1]?.rows[1]?.["s0-Total"], null);
 assert.equal(ukaComparisonTimeline([row()]).panels.length, 1);
+
+// Exempel: åldersgrupper ska inte ändra total eller standardfördjupning.
+const ageRows = [
+  ...rows,
+  row({ breakdown: "aldersgrupp", category: "-24", value: 55 }),
+  row({ breakdown: "aldersgrupp|amnesomrade", category: "-24|Teknik", value: 45 }),
+];
+assert.equal(selectUkaRows(ageRows, filters).rows.find((r) => r.gender === "Total")?.value, 100);
+assert.equal(selectUkaRows(ageRows, filters, true).breakdown, "amnesomrade");
+assert.equal(
+  selectUkaRows(ageRows, { ...filters, dimensions: { aldersgrupp: "-24" } }).rows[0]?.value,
+  55,
+);
+assert.equal(
+  selectUkaRows(ageRows, { ...filters, dimensions: { aldersgrupp: "-24", amnesomrade: "Teknik" } })
+    .rows[0]?.value,
+  45,
+);

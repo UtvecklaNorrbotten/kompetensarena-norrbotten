@@ -11,8 +11,9 @@ on:
       - "R/etl/uka_sync.R"
       - "R/etl/uka_values.R"
       - "tests/uka-values.R"
-      - "scripts/uka_extended_sync.py"
-      - "tests/test_uka_extended.py"
+      - "tests/uka-api.R"
+      - "scripts/uka_files_sync.py"
+      - "tests/test_uka_files.py"
       - "config/uka_regional_sources.json"
       - ".github/workflows/etl-uka.yml"
   workflow_dispatch:
@@ -31,6 +32,11 @@ on:
           - "99"
           - "108"
           - "136"
+          - "77"
+          - "134"
+          - "135"
+          - api
+          - files
           - extended
       test_mode:
         description: "Hämta och validera utan publicering"
@@ -38,7 +44,7 @@ on:
         type: boolean
         default: false
   schedule:
-    # Veckovis metadatakontroll och kvartalsvis revisionshämtning i utökningen.
+    # Veckovis API-hämtning; filkällor kontrolleras före export, full revision kvartalsvis.
     # De sju ursprungliga indikatorernas femårsregel behålls.
     - cron: "30 4 * * 1"
 
@@ -50,27 +56,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  changes:
-    runs-on: ubuntu-latest
-    outputs:
-      legacy: ${{ steps.paths.outputs.legacy }}
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          fetch-depth: 2
-      - id: paths
-        shell: bash
-        env:
-          EVENT: ${{ github.event_name }}
-        run: |
-          if [ "$EVENT" != push ] || git diff --name-only HEAD^ HEAD | grep -qE '^(R/etl/uka_|tests/uka-values.R)'; then
-            echo "legacy=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "legacy=false" >> "$GITHUB_OUTPUT"
-          fi
-
-  extended:
-    if: github.event_name != 'workflow_dispatch' || inputs.indicator == 'all' || inputs.indicator == 'extended'
+  files:
+    # Sekventiella jobb undviker samtidiga fulla UKÄ-aggregatomräkningar.
+    needs: api
+    if: >-
+      always() && (github.event_name != 'workflow_dispatch' ||
+      inputs.indicator == 'all' || inputs.indicator == 'files' || inputs.indicator == 'extended')
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
@@ -83,8 +74,8 @@ jobs:
           python -m pip install requests beautifulsoup4 openpyxl pdfplumber
           command -v pdftotext || (sudo apt-get update && sudo apt-get install -y poppler-utils)
       - name: Testa struktur, dimensioner och publiceringsregler
-        run: python -m unittest discover -s tests -p 'test_uka_extended.py' -v
-      - name: Hämta och publicera genomströmning och regional statistik
+        run: python -m unittest discover -s tests -p 'test_uka_files.py' -v
+      - name: Hämta och publicera Excel och PDF
         env:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
           ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
@@ -93,12 +84,12 @@ jobs:
         shell: bash
         run: |
           if [ "$TEST_MODE" = true ]; then
-            python -u scripts/uka_extended_sync.py
+            python -u scripts/uka_files_sync.py
           else
-            python -u scripts/uka_extended_sync.py --publish
+            python -u scripts/uka_files_sync.py --publish
             if [ "$VERIFY_NO_CHANGE" = true ]; then
               cp output/uka_extended/summary.json output/uka_extended/publication.json
-              python -u scripts/uka_extended_sync.py --publish --expect-no-change
+              python -u scripts/uka_files_sync.py --publish --expect-no-change
               cp output/uka_extended/summary.json output/uka_extended/no-change.json
               cp output/uka_extended/publication.json output/uka_extended/summary.json
             fi
@@ -111,11 +102,10 @@ jobs:
           path: output/uka_extended/*.json
           retention-days: 90
 
-  uka:
-    needs: [changes, extended]
+  api:
     if: >-
-      always() && needs.changes.outputs.legacy == 'true' &&
-      (github.event_name != 'workflow_dispatch' || inputs.indicator != 'extended')
+      github.event_name != 'workflow_dispatch' ||
+      (inputs.indicator != 'files' && inputs.indicator != 'extended')
     runs-on: ubuntu-latest
     timeout-minutes: 180
 
@@ -142,11 +132,13 @@ jobs:
           install-pandoc: false
           install-quarto: false
 
-      - name: Kontrollera tal och decimaler
+      - name: Testa gemensam API-import, ålder och totaler
         shell: Rscript {0}
-        run: source("tests/uka-values.R")
+        run: |
+          source("tests/uka-values.R")
+          source("tests/uka-api.R")
 
-      - name: Hämta och publicera UKÄ
+      - name: Hämta och publicera alla valda API-indikatorer
         env:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
           ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}

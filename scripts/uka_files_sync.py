@@ -1,11 +1,10 @@
-"""UKÄ genomströmning och regional rekrytering; publicering via ordinarie UKÄ-batch-API.
+"""UKÄ:s filkällor: prestationsgrad (Excel) och regional rekrytering (PDF); publicering via ordinarie UKÄ-batch-API.
 
 Kör utan --publish för en fullständig käll- och dimensionskontroll. Inga härledda
 antal skapas. Uppgifter som inte kan tolkas säkert stoppar aktuell källa.
 """
 from __future__ import annotations
 import argparse
-import csv
 import hashlib
 import io
 import json
@@ -29,9 +28,7 @@ OUT = ROOT / 'output/uka_extended'
 SM_PAGE = 'https://www.uka.se/statistik-och-analys/om-var-statistik/statistiska-meddelanden'
 SCB205 = 'https://www.scb.se/uf0205'
 SCB208 = 'https://www.scb.se/uf0208'
-EXPORT = 'https://statistik-www.uka.se/export'
 SOURCE_ID = 'uka-genomstromning-regional'
-API_IDS = {77: 'uka-kvarvaro-hogskolenyborjare', 134: 'uka-kvarvaro-program', 135: 'uka-examensfrekvens'}
 REGIONAL_IDS = ['uka-regional-examinerade', 'uka-regional-rekryterade-antal', 'uka-regional-bosatta-antal',
                 'uka-regional-rekryterade-andel', 'uka-regional-bosatta-andel']
 SESSION = requests.Session()
@@ -87,64 +84,6 @@ def validate(rows, percentage=True, required_program=False):
         seen.add(key)
     if not any(r['university'] == 'Luleå tekniska universitet' for r in rows):
         raise ValueError('LTU saknas: kontrollera att hela lärosätesurvalet hämtats')
-
-
-def options(html, prefix):
-    s = BeautifulSoup(html, 'html.parser')
-    return list(dict.fromkeys(e['value'] for e in s.select('[value]') if e['value'].startswith(prefix)))
-
-
-def api_metadata(id):
-    return get(f'https://statistik-api.uka.se/api/totals/{id}/').json()
-
-
-def api_rows(id, cache=None):
-    html = {}
-    for ep in ['academic_term.php?direction=from', 'university.php', 'gender.php', 'age.php', 'group.php']:
-        k = ep.split('.')[0]
-        local = Path(cache) / f'{id}_{k}.html' if cache else None
-        html[k] = local.read_text() if local and local.exists() else get(
-            f'{EXPORT}/filters/{ep}'+('&' if '?' in ep else '?')+'indicator='+requests.utils.quote(json.dumps([str(id)]))).text
-    periods = options(html['academic_term'], 'from:')
-    if not periods:
-        raise ValueError(f'UKÄ {id}: perioder saknas')
-    filters = [periods[-1], periods[0].replace('from:', 'to:')]
-    for key, prefix in [('university','uni:'),('gender','gender:'),('age','age:')]:
-        vals = options(html[key], prefix)
-        if not vals:
-            raise ValueError(f'UKÄ {id}: filter {key} saknas')
-        filters += vals
-    s = BeautifulSoup(html['group'], 'html.parser')
-    for g in s.select('.groupTitles'):
-        ix = g.select_one('.dynamic-filter-index').get_text(strip=True)
-        filters += [ix+v for v in options(str(g), 'dynamic:')]
-    local = Path(cache) / f'export{id}.csv' if cache else None
-    if local and local.exists():
-        raw = local.read_text(encoding='utf-8-sig')
-    else:
-        # Export skapar bara en källfil; återförsök av detta anrop ändrar inga observationer.
-        r = SESSION.post(f'{EXPORT}/api/index.php', data=[('indicator', str(id))]+[('filters[]',v) for v in filters],
-                         headers={'X-Requested-With':'XMLHttpRequest'}, timeout=(30,300))
-        r.raise_for_status()
-        raw = get(r.json()['fileUrl']).content.decode('utf-8-sig')
-    reader = csv.DictReader(io.StringIO(raw), delimiter=';')
-    expected = {'Tidsperiod','Lärosäte','Kön','Åldersgrupp','Värde'} | ({'Program'} if id != 77 else set())
-    if set(reader.fieldnames or []) != expected:
-        raise ValueError(f'UKÄ {id}: ändrade CSV-kolumner {reader.fieldnames}')
-    rows=[]
-    for r in reader:
-        period = r['Tidsperiod'].removeprefix('="').removesuffix('"')
-        if 'from:'+period not in periods:
-            raise ValueError('Export innehåller ej begärd period')
-        dims={'aldersgrupp':r['Åldersgrupp']}
-        if id != 77:
-            dims['program'] = r['Program'] or 'Total'
-        if not dims['aldersgrupp']:
-            raise ValueError('Åldersgrupp saknas')
-        rows.append(dict(period=period, university=r['Lärosäte'] or 'Riket', gender=r['Kön'],
-                         value=number(r['Värde']), dimensions=dims))
-    validate(rows, required_program=id != 77)
-    return rows
 
 
 def performance_rows(content):
@@ -357,12 +296,11 @@ def main():
     reports=[dict(title=regional[0][0],url=regional[0][1])]
     for r in prior_reports+history:
         if not any(r['title'][-7:] in x['title'] for x in reports):reports.append(r)
-    markers={f'api-{id}':api_metadata(id) for id in API_IDS}
+    markers={}
     markers['performance']=http_marker(performance)
     markers['regional']={'parser_version':2,'reports':[http_marker(r['url']) for r in reports]}
     hashes={k:digest(v) for k,v in markers.items()}
-    summary['sources']={'http_metadata':{'performance':markers['performance'],'regional':markers['regional']},'performance':performance,'regional':reports,'metadata_fingerprints':hashes,
-                        'api':{str(id):markers[f'api-{id}']['indicator'] for id in API_IDS}}
+    summary['sources']={'http_metadata':{'performance':markers['performance'],'regional':markers['regional']},'performance':performance,'regional':reports,'metadata_fingerprints':hashes}
     force=args.force or old.get('revision_quarter')!=quarter
     if args.expect_no_change and (force or old.get('fingerprints')!=hashes):
         raise ValueError('Källmarkörer har ändrats; oförändrad kontroll kan inte bekräftas')
@@ -371,10 +309,6 @@ def main():
         if pub:summary['indicators'][id]['publication']=pub.publish(id,rows,updated)
         print(id,json.dumps(summary['indicators'][id],ensure_ascii=False)[:700],flush=True)
     try:
-        for id,key in API_IDS.items():
-            if force or old.get('fingerprints',{}).get(f'api-{id}')!=hashes[f'api-{id}'] or not pub:
-                publish(key,api_rows(id,args.cache))
-                # UKÄ:s totals-API saknar verifierbart uppdateringsdatum. Skicka inte hämtdatum som källdatum.
         if force or old.get('fingerprints',{}).get('performance')!=hashes['performance'] or not pub:
             raw=(Path(args.cache)/'performance.xlsx').read_bytes() if args.cache else get(performance).content
             modified=markers['performance']['last_modified']

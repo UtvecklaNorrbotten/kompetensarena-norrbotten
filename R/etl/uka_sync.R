@@ -6,11 +6,10 @@
 #
 # Regler:
 # - hela Sverige: Riket + lärosäten
-# - exakt senaste 5 år (10 terminer för terminsdata)
-# - lärosäten måste ha förekommit under senaste 3 år
+# - indikatorpolicy: ursprungliga sju = fem år/aktiva lärosäten, 77/134/135 = hela historiken
 # - om Kvinnor/Män finns sparas Kvinnor, Män och Total
 # - om endast Total finns används det tekniskt men könsdimensionen lagras inte
-# - ålder hämtas endast som tekniskt Total-filter och lagras aldrig
+# - alla erbjudna åldersgrupper hämtas; totalvärdet lagras utan åldersdimension
 # - full snapshot per indikator gör att äldre perioder/lärosäten rensas
 # -------------------------------------------------------------------
 
@@ -41,13 +40,20 @@ uka_indicators <- tribble(
   97L,  "uka-antagna-yrkesprogram",            "Antagna till yrkesexamensprogram",
   99L,  "uka-soktryck-yrkesprogram",           "Söktryck till yrkesexamensprogram",
   108L, "uka-examinerade",                     "Examinerade",
-  136L, "uka-etablering",                      "Etablering på arbetsmarknaden"
-)
+  136L, "uka-etablering",                      "Etablering på arbetsmarknaden",
+  77L,  "uka-kvarvaro-hogskolenyborjare",         "Kvarvaro termin 3 för högskolenybörjare",
+  134L, "uka-kvarvaro-program",                  "Kvarvaro termin 3 på program",
+  135L, "uka-examensfrekvens",                   "Examensfrekvens på program"
+) |>
+  mutate(
+    retention_years = if_else(uka_id %in% c(77L, 134L, 135L), NA_integer_, 5L),
+    active_years = if_else(uka_id %in% c(77L, 134L, 135L), NA_integer_, 3L)
+  )
 
 selected_indicator <- Sys.getenv("UKA_INDICATOR", unset = "all")
 test_mode <- tolower(Sys.getenv("ETL_TEST_MODE", unset = "false")) %in% c("1", "true", "yes")
 
-if (selected_indicator != "all") {
+if (!selected_indicator %in% c("all", "api")) {
   uka_indicators <- uka_indicators |>
     filter(as.character(uka_id) == selected_indicator | indicator_id == selected_indicator)
   if (nrow(uka_indicators) == 0L) stop("Okänd UKÄ-indikator: ", selected_indicator)
@@ -150,16 +156,17 @@ period_type <- function(period_value) {
 
 retained_periods <- function(from_values, years) {
   n <- if (period_type(from_values[[1]]) == "semester") years * 2L else years
+  if (is.na(years)) return(from_values)
   head(from_values, n)
 }
 
-uka_export <- function(uka_id, from_value, to_value, universities, genders, age_total, dynamic_filters) {
+uka_export <- function(uka_id, from_value, to_value, universities, genders, ages, dynamic_filters) {
   filters <- c(
     from_value,
     to_value,
     universities,
     genders,
-    age_total,
+    ages,
     dynamic_filters
   )
 
@@ -221,7 +228,7 @@ dimension_code <- function(x) {
     str_replace_all("(^-|-$)", "")
 }
 
-normalize_uka <- function(df, uka_id, store_gender) {
+normalize_uka <- function(df, uka_id, store_gender, store_age = FALSE) {
   names(df) <- names(df) |>
     str_replace_all("\\[0\\]$", "") |>
     str_replace_all("\\[1\\]$", "") |>
@@ -244,6 +251,15 @@ normalize_uka <- function(df, uka_id, store_gender) {
       filter(gender %in% c("Kvinnor", "Män", "Total"))
   }
 
+  if (store_age) {
+    if (!"Åldersgrupp" %in% names(df)) stop("UKÄ ", uka_id, ": ålderskolumn saknas")
+    age <- trimws(as.character(df$Åldersgrupp))
+    if (anyNA(age) || any(!age %in% c("", "Total", "Totalt", "Totala värdet", "-24", "25-34", "35-"))) {
+      stop("UKÄ ", uka_id, ": oväntad åldersgrupp")
+    }
+    # Totalraden bevaras som en egen observation utan ålder, aldrig som summa av grupper.
+    df$aldersgrupp <- ifelse(age %in% c("", "Total", "Totalt", "Totala värdet"), NA_character_, age)
+  }
   df <- df |>
     select(-any_of(c("Tidsperiod", "Lärosäte", "Kön", "Värde", "Åldersgrupp")))
 
@@ -277,7 +293,7 @@ active_universities <- function(uka_id, from_values, university_html, gender_val
     to_value = to3,
     universities = university_values,
     genders = gender_values,
-    age_total = age_total,
+    ages = age_total,
     dynamic_filters = total_dynamic
   )
 
@@ -293,6 +309,31 @@ active_universities <- function(uka_id, from_values, university_html, gender_val
 
   # Riket ska alltid följa med.
   unique(c("uni:1", active_values))
+}
+
+# Kontroller före start av en ersättande snapshot.
+validate_uka_observations <- function(observations, uka_id, has_age_breakdown) {
+  if (!length(observations)) stop("Tom UKÄ-källa")
+  keys <- vapply(observations, function(o) {
+    dims <- o$dimensions %||% list()
+    jsonlite::toJSON(list(o$period, o$university, o$gender, dims[sort(names(dims))]), auto_unbox = TRUE)
+  }, character(1))
+  if (anyDuplicated(keys)) stop("Dubblett i UKÄ-observationer")
+  if (!any(vapply(observations, function(o) o$university == "Luleå tekniska universitet", logical(1)))) stop("LTU saknas")
+  ages <- vapply(observations, function(o) o$dimensions$aldersgrupp %||% "Total", character(1))
+  if (has_age_breakdown && !all(c("Total", "-24", "25-34", "35-") %in% ages)) stop("Åldersgrupper eller total saknas")
+  if (!has_age_breakdown && any(ages != "Total")) stop("Oväntad åldersuppdelning")
+  # Varje kombination av period/lärosäte/kön/övriga dimensioner måste ha en källtotal.
+  age_keys <- vapply(observations, function(o) {
+    dims <- o$dimensions %||% list(); dims$aldersgrupp <- NULL
+    jsonlite::toJSON(list(o$period, o$university, o$gender, dims[sort(names(dims))]), auto_unbox = TRUE)
+  }, character(1))
+  if (length(setdiff(age_keys, age_keys[ages == "Total"]))) stop("Ålderstotal saknas för en observationsgrupp")
+  for (o in observations) {
+    if (!is.null(o$value) && !is.na(o$value) && (!is.finite(o$value) || o$value < 0 ||
+        (uka_id %in% c(77L, 134L, 135L, 136L) && o$value > 100))) stop("Orimligt UKÄ-värde")
+  }
+  invisible(TRUE)
 }
 
 # ---- Bygg observationspayload ----
@@ -342,13 +383,12 @@ uka_publish_batch <- function(indicator_id, source, source_updated_date, observa
   start <- uka_etl_request("start") |>
     req_method("POST") |>
     req_body_json(
-      list(
+      c(list(
         indicator_id = indicator_id,
         source = source,
         expected_chunks = length(chunks),
-        expected_rows = length(observations),
-        kalla_uppdaterad_datum = source_updated_date
-      ),
+        expected_rows = length(observations)
+      ), if (!is.null(source_updated_date)) list(kalla_uppdaterad_datum = source_updated_date)),
       auto_unbox = TRUE,
       null = "null"
     ) |>
@@ -398,13 +438,14 @@ uka_publish_batch <- function(indicator_id, source, source_updated_date, observa
     req_body_json(list(batch_id = batch_id), auto_unbox = TRUE) |>
     etl_perform_json(retry_safe = TRUE, timeout = 180)
 
+  if (!identical(as.numeric(result$rows), as.numeric(length(observations)))) stop("UKÄ: publicerat radantal avviker")
   ok <- TRUE
   result
 }
 
 # ---- Kör indikator ----
 
-run_uka_indicator <- function(uka_id, indicator_id, label) {
+run_uka_indicator <- function(uka_id, indicator_id, label, retention_years, active_years) {
   message("\n--- UKÄ ", uka_id, ": ", label, " ---")
 
   meta <- uka_indicator_meta(uka_id)
@@ -439,22 +480,19 @@ run_uka_indicator <- function(uka_id, indicator_id, label) {
     if (length(gender_keep) == 0L) gender_keep <- gender_values
   }
 
-  # Ålder: endast tekniskt Total-värde, dimensionen lagras aldrig.
+  # Samma åldersregel för alla API-indikatorer. Total ingår alltid i begäran.
   age_total <- age_values[age_values %in% c("age:1", "age:Total")]
-  if (length(age_values) > 0L && length(age_total) == 0L) age_total <- tail(age_values, 1)
+  if (length(age_total) != 1L) stop("UKÄ ", uka_id, ": verifierbart ålderstotalfilter saknas")
+  has_age_breakdown <- any(!age_values %in% age_total)
+  periods_keep <- retained_periods(from_values, retention_years)
+  from_keep <- tail(periods_keep, 1)
+  to_keep <- str_replace(head(periods_keep, 1), "^from:", "to:")
 
-  periods5 <- retained_periods(from_values, 5L)
-  from5 <- tail(periods5, 1)
-  to5 <- str_replace(head(periods5, 1), "^from:", "to:")
-
-  universities <- active_universities(
-    uka_id = uka_id,
-    from_values = from_values,
-    university_html = university_html,
-    gender_values = gender_keep,
-    age_total = age_total,
-    dynamic_groups = dynamic_groups
-  )
+  universities <- if (is.na(active_years)) {
+    extract_values(university_html, "uni:")
+  } else {
+    active_universities(uka_id, from_values, university_html, gender_keep, age_total, dynamic_groups)
+  }
 
   dynamic_filters <- unlist(
     map(dynamic_groups, ~ paste0(.x$index, .x$values)),
@@ -463,15 +501,15 @@ run_uka_indicator <- function(uka_id, indicator_id, label) {
 
   raw <- uka_export(
     uka_id = uka_id,
-    from_value = from5,
-    to_value = to5,
+    from_value = from_keep,
+    to_value = to_keep,
     universities = universities,
     genders = gender_keep,
-    age_total = age_total,
+    ages = age_values,
     dynamic_filters = dynamic_filters
   )
 
-  data <- normalize_uka(raw, uka_id, store_gender = has_gender_breakdown)
+  data <- normalize_uka(raw, uka_id, store_gender = has_gender_breakdown, store_age = has_age_breakdown)
 
   if (nrow(data) == 0L) stop("UKÄ ", uka_id, ": inga rader efter filtrering")
 
@@ -484,20 +522,17 @@ run_uka_indicator <- function(uka_id, indicator_id, label) {
     stop("UKÄ ", uka_id, ": könsdimension lagrades trots att endast Total finns")
   }
   if ("Åldersgrupp" %in% names(data)) {
-    stop("UKÄ ", uka_id, ": åldersdimensionen har inte tagits bort")
+    stop("UKÄ ", uka_id, ": ålderskolumnen har inte normaliserats")
   }
 
-  # Högst fem år / tio terminer enligt faktisk UKÄ-periodtyp.
-  expected_periods <- str_remove(periods5, "^from:")
+  expected_periods <- str_remove(periods_keep, "^from:")
   unexpected <- setdiff(unique(data$period), expected_periods)
-  if (length(unexpected) > 0L) {
-    stop("UKÄ ", uka_id, ": oväntade perioder: ", paste(unexpected, collapse = ", "))
-  }
-
+  if (length(unexpected) > 0L) stop("UKÄ ", uka_id, ": oväntade perioder: ", paste(unexpected, collapse = ", "))
   observations <- build_observations(data)
+  validate_uka_observations(observations, uka_id, has_age_breakdown)
 
   message(sprintf(
-    "UKÄ %s: %s rader, %d perioder, %d aktiva lärosäten + Riket",
+    "UKÄ %s: %s rader, %d perioder, %d lärosäten + Riket",
     uka_id,
     format(nrow(data), big.mark = " "),
     length(unique(data$period)),
@@ -512,7 +547,7 @@ run_uka_indicator <- function(uka_id, indicator_id, label) {
   result <- uka_publish_batch(
     indicator_id = indicator_id,
     source = source_name,
-    source_updated_date = as.character(Sys.Date()),
+    source_updated_date = NULL,
     observations = observations
   )
 
@@ -526,34 +561,25 @@ run_uka_indicator <- function(uka_id, indicator_id, label) {
 }
 
 # ---- Kör alla valda indikatorer ----
-
-results <- pmap(
-  uka_indicators,
-  function(uka_id, indicator_id, label) {
-    run_uka_indicator(uka_id, indicator_id, label)
-  }
-)
-
-if (!test_mode) {
-  latest <- max(vapply(uka_indicators$uka_id, function(id) {
-    as.character(uka_indicator_meta(id)$current_year %||% "")
-  }, character(1)))
-
-  try(
+run_uka_sync <- function() {
+  results <- pmap(uka_indicators, run_uka_indicator)
+  if (!test_mode) {
+    latest <- max(vapply(uka_indicators$uka_id, function(id) {
+      as.character(uka_indicator_meta(id)$current_year %||% "")
+    }, character(1)))
     etl_update_source_state(
-      source_id = source_id,
-      status = "succeeded",
-      latest_available_period = latest,
-      latest_successful_period = latest,
+      source_id = source_id, status = "succeeded",
+      latest_available_period = latest, latest_successful_period = latest,
       details = list(
         indicators = uka_indicators$uka_id,
-        retention_years = 5,
-        active_institution_years = 3,
-        gender_rule = "Spara Kvinnor/Män/Total om könsuppdelning finns; annars ingen könsdimension",
-        age_stored = FALSE
+        policies = uka_indicators |> select(uka_id, retention_years, active_years),
+        gender_rule = "Kvinnor/Män/Total om uppdelning finns; annars ingen könsdimension",
+        age_rule = "Alla erbjudna grupper; källans ålderstotal lagras utan åldersdimension",
+        age_stored = TRUE
       )
-    ),
-    silent = TRUE
-  )
+    )
+  }
+  invisible(results)
 }
 
+if (Sys.getenv("UKA_LOAD_ONLY") != "true") run_uka_sync()

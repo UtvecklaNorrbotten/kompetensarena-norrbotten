@@ -1,6 +1,6 @@
 # UKÄ: genomströmning och regional uppföljning
 
-Verifierat mot officiella källor 29 oktober 2026. Utökningen använder `scripts/uka_extended_sync.py`; de sju ursprungliga indikatorerna använder oförändrat `R/etl/uka_sync.R`.
+Verifierat mot officiella källor 29 oktober 2026. Alla tio indikatorer från Högskolan i siffrors API/CSV-export använder gemensamt `R/etl/uka_sync.R`. Filkällorna prestationsgrad (Excel) och regional uppföljning (PDF) använder `scripts/uka_files_sync.py`.
 
 ## Källor och importer
 
@@ -95,15 +95,15 @@ Ingen kontakt med UKÄ har skickats inom denna kontroll. Nästa externa beroende
 
 ## Drift, revideringar och lagring
 
-- Workflow: `10 · Data · UKÄ – högskolan i siffror`, `.github/workflows/etl-uka.yml`. Den nya delen kan väljas manuellt med `indicator=extended`, eller inkluderas med `all`. `test_mode=true` publicerar ingenting.
-- Veckovis kontroll av API-metadata och HTTP `Last-Modified`/ETag för filkällorna före full export. Om markörerna inte ändrats sker ingen dataexport eller batchpublicering. Full hämtning görs vid första veckokontrollen i ett nytt kalenderkvartal för historiska revideringar som inte syns i aktuell API-total.
-- API:t exponerar inget verifierbart uppdateringsdatum i totalsmetadata. För dessa importer lämnas `kalla_uppdaterad_datum` tomt, i stället för att felaktigt använda dagens datum. Hämtdatum sätts av befintlig finalisering. Filkällors tillgängliga uppdateringsmarkörer sparas i körningsrapporten. För den regionala snapshoten används det senaste Last-Modified-datumet bland de ingående rapporterna (verifierat 2026-04-08); för prestationsgraden är filens datum 2026-05-19, medan publiceringssidan anger 2026-05-21.
+- Workflow: `10 · Data · UKÄ – högskolan i siffror`, `.github/workflows/etl-uka.yml`. API-delen väljs med `indicator=api` eller ett API-ID. Filkällorna väljs med `indicator=files` (`extended` behålls som alias). `all` kör båda jobben sekventiellt. `test_mode=true` publicerar ingenting.
+- Alla tio API-indikatorer hämtas veckovis genom samma export-, normaliserings-, validerings- och batchfunktioner. Filkällorna kontrolleras med HTTP `Last-Modified`/ETag före hämtning. Oförändrade filmarkörer ger ingen ny batch. Fullständig filhämtning görs vid första veckokontrollen i ett nytt kalenderkvartal för att fånga historiska revideringar.
+- API:t exponerar inget verifierbart uppdateringsdatum i totalsmetadata. För samtliga API-importer lämnas `kalla_uppdaterad_datum` tomt, i stället för att felaktigt använda dagens datum. Hämtdatum sätts av befintlig finalisering. Filkällors tillgängliga uppdateringsmarkörer sparas i körningsrapporten. För den regionala snapshoten används det senaste Last-Modified-datumet bland de ingående rapporterna (verifierat 2026-04-08); för prestationsgraden är filens datum 2026-05-19, medan publiceringssidan anger 2026-05-21.
 - De nya indikatorerna behåller hela den verifierade historiken. De sju ursprungliga indikatorernas avsiktliga femårsregel och urval av aktiva lärosäten ändras inte.
 - Publicering använder befintliga `/api/public/jobs/uka/start`, `chunk`, `finalize`, `abort`, `uka_batches`, `uka_active_batches`, `uka_observations` och `agg_uka_university`. Varje indikator aktiveras atomiskt efter fullständig laddning. Befintlig versionshantering ersätter föregående aktiva snapshot utan identiska parallella datakopior.
 - Indikatorregistrering: `drizzle/migrations/0045_uka_completion_regional.sql`. Migrationen har applicerats i ansluten databas.
 - Separat källstatus: `uka-genomstromning-regional`. Detaljer innehåller fingeravtryck, källadresser, antal, perioder, LTU-exempel och spärrar. Rapporten sparas också som Actions-artifact `uka-genomstromning-regional` i 90 dagar.
 - Det tidigare `uka-regional-audit.yml` och dess låsta granskningsskript har ersatts av integrerade kontroller, inte ytterligare ett schemalagt workflow.
-- Test: `python -m unittest discover -s tests -p test_uka_extended.py -v`. Fullständig reproducerbar källkontroll utan publicering: `python scripts/uka_extended_sync.py`. Lokala hämtade källfiler kan kontrolleras med `--cache` och får inte publiceras.
+- API-tester: `Rscript tests/uka-values.R` och `Rscript tests/uka-api.R`. Filtester: `python -m unittest discover -s tests -p test_uka_files.py -v`. Fullständig reproducerbar filkällkontroll utan publicering: `python scripts/uka_files_sync.py`. Lokala hämtade källfiler kan kontrolleras med `--cache` och får inte publiceras.
 
 ## Jämförelse som går att göra
 
@@ -136,3 +136,12 @@ Kontrollerade via UKÄ:s metadata och periodfilter 29 oktober 2026. Samtliga API
 | Utred: arbetsplats i hemlänet | UKÄ 2023:20, figurer 12–14 | Verifierad analys av examensår 2019/20, uppföljning 2021 | Regional kompetensförsörjning; kräver verifierat tabellunderlag innan automation. |
 
 Statistik om svensk och utländsk bakgrund har inte valts ut eller implementerats.
+
+## Gemensam API-import och ålder, 30 oktober 2026
+
+- `R/etl/uka_sync.R` hämtar ID 13, 31, 33, 97, 99, 108, 136, 77, 134 och 135 genom samma funktioner. Indikatortabellen anger endast historik- och lärosätespolicy. Den duplicerade API/CSV-importen har tagits bort ur Python-skriptet.
+- ID 13, 31, 33, 97, 108, 134 och 135 erbjuder grupperna `-24`, `25-34`, `35-` samt källans total. Alla dessa hämtas. ID 77, 99 och 136 erbjuder endast total. Filkällorna har ingen åldersuppdelning.
+- Grupperna lagras med samma dimensionsnyckel `aldersgrupp`. Källans total lagras som en observation utan åldersdimension. Inga totaler skapas genom summering av åldersgrupper. Webbplatsens standardurval använder ålderstotalen, så åldersgrupper inte ändrar standardfigurer eller dubbelräknas.
+- Före publicering kontrolleras att totalen finns för varje kombination av period, lärosäte, kön och övriga dimensioner. Dubbletter, okända åldersetiketter och orimliga värden stoppar aktuell indikator.
+- Ursprungliga sju behåller fem års historik och befintligt aktivt lärosätesurval. ID 77/134/135 behåller hela sin tidigare historik och historiska lärosäten. Ingen tioårsgräns eller avgränsning till norrlänen har införts.
+- Vid ändrad API-källa görs en ny export med samtliga tillgängliga åldersgrupper. Om nya gruppetiketter införs stoppar valideringen publicering tills indelningen granskats.
