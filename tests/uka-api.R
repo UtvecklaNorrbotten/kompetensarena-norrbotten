@@ -39,3 +39,19 @@ obs <- build_observations(normalize_uka(raw, 135L, TRUE, TRUE))
 validate_uka_observations(obs, 135L, TRUE)
 stopifnot(obs[[1]]$value == 72.3, obs[[2]]$value == 0, is.na(obs[[3]]$value))
 message('UKÄ API: gemensamma policyer, åldersgrupper, oförändrade totaler och dubblettskydd godkända')
+
+# Exempel: återstart använder samma importfunktioner och hoppar över redan färdiga indikatorer.
+stopifnot(identical(select_uka_indicators(uka_indicators, start_from = "77")$uka_id, c(77L,134L,135L)))
+stopifnot(inherits(try(select_uka_indicators(uka_indicators, start_from = "999"), silent=TRUE), "try-error"))
+stopifnot(length(extract_dynamic_groups("")) == 0L)
+
+# Exempel: tomt lyckat gruppfilter är giltigt; tomma obligatoriska filter är fel.
+original_request <- uka_request
+uka_request <- function(url) url
+req_perform <- function(req) list()
+resp_has_body <- function(response) FALSE
+stopifnot(identical(uka_filter_html(77L, "group.php"), ""))
+stopifnot(inherits(try(uka_filter_html(77L, "age.php"), silent=TRUE), "try-error"))
+uka_request <- original_request
+rm(req_perform, resp_has_body, original_request)
+message("UKÄ API: tomma valfria gruppfilter och säker återstart godkända")

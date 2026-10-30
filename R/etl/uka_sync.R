@@ -53,11 +53,22 @@ uka_indicators <- tribble(
 selected_indicator <- Sys.getenv("UKA_INDICATOR", unset = "all")
 test_mode <- tolower(Sys.getenv("ETL_TEST_MODE", unset = "false")) %in% c("1", "true", "yes")
 
-if (!selected_indicator %in% c("all", "api")) {
-  uka_indicators <- uka_indicators |>
-    filter(as.character(uka_id) == selected_indicator | indicator_id == selected_indicator)
-  if (nrow(uka_indicators) == 0L) stop("Okänd UKÄ-indikator: ", selected_indicator)
+select_uka_indicators <- function(indicators, selected = "all", start_from = "") {
+  if (!selected %in% c("all", "api")) {
+    indicators <- indicators |>
+      filter(as.character(uka_id) == selected | indicator_id == selected)
+  }
+  if (!nrow(indicators)) stop("Okänd UKÄ-indikator: ", selected)
+  if (nzchar(start_from)) {
+    index <- match(start_from, as.character(indicators$uka_id))
+    if (is.na(index)) stop("Återstartens API-ID saknas i urvalet: ", start_from)
+    indicators <- indicators[seq.int(index, nrow(indicators)), ]
+  }
+  indicators
 }
+uka_indicators <- select_uka_indicators(
+  uka_indicators, selected_indicator, Sys.getenv("UKA_START_FROM", unset = "")
+)
 
 # ---- HTTP-hjälpare ----
 
@@ -73,10 +84,13 @@ uka_request <- function(url) {
     )
 }
 
-uka_get_text <- function(url) {
-  uka_request(url) |>
-    req_perform() |>
-    resp_body_string()
+uka_get_text <- function(url, allow_empty = FALSE) {
+  response <- uka_request(url) |> req_perform()
+  if (!resp_has_body(response)) {
+    if (allow_empty) return("")
+    stop("Tomt UKÄ-svar för obligatoriskt filter: ", url)
+  }
+  resp_body_string(response)
 }
 
 uka_indicator_meta <- function(uka_id) {
@@ -94,7 +108,8 @@ uka_filter_html <- function(uka_id, endpoint) {
     uka_base, "/filters/", endpoint, separator,
     "indicator=", URLencode(indicator_json, reserved = TRUE)
   )
-  uka_get_text(url)
+  # Avsaknad av extra gruppdimensioner redovisas som en tom, lyckad HTTP-kropp.
+  uka_get_text(url, allow_empty = identical(endpoint, "group.php"))
 }
 
 extract_values <- function(html, prefix) {

@@ -149,3 +149,9 @@ Statistik om svensk och utländsk bakgrund har inte valts ut eller implementerat
 ### Omräkning efter större importer
 
 `0046_uka_incremental_refresh.sql` gör aggregatomräkningen idempotent och inkrementell: ett transaktionslås samordnar omräkningar, samma aktiva batchmarkör ger direkt `no_change`, och endast indikatorer med ändrad aktiv batch ersätts i aggregatet. Uppdatering av indikatorns aggregat och omräkningsmarkören sker i samma transaktion. Detta undviker full omräkning av samtliga indikatorer efter varje åldersimport eller HTTP-återförsök. API-importens finalisering tillåts vänta 1 200 sekunder, längre än databasfunktionens budget på 900 sekunder. Migrationen har applicerats i ansluten databas.
+
+### Återstart och indikatorer utan extra grupper
+
+Indikator 77 saknar extra gruppdimensioner. UKÄ:s `group.php` returnerar då en lyckad men tom HTTP-kropp. Endast detta valfria filter tillåts vara tomt; obligatoriska period-/lärosätes-/köns-/åldersfilter måste fortfarande ge ett läsbart svar.
+
+En avbruten import kan återstartas med workflowets valfria `start_from` (API-ID) inom valt urval. Vid en kodrättning som startar en push-körning kan samma återstartspunkt anges i commitmeddelandet som `[uka-start=77]`. Återstarten använder den gemensamma indikatortabellens ordning och samma hämtning/validering/publicering. Ett okänt ID stoppar körningen. Utan återstartspunkt körs hela det valda urvalet.
