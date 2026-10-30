@@ -115,7 +115,7 @@ export const getUkaEducation = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const client = publicClient();
     const result: Database["public"]["Tables"]["agg_uka_university"]["Row"][] = [];
-    for (let offset = 0; offset < 50000; offset += 1000) {
+    for (let offset = 0; offset < 200000; offset += 1000) {
       const { data: rows, error } = await client
         .from("agg_uka_university")
         .select("indicator_id, university, period, gender, breakdown, category, value")
