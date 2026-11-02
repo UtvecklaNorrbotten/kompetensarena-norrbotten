@@ -1990,6 +1990,17 @@ export type Database = {
         Returns: Json
       }
       etl_finalize_batch: { Args: { p_batch_id: string }; Returns: Json }
+      etl_obsolete_batch_ids: {
+        Args: never
+        Returns: {
+          batch_id: string
+          reason: string
+        }[]
+      }
+      etl_purge_obsolete_batches: {
+        Args: { p_max_rows?: number }
+        Returns: Json
+      }
       etl_reopen_failed_batch: { Args: { p_batch_id: string }; Returns: Json }
       etl_snapshot_progress: {
         Args: { p_batch_id: string; p_import_key: string }
