@@ -23,6 +23,8 @@ on:
       - "R/etl/uka_values.R"
       - "tests/uka-api.R"
       - "tests/uka-values.R"
+      - "scripts/uka_files_sync.py"
+      - "tests/test_uka_files.py"
       - ".github/workflows/etl-uka.yml"
   workflow_dispatch:
     inputs:
@@ -69,6 +71,20 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  files_validation:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Installera testberoenden
+        run: python -m pip install requests beautifulsoup4 openpyxl pdfplumber
+      - name: Testa UKÄ:s filbaserade perioder och källvärden
+        run: python -m unittest discover -s tests -p 'test_uka_files.py' -v
+
   files:
     # Sekventiella jobb undviker samtidiga fulla UKÄ-aggregatomräkningar.
     needs: api
