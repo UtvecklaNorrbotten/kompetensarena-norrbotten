@@ -16,6 +16,14 @@ on:
       - "tests/test_uka_files.py"
       - "config/uka_regional_sources.json"
       - ".github/workflows/etl-uka.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "R/etl/uka_sync.R"
+      - "R/etl/uka_values.R"
+      - "tests/uka-api.R"
+      - "tests/uka-values.R"
+      - ".github/workflows/etl-uka.yml"
   workflow_dispatch:
     inputs:
       indicator:
@@ -65,7 +73,7 @@ jobs:
     # Sekventiella jobb undviker samtidiga fulla UKÄ-aggregatomräkningar.
     needs: api
     if: >-
-      always() && (github.event_name != 'workflow_dispatch' ||
+      always() && github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' ||
       inputs.indicator == 'all' || inputs.indicator == 'files' || inputs.indicator == 'extended')
     runs-on: ubuntu-latest
     timeout-minutes: 90
@@ -158,6 +166,7 @@ jobs:
           echo "start_from=$start" >> "$GITHUB_OUTPUT"
 
       - name: Hämta och publicera alla valda API-indikatorer
+        if: github.event_name != 'pull_request'
         env:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
           ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
