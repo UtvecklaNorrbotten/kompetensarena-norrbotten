@@ -50,7 +50,7 @@ on:
         default: false
   schedule:
     # Veckovis API-hämtning; filkällor kontrolleras före export, full revision kvartalsvis.
-    # De sju ursprungliga indikatorernas femårsregel behålls.
+    # Alla tio API-indikatorer: senaste tio år, alla lärosäten och alla källans åldersgrupper.
     - cron: "30 4 * * 1"
 
 permissions:
