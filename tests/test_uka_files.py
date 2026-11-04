@@ -35,6 +35,18 @@ class ValidationTests(unittest.TestCase):
         r=self.row();r['dimensions'].pop('program')
         with self.assertRaisesRegex(ValueError,'Program'):uka.validate([r],required_program=True)
 
+    def test_latest_ten_periods_preserve_source_values(self):
+        rows=[dict(period=f'{year}/{(year+1)%100:02d}',
+                   university='Luleå tekniska universitet',
+                   gender='Total',value=year,
+                   dimensions={'aldersgrupp':'Total'})
+              for year in range(2013,2026)]
+        result=uka.latest_ten_periods(rows)
+        self.assertEqual(len(result),10)
+        self.assertEqual(result[0]['period'],'2016/17')
+        self.assertEqual(result[-1]['value'],2025)
+        self.assertEqual(result[-1]['dimensions']['aldersgrupp'],'Total')
+
     def test_failed_chunk_aborts_without_finalize(self):
         p=uka.Publisher.__new__(uka.Publisher)
         p.request=Mock(side_effect=[{'batch_id':'batch'},RuntimeError('chunk failed'),{}])
