@@ -264,6 +264,13 @@ def http_marker(url):
             'content_length':r.headers.get('Content-Length')}
 
 
+def latest_ten_periods(rows):
+    """Behåll högst tio källperioder; inga värden eller totaler beräknas."""
+    periods = sorted({r['period'] for r in rows})
+    allowed = set(periods[-10:])
+    return [r for r in rows if r['period'] in allowed]
+
+
 def summarize(rows):
     return dict(rows=len(rows),null_values=sum(r['value'] is None for r in rows),
                 periods=sorted({r['period'] for r in rows}),universities=len({r['university'] for r in rows}),
@@ -305,6 +312,7 @@ def main():
     if args.expect_no_change and (force or old.get('fingerprints')!=hashes):
         raise ValueError('Källmarkörer har ändrats; oförändrad kontroll kan inte bekräftas')
     def publish(id,rows,updated=None):
+        rows = latest_ten_periods(rows)
         summary['indicators'][id]=summarize(rows)
         if pub:summary['indicators'][id]['publication']=pub.publish(id,rows,updated)
         print(id,json.dumps(summary['indicators'][id],ensure_ascii=False)[:700],flush=True)

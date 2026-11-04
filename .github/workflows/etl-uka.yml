@@ -16,6 +16,16 @@ on:
       - "tests/test_uka_files.py"
       - "config/uka_regional_sources.json"
       - ".github/workflows/etl-uka.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "R/etl/uka_sync.R"
+      - "R/etl/uka_values.R"
+      - "tests/uka-api.R"
+      - "tests/uka-values.R"
+      - "scripts/uka_files_sync.py"
+      - "tests/test_uka_files.py"
+      - ".github/workflows/etl-uka.yml"
   workflow_dispatch:
     inputs:
       indicator:
@@ -50,7 +60,7 @@ on:
         default: false
   schedule:
     # Veckovis API-hämtning; filkällor kontrolleras före export, full revision kvartalsvis.
-    # De sju ursprungliga indikatorernas femårsregel behålls.
+    # Alla tio API-indikatorer: senaste tio år, alla lärosäten och alla källans åldersgrupper.
     - cron: "30 4 * * 1"
 
 permissions:
@@ -61,11 +71,25 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  files_validation:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Installera testberoenden
+        run: python -m pip install requests beautifulsoup4 openpyxl pdfplumber
+      - name: Testa UKÄ:s filbaserade perioder och källvärden
+        run: python -m unittest discover -s tests -p 'test_uka_files.py' -v
+
   files:
     # Sekventiella jobb undviker samtidiga fulla UKÄ-aggregatomräkningar.
     needs: api
     if: >-
-      always() && (github.event_name != 'workflow_dispatch' ||
+      always() && github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' ||
       inputs.indicator == 'all' || inputs.indicator == 'files' || inputs.indicator == 'extended')
     runs-on: ubuntu-latest
     timeout-minutes: 90
@@ -158,6 +182,7 @@ jobs:
           echo "start_from=$start" >> "$GITHUB_OUTPUT"
 
       - name: Hämta och publicera alla valda API-indikatorer
+        if: github.event_name != 'pull_request'
         env:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
           ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}

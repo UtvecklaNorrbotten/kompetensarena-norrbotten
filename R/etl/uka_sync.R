@@ -6,7 +6,7 @@
 #
 # Regler:
 # - hela Sverige: Riket + lärosäten
-# - indikatorpolicy: ursprungliga sju = fem år/aktiva lärosäten, 77/134/135 = hela historiken
+# - indikatorpolicy: tio senaste år för alla API-indikatorer och alla lärosäten
 # - om Kvinnor/Män finns sparas Kvinnor, Män och Total
 # - om endast Total finns används det tekniskt men könsdimensionen lagras inte
 # - alla erbjudna åldersgrupper hämtas; totalvärdet lagras utan åldersdimension
@@ -46,8 +46,8 @@ uka_indicators <- tribble(
   135L, "uka-examensfrekvens",                   "Examensfrekvens på program"
 ) |>
   mutate(
-    retention_years = if_else(uka_id %in% c(77L, 134L, 135L), NA_integer_, 5L),
-    active_years = if_else(uka_id %in% c(77L, 134L, 135L), NA_integer_, 3L)
+    retention_years = 10L,
+    active_years = NA_integer_
   )
 
 selected_indicator <- Sys.getenv("UKA_INDICATOR", unset = "all")
@@ -269,8 +269,8 @@ normalize_uka <- function(df, uka_id, store_gender, store_age = FALSE) {
   if (store_age) {
     if (!"Åldersgrupp" %in% names(df)) stop("UKÄ ", uka_id, ": ålderskolumn saknas")
     age <- trimws(as.character(df$Åldersgrupp))
-    if (anyNA(age) || any(!age %in% c("", "Total", "Totalt", "Totala värdet", "-24", "25-34", "35-"))) {
-      stop("UKÄ ", uka_id, ": oväntad åldersgrupp")
+    if (anyNA(age)) {
+      stop("UKÄ ", uka_id, ": saknad åldersgrupp")
     }
     # Totalraden bevaras som en egen observation utan ålder, aldrig som summa av grupper.
     df$aldersgrupp <- ifelse(age %in% c("", "Total", "Totalt", "Totala värdet"), NA_character_, age)
@@ -336,7 +336,7 @@ validate_uka_observations <- function(observations, uka_id, has_age_breakdown) {
   if (anyDuplicated(keys)) stop("Dubblett i UKÄ-observationer")
   if (!any(vapply(observations, function(o) o$university == "Luleå tekniska universitet", logical(1)))) stop("LTU saknas")
   ages <- vapply(observations, function(o) o$dimensions$aldersgrupp %||% "Total", character(1))
-  if (has_age_breakdown && !all(c("Total", "-24", "25-34", "35-") %in% ages)) stop("Åldersgrupper eller total saknas")
+  if (has_age_breakdown && (!("Total" %in% ages) || !any(ages != "Total"))) stop("Åldersgrupper eller källtotal saknas")
   if (!has_age_breakdown && any(ages != "Total")) stop("Oväntad åldersuppdelning")
   # Varje kombination av period/lärosäte/kön/övriga dimensioner måste ha en källtotal.
   age_keys <- vapply(observations, function(o) {
