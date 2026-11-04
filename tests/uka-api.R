@@ -3,9 +3,10 @@ Sys.setenv(UKA_LOAD_ONLY = "true")
 source("R/etl/uka_sync.R")
 Sys.unsetenv("UKA_LOAD_ONLY")
 stopifnot(nrow(uka_indicators) == 10L)
-stopifnot(all(is.na(uka_indicators$retention_years[uka_indicators$uka_id %in% c(77,134,135)])))
-stopifnot(all(uka_indicators$retention_years[!uka_indicators$uka_id %in% c(77,134,135)] == 5L))
-stopifnot(length(retained_periods(paste0("from:HT", 2026:2000), 5L)) == 10L)
+stopifnot(all(uka_indicators$retention_years == 10L))
+stopifnot(all(is.na(uka_indicators$active_years)))
+stopifnot(length(retained_periods(paste0("from:HT", 2026:2000), 10L)) == 20L)
+stopifnot(length(retained_periods(paste0("from:", 2026:2000), 10L)) == 10L)
 stopifnot(length(retained_periods(paste0("from:", 2026:2000), NA_integer_)) == 27L)
 
 raw <- tibble(
@@ -31,7 +32,11 @@ validate_uka_observations(only, 99L, FALSE)
 # Fler åldersgrupper med samma övriga nyckel är tillåtna, dubbletter och saknad total stoppas.
 stopifnot(inherits(try(validate_uka_observations(c(obs, obs[1]), 13L, TRUE), silent=TRUE), 'try-error'))
 stopifnot(inherits(try(validate_uka_observations(obs[-1], 13L, TRUE), silent=TRUE), 'try-error'))
-bad <- raw; bad$Åldersgrupp[2] <- 'okänd'
+expanded <- raw; expanded$Åldersgrupp[2] <- '18-20'
+expanded_obs <- build_observations(normalize_uka(expanded, 13L, TRUE, TRUE))
+validate_uka_observations(expanded_obs, 13L, TRUE)
+stopifnot(expanded_obs[[2]]$dimensions$aldersgrupp == '18-20')
+bad <- raw; bad$Åldersgrupp[2] <- NA_character_
 stopifnot(inherits(try(normalize_uka(bad, 13L, TRUE, TRUE), silent=TRUE), 'try-error'))
 # Null och decimaler får inte ändras när en åldersdimension läggs till.
 raw$Värde <- c(72.3, 0, NA_real_, 51.8)
