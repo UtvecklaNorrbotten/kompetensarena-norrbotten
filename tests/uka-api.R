@@ -96,3 +96,44 @@ stopifnot(nrow(split_uni) == 4L, setequal(split_uni$Lärosäte, c("uni:1", "uni:
 uka_export <- original_export
 rm(original_export, split_uni)
 message("UKÄ API: uppdelning per lärosäte godkänd")
+
+# Exempel: UKÄ 33 ger en tom fil om alla kön kombineras, men kompletta
+# källrader när varje kön begärs separat. Total får inte räknas fram.
+original_export <- uka_export
+requested_genders <- character()
+uka_export <- function(uka_id, from_value, to_value, universities, genders, ages, dynamic_filters) {
+  requested_genders <<- c(requested_genders, genders)
+  if (length(genders) > 1L) stop("Tom UKÄ-exportfil")
+  value <- switch(genders, "gender:Kvinnor" = 41, "gender:Män" = 59,
+                  "gender:Total" = 103, stop("Okänt kön"))
+  tibble(Tidsperiod = str_remove(from_value, "^from:"),
+         Lärosäte = "Luleå tekniska universitet", Kön = str_remove(genders, "^gender:"),
+         Åldersgrupp = "Total", Värde = value)
+}
+separated <- uka_export_adaptive(33L, "from:2025/26", "uni:1",
+                                c("gender:Kvinnor", "gender:Män", "gender:Total"),
+                                "age:1", character())
+stopifnot(nrow(separated) == 3L,
+          identical(separated$Värde, c(41, 59, 103)),
+          identical(requested_genders, c("gender:Kvinnor", "gender:Män", "gender:Total")))
+normalized <- normalize_uka(separated, 33L, TRUE, TRUE)
+validate_uka_observations(build_observations(normalized), 33L, FALSE)
+uka_export <- original_export
+rm(original_export, requested_genders, separated, normalized)
+message("UKÄ API: varje källkön hämtas separat, källans Total bevaras")
+
+# Exempel: om en enskild period/lärosäte/kön är för stor ska ålder
+# delas upp sist, men ingen källrad får dupliceras.
+original_export <- uka_export
+uka_export <- function(uka_id, from_value, to_value, universities, genders, ages, dynamic_filters) {
+  if (length(ages) > 1L) stop("Tom UKÄ-exportfil")
+  tibble(Tidsperiod = str_remove(from_value, "^from:"), Lärosäte = "Luleå tekniska universitet",
+         Kön = "Total", Åldersgrupp = if (ages == "age:1") "Total" else "25-34",
+         Värde = if (ages == "age:1") 100 else 60)
+}
+age_split <- uka_export_adaptive(33L, "from:2025/26", "uni:1",
+                                 "gender:Total", c("age:1", "age:9"), character())
+stopifnot(nrow(age_split) == 2L, setequal(age_split$Åldersgrupp, c("Total", "25-34")))
+uka_export <- original_export
+rm(original_export, age_split)
+message("UKÄ API: reservuppdelning per ålder godkänd")
