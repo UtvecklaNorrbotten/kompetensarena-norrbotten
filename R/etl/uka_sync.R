@@ -237,46 +237,68 @@ uka_export <- function(uka_id, from_value, to_value, universities, genders, ages
   stop("UKÄ ", uka_id, ": exporten misslyckades efter tre försök: ", last_error)
 }
 
-# Stora exporter delas även per lärosäte. För enskilda lärosäten kan UKÄ
-# svara tomt när det inte finns observationer; en lyckad export för övriga
-# lärosäten och perioder får dock aldrig döljas.
+# UKÄ:s export kan ge en tom fil när flera kön, åldrar och ämnesgrupper
+# begärs samtidigt. Verifierat för HST 33: Kvinnor, Män och Total fungerar
+# separat med ALLA åldrar, även när den kombinerade exporten blir tom.
+# Hämta därför alltid varje källkön separat; beräkna aldrig Total.
 uka_export_adaptive <- function(uka_id, periods, universities, genders, ages, dynamic_filters) {
+  if (length(genders) > 1L) {
+    parts <- lapply(genders, function(gender) {
+      message("UKÄ ", uka_id, ": hämtar källkön ", gender)
+      uka_export_adaptive(uka_id, periods, universities, gender, ages, dynamic_filters)
+    })
+    return(dplyr::bind_rows(parts))
+  }
+
   from_value <- tail(periods, 1)
   to_value <- str_replace(head(periods, 1), "^from:", "to:")
   result <- tryCatch(
     uka_export(uka_id, from_value, to_value, universities, genders, ages, dynamic_filters),
     error = function(e) {
       message("UKÄ ", uka_id, ": export ", from_value, "–", to_value,
-              " (", length(universities), " lärosätesfilter) misslyckades: ", conditionMessage(e))
+              " (", length(universities), " lärosäten, ", length(ages),
+              " åldersfilter, kön ", paste(genders, collapse = ","), ") misslyckades: ",
+              conditionMessage(e))
       NULL
     }
   )
   wanted <- str_remove(periods, "^from:")
   if (!is.null(result)) {
     if (!"Tidsperiod" %in% names(result)) stop("UKÄ ", uka_id, ": Tidsperiod saknas")
-    unexpected <- setdiff(unique(clean_period(result$Tidsperiod)), wanted)
+    observed <- unique(clean_period(result$Tidsperiod))
+    unexpected <- setdiff(observed, wanted)
     if (length(unexpected)) stop("UKÄ ", uka_id, ": oväntade perioder: ", paste(unexpected, collapse = ", "))
-    # En flerårig export som saknar någon period är inte en komplett snapshot.
-    if (!length(setdiff(wanted, unique(clean_period(result$Tidsperiod))))) return(result)
-    message("UKÄ ", uka_id, ": ofullständig export för ", paste(setdiff(wanted, unique(clean_period(result$Tidsperiod))), collapse = ", "))
+    if (!length(setdiff(wanted, observed))) return(result)
+    message("UKÄ ", uka_id, ": ofullständiga perioder: ",
+            paste(setdiff(wanted, observed), collapse = ", "))
   }
+  # Dela först perioden, därefter lärosätena och sist åldersfiltret.
+  # Samtliga delfiler måste lyckas; annars publiceras ingen ny snapshot.
   if (length(periods) > 1L) {
     mid <- length(periods) %/% 2L
-    recent <- uka_export_adaptive(uka_id, periods[seq_len(mid)], universities, genders, ages, dynamic_filters)
-    older <- uka_export_adaptive(uka_id, periods[seq.int(mid + 1L, length(periods))], universities, genders, ages, dynamic_filters)
-    return(dplyr::bind_rows(recent, older))
+    return(dplyr::bind_rows(
+      uka_export_adaptive(uka_id, periods[seq_len(mid)], universities, genders, ages, dynamic_filters),
+      uka_export_adaptive(uka_id, periods[seq.int(mid + 1L, length(periods))], universities, genders, ages, dynamic_filters)
+    ))
   }
-  # En enda period kan fortfarande vara för stor. Dela på de begärda
-  # lärosätena i stället för att ge upp eller skriva ett ofullständigt år.
   if (length(universities) > 1L) {
     mid <- length(universities) %/% 2L
-    left <- uka_export_adaptive(uka_id, periods, universities[seq_len(mid)], genders, ages, dynamic_filters)
-    right <- uka_export_adaptive(uka_id, periods, universities[seq.int(mid + 1L, length(universities))], genders, ages, dynamic_filters)
-    return(dplyr::bind_rows(left, right))
+    return(dplyr::bind_rows(
+      uka_export_adaptive(uka_id, periods, universities[seq_len(mid)], genders, ages, dynamic_filters),
+      uka_export_adaptive(uka_id, periods, universities[seq.int(mid + 1L, length(universities))], genders, ages, dynamic_filters)
+    ))
   }
-  stop("UKÄ ", uka_id, ": exporten kunde inte verifieras för ", wanted,
-       " och lärosätesfilter ", paste(universities, collapse = ","),
-       ". Ingen ofullständig snapshot publiceras.")
+  if (length(ages) > 1L) {
+    mid <- length(ages) %/% 2L
+    return(dplyr::bind_rows(
+      uka_export_adaptive(uka_id, periods, universities, genders, ages[seq_len(mid)], dynamic_filters),
+      uka_export_adaptive(uka_id, periods, universities, genders, ages[seq.int(mid + 1L, length(ages))], dynamic_filters)
+    ))
+  }
+  stop("UKÄ ", uka_id, ": enskild export kunde inte verifieras: ",
+       paste(wanted, collapse = ","), " / ", paste(universities, collapse = ","),
+       " / ", paste(genders, collapse = ","), " / ", paste(ages, collapse = ","),
+       ". Avbryter utan att ersätta befintlig snapshot.")
 }
 
 # ---- Normalisering ----
@@ -601,6 +623,19 @@ run_uka_indicator <- function(uka_id, indicator_id, label, retention_years, acti
   expected_periods <- str_remove(periods_keep, "^from:")
   unexpected <- setdiff(unique(data$period), expected_periods)
   if (length(unexpected) > 0L) stop("UKÄ ", uka_id, ": oväntade perioder: ", paste(unexpected, collapse = ", "))
+  missing_periods <- setdiff(expected_periods, unique(data$period))
+  if (length(missing_periods) > 0L) stop("UKÄ ", uka_id, ": saknade perioder efter sammanfogning: ",
+                                      paste(missing_periods, collapse = ", "))
+  if (has_gender_breakdown) {
+    missing_genders <- setdiff(str_remove(gender_keep, "^gender:"), unique(data$gender))
+    if (length(missing_genders)) stop("UKÄ ", uka_id, ": saknade källkön: ", paste(missing_genders, collapse = ", "))
+  }
+  if (has_age_breakdown) {
+    missing_ages <- setdiff(c("Total", "-24", "25-34", "35-"), unique(c("Total", data$aldersgrupp)))
+    # UKÄ kan ha annan åldersindelning per indikator. Kontrollera i stället att
+    # minst en uppdelad åldersgrupp och källtotal finns (i validate_uka_observations).
+    invisible(missing_ages)
+  }
   observations <- build_observations(data)
   validate_uka_observations(observations, uka_id, has_age_breakdown)
 
