@@ -99,6 +99,16 @@ for (n in c(116L,58L,29L,14L,7L,3L,1L)) {
  raw_probe(paste0("prefix_half1_",n),selected)
 }
 raw_probe("source_subject_total",subject[1])
+# Probe branches not containing the "TOTAL" node: these can legitimately
+# have no observations for a particular university/age/gender.
+raw_probe("non_total_subject_2",subject[2])
+raw_probe("non_total_subject_3",subject[3])
+raw_probe("non_total_subject_4",subject[4])
+raw_probe("non_total_half2_full",parts[[2]])
+raw_probe("non_total_half2_first1",parts[[2]][1])
+raw_probe("non_total_half2_first3",parts[[2]][1:3])
+raw_probe("non_total_half2_last1",tail(parts[[2]],1))
+
 message("AUDIT_RAW_DONE")
 
 message("AUDIT_DONE read-only, no publishing")
