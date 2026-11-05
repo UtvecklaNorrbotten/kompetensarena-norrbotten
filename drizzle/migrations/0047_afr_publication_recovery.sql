@@ -6,7 +6,7 @@ revoke all on function public.afr_finalize_sync_apply(uuid, jsonb) from public, 
 create function public.afr_finalize_sync(p_sync_id uuid, p_stats jsonb default '{}'::jsonb)
 returns jsonb language plpgsql security definer set search_path = public
 set statement_timeout = '600s' set lock_timeout = '5s' as $$
-declare v_result jsonb; v_state text; v_message text; v_context text; v_started timestamptz := clock_timestamp();
+declare v_result jsonb; v_run uuid; v_state text; v_message text; v_context text; v_started timestamptz := clock_timestamp();
 begin
   if not pg_try_advisory_xact_lock(hashtext('scb-afr')) then
     return jsonb_build_object('status', 'busy', 'sync_id', p_sync_id,
@@ -27,7 +27,12 @@ begin
       stats = coalesce(stats, '{}'::jsonb) || jsonb_build_object('last_publication_error', jsonb_build_object(
         'code', v_state, 'message', v_message, 'context', v_context,
         'at', clock_timestamp(), 'duration_seconds', extract(epoch from clock_timestamp() - v_started)))
-      where id = p_sync_id and status = 'receiving';
+      where id = p_sync_id and status = 'receiving' returning run_id into v_run;
+    if found then
+      update data_source_runs set status = 'failed', finished_at = now(), error_message = v_message where id = v_run;
+      update data_source_state set last_status = 'failed', last_error = v_message,
+        last_checked_at = now(), updated_at = now() where source_id = 'scb-afr';
+    end if;
     return jsonb_build_object('status', case when v_state in ('55P03','57014','40P01','40001') then 'retryable' else 'blocked' end,
       'sync_id', p_sync_id, 'code', v_state, 'message', v_message);
   end;

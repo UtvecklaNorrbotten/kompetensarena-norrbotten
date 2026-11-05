@@ -317,14 +317,25 @@ export async function handleAfrResume(request: Request): Promise<Response> {
   if (request.method === "GET") {
     const url = new URL(request.url);
     const syncId = url.searchParams.get("sync_id");
-    if (syncId && !z.string().uuid().safeParse(syncId).success) return json({ error: "Invalid sync_id" }, 400);
+    if (syncId && !z.string().uuid().safeParse(syncId).success)
+      return json({ error: "Invalid sync_id" }, 400);
     const mode = url.searchParams.get("mode") ?? "initial";
-    if (!syncId && !["initial", "daily"].includes(mode)) return json({ error: "Invalid mode" }, 400);
-    let query = db.from("afr_syncs").select(
-      "id, status, source_date, je_source_count, ae_source_count, expected_je_chunks, expected_ae_chunks, received_je_chunks, received_ae_chunks, stats, error_message, created_at",
-    );
-    query = syncId ? query.eq("id", syncId) : query.eq("mode", mode).in("status", mode === "daily" ? ["receiving"] : ["failed", "receiving"]);
-    const { data, error } = await query.order("created_at", { ascending: false }).limit(1).maybeSingle();
+    if (!syncId && !["initial", "daily"].includes(mode))
+      return json({ error: "Invalid mode" }, 400);
+    let query = db
+      .from("afr_syncs")
+      .select(
+        "id, status, source_date, je_source_count, ae_source_count, expected_je_chunks, expected_ae_chunks, received_je_chunks, received_ae_chunks, stats, error_message, created_at",
+      );
+    query = syncId
+      ? query.eq("id", syncId)
+      : query
+          .eq("mode", mode)
+          .in("status", mode === "daily" ? ["receiving"] : ["failed", "receiving"]);
+    const { data, error } = await query
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
     if (error) return json({ error: "Lookup failed" }, 500);
     return json(data ?? null, 200);
   }
@@ -332,7 +343,9 @@ export async function handleAfrResume(request: Request): Promise<Response> {
   if (request.method === "POST") {
     const body = await readBody(request, reopenSchema);
     if (!body.ok) return body.response;
-    const { data, error } = await db.rpc("afr_reopen_initial_sync", { p_sync_id: body.data.sync_id });
+    const { data, error } = await db.rpc("afr_reopen_initial_sync", {
+      p_sync_id: body.data.sync_id,
+    });
     if (error) return rpcError("Resume", error);
     return json(data, 200);
   }
