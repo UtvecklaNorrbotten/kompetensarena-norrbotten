@@ -32,3 +32,22 @@ Daily: api-info → jämför med `data_source_state.latest_successful_period` �
 
 ## Första laddningen: pausade index
 Hjälpindex och kopplingskontroller (lista i `afr_deferred_ddl`) är borttagna medan första laddningen pågår. Före finalisering kör ETL `afr/maintenance` (fyller i `primary_sni` och bygger sedan ett index per anrop). En trigger på `afr_syncs` gör att ingen synk kan få status `succeeded`, och ingen daglig synk kan starta, förrän alla index finns och alla kopplingar är validerade. Om återuppbyggnaden misslyckas förblir AFR opublicerat; nästa körning fortsätter där den slutade.
+
+## Återupptagning av daglig publicering
+Innan SCB kontaktas kontrolleras senaste dagliga synk med status `receiving`.
+Om alla datapaket finns återupptas samma publicering med ursprungligt källdatum.
+En ofullständig överföring avbryts under samma databaslås innan ett nytt uttag börjar.
+Publiceringsfel behåller staging och markeras inte som lyckade; nästa körning försöker igen.
+Om den återupptagna publiceringen gäller ett äldre källdatum hämtas nästa version vid nästa körning.
+
+`afr_finalize_sync` tar ett icke-väntande transaktionslås före radlåset och returnerar
+`busy` om en publicering redan pågår. Databasoperationen har 600 s tidsgräns,
+HTTP-klienten 660 s. Varje explicit återförsök läser först committed status;
+automatiska HTTP-återförsök är avstängda för finalisering. Ett lyckat anrop kan
+upprepas utan dubbel historik. Felstatus skrivs endast under databaslåset,
+aldrig från ett sent HTTP-fel. Valideringsfel stoppar återförsöken för granskning.
+
+Diagnostik finns i `afr_syncs.stats.last_publication_error` (SQLSTATE, SQL-kontext,
+tidpunkt och tidsåtgång). Ett `busy`-svar ger även process-ID och blockerande
+process-ID utan råa registerdata. API:t är fortsatt skyddat med ETL-nyckeln.
+Migration `0047_afr_publication_recovery.sql` måste appliceras före den nya klienten.

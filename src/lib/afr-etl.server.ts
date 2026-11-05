@@ -286,15 +286,10 @@ export async function handleAfrFinalize(request: Request): Promise<Response> {
     p_sync_id: body.data.sync_id,
     p_stats: (body.data.stats ?? {}) as Json,
   });
-  if (error) {
-    // Transaktionen rullas tillbaka – publicerade AFR-data är oförändrade.
-    await db
-      .from("afr_syncs")
-      .update({ error_message: error.message, last_activity_at: new Date().toISOString() })
-      .eq("id", body.data.sync_id);
-    return rpcError("Finalize", error);
-  }
-  return json({ status: "succeeded", ...(data as Record<string, unknown>) }, 200);
+  if (error) return rpcError("Finalize", error);
+  // The database owns status/error writes under the publication lock. Never write
+  // an old HTTP error back here: another attempt may already have committed.
+  return json(data, 200);
 }
 
 /** POST /api/public/jobs/afr/abort */
@@ -320,16 +315,16 @@ export async function handleAfrResume(request: Request): Promise<Response> {
   const db = await admin();
 
   if (request.method === "GET") {
-    const { data, error } = await db
-      .from("afr_syncs")
-      .select(
-        "id, status, source_date, je_source_count, ae_source_count, expected_je_chunks, expected_ae_chunks, received_je_chunks, received_ae_chunks, stats, created_at",
-      )
-      .eq("mode", "initial")
-      .in("status", ["failed", "receiving"])
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    const url = new URL(request.url);
+    const syncId = url.searchParams.get("sync_id");
+    if (syncId && !z.string().uuid().safeParse(syncId).success) return json({ error: "Invalid sync_id" }, 400);
+    const mode = url.searchParams.get("mode") ?? "initial";
+    if (!syncId && !["initial", "daily"].includes(mode)) return json({ error: "Invalid mode" }, 400);
+    let query = db.from("afr_syncs").select(
+      "id, status, source_date, je_source_count, ae_source_count, expected_je_chunks, expected_ae_chunks, received_je_chunks, received_ae_chunks, stats, error_message, created_at",
+    );
+    query = syncId ? query.eq("id", syncId) : query.eq("mode", mode).in("status", mode === "daily" ? ["receiving"] : ["failed", "receiving"]);
+    const { data, error } = await query.order("created_at", { ascending: false }).limit(1).maybeSingle();
     if (error) return json({ error: "Lookup failed" }, 500);
     return json(data ?? null, 200);
   }

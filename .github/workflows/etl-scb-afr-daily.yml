@@ -18,6 +18,11 @@ on:
         required: false
         default: false
         type: boolean
+  push:
+    branches: [main]
+    paths:
+      - R/etl/afr_*.R
+      - .github/workflows/etl-scb-afr-daily.yml
   schedule:
     # 04:00 UTC = 05:00 svensk vintertid / 06:00 sommartid, efter SCB:s nattliga underhåll.
     - cron: "0 4 * * *"
@@ -42,6 +47,9 @@ jobs:
         with:
           use-public-rspm: true
 
+      - name: Testa återupptagning av publicering
+        run: Rscript tests/test_afr_publication.R
+
       - name: Installera beroenden
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -54,7 +62,7 @@ jobs:
 
       - name: Kör AFR-synk
         env:
-          AFR_MODE: ${{ github.event_name == 'schedule' && 'daily' || inputs.mode }}
+          AFR_MODE: ${{ github.event_name != 'workflow_dispatch' && 'daily' || inputs.mode }}
           AFR_CONFIRM_LARGE_REMOVAL: ${{ github.event_name == 'workflow_dispatch' && inputs.confirm_large_removal || 'false' }}
           SCB_AFR_API_KEY: ${{ secrets.SCB_AFR_API_KEY }}
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
