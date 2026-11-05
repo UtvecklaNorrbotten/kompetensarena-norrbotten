@@ -281,6 +281,29 @@ uka_export_adaptive <- function(uka_id, periods, universities, genders, ages, dy
       uka_export_adaptive(uka_id, periods[seq.int(mid + 1L, length(periods))], universities, genders, ages, dynamic_filters)
     ))
   }
+  # UKÄ:s HST-export blir ibland tom även för ett lärosäte/år/ålder
+  # när alla ämnesnivåer valts. Dela den största dynamiska filtergruppen
+  # utan att ta bort val från andra grupper. Halvorna är disjunkta och
+  # samtliga källrader måste finnas innan snapshot kan ersättas.
+  if (length(dynamic_filters) > 1L) {
+    group_ids <- sub("dynamic:.*$", "", dynamic_filters)
+    counts <- table(group_ids)
+    candidates <- names(counts)[counts > 1L]
+    if (length(candidates)) {
+      group_id <- candidates[[which.max(counts[candidates])]]
+      positions <- which(group_ids == group_id)
+      middle <- length(positions) %/% 2L
+      other <- setdiff(seq_along(dynamic_filters), positions)
+      left_filters <- dynamic_filters[sort(c(other, positions[seq_len(middle)]))]
+      right_filters <- dynamic_filters[sort(c(other, positions[seq.int(middle + 1L, length(positions))]))]
+      message("UKÄ ", uka_id, ": delar dynamisk filtergrupp ", group_id,
+              " (", length(positions), " val) för ", paste(wanted, collapse = ","))
+      return(dplyr::bind_rows(
+        uka_export_adaptive(uka_id, periods, universities, genders, ages, left_filters),
+        uka_export_adaptive(uka_id, periods, universities, genders, ages, right_filters)
+      ))
+    }
+  }
   if (length(universities) > 1L) {
     mid <- length(universities) %/% 2L
     return(dplyr::bind_rows(
