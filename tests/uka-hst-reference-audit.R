@@ -1,0 +1,75 @@
+# Read-only source audit for UKÄ HST. No ETL endpoint or database write.
+Sys.setenv(UKA_LOAD_ONLY="true")
+source("R/etl/uka_sync.R")
+Sys.unsetenv("UKA_LOAD_ONLY")
+
+id <- 33L
+period <- "2025/26"
+groups <- extract_dynamic_groups(uka_filter_html(id,"group.php"))
+stopifnot(length(groups) == 2L)
+study <- paste0(groups[[1]]$index,groups[[1]]$values)
+subject <- paste0(groups[[2]]$index,groups[[2]]$values)
+ages <- extract_values(uka_filter_html(id,"age.php"),"age:")
+uni <- c("uni:1", "uni:171")
+gender <- "gender:Kvinnor"
+parts <- split(subject,rep(seq_len(2L),length.out=length(subject)))
+message("AUDIT_META ",jsonlite::toJSON(list(ages=ages,study=length(study),
+  subject=length(subject),subgroups=vapply(parts,length,integer(1))),auto_unbox=TRUE))
+# Inspect hierarchy from actual filter tokens. Values such as 922_921 link child to parent.
+tokens <- sub("^.*dynamic:","",subject)
+tokens <- tokens[tokens!="TOTAL"]
+depth <- vapply(strsplit(tokens,"_",fixed=TRUE),length,integer(1))
+message("AUDIT_HIERARCHY levels=",paste(sort(table(depth)),collapse=","), 
+  " examples=",paste(head(tokens,14),collapse="|"))
+
+safe_export <- function(label,loc,age_vals,filters) {
+  begin <- Sys.time()
+  out <- tryCatch({
+    dat <- uka_export(id,paste0("from:",period),paste0("to:",period),
+                      loc,gender,age_vals,filters)
+    list(ok=TRUE,rows=nrow(dat),data=dat)
+  },error=function(e) list(ok=FALSE,error=conditionMessage(e)))
+  message("AUDIT_EXPORT ",label," ",jsonlite::toJSON(
+    if(out$ok) list(ok=TRUE,rows=out$rows,age_counts=as.list(table(as.character(out$data$Åldersgrupp))))
+    else list(ok=FALSE,error=out$error),auto_unbox=TRUE),
+    " seconds=",round(as.numeric(difftime(Sys.time(),begin,units="secs")),1))
+  out
+}
+# Compare source observations, not just row counts.
+keyed <- function(df) {
+  names(df) <- gsub("\\[[012]\\]$","",names(df))
+  df <- df[,sort(names(df)),drop=FALSE]
+  df[] <- lapply(df,as.character)
+  if ("Värde" %in% names(df)) df$Värde <- trimws(df$Värde)
+  keys <- apply(df,1,function(row) jsonlite::toJSON(as.list(row),auto_unbox=TRUE,na="null"))
+  sort(keys)
+}
+compare <- function(label,a,b) {
+  if(!a$ok || !b$ok) return(invisible(NULL))
+  ka <- keyed(a$data);kb <- keyed(b$data)
+  message("AUDIT_COMPARE ",label," ",jsonlite::toJSON(list(
+    exact=identical(ka,kb),count_a=length(ka),count_b=length(kb),
+    duplicates_a=sum(duplicated(ka)),duplicates_b=sum(duplicated(kb)),
+    only_a=length(setdiff(ka,kb)),only_b=length(setdiff(kb,ka))),auto_unbox=TRUE))
+}
+
+for (loc in uni) {
+  label <- gsub(":", "_", loc)
+  whole <- safe_export(paste0(label,"_allages_fullsubject"),loc,ages,c(study,subject))
+  half <- lapply(seq_along(parts),function(i) safe_export(
+    paste0(label,"_allages_half",i),loc,ages,c(study,parts[[i]])))
+  if (all(vapply(half,function(x)x$ok,logical(1)))) {
+    joined <- list(ok=TRUE,data=dplyr::bind_rows(lapply(half,function(x)x$data)))
+    compare(paste0(label,"_allages_full_vs_halves"),whole,joined)
+  }
+  for (i in seq_along(parts)) {
+    solo <- safe_export(paste0(label,"_age8_half",i),loc,"age:8",c(study,parts[[i]]))
+    if (half[[i]]$ok) {
+      filtered <- list(ok=TRUE,data=half[[i]]$data[as.character(half[[i]]$data$Åldersgrupp)=="-24",,drop=FALSE])
+      compare(paste0(label,"_half",i,"_age8_vs_filtered_allages"),solo,filtered)
+    }
+  }
+  source_total <- safe_export(paste0(label,"_source_total"),loc,"age:8",
+                              c(study[1],subject[1]))
+}
+message("AUDIT_DONE read-only, no publishing")
