@@ -47,3 +47,19 @@ run_probe <- function(label, year, dynamic) {
 run_probe("2025-26_total_dimensions", "2025/26", totals)
 run_probe("2024-25_total_dimensions", "2024/25", totals)
 run_probe("2025-26_all_dimensions", "2025/26", all_group_values)
+
+message("--- SECOND PASS: all age/gender interactions (2025/26 Riket) ---")
+run_probe2 <- function(label, genders_test, ages_test) {
+ t <- Sys.time()
+ ans <- tryCatch({
+   dat <- uka_export(33L, "from:2025/26", "to:2025/26", "uni:1",
+                     genders_test, ages_test, all_group_values)
+   list(success=TRUE, rows=nrow(dat), ages=paste(unique(dat$Åldersgrupp),collapse="|"),
+        genders=paste(unique(dat$Kön),collapse="|"))
+ }, error=function(e) list(success=FALSE,error=conditionMessage(e)))
+ message("RESULT2 ", label, " ", jsonlite::toJSON(ans,auto_unbox=TRUE),
+         " elapsed_seconds=",round(as.numeric(difftime(Sys.time(),t,units="secs")),1))
+}
+run_probe2("all_ages_gender_total", "gender:Total", ages)
+run_probe2("age_total_all_genders", genders, a)
+run_probe2("all_ages_all_genders", genders, ages)
