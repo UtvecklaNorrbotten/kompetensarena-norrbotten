@@ -63,3 +63,6 @@ run_probe2 <- function(label, genders_test, ages_test) {
 run_probe2("all_ages_gender_total", "gender:Total", ages)
 run_probe2("age_total_all_genders", genders, a)
 run_probe2("all_ages_all_genders", genders, ages)
+
+message("--- THIRD PASS: separate gender files for all age groups ---")
+for (gender_one in genders) run_probe2(paste0("gender_", sub("^gender:","",gender_one)), gender_one, ages)
