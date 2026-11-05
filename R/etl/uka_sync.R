@@ -630,12 +630,6 @@ run_uka_indicator <- function(uka_id, indicator_id, label, retention_years, acti
     missing_genders <- setdiff(str_remove(gender_keep, "^gender:"), unique(data$gender))
     if (length(missing_genders)) stop("UKÄ ", uka_id, ": saknade källkön: ", paste(missing_genders, collapse = ", "))
   }
-  if (has_age_breakdown) {
-    missing_ages <- setdiff(c("Total", "-24", "25-34", "35-"), unique(c("Total", data$aldersgrupp)))
-    # UKÄ kan ha annan åldersindelning per indikator. Kontrollera i stället att
-    # minst en uppdelad åldersgrupp och källtotal finns (i validate_uka_observations).
-    invisible(missing_ages)
-  }
   observations <- build_observations(data)
   validate_uka_observations(observations, uka_id, has_age_breakdown)
 
