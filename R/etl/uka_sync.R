@@ -185,7 +185,12 @@ uka_export <- function(uka_id, from_value, to_value, universities, genders, ages
     dynamic_filters
   )
 
-  response <- request(paste0(uka_base, "/api/index.php")) |>
+  # UKÄ kan returnera en giltig fileUrl men en tom nedladdning. Upprepa
+  # hela exportförfrågan så att en ny fil skapas, inte bara samma tomma URL.
+  last_error <- NULL
+  for (attempt in seq_len(3L)) {
+    result <- tryCatch({
+      response <- request(paste0(uka_base, "/api/index.php")) |>
     req_user_agent("Kompetensarena-Norrbotten-UKA-ETL/1.0") |>
     req_headers(
       "Accept" = "application/json",
@@ -205,23 +210,66 @@ uka_export <- function(uka_id, from_value, to_value, universities, genders, ages
     req_perform() |>
     resp_body_json(simplifyVector = TRUE)
 
-  if (is.null(response$fileUrl) || !nzchar(response$fileUrl)) {
-    stop("UKÄ-exporten returnerade ingen fileUrl för indikator ", uka_id)
+      if (is.null(response$fileUrl) || !nzchar(response$fileUrl)) {
+        stop("UKÄ-exporten returnerade ingen fileUrl för indikator ", uka_id)
+      }
+      download <- uka_request(response$fileUrl) |>
+        req_timeout(600) |>
+        req_perform()
+      if (!resp_has_body(download)) stop("Tom UKÄ-exportfil")
+      raw <- resp_body_raw(download)
+      if (!length(raw)) stop("Tom UKÄ-exportfil")
+      data <- read_delim(
+        I(raw),
+        delim = ";",
+        locale = locale(decimal_mark = ",", encoding = "UTF-8"),
+        show_col_types = FALSE,
+        name_repair = "minimal",
+        trim_ws = TRUE
+      )
+      if (!nrow(data)) stop("Tom UKÄ-exportfil (inga datarader)")
+      data
+    }, error = function(e) { last_error <<- conditionMessage(e); NULL })
+    if (!is.null(result)) return(result)
+    message(sprintf("UKÄ %s exportförsök %d/3 misslyckades: %s", uka_id, attempt, last_error))
+    if (attempt < 3L) Sys.sleep(attempt * 3L)
   }
+  stop("UKÄ ", uka_id, ": exporten misslyckades efter tre försök: ", last_error)
+}
 
-  raw <- uka_request(response$fileUrl) |>
-    req_timeout(600) |>
-    req_perform() |>
-    resp_body_raw()
-
-  read_delim(
-    I(raw),
-    delim = ";",
-    locale = locale(decimal_mark = ",", encoding = "UTF-8"),
-    show_col_types = FALSE,
-    name_repair = "minimal",
-    trim_ws = TRUE
+# Om en stor export blir tom eller ofullständig delas perioden rekursivt.
+# Returnerar hela materialet innan någon produktionsbatch påbörjas.
+uka_export_adaptive <- function(uka_id, periods, universities, genders, ages, dynamic_filters) {
+  from_value <- tail(periods, 1)
+  to_value <- str_replace(head(periods, 1), "^from:", "to:")
+  result <- tryCatch(
+    uka_export(uka_id, from_value, to_value, universities, genders, ages, dynamic_filters),
+    error = function(e) {
+      message("UKÄ ", uka_id, ": periodintervall ", from_value, "–", to_value,
+              " kunde inte hämtas: ", conditionMessage(e))
+      NULL
+    }
   )
+  if (!is.null(result)) {
+    if (!"Tidsperiod" %in% names(result)) {
+      stop("UKÄ ", uka_id, ": Tidsperiod saknas i exporten")
+    }
+    observed <- unique(clean_period(result$Tidsperiod))
+    unexpected <- setdiff(observed, str_remove(periods, "^from:"))
+    if (length(unexpected)) stop("UKÄ ", uka_id, ": oväntade perioder: ", paste(unexpected, collapse = ", "))
+    # Acceptera endast ett komplett intervall. UKÄ:s periodfilter kan
+    # annars tyst ge färre perioder än begärt.
+    missing <- setdiff(str_remove(periods, "^from:"), observed)
+    if (!length(missing)) return(result)
+    message("UKÄ ", uka_id, ": perioder saknas i exporten: ", paste(missing, collapse = ", "))
+  }
+  if (length(periods) == 1L) {
+    stop("UKÄ ", uka_id, ": kunde inte verifiera period ", str_remove(periods, "^from:"))
+  }
+  n <- length(periods) %/% 2L
+  recent <- uka_export_adaptive(uka_id, periods[seq_len(n)], universities, genders, ages, dynamic_filters)
+  older <- uka_export_adaptive(uka_id, periods[seq.int(n + 1L, length(periods))], universities, genders, ages, dynamic_filters)
+  dplyr::bind_rows(recent, older)
 }
 
 # ---- Normalisering ----
@@ -515,10 +563,12 @@ run_uka_indicator <- function(uka_id, indicator_id, label, retention_years, acti
     use.names = FALSE
   )
 
-  raw <- uka_export(
+  message(sprintf("UKÄ %s: %d perioder erbjuds; %d efter tioårsfilter (%s till %s)",
+                  uka_id, length(from_values), length(periods_keep),
+                  str_remove(from_keep, "^from:"), str_remove(to_keep, "^to:")))
+  raw <- uka_export_adaptive(
     uka_id = uka_id,
-    from_value = from_keep,
-    to_value = to_keep,
+    periods = periods_keep,
     universities = universities,
     genders = gender_keep,
     ages = age_values,
