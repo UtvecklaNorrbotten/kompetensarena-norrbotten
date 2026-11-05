@@ -137,3 +137,27 @@ stopifnot(nrow(age_split) == 2L, setequal(age_split$Åldersgrupp, c("Total", "25
 uka_export <- original_export
 rm(original_export, age_split)
 message("UKÄ API: reservuppdelning per ålder godkänd")
+
+# Exempel: syntetiska ämnesval där full export är för stor, men två
+# disjunkta delmängder fungerar. Studieformsfiltret ska följa med båda.
+original_export <- uka_export
+selected_subjects <- character()
+uka_export <- function(uka_id, from_value, to_value, universities, genders, ages, dynamic_filters) {
+  stopifnot("6.dynamic:TOTAL" %in% dynamic_filters)
+  subjects <- dynamic_filters[startsWith(dynamic_filters, "7.")]
+  if (length(subjects) > 2L) stop("Tom UKÄ-exportfil")
+  selected_subjects <<- c(selected_subjects, subjects)
+  tibble(Tidsperiod = rep(str_remove(from_value, "^from:"), length(subjects)),
+         Lärosäte = "Luleå tekniska universitet", Kön = "Total",
+         Ämnesgrupp = subjects, Värde = seq_along(subjects))
+}
+dynamic_values <- paste0("7.dynamic:", c("TOTAL", "A", "B", "C"))
+dynamic_rows <- uka_export_adaptive(33L, "from:2025/26", "uni:1",
+                                     "gender:Total", "age:1",
+                                     c("6.dynamic:TOTAL", dynamic_values))
+stopifnot(nrow(dynamic_rows) == 4L,
+          setequal(selected_subjects, dynamic_values),
+          !anyDuplicated(dynamic_rows$Ämnesgrupp))
+uka_export <- original_export
+rm(original_export,selected_subjects,dynamic_values,dynamic_rows)
+message("UKÄ API: disjunkt uppdelning av ämnesfilter godkänd")
