@@ -237,39 +237,46 @@ uka_export <- function(uka_id, from_value, to_value, universities, genders, ages
   stop("UKÄ ", uka_id, ": exporten misslyckades efter tre försök: ", last_error)
 }
 
-# Om en stor export blir tom eller ofullständig delas perioden rekursivt.
-# Returnerar hela materialet innan någon produktionsbatch påbörjas.
+# Stora exporter delas även per lärosäte. För enskilda lärosäten kan UKÄ
+# svara tomt när det inte finns observationer; en lyckad export för övriga
+# lärosäten och perioder får dock aldrig döljas.
 uka_export_adaptive <- function(uka_id, periods, universities, genders, ages, dynamic_filters) {
   from_value <- tail(periods, 1)
   to_value <- str_replace(head(periods, 1), "^from:", "to:")
   result <- tryCatch(
     uka_export(uka_id, from_value, to_value, universities, genders, ages, dynamic_filters),
     error = function(e) {
-      message("UKÄ ", uka_id, ": periodintervall ", from_value, "–", to_value,
-              " kunde inte hämtas: ", conditionMessage(e))
+      message("UKÄ ", uka_id, ": export ", from_value, "–", to_value,
+              " (", length(universities), " lärosätesfilter) misslyckades: ", conditionMessage(e))
       NULL
     }
   )
+  wanted <- str_remove(periods, "^from:")
   if (!is.null(result)) {
-    if (!"Tidsperiod" %in% names(result)) {
-      stop("UKÄ ", uka_id, ": Tidsperiod saknas i exporten")
-    }
-    observed <- unique(clean_period(result$Tidsperiod))
-    unexpected <- setdiff(observed, str_remove(periods, "^from:"))
+    if (!"Tidsperiod" %in% names(result)) stop("UKÄ ", uka_id, ": Tidsperiod saknas")
+    unexpected <- setdiff(unique(clean_period(result$Tidsperiod)), wanted)
     if (length(unexpected)) stop("UKÄ ", uka_id, ": oväntade perioder: ", paste(unexpected, collapse = ", "))
-    # Acceptera endast ett komplett intervall. UKÄ:s periodfilter kan
-    # annars tyst ge färre perioder än begärt.
-    missing <- setdiff(str_remove(periods, "^from:"), observed)
-    if (!length(missing)) return(result)
-    message("UKÄ ", uka_id, ": perioder saknas i exporten: ", paste(missing, collapse = ", "))
+    # En flerårig export som saknar någon period är inte en komplett snapshot.
+    if (!length(setdiff(wanted, unique(clean_period(result$Tidsperiod))))) return(result)
+    message("UKÄ ", uka_id, ": ofullständig export för ", paste(setdiff(wanted, unique(clean_period(result$Tidsperiod))), collapse = ", "))
   }
-  if (length(periods) == 1L) {
-    stop("UKÄ ", uka_id, ": kunde inte verifiera period ", str_remove(periods, "^from:"))
+  if (length(periods) > 1L) {
+    mid <- length(periods) %/% 2L
+    recent <- uka_export_adaptive(uka_id, periods[seq_len(mid)], universities, genders, ages, dynamic_filters)
+    older <- uka_export_adaptive(uka_id, periods[seq.int(mid + 1L, length(periods))], universities, genders, ages, dynamic_filters)
+    return(dplyr::bind_rows(recent, older))
   }
-  n <- length(periods) %/% 2L
-  recent <- uka_export_adaptive(uka_id, periods[seq_len(n)], universities, genders, ages, dynamic_filters)
-  older <- uka_export_adaptive(uka_id, periods[seq.int(n + 1L, length(periods))], universities, genders, ages, dynamic_filters)
-  dplyr::bind_rows(recent, older)
+  # En enda period kan fortfarande vara för stor. Dela på de begärda
+  # lärosätena i stället för att ge upp eller skriva ett ofullständigt år.
+  if (length(universities) > 1L) {
+    mid <- length(universities) %/% 2L
+    left <- uka_export_adaptive(uka_id, periods, universities[seq_len(mid)], genders, ages, dynamic_filters)
+    right <- uka_export_adaptive(uka_id, periods, universities[seq.int(mid + 1L, length(universities))], genders, ages, dynamic_filters)
+    return(dplyr::bind_rows(left, right))
+  }
+  stop("UKÄ ", uka_id, ": exporten kunde inte verifieras för ", wanted,
+       " och lärosätesfilter ", paste(universities, collapse = ","),
+       ". Ingen ofullständig snapshot publiceras.")
 }
 
 # ---- Normalisering ----
