@@ -21,8 +21,9 @@ on:
       - R/etl/e3_municipal.R
       - .github/workflows/etl-e3-municipal.yml
   schedule:
-    # Fortsätter även pausade importer. Lokal tidskontroll hanterar sommartid.
-    - cron: "30 3,4 * * *"
+    # En kontroll per dygn; förseningar i GitHub får inte hoppa över metadata.
+    # 05:30 vintertid / 06:30 sommartid.
+    - cron: "30 4 * * *"
 
 permissions:
   contents: read
@@ -36,20 +37,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
-      - name: Kontrollera lokal körtid
-        id: time
-        run: |
-          if [ "${{ github.event_name }}" != "schedule" ] || [ "$(TZ=Europe/Stockholm date +%H)" = "05" ]; then
-            echo "run=true" >> "$GITHUB_OUTPUT"
-          fi
       - uses: actions/checkout@v4
-        if: steps.time.outputs.run == 'true'
       - uses: r-lib/actions/setup-r@v2
-        if: steps.time.outputs.run == 'true'
         with:
           use-public-rspm: true
       - uses: r-lib/actions/setup-r-dependencies@v2
-        if: steps.time.outputs.run == 'true'
         with:
           packages: |
             any::dplyr
@@ -62,17 +54,14 @@ jobs:
           install-pandoc: false
           install-quarto: false
       - name: Installera pxweb2r
-        if: steps.time.outputs.run == 'true'
         env:
           GITHUB_PAT: ${{ github.token }}
         shell: Rscript {0}
         run: remotes::install_github("FaluPeppe/pxweb2r", upgrade = "never")
       - name: Regressionstest
-        if: steps.time.outputs.run == 'true'
         shell: Rscript {0}
         run: source("R/etl/validate_e3_municipal.R")
       - name: Vänta på driftsatt backend och migration 0031
-        if: steps.time.outputs.run == 'true'
         env:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
           ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
@@ -96,14 +85,13 @@ jobs:
           }
           if (!ready) stop("Driftsätt backend och migration 0031 via Lovable och kör om workflowet.")
       - name: Hämta och återuppta E3 kommun
-        if: steps.time.outputs.run == 'true'
         env:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
           ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
           ETL_INDICATOR: e3_kommun
           ETL_TEST_MODE: ${{ inputs.test_mode || 'false' }}
           ETL_TEST_FINALIZE: ${{ inputs.finalize_test || 'false' }}
-          ETL_FORCE_REFRESH: ${{ github.event_name == 'push' && 'true' || inputs.force_refresh || 'false' }}
+          ETL_FORCE_REFRESH: ${{ inputs.force_refresh || 'false' }}
           ETL_RUN_BUDGET_SECONDS: "14400"
         shell: Rscript {0}
         run: |

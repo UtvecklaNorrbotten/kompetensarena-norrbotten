@@ -14,6 +14,7 @@
 source("R/etl/etl_api.R")
 source("R/etl/afr_client.R")
 source("R/etl/afr_normalize.R")
+source("R/etl/afr_publication.R")
 
 AFR_SOURCE_ID <- "scb-afr"
 AFR_REMOVED_PER_CHUNK <- 50000L
@@ -141,6 +142,24 @@ result <- tryCatch({
     }
     message("Städning klar.")
     quit(status = 0)
+  }
+
+  # Finish a previously staged release before contacting SCB again. A complete
+  # staging snapshot belongs to its original source date, even if SCB is newer.
+  if (afr_mode == "daily") {
+    open <- afr_read_sync(mode = "daily")
+    if (!is.null(open) && length(open) > 0L) {
+      if (afr_chunks_complete(open)) {
+        sync_id <- open$id
+        source_date <- open$source_date
+        fin <- afr_finalize_recoverable(sync_id)
+        message("AFR-synk återupptagen och publicerad: ", toJSON(fin$stats, auto_unbox = TRUE))
+        quit(status = 0)
+      }
+      # Partial staging cannot have been finalized. Guarded abort refuses to
+      # interfere with an active publisher; then a fresh source traversal is safe.
+      afr_post("/api/public/jobs/afr/abort", list(sync_id = open$id, reason = "Ersätter ofullständig överföring"))
+    }
   }
 
   info <- afr_api_info()
@@ -273,19 +292,20 @@ result <- tryCatch({
     afr_send_chunks(sync_id, "ae", da$up, ae_chunks)
   }
 
-  fin <- afr_post("/api/public/jobs/afr/finalize", list(sync_id = sync_id, stats = list(
+  fin <- afr_finalize_recoverable(sync_id, stats = list(
     duration_seconds = round(as.numeric(difftime(Sys.time(), started, units = "secs"))),
     afr_requests = afr_stats$requests, afr_retries = afr_stats$retries, afr_http_429 = afr_stats$http_429,
     afr_bytes = afr_stats$bytes
-  )))
+  ))
   message("AFR-synk publicerad: ", toJSON(fin$stats, auto_unbox = TRUE))
   "ok"
 }, error = function(e) {
   msg <- conditionMessage(e)
   message("AFR-synk misslyckades: ", msg)
   if (!is.null(sync_id)) {
-    # Första laddningen markeras som misslyckad men kan återupptas; daglig staging rensas.
-    try(afr_post("/api/public/jobs/afr/abort", list(sync_id = sync_id, reason = substr(msg, 1, 900))), silent = TRUE)
+    # Keep staging on publication/network failure. The next daily run checks
+    # committed state and retries finalization before downloading SCB again.
+    message("AFR-synk ", sync_id, " behålls för återupptagning; inget abort-anrop skickas.")
   } else {
     afr_log_check("failed", source_date, list(mode = afr_mode, requests = afr_stats$requests,
       retries = afr_stats$retries, http_429 = afr_stats$http_429), msg)
