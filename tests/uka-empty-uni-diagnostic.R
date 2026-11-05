@@ -24,3 +24,16 @@ probe("uni171_female_age_total_total_groups","uni:171","gender:Kvinnor","age:1",
 probe("uni171_total_gender_age_total_total_groups","uni:171","gender:Total","age:1",totals)
 probe("uni171_female_age8_all_groups","uni:171","gender:Kvinnor","age:8",all_groups)
 probe("riket_female_age8_total_groups","uni:1","gender:Kvinnor","age:8",totals)
+
+message("DYNAMIC FILTER SPLIT PROBES")
+study <- paste0(groups[[1]]$index,groups[[1]]$values)
+subject <- paste0(groups[[2]]$index,groups[[2]]$values)
+subject_parts <- split(subject,rep(1:2,length.out=length(subject)))
+for (i in seq_along(subject_parts)) {
+  probe(paste0("uni171_subject_half_",i),"uni:171","gender:Kvinnor","age:8",c(study,subject_parts[[i]]))
+}
+full <- uka_export(33L,"from:2025/26","to:2025/26","uni:1","gender:Total","age:1",c(study,subject))
+parts <- lapply(subject_parts,function(x) uka_export(33L,"from:2025/26","to:2025/26","uni:1","gender:Total","age:1",c(study,x)))
+combined <- dplyr::bind_rows(parts)
+message("DYNAMIC_SPLIT_COUNTS ",jsonlite::toJSON(list(full=nrow(full),parts=vapply(parts,nrow,integer(1)),
+ combined=nrow(combined),duplicates=nrow(combined)-nrow(dplyr::distinct(combined))),auto_unbox=TRUE))
