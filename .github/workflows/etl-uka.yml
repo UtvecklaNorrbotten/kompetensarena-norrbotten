@@ -89,7 +89,7 @@ jobs:
     # Sekventiella jobb undviker samtidiga fulla UKÄ-aggregatomräkningar.
     needs: api
     if: >-
-      github.event_name != 'pull_request' &&
+      always() && github.event_name != 'pull_request' &&
       (needs.api.result == 'success' ||
        (github.event_name == 'workflow_dispatch' && needs.api.result == 'skipped' &&
         (inputs.indicator == 'files' || inputs.indicator == 'extended'))) &&
