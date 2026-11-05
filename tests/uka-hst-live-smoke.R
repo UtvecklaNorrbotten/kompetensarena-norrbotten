@@ -7,7 +7,10 @@ group_html <- uka_filter_html(id,"group.php")
 groups <- extract_dynamic_groups(group_html)
 dynamic_filters <- unlist(lapply(groups, function(g) paste0(g$index,g$values)),use.names=FALSE)
 age_values <- extract_values(uka_filter_html(id,"age.php"),"age:")
-test_universities <- c("uni:1","uni:171")
+uni_options <- extract_options(uka_filter_html(id,"university.php"),"uni:")
+ltu <- uni_options$value[uni_options$name == "Luleå tekniska universitet"]
+stopifnot(length(ltu)==1L)
+test_universities <- c("uni:1","uni:171",ltu)
 message("Read-only HST probe: ", length(dynamic_filters)," subject/study filters, ",length(age_values)," age groups")
 raw <- uka_export_adaptive(id,"from:2025/26",test_universities,
                             "gender:Kvinnor",age_values,dynamic_filters)
