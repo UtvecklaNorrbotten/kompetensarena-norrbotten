@@ -22,6 +22,7 @@ on:
       - "R/etl/uka_sync.R"
       - "R/etl/uka_values.R"
       - "tests/uka-api.R"
+      - "tests/uka-hst-live-smoke.R"
       - "tests/uka-values.R"
       - "scripts/uka_files_sync.py"
       - "tests/test_uka_files.py"
@@ -170,6 +171,12 @@ jobs:
         run: |
           source("tests/uka-values.R")
           source("tests/uka-api.R")
+
+      - name: Read-only HST-integrationsprov för Riket, LTU och uni:171
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'fix/uka-prioritize-university-')
+        shell: Rscript {0}
+        run: |
+          source("tests/uka-hst-live-smoke.R")
 
       - name: Välj återstartspunkt
         id: selection

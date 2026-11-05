@@ -281,6 +281,15 @@ uka_export_adaptive <- function(uka_id, periods, universities, genders, ages, dy
       uka_export_adaptive(uka_id, periods[seq.int(mid + 1L, length(periods))], universities, genders, ages, dynamic_filters)
     ))
   }
+  # Dela lärosäten före ämnesfilter för att undvika urval med ogiltiga
+  # kombinationer av hierarkiska ämnes- och studieformsnivåer.
+  if (length(universities) > 1L) {
+    mid <- length(universities) %/% 2L
+    return(dplyr::bind_rows(
+      uka_export_adaptive(uka_id, periods, universities[seq_len(mid)], genders, ages, dynamic_filters),
+      uka_export_adaptive(uka_id, periods, universities[seq.int(mid + 1L, length(universities))], genders, ages, dynamic_filters)
+    ))
+  }
   # UKÄ:s HST-export blir ibland tom även för ett lärosäte/år/ålder
   # när alla ämnesnivåer valts. Dela den största dynamiska filtergruppen
   # utan att ta bort val från andra grupper. Halvorna är disjunkta och
@@ -303,13 +312,6 @@ uka_export_adaptive <- function(uka_id, periods, universities, genders, ages, dy
         uka_export_adaptive(uka_id, periods, universities, genders, ages, right_filters)
       ))
     }
-  }
-  if (length(universities) > 1L) {
-    mid <- length(universities) %/% 2L
-    return(dplyr::bind_rows(
-      uka_export_adaptive(uka_id, periods, universities[seq_len(mid)], genders, ages, dynamic_filters),
-      uka_export_adaptive(uka_id, periods, universities[seq.int(mid + 1L, length(universities))], genders, ages, dynamic_filters)
-    ))
   }
   if (length(ages) > 1L) {
     mid <- length(ages) %/% 2L
