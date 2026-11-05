@@ -60,3 +60,22 @@ stopifnot(inherits(try(uka_filter_html(77L, "age.php"), silent=TRUE), "try-error
 uka_request <- original_request
 rm(req_perform, resp_has_body, original_request)
 message("UKÄ API: tomma valfria gruppfilter och säker återstart godkända")
+
+# Exempel: syntetisk UKÄ-export som blir tom för fler än en period.
+# Reservvägen ska dela intervallet, hämta alla perioder och inte publicera något.
+original_export <- uka_export
+seen_ranges <- character()
+uka_export <- function(uka_id, from_value, to_value, universities, genders, ages, dynamic_filters) {
+  seen_ranges <<- c(seen_ranges, paste(from_value, to_value))
+  if (from_value != str_replace(to_value, "^to:", "from:")) stop("Tom UKÄ-exportfil")
+  tibble(Tidsperiod = str_remove(from_value, "^from:"), Lärosäte = "Luleå tekniska universitet",
+         Kön = "Total", Värde = 100)
+}
+period_list <- paste0("from:", 2026:2023)
+fallback <- uka_export_adaptive(31L, period_list, "uni:1", "gender:Total", "age:1", character())
+stopifnot(nrow(fallback) == 4L,
+          setequal(fallback$Tidsperiod, as.character(2026:2023)),
+          length(seen_ranges) > 4L)
+uka_export <- original_export
+rm(original_export, seen_ranges, period_list, fallback)
+message("UKÄ API: reservhämtning för tomma och avkortade periodexporter godkänd")
