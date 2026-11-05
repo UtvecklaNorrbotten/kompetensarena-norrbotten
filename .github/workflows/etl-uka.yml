@@ -89,8 +89,12 @@ jobs:
     # Sekventiella jobb undviker samtidiga fulla UKÄ-aggregatomräkningar.
     needs: api
     if: >-
-      always() && github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' ||
-      inputs.indicator == 'all' || inputs.indicator == 'files' || inputs.indicator == 'extended')
+      github.event_name != 'pull_request' &&
+      (needs.api.result == 'success' ||
+       (github.event_name == 'workflow_dispatch' && needs.api.result == 'skipped' &&
+        (inputs.indicator == 'files' || inputs.indicator == 'extended'))) &&
+      (github.event_name != 'workflow_dispatch' ||
+       inputs.indicator == 'all' || inputs.indicator == 'files' || inputs.indicator == 'extended')
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
