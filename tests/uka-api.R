@@ -79,3 +79,20 @@ stopifnot(nrow(fallback) == 4L,
 uka_export <- original_export
 rm(original_export, seen_ranges, period_list, fallback)
 message("UKÄ API: reservhämtning för tomma och avkortade periodexporter godkänd")
+
+
+# Exempel: en enda period ger tom export vid fler än ett lärosäte.
+# Underindelning per lärosäte ska ge ett komplett dataset.
+original_export <- uka_export
+uka_export <- function(uka_id, from_value, to_value, universities, genders, ages, dynamic_filters) {
+  if (length(universities) > 1L) stop("Tom UKÄ-exportfil")
+  tibble(Tidsperiod = str_remove(from_value, "^from:"),
+         Lärosäte = universities, Kön = "Total", Värde = 100)
+}
+split_uni <- uka_export_adaptive(33L, "from:2024/25",
+                                c("uni:1", "uni:2", "uni:3", "uni:4"),
+                                "gender:Total", "age:1", character())
+stopifnot(nrow(split_uni) == 4L, setequal(split_uni$Lärosäte, c("uni:1", "uni:2", "uni:3", "uni:4")))
+uka_export <- original_export
+rm(original_export, split_uni)
+message("UKÄ API: uppdelning per lärosäte godkänd")
