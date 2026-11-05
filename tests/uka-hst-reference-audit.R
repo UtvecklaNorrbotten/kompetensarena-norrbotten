@@ -72,4 +72,33 @@ for (loc in uni) {
   source_total <- safe_export(paste0(label,"_source_total"),loc,"age:8",
                               c(study[1],subject[1]))
 }
+
+# Probe an intentionally tiny, hierarchy-sensitive selection. Do not infer
+# that empty CSV means zero; distinguish an empty HTTP body from CSV headers.
+raw_probe <- function(label,subject_values) {
+ filters <- c("from:2025/26","to:2025/26","uni:171","gender:Kvinnor","age:8",study,subject_values)
+ result <- tryCatch({
+   response <- httr2::request(paste0(uka_base,"/api/index.php")) |>
+     httr2::req_headers("Accept"="application/json","X-Requested-With"="XMLHttpRequest") |>
+     httr2::req_body_form(indicator="33",`filters[]`=filters,.multi="explode") |>
+     httr2::req_timeout(90) |> httr2::req_perform() |>
+     httr2::resp_body_json(simplifyVector=TRUE)
+   url <- response$fileUrl
+   if (is.null(url) || !nzchar(url)) stop("Missing fileUrl")
+   res <- uka_request(url) |> httr2::req_timeout(90) |> httr2::req_perform()
+   raw <- httr2::resp_body_raw(res)
+   body <- if(length(raw)) rawToChar(head(raw,300L)) else ""
+   list(file_url_present=TRUE,status=httr2::resp_status(res),
+        bytes=length(raw),preview=substr(body,1,180))
+ },error=function(e)list(error=conditionMessage(e)))
+ message("AUDIT_RAW ",label," ",jsonlite::toJSON(result,auto_unbox=TRUE))
+}
+# Prefix paths resemble the recursive splitter; also test a known valid total.
+for (n in c(116L,58L,29L,14L,7L,3L,1L)) {
+ selected <- parts[[1]][seq_len(n)]
+ raw_probe(paste0("prefix_half1_",n),selected)
+}
+raw_probe("source_subject_total",subject[1])
+message("AUDIT_RAW_DONE")
+
 message("AUDIT_DONE read-only, no publishing")
