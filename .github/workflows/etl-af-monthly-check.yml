@@ -15,10 +15,11 @@ on:
           - publish-history
           - publish-current
   schedule:
-    # Tillfälligt brett observationsfönster tills AF:s faktiska publiceringsmönster är känt.
-    # Kontroll sker 1-15 samt den 23:e varje månad.
-    - cron: "15 4 1-15 * *"
-    - cron: "15 4 23 * *"
+    # Två UTC-triggers gör att kontrollen kan hållas vid 06:15 svensk lokal tid
+    # genom både sommar- och vintertid. R-skriptet släpper bara igenom rätt
+    # lokala körning och endast när expected_period har nått sitt kontrollfönster.
+    - cron: "15 4 * * *"
+    - cron: "15 5 * * *"
 
 permissions:
   contents: read
