@@ -5,8 +5,10 @@ on:
     paths:
       - scripts/uka_json_probe.py
       - scripts/uka_hst_complete_probe.py
+      - scripts/uka_json_plan.py
       - tests/test_uka_json_probe.py
       - tests/test_uka_hst_complete_probe.py
+      - tests/test_uka_json_plan.py
       - .github/workflows/uka-json-probe.yml
   workflow_dispatch:
     inputs:
@@ -42,6 +44,11 @@ jobs:
           python -m unittest discover -s tests -p test_uka_source_audit.py -v
           python -m unittest discover -s tests -p test_uka_json_probe.py -v
           python -m unittest discover -s tests -p test_uka_hst_complete_probe.py -v
+          python -m unittest discover -s tests -p test_uka_json_plan.py -v
+      - name: Bygg hämtningsplan utan API-anrop
+        env:
+          SNAPSHOT: ${{ inputs.snapshot }}
+        run: python scripts/uka_json_plan.py --snapshot "${SNAPSHOT:-$(date -u +%F)}" --output output/uka-json-probe/plan.json
       - uses: actions/download-artifact@v4
         if: github.event_name == 'workflow_dispatch' && inputs.resume_run != ''
         with:
