@@ -1,0 +1,460 @@
+{
+  "indicator": 33,
+  "university": "171",
+  "period": "2025/26",
+  "gender": "Kvinnor",
+  "publish_allowed": false,
+  "csv_equivalence_verified": false,
+  "scope": "All nodes advertised by the JSON API for this university/period/gender and all four ages",
+  "ages": [
+    {
+      "age": "Total",
+      "nodes": 12,
+      "edge_value_checks": 17,
+      "reverse_edge_value_checks": 17,
+      "exact_order_comparison": true,
+      "reverse_new_requests": 0,
+      "source_total": "61.5"
+    },
+    {
+      "age": "-24",
+      "nodes": 12,
+      "edge_value_checks": 17,
+      "reverse_edge_value_checks": 17,
+      "exact_order_comparison": true,
+      "reverse_new_requests": 0,
+      "source_total": "14.4"
+    },
+    {
+      "age": "25-34",
+      "nodes": 12,
+      "edge_value_checks": 17,
+      "reverse_edge_value_checks": 17,
+      "exact_order_comparison": true,
+      "reverse_new_requests": 0,
+      "source_total": "24.2"
+    },
+    {
+      "age": "35-",
+      "nodes": 12,
+      "edge_value_checks": 17,
+      "reverse_edge_value_checks": 17,
+      "exact_order_comparison": true,
+      "reverse_new_requests": 0,
+      "source_total": "22.9"
+    }
+  ],
+  "observations": [
+    {
+      "age": "Total",
+      "dimensions": {
+        "Studieform": "Fristående kurser",
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesgrupp": "Teologi",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "21.8"
+    },
+    {
+      "age": "Total",
+      "dimensions": {
+        "Studieform": "Fristående kurser",
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "21.8"
+    },
+    {
+      "age": "Total",
+      "dimensions": {
+        "Studieform": "Fristående kurser",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "21.8"
+    },
+    {
+      "age": "Total",
+      "dimensions": {
+        "Studieform": "Fristående kurser"
+      },
+      "value": "21.8"
+    },
+    {
+      "age": "Total",
+      "dimensions": {
+        "Studieform": "Generella program",
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesgrupp": "Teologi",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "39.6"
+    },
+    {
+      "age": "Total",
+      "dimensions": {
+        "Studieform": "Generella program",
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "39.6"
+    },
+    {
+      "age": "Total",
+      "dimensions": {
+        "Studieform": "Generella program",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "39.6"
+    },
+    {
+      "age": "Total",
+      "dimensions": {
+        "Studieform": "Generella program"
+      },
+      "value": "39.6"
+    },
+    {
+      "age": "Total",
+      "dimensions": {
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesgrupp": "Teologi",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "61.5"
+    },
+    {
+      "age": "Total",
+      "dimensions": {
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "61.5"
+    },
+    {
+      "age": "Total",
+      "dimensions": {
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "61.5"
+    },
+    {
+      "age": "Total",
+      "dimensions": {},
+      "value": "61.5"
+    },
+    {
+      "age": "-24",
+      "dimensions": {
+        "Studieform": "Fristående kurser",
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesgrupp": "Teologi",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "2.8"
+    },
+    {
+      "age": "-24",
+      "dimensions": {
+        "Studieform": "Fristående kurser",
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "2.8"
+    },
+    {
+      "age": "-24",
+      "dimensions": {
+        "Studieform": "Fristående kurser",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "2.8"
+    },
+    {
+      "age": "-24",
+      "dimensions": {
+        "Studieform": "Fristående kurser"
+      },
+      "value": "2.8"
+    },
+    {
+      "age": "-24",
+      "dimensions": {
+        "Studieform": "Generella program",
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesgrupp": "Teologi",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "11.6"
+    },
+    {
+      "age": "-24",
+      "dimensions": {
+        "Studieform": "Generella program",
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "11.6"
+    },
+    {
+      "age": "-24",
+      "dimensions": {
+        "Studieform": "Generella program",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "11.6"
+    },
+    {
+      "age": "-24",
+      "dimensions": {
+        "Studieform": "Generella program"
+      },
+      "value": "11.6"
+    },
+    {
+      "age": "-24",
+      "dimensions": {
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesgrupp": "Teologi",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "14.4"
+    },
+    {
+      "age": "-24",
+      "dimensions": {
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "14.4"
+    },
+    {
+      "age": "-24",
+      "dimensions": {
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "14.4"
+    },
+    {
+      "age": "-24",
+      "dimensions": {},
+      "value": "14.4"
+    },
+    {
+      "age": "25-34",
+      "dimensions": {
+        "Studieform": "Fristående kurser",
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesgrupp": "Teologi",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "6.7"
+    },
+    {
+      "age": "25-34",
+      "dimensions": {
+        "Studieform": "Fristående kurser",
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "6.7"
+    },
+    {
+      "age": "25-34",
+      "dimensions": {
+        "Studieform": "Fristående kurser",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "6.7"
+    },
+    {
+      "age": "25-34",
+      "dimensions": {
+        "Studieform": "Fristående kurser"
+      },
+      "value": "6.7"
+    },
+    {
+      "age": "25-34",
+      "dimensions": {
+        "Studieform": "Generella program",
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesgrupp": "Teologi",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "17.5"
+    },
+    {
+      "age": "25-34",
+      "dimensions": {
+        "Studieform": "Generella program",
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "17.5"
+    },
+    {
+      "age": "25-34",
+      "dimensions": {
+        "Studieform": "Generella program",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "17.5"
+    },
+    {
+      "age": "25-34",
+      "dimensions": {
+        "Studieform": "Generella program"
+      },
+      "value": "17.5"
+    },
+    {
+      "age": "25-34",
+      "dimensions": {
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesgrupp": "Teologi",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "24.2"
+    },
+    {
+      "age": "25-34",
+      "dimensions": {
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "24.2"
+    },
+    {
+      "age": "25-34",
+      "dimensions": {
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "24.2"
+    },
+    {
+      "age": "25-34",
+      "dimensions": {},
+      "value": "24.2"
+    },
+    {
+      "age": "35-",
+      "dimensions": {
+        "Studieform": "Fristående kurser",
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesgrupp": "Teologi",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "12.4"
+    },
+    {
+      "age": "35-",
+      "dimensions": {
+        "Studieform": "Fristående kurser",
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "12.4"
+    },
+    {
+      "age": "35-",
+      "dimensions": {
+        "Studieform": "Fristående kurser",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "12.4"
+    },
+    {
+      "age": "35-",
+      "dimensions": {
+        "Studieform": "Fristående kurser"
+      },
+      "value": "12.4"
+    },
+    {
+      "age": "35-",
+      "dimensions": {
+        "Studieform": "Generella program",
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesgrupp": "Teologi",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "10.5"
+    },
+    {
+      "age": "35-",
+      "dimensions": {
+        "Studieform": "Generella program",
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "10.5"
+    },
+    {
+      "age": "35-",
+      "dimensions": {
+        "Studieform": "Generella program",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "10.5"
+    },
+    {
+      "age": "35-",
+      "dimensions": {
+        "Studieform": "Generella program"
+      },
+      "value": "10.5"
+    },
+    {
+      "age": "35-",
+      "dimensions": {
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesgrupp": "Teologi",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "22.9"
+    },
+    {
+      "age": "35-",
+      "dimensions": {
+        "Ämnesdelområde": "Religionsvetenskap",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "22.9"
+    },
+    {
+      "age": "35-",
+      "dimensions": {
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "value": "22.9"
+    },
+    {
+      "age": "35-",
+      "dimensions": {},
+      "value": "22.9"
+    }
+  ],
+  "graph_closure_verified": true,
+  "duplicates": 0,
+  "new_requests": 39,
+  "rows": 48,
+  "dimension_combinations": {
+    "Studieform|Ämnesdelområde|Ämnesgrupp|Ämnesområde": 8,
+    "Studieform|Ämnesdelområde|Ämnesområde": 8,
+    "Studieform|Ämnesområde": 8,
+    "Studieform": 8,
+    "Ämnesdelområde|Ämnesgrupp|Ämnesområde": 4,
+    "Ämnesdelområde|Ämnesområde": 4,
+    "Ämnesområde": 4,
+    "Total": 4
+  },
+  "volume_upper_bound": {
+    "hst_source_periods": 10,
+    "genders": 3,
+    "ages": 4,
+    "study_choices_including_total": 5,
+    "subject_choices_including_total": 231,
+    "national_graph_requests_before_sparsity_and_reuse": 138600,
+    "meaning": "Conservative planning bound; not a measured runtime or required request count. University lists can be read within national group responses."
+  }
+}

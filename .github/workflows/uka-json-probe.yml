@@ -4,7 +4,9 @@ on:
   pull_request:
     paths:
       - scripts/uka_json_probe.py
+      - scripts/uka_hst_complete_probe.py
       - tests/test_uka_json_probe.py
+      - tests/test_uka_hst_complete_probe.py
       - .github/workflows/uka-json-probe.yml
   workflow_dispatch:
     inputs:
@@ -39,6 +41,7 @@ jobs:
         run: |
           python -m unittest discover -s tests -p test_uka_source_audit.py -v
           python -m unittest discover -s tests -p test_uka_json_probe.py -v
+          python -m unittest discover -s tests -p test_uka_hst_complete_probe.py -v
       - uses: actions/download-artifact@v4
         if: github.event_name == 'workflow_dispatch' && inputs.resume_run != ''
         with:
@@ -53,6 +56,7 @@ jobs:
           args=()
           if [ -n "$SNAPSHOT" ]; then args+=(--snapshot "$SNAPSHOT"); fi
           python -u scripts/uka_json_probe.py "${args[@]}"
+          python -u scripts/uka_hst_complete_probe.py "${args[@]}"
       - name: Spara kontroller och återstartbara källsvar
         if: always()
         uses: actions/upload-artifact@v4

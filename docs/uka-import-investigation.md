@@ -6,6 +6,35 @@ Ingen ändring av produktionsimport, databasschema eller produktionsdata i denna
 
 ## Uppföljning: webbexport och JSON-alternativ
 
+### Uttömmande, avgränsat HST-prov
+
+Nästa verifieringssteg har genomförts för uni:171, Kvinnor, 2025/26 och
+åldrarna Total, -24, 25–34 och 35–. Samtliga annonserade ämnes- och studieformslänkar
+följdes tills inga obesökta noder återstod: 12 noder per ålderskategori,
+**48 unika observationer**, inga dubbla observationsnycklar.
+Varje länkad observation jämfördes med barnanropets faktiska källvärde.
+Ämne-först och studieform-först gav exakt samma observationsnycklar och värden.
+Den andra genomgången behövde **0 nya källanrop**.
+De fyra separata källtotalerna är 61,5; 14,4; 24,2 respektive 22,9 HST.
+De har inte summerats fram. Resultatet finns i `uka-hst-complete-2026-11-06.json`.
+
+Detta är ett komplett prov av **den annonserade JSON-grafen för detta avgränsade urval**.
+Det bevisar inte att API:t annonserar alla observationer som finns i UKÄ:s underliggande databas,
+och det finns ännu ingen fungerande oberoende CSV-referens för värdejämförelse av hela urvalet.
+Överensstämmelsen med PR #81:s 48 rader är bara en rimlighetskontroll, inte en värdeverifiering.
+
+Den konservativa planeringsgränsen för HST är 10 perioder × 3 kön × 4 ålderskategorier
+× 5 studieformsval × 231 ämnesval = **138 600 nationella gruppanrop**.
+Det är inte ett uppmätt behov eller en körtidsprognos. Glesa grupper, kanoniska länkar,
+källans hela tidsserier och lärosäteslistorna i Rikets svar kan minska hämtningen.
+Ingen multiplikation med antalet lärosäten ska göras blint.
+
+Ingen stor tioårshämtning startas på denna övre gräns. Nästa steg är en deterministisk
+manifestplan med återanvändning över perioder och mätning av faktisk mängd noder innan full körning.
+Källversion/revisionshantering och oberoende referens måste också lösas före publicering.
+`uka_hst_complete_probe.py` har en fast budget på högst 80 nya anrop och stopp vid oväntad grafstorlek.
+Tre nya regressionstester kontrollerar alternativa vägar, ändrade värden och motstridiga dimensionsnycklar.
+
 Den 6 november testades UKÄ:s riktiga webbformulär för HST, Riket och enbart källtotaler.
 Både 2025/26 och 2024/25 gav faktiskt nedladdade CSV-filer på **0 byte**.
 För 2025/26 matchar webbens filtervärden klientens, och samma cachefilnamn returneras.
