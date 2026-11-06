@@ -1,6 +1,6 @@
 {
-  "run_id": "42210008954",
+  "run_id": "42214430694",
   "snapshot": "2026-11-06",
   "artifact": "uka-json-probe",
-  "purpose": "Preserved blocked diagnostic queue with 1038 observations and permanent hierarchy conflict; not production approval"
+  "purpose": "Resume separate study-first queue (104 done, 2105 observations, 298 pending); preserve blocked all-routes evidence; not production approval"
 }

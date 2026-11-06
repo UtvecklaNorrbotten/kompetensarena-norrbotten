@@ -4,6 +4,20 @@ Senast uppdaterat: 2026-11-06. Repo `UtvecklaNorrbotten/kompetensarena-norrbotte
 Arbetsgren `fix/uka-verified-checkpoint-import`, utkast PR #82.
 Ingen merge eller produktionsimport har gjorts av denna utredning.
 
+## Senaste återstartspunkt
+
+Körning **42214430694**, artefakt `uka-json-probe` ID **13500557368**, utgår
+2026-11-20. Konfigurationen pekar nu hit. Den innehåller båda köerna och källcachen.
+Studieform-först-steget och alla 38 tester passerade i Actions. Den separata kön har
+**104 färdiga noder, 2 105 observationer och 298 väntande**, inga fel; stopp efter 60 nya
+anrop. Hela jobbet är fortfarande avsiktligt rött på den gamla all-routes-spärren.
+Detta ska inte misstolkas som att det nya källprovet misslyckades eller är komplett.
+
+Extra källprov: Riket 2016/17 ger Medicin/Övrigt 33,1 och Naturvetenskap/Övrigt 22,1
+för Fristående kurser/Kvinnor/-24. För LTU 2025/26 annonseras ingen Övrigt-rad under
+dessa två områden. Frånvaro i listan är **inte** i sig bevis för en verifierad tom observation.
+Se `uka-study-first-additional-2026-11-06.json`. Inga totaler har räknats genom summering.
+
 ## Ny prövning: studieform först
 
 Den alternativa strategin `study-first` väljer Studieform endast vid roten och går sedan

@@ -118,5 +118,11 @@ jobs:
                   out.write(f"Indikatorer med periodprov: {len(r['inventory'])}/10.\n\n")
                   out.write(f"Godkända HST-prov: {sum(c['verified_sample'] for c in r['hst_samples'])}/6.\n\n")
                   out.write(f"Kön/åldersprov: {len(r.get('gender_age_grid', {}).get('observations', []))}/12.\n\n")
+              for queue in sorted(Path('output/uka-json-probe').glob('*.summary.json')):
+                  q = json.loads(queue.read_text())
+                  out.write(f"### {queue.stem}\n\n")
+                  out.write(f"Strategi: {q.get('strategy', 'all-routes')}. Stopp: {q['stop_reason']}.\n\n")
+                  out.write(f"Noder: {q['states']}. Observationer: {q['observations']}. Nya anrop: {q['network_requests_this_run']}.\n\n")
+                  out.write(f"Graf färdig: {q['graph_closed']}. Publicering tillåten: {q['publish_allowed']}.\n\n")
               out.write('Ett godkänt stickprov bevisar inte full datatäckning eller CSV-likvärdighet. Ingen publicering utförs.\n')
           PY
