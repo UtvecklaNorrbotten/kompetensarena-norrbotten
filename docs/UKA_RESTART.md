@@ -77,8 +77,39 @@ python scripts/uka_json_queue.py \
 `graph_closed` betyder bara att denna annonserade JSON-graf är uttömd. Publiceringsflaggan är alltid falsk.
 
 Nästa återstående kodsteg: verifiera kömotorn mot fler nationella HST-noder, testa återläsning av sparade observationer mot direktuttag,
-lägg till selektiv återförsökshantering för övergående fel och ett kampanjlager över rotjobben.
+bygg ett kampanjlager över rotjobben och pröva selektiva återförsök i en större kontrollerad körning.
 Övriga nio indikatorers dimensioner stöds ännu inte av denna HST-kömotor.
 Källrevisioner och oberoende fullständighetsreferens blockerar fortfarande produktion.
 
 Källdetalj verifierad under kötestet: UKÄ utelämnar `groups` i vissa institutionsspecifika slutnoder. Kömotorn accepterar detta endast när ämnesområde, delområde, ämnesgrupp och studieform redan är valda och källans periodvärde verifieras. Saknad struktur i rotnoder eller nationella noder förblir ett fel. Regressionstester täcker båda fallen.
+
+## Selektiva återförsök och verifierad artefaktåterstart
+
+Kömotorn skiljer nu tillfälliga transportfel från datakonflikter. Timeout/anslutningsavbrott
+och HTTP 408/425/429/500/502/503/504 får högst tre misslyckade försök per nod,
+med 30 och 60 sekunders väntetid före nästa försök. Certifikatfel, andra HTTP-fel,
+felaktiga observationer och struktur-/värdekonflikter öppnas aldrig automatiskt igen.
+Försöksräknare och tidpunkt sparas i SQLite, även över avbrott och processbyten.
+
+Status `retry_wait` innebär att grafen inte är klar. CLI avslutar med kod 75 så att GitHub
+redovisar ett tekniskt avbrott och ändå sparar artefakten. Nästa körning försöker bara om
+förfallna tillfälliga fel. Efter tre misslyckanden blir noden blockerad (`transient_exhausted`).
+Ingen blockerad datakonflikt får återöppnas bara för att få en grön körning.
+
+Den verifierade GitHub-artefakten från **42202630673** har faktiskt laddats ner och dess
+SQLite-kö återställts: 13 färdiga noder och 416 observationer. Lokal fortsättning gav
+22 färdiga noder, 642 observationer och 146 väntande noder efter 8 nya anrop.
+SQLite-integriteten är OK, inga dubbla observationsnycklar finns och tidigare färdiga
+noder behölls. Se `uka-queue-retry-2026-11-06.json`.
+
+Workflowets standardåterstart definieras nu i `config/uka_json_diagnostic_checkpoint.json`.
+Det laddar ner den kända artefakten före planeringen, så grundproven behöver inte hämtas om.
+För att fortsätta från en NYARE lyckad körning: ange dess `resume_run` och ursprungliga
+`snapshot` vid manuell start, eller uppdatera checkpointfilen i arbetsgrenen.
+Ett uttryckligt run-ID utan snapshot avvisas; en utgången artefakt ger fel, inte en tyst omstart.
+Den nationella fortsättningen har högst 60 nya anrop, 100 noder och 120 sekunders budget
+per körning. Detta gäller ett enda rotjobb, inte hela tioårshämtningen.
+
+Fyra nya tester verifierar felklassificering, beständig väntetid, tre-försöksgränsen
+och att datakonflikter förblir blockerade. Totalt finns 34 tester i JSON-workflowet.
+Det nationella urvalet är fortfarande ofullständigt och publicering är fortsatt spärrad.

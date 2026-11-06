@@ -7,9 +7,19 @@ import json
 from pathlib import Path
 import sqlite3
 import time
+import requests
 
 from uka_json_probe import Probe, SUBJECT_LEVELS, validate_follow, validate_url, yearly
 from uka_source_audit import canonical_value, digest, write_json
+
+
+def transient_error(error):
+    if isinstance(error, requests.exceptions.SSLError):
+        return False
+    if isinstance(error, (requests.Timeout, requests.ConnectionError)):
+        return True
+    return (isinstance(error, requests.HTTPError) and error.response is not None and
+            error.response.status_code in (408, 425, 429, 500, 502, 503, 504))
 
 
 class Queue:
@@ -38,6 +48,11 @@ class Queue:
             parent TEXT NOT NULL, child TEXT NOT NULL, expected TEXT NOT NULL,
             PRIMARY KEY(parent, child));
         ''')
+        columns = {r['name'] for r in self.db.execute('PRAGMA table_info(nodes)')}
+        for name, declaration in (('attempts', 'INTEGER NOT NULL DEFAULT 0'),
+                                  ('retry_after', 'REAL'), ('error_kind', 'TEXT')):
+            if name not in columns:
+                self.db.execute(f'ALTER TABLE nodes ADD COLUMN {name} {declaration}')
         saved = self.db.execute('SELECT binding FROM meta').fetchone()
         if saved and json.loads(saved['binding']) != binding:
             self.close()
@@ -123,11 +138,13 @@ class Queue:
                     raise ValueError('Conflicting repeated source edge')
                 self.db.execute('INSERT OR IGNORE INTO edges VALUES (?,?,?)',
                                 (node['id'], child_id, json.dumps(expected)))
-            self.db.execute("UPDATE nodes SET status='done',value=?,source_hash=?,observations=?,error=NULL WHERE id=?",
+            self.db.execute("UPDATE nodes SET status='done',value=?,source_hash=?,observations=?,error=NULL,error_kind=NULL,retry_after=NULL WHERE id=?",
                             (json.dumps(value), digest(body), json.dumps(observations, ensure_ascii=False), node['id']))
 
     def run(self, probe, max_nodes=20, seconds=30):
         started = time.monotonic(); processed = 0; reason = 'graph_exhausted'
+        with self.db:
+            self.db.execute("UPDATE nodes SET status='pending' WHERE status='retry_wait' AND retry_after<=?", (time.time(),))
         while processed < max_nodes:
             if time.monotonic() - started >= seconds:
                 reason = 'time_budget'; break
@@ -142,19 +159,28 @@ class Queue:
                     reason = 'request_budget'; break
                 raise
             except Exception as error:
+                retryable = transient_error(error)
+                attempts = node['attempts'] + 1
+                waiting = retryable and attempts < 3
+                status = 'retry_wait' if waiting else 'error'
+                kind = 'transient' if waiting else 'transient_exhausted' if retryable else 'permanent'
+                next_try = time.time() + min(300, 30 * 2 ** (attempts - 1)) if waiting else None
                 with self.db:
-                    self.db.execute("UPDATE nodes SET status='error',error=? WHERE id=?", (str(error), node['id']))
-                reason = 'source_error'; break
+                    self.db.execute("UPDATE nodes SET status=?,error=?,error_kind=?,attempts=?,retry_after=? WHERE id=?",
+                                    (status, str(error), kind, attempts, next_try, node['id']))
+                reason = 'temporary_source_error' if waiting else 'source_error'; break
             processed += 1
         else:
             reason = 'node_budget'
         states = dict(Counter(r['status'] for r in self.db.execute('SELECT status FROM nodes')))
+        if reason == 'graph_exhausted' and states.get('retry_wait'):
+            reason = 'retry_backoff'
         done = self.db.execute("SELECT observations FROM nodes WHERE status='done'").fetchall()
         return {'stop_reason': reason, 'processed_this_run': processed, 'states': states,
                 'observations': sum(len(json.loads(r['observations'])) for r in done),
                 'university_codes': sorted({o['university'] for r in done for o in json.loads(r['observations'])}),
-                'errors': [dict(r) for r in self.db.execute("SELECT url,error FROM nodes WHERE status='error' LIMIT 10")],
-                'graph_closed': not states.get('pending', 0) and not states.get('error', 0),
+                'errors': [dict(r) for r in self.db.execute("SELECT url,error,error_kind,attempts,retry_after FROM nodes WHERE status IN ('error','retry_wait') LIMIT 10")],
+                'graph_closed': all(status == 'done' for status in states),
                 'publish_allowed': False, 'source_release_verified': False,
                 'network_requests_this_run': probe.requests}
 
@@ -176,4 +202,4 @@ if __name__ == '__main__':
         result = queue.run(probe, args.max_nodes, args.seconds)
     write_json(Path(args.database).with_suffix('.summary.json'), result)
     print(json.dumps(result, ensure_ascii=False, indent=2))
-    raise SystemExit(1 if result['states'].get('error') else 0)
+    raise SystemExit(1 if result['states'].get('error') else 75 if result['states'].get('retry_wait') else 0)

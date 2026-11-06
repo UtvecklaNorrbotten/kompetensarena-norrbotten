@@ -5,8 +5,10 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
+import requests
 sys.path.insert(0, str(Path(__file__).parents[1] / 'scripts'))
-from uka_json_queue import Queue
+from uka_json_queue import Queue, transient_error
 
 ROOT = 'https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor'
 
@@ -34,6 +36,67 @@ class MemoryProbe:
 
 
 class QueueTests(unittest.TestCase):
+    def test_only_temporary_transport_and_selected_http_errors_are_retryable(self):
+        for status in (408, 425, 429, 500, 502, 503, 504, 400, 401, 403, 404, 422):
+            response = requests.Response(); response.status_code = status
+            self.assertEqual(transient_error(requests.HTTPError(response=response)), status in (408,425,429,500,502,503,504))
+        self.assertTrue(transient_error(requests.Timeout()))
+        self.assertFalse(transient_error(requests.exceptions.SSLError()))
+        self.assertFalse(transient_error(ValueError('Conflicting source values')))
+
+    def test_retry_backoff_survives_reopen_and_skips_validated_nodes(self):
+        class TimeoutProbe(MemoryProbe):
+            def get(self, url, indicator):
+                self.requests += 1
+                raise requests.Timeout('Synthetic timeout')
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / 'q.sqlite'
+            with Queue(db, ROOT, 'example') as q:
+                q.run(MemoryProbe(fixture()), max_nodes=1)
+                with patch('uka_json_queue.time.time', return_value=100):
+                    r = q.run(TimeoutProbe(fixture()))
+                self.assertEqual(r['states']['retry_wait'], 1)
+                self.assertFalse(r['graph_closed'])
+            with Queue(db, ROOT, 'example') as q:
+                early = MemoryProbe(fixture())
+                with patch('uka_json_queue.time.time', return_value=129):
+                    r = q.run(early)
+                self.assertEqual(r['stop_reason'], 'retry_backoff')
+                self.assertNotIn(ROOT + '&group_slug=A', early.calls)
+                resumed = MemoryProbe(fixture())
+                with patch('uka_json_queue.time.time', return_value=130):
+                    r = q.run(resumed)
+                self.assertTrue(r['graph_closed'])
+                self.assertEqual(resumed.calls, [ROOT + '&group_slug=A'])
+
+    def test_three_transport_failures_block_instead_of_retrying_forever(self):
+        class TimeoutProbe(MemoryProbe):
+            def get(self, url, indicator):
+                self.requests += 1
+                raise requests.Timeout('Synthetic timeout')
+        with tempfile.TemporaryDirectory() as tmp, Queue(Path(tmp) / 'q.sqlite', ROOT, 'example') as q:
+            p = TimeoutProbe(fixture())
+            for now in (100, 130, 190):
+                with patch('uka_json_queue.time.time', return_value=now):
+                    r = q.run(p)
+            self.assertEqual(r['states'], {'error': 1})
+            self.assertEqual(r['errors'][0]['error_kind'], 'transient_exhausted')
+            self.assertEqual(r['errors'][0]['attempts'], 3)
+            with patch('uka_json_queue.time.time', return_value=9999):
+                q.run(p)
+            self.assertEqual(p.requests, 3)
+
+    def test_data_conflicts_are_never_reopened_automatically(self):
+        data = fixture(); data[ROOT + '&group_slug=A']['yearly_totals']['totals'][0]['value'] = 99
+        with tempfile.TemporaryDirectory() as tmp, Queue(Path(tmp) / 'q.sqlite', ROOT, 'example') as q:
+            q.run(MemoryProbe(data))
+            self.assertEqual(q.db.execute("SELECT error_kind FROM nodes WHERE status='error'").fetchone()[0], 'permanent')
+            later = MemoryProbe(fixture())
+            with patch('uka_json_queue.time.time', return_value=9999):
+                r = q.run(later)
+            self.assertNotIn(ROOT + '&group_slug=A', later.calls)
+            self.assertFalse(r['graph_closed'])
+
     def test_resume_mid_graph_skips_done_nodes_and_matches_uninterrupted(self):
         with tempfile.TemporaryDirectory() as tmp:
             db = Path(tmp) / 'queue.sqlite'; p = MemoryProbe(fixture())

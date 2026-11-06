@@ -11,6 +11,7 @@ on:
       - tests/test_uka_hst_complete_probe.py
       - tests/test_uka_json_plan.py
       - tests/test_uka_json_queue.py
+      - config/uka_json_diagnostic_checkpoint.json
       - .github/workflows/uka-json-probe.yml
   workflow_dispatch:
     inputs:
@@ -48,20 +49,39 @@ jobs:
           python -m unittest discover -s tests -p test_uka_hst_complete_probe.py -v
           python -m unittest discover -s tests -p test_uka_json_plan.py -v
           python -m unittest discover -s tests -p test_uka_json_queue.py -v
-      - name: Bygg hämtningsplan utan API-anrop
+      - name: Välj verifierad återstartspunkt
+        id: checkpoint
         env:
-          SNAPSHOT: ${{ inputs.snapshot }}
-        run: python scripts/uka_json_plan.py --snapshot "${SNAPSHOT:-$(date -u +%F)}" --output output/uka-json-probe/plan.json
+          REQUESTED_RUN: ${{ inputs.resume_run }}
+          REQUESTED_SNAPSHOT: ${{ inputs.snapshot }}
+        run: |
+          python - <<'PY'
+          import json, os
+          checkpoint = json.load(open('config/uka_json_diagnostic_checkpoint.json'))
+          requested = os.environ.get('REQUESTED_RUN', '')
+          snapshot = os.environ.get('REQUESTED_SNAPSHOT', '')
+          if requested and not snapshot:
+              raise ValueError('Explicit resume_run requires its original snapshot ID')
+          run = requested or checkpoint['run_id']
+          snapshot = snapshot or checkpoint['snapshot']
+          if not run.isdigit() or any(c not in '0123456789-' for c in snapshot):
+              raise ValueError('Invalid checkpoint input')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
+              out.write(f'run={run}\nsnapshot={snapshot}\n')
+          PY
       - uses: actions/download-artifact@v4
-        if: github.event_name == 'workflow_dispatch' && inputs.resume_run != ''
         with:
           name: uka-json-probe
           path: output/uka-json-probe
-          run-id: ${{ inputs.resume_run }}
+          run-id: ${{ steps.checkpoint.outputs.run }}
           github-token: ${{ github.token }}
+      - name: Bygg hämtningsplan från återställd cache utan API-anrop
+        env:
+          SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
+        run: python scripts/uka_json_plan.py --snapshot "$SNAPSHOT" --output output/uka-json-probe/plan.json
       - name: Verifiera begränsade JSON-urval – ingen produktionsimport
         env:
-          SNAPSHOT: ${{ inputs.snapshot }}
+          SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
         run: |
           args=()
           if [ -n "$SNAPSHOT" ]; then args+=(--snapshot "$SNAPSHOT"); fi
@@ -69,7 +89,7 @@ jobs:
           python -u scripts/uka_hst_complete_probe.py "${args[@]}"
           python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8' --database output/uka-json-probe/resume-demo.sqlite --max-nodes 1 "${args[@]}"
           python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8' --database output/uka-json-probe/resume-demo.sqlite --max-nodes 100 "${args[@]}"
-          python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8' --database output/uka-json-probe/national-queue.sqlite --max-new-requests 10 --max-nodes 20 "${args[@]}"
+          python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8' --database output/uka-json-probe/national-queue.sqlite --max-new-requests 60 --max-nodes 100 --seconds 120 "${args[@]}"
       - name: Spara kontroller och återstartbara källsvar
         if: always()
         uses: actions/upload-artifact@v4
