@@ -1,6 +1,6 @@
 {
-  "run_id": "42214430694",
+  "run_id": "42214778236",
   "snapshot": "2026-11-06",
   "artifact": "uka-json-probe",
-  "purpose": "Resume separate study-first queue (104 done, 2105 observations, 298 pending); preserve blocked all-routes evidence; not production approval"
+  "purpose": "Resume study-first at 164 completed nodes and 2630 observations; retain original source-conflict regression fixture"
 }

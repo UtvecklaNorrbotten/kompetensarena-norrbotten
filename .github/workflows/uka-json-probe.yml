@@ -80,12 +80,12 @@ jobs:
         env:
           SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
         run: python scripts/uka_json_plan.py --snapshot "$SNAPSHOT" --output output/uka-json-probe/plan.json
-      - name: Pröva studieform före ämneshierarki i separat kö
+      - name: Verifiera hela HST-grafen i separat kö – ingen publicering
         env:
           SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
         run: |
           python scripts/uka_study_first_probe.py --cache output/uka-json-probe --snapshot "$SNAPSHOT" --output output/uka-json-probe/study-first-evidence.json --max-new-requests 4
-          python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8' --snapshot "$SNAPSHOT" --strategy study-first --database output/uka-json-probe/national-study-first.sqlite --cache output/uka-json-probe --max-new-requests 60 --max-nodes 120 --seconds 120
+          python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8' --snapshot "$SNAPSHOT" --strategy study-first --database output/uka-json-probe/national-study-first.sqlite --cache output/uka-json-probe --max-new-requests 1200 --max-nodes 1500 --seconds 720
       - name: Verifiera begränsade JSON-urval – ingen produktionsimport
         env:
           SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
@@ -96,7 +96,35 @@ jobs:
           python -u scripts/uka_hst_complete_probe.py "${args[@]}"
           python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8' --database output/uka-json-probe/resume-demo.sqlite --max-nodes 1 "${args[@]}"
           python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8' --database output/uka-json-probe/resume-demo.sqlite --max-nodes 100 "${args[@]}"
-          python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8' --database output/uka-json-probe/national-queue.sqlite --max-new-requests 60 --max-nodes 100 --seconds 120 "${args[@]}"
+      - name: Kontrollera att det gamla källfelet fortfarande blockeras
+        env:
+          SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
+        run: |
+          PYTHONPATH=scripts python - <<'PY'
+          import json, os
+          from pathlib import Path
+          from uka_json_probe import Probe
+          from uka_json_queue import Queue
+          from uka_source_audit import write_json
+          path = Path('output/uka-json-probe/national-queue.sqlite')
+          root = 'https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8'
+          if not path.exists():
+              raise ValueError('Missing original source-conflict fixture')
+          probe = Probe(path.parent, os.environ['SNAPSHOT'], budget=0)
+          with Queue(path, root, os.environ['SNAPSHOT']) as queue:
+              before = [tuple(row) for row in queue.db.execute('SELECT * FROM nodes ORDER BY id')]
+              result = queue.run(probe)
+              after = [tuple(row) for row in queue.db.execute('SELECT * FROM nodes ORDER BY id')]
+          assert before == after, 'Blocked fixture changed'
+          assert result['stop_reason'] == 'blocked_source_error', result
+          assert result['network_requests_this_run'] == 0 and result['processed_this_run'] == 0, result
+          assert result['states'].get('error') and not result['graph_closed'], result
+          assert any(e['error'] == 'Different source URLs duplicate an observation key' and
+                     e['error_kind'] == 'permanent' for e in result['errors']), result
+          result['expected_source_conflict_verified'] = True
+          write_json(path.with_suffix('.summary.json'), result)
+          print('Expected original source conflict remains blocked; no new requests or changes.')
+          PY
       - name: Spara kontroller och återstartbara källsvar
         if: always()
         uses: actions/upload-artifact@v4
