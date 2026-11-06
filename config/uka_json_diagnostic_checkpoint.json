@@ -1,6 +1,6 @@
 {
-  "run_id": "42214778236",
+  "run_id": "42217378947",
   "snapshot": "2026-11-06",
   "artifact": "uka-json-probe",
-  "purpose": "Resume study-first at 164 completed nodes and 2630 observations; retain original source-conflict regression fixture"
+  "purpose": "Completed study-first national graph: 857 nodes, 9731 observations. Retain legacy conflict fixture. Publication remains prohibited pending source coverage verification."
 }

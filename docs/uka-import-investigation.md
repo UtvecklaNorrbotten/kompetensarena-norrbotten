@@ -1,3 +1,10 @@
+> Senaste verifiering 2026-11-06: Actions 42217378947 passerade. Hela annonserade
+> studieform-först-grafen för Riket/Kvinnor/-24/2025-26 är avslutad: 857 noder,
+> 9 731 observationer, inga väntande och inga fel. Metadata-audit ger noll dubbletter
+> och noll ogiltiga ämnesvägar. 222 av 230 metadataämnesvägar finns i urvalet;
+> åtta ej annonserade vägar återstår att förklara. Full källtäckning och publicering
+> är fortfarande inte godkända. Se UKA_RESTART.md och uka-hst-coverage-2026-11-06.json.
+
 > Uppdatering 2026-11-06: en separat `study-first`-strategi undviker de tvetydiga
 > Ämne→Studieform-länkarna genom att välja Studieform vid roten. Båda Övrigt-grenarnas
 > värden och ämnesgrupper är verifierade. 48 smågrafsobservationer är exakt lika referensen.

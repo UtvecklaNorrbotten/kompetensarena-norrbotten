@@ -1,0 +1,201 @@
+{
+  "checks": [
+    {
+      "dimensions": {
+        "Ämnesdelområde": "Beteendevetenskap",
+        "Ämnesgrupp": "Psykoterapi",
+        "Ämnesområde": "Juridik och samhällsvetenskap"
+      },
+      "contrast_selection": {
+        "university": "1",
+        "year": "2025/26",
+        "gender": "Total",
+        "age": "Total"
+      },
+      "total_filter_semantics": "Source default URL omits gender and age_group",
+      "status": "advertised_in_total_selection",
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=1f7d7345c29b1c4af9ee42aac719eeeaf4b685fc",
+      "source_series": {
+        "2007/08": "314.8",
+        "2008/09": "317.7",
+        "2009/10": "294.1",
+        "2010/11": "298",
+        "2011/12": "354.8",
+        "2012/13": "350.9",
+        "2013/14": "338.6",
+        "2014/15": "315.7",
+        "2015/16": "271",
+        "2016/17": "229.1",
+        "2017/18": "242.5",
+        "2018/19": "249.6",
+        "2019/20": "302",
+        "2020/21": "237.2",
+        "2021/22": "269.7",
+        "2022/23": "246.7",
+        "2023/24": "230.1",
+        "2024/25": "236.2",
+        "2025/26": "282.8"
+      }
+    },
+    {
+      "dimensions": {
+        "Ämnesdelområde": "Idrott och friskvård",
+        "Ämnesgrupp": "Friskvård",
+        "Ämnesområde": "Övrigt område"
+      },
+      "contrast_selection": {
+        "university": "1",
+        "year": "2025/26",
+        "gender": "Total",
+        "age": "Total"
+      },
+      "total_filter_semantics": "Source default URL omits gender and age_group",
+      "status": "not_advertised_in_total_selection",
+      "absent_level": "Ämnesgrupp",
+      "parent_url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=9d6794db9e5b92da970ce5c26c687734498020e8"
+    },
+    {
+      "dimensions": {
+        "Ämnesdelområde": "Lant- och skogsbruk",
+        "Ämnesgrupp": "Fiske och vattenbruk",
+        "Ämnesområde": "Naturvetenskap"
+      },
+      "contrast_selection": {
+        "university": "1",
+        "year": "2025/26",
+        "gender": "Total",
+        "age": "Total"
+      },
+      "total_filter_semantics": "Source default URL omits gender and age_group",
+      "status": "not_advertised_in_total_selection",
+      "absent_level": "Ämnesgrupp",
+      "parent_url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=a5d9ba1eaf3a926a9921d6230003bebea1140c0a"
+    },
+    {
+      "dimensions": {
+        "Ämnesdelområde": "Språkvetenskapliga ämnen",
+        "Ämnesgrupp": "Persiska",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "contrast_selection": {
+        "university": "1",
+        "year": "2025/26",
+        "gender": "Total",
+        "age": "Total"
+      },
+      "total_filter_semantics": "Source default URL omits gender and age_group",
+      "status": "advertised_in_total_selection",
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=d50030f237e3a2be82cd14a9589c243549b73e9a",
+      "source_series": {
+        "2007/08": "8.5",
+        "2008/09": "6.5",
+        "2009/10": "7.1",
+        "2010/11": "6.4",
+        "2011/12": "8.3",
+        "2012/13": "6.9",
+        "2013/14": "5.3",
+        "2014/15": "7",
+        "2015/16": "6.6",
+        "2016/17": "9",
+        "2017/18": "8.4",
+        "2018/19": "5.6",
+        "2019/20": "3.8",
+        "2020/21": "6",
+        "2021/22": "8.4",
+        "2022/23": "11.4",
+        "2023/24": "3.8",
+        "2024/25": "11.3",
+        "2025/26": "6.1"
+      }
+    },
+    {
+      "dimensions": {
+        "Ämnesdelområde": "Språkvetenskapliga ämnen",
+        "Ämnesgrupp": "Tibetanska",
+        "Ämnesområde": "Humaniora och teologi"
+      },
+      "contrast_selection": {
+        "university": "1",
+        "year": "2025/26",
+        "gender": "Total",
+        "age": "Total"
+      },
+      "total_filter_semantics": "Source default URL omits gender and age_group",
+      "status": "not_advertised_in_total_selection",
+      "absent_level": "Ämnesgrupp",
+      "parent_url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=46cf4b48b90b4ae98650a829f6089ce61915d067"
+    },
+    {
+      "dimensions": {
+        "Ämnesdelområde": "Teater, film och dans",
+        "Ämnesgrupp": "Koreografi",
+        "Ämnesområde": "Konstnärligt område"
+      },
+      "contrast_selection": {
+        "university": "1",
+        "year": "2025/26",
+        "gender": "Total",
+        "age": "Total"
+      },
+      "total_filter_semantics": "Source default URL omits gender and age_group",
+      "status": "advertised_in_total_selection",
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=2199276d523b95f23f7bb7e259ee69975e9fe15e",
+      "source_series": {
+        "2008/09": "6",
+        "2009/10": "9.4",
+        "2010/11": "8.5",
+        "2011/12": "12.1",
+        "2012/13": "17.4",
+        "2013/14": "31.3",
+        "2014/15": "31",
+        "2015/16": "33.3",
+        "2016/17": "23.1",
+        "2017/18": "26.3",
+        "2018/19": "24",
+        "2019/20": "23.9",
+        "2020/21": "28",
+        "2021/22": "25",
+        "2022/23": "22.5",
+        "2023/24": "27.8",
+        "2024/25": "19.9",
+        "2025/26": "30.1"
+      }
+    },
+    {
+      "dimensions": {
+        "Ämnesdelområde": "Teater, film och dans",
+        "Ämnesgrupp": "Regi",
+        "Ämnesområde": "Konstnärligt område"
+      },
+      "contrast_selection": {
+        "university": "1",
+        "year": "2025/26",
+        "gender": "Total",
+        "age": "Total"
+      },
+      "total_filter_semantics": "Source default URL omits gender and age_group",
+      "status": "not_advertised_in_total_selection",
+      "absent_level": "Ämnesgrupp",
+      "parent_url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=3c929c68d36639e9dd2ac41dd5cef85336b8e7ef"
+    },
+    {
+      "dimensions": {
+        "Ämnesdelområde": "Transport",
+        "Ämnesgrupp": "Luftfart",
+        "Ämnesområde": "Övrigt område"
+      },
+      "contrast_selection": {
+        "university": "1",
+        "year": "2025/26",
+        "gender": "Total",
+        "age": "Total"
+      },
+      "total_filter_semantics": "Source default URL omits gender and age_group",
+      "status": "not_advertised_in_total_selection",
+      "absent_level": "Ämnesgrupp",
+      "parent_url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=ef350a92bdb3559f052673c9c6371ad86ad7eaf0"
+    }
+  ],
+  "new_requests": 14,
+  "publish_allowed": false
+}

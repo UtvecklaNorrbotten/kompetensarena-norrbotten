@@ -4,6 +4,45 @@ Senast uppdaterat: 2026-11-06. Repo `UtvecklaNorrbotten/kompetensarena-norrbotte
 Arbetsgren `fix/uka-verified-checkpoint-import`, utkast PR #82.
 Ingen merge eller produktionsimport har gjorts av denna utredning.
 
+## Aktuellt genombrott – 2026-11-06
+
+Körning **42217378947** passerade samtliga steg. Den nya studieform-först-kön har
+**857 färdiga noder, 9 731 observationer, inga väntande och inga fel** för
+Riket/Kvinnor/-24/2025-26. Återstarten behandlade 693 noder med 689 nya anrop;
+redan färdiga noder hämtades inte om. Detta är en avslutad annonserad JSON-graf för ett urval,
+inte en full produktionsimport.
+
+Artefakt `uka-json-probe` ID **13502605500**, utgår 2026-11-20, är nu vald i konfigurationen.
+Den innehåller färdig kö, källcache och den gamla blockerade kön.
+Den gamla källkonflikten testas nu som en explicit förväntad spärr med noll anrop och
+oförändrade noder. Nya fel i den nya hämtningen tillåts fortfarande stoppa jobbet.
+
+Efterkontroll mot de 230 ordnade ämnesvägarna i UKÄ:s exportfilter:
+**0 dubbletter, 0 ogiltiga ämnesvägar, 222 representerade ämnesvägar, 8 ej annonserade**.
+De åtta saknade vägarna redovisas i `uka-hst-coverage-2026-11-06.json`; de får inte
+omvandlas till nollor. Kontrollera kontrastprovet mot Total kön/ålder innan slutsatser dras.
+De sparade ämnesvägarna bevarar den aktiva föräldravägen, även för återanvänd kod 1051.
+
+Två extra LTU-anrop för oannonserade Övrigt-kombinationer gav HTTP 500.
+Se `uka-absent-selection-probe-2026-11-06.json`: detta bevisar varken legitim tomhet eller noll.
+Underlaget till UKÄ är uppdaterat men inte skickat.
+
+Kontrastprov för de åtta saknade vägarna: Psykoterapi, Persiska och Koreografi
+annonseras för Total kön/ålder 2025/26, med källvärden 282,8, 6,1 respektive 30,1.
+De övriga fem saknas även i det övergripande urvalet. Detta skiljer ett populationsurval
+från den generella filterlistan, men bevisar fortfarande inte att saknade rader betyder noll.
+Se `uka-hst-missing-path-contrast-2026-11-06.json`.
+
+Diagnostikändringar: JSON-workflowet avbryter inte längre en pågående källa vid nya commits.
+Äldre CSV-/R-källprov körs endast vid manuell workflow_dispatch; PR behåller enhetstesterna.
+Detta undviker upprepning av de redan dokumenterade CSV-felen vid varje commit.
+Nya kontroller: `scripts/uka_hst_coverage.py` och fem tester.
+Totalt passerar 51 lokala UKÄ-tester, varav 43 ingår i JSON-workflowet. Nästa steg är att verifiera
+saknade urval, fler fullständiga kön/ålders-/periodurval och universiteten, därefter strategier
+för övriga nio indikatorer och staging/publicering. Ingen merge eller produktionsimport.
+
+## Tidigare delresultat (historik)
+
 ## Senaste återstartspunkt
 
 Körning **42214430694**, artefakt `uka-json-probe` ID **13500557368**, utgår
@@ -43,7 +82,7 @@ Nästa steg: återställ den senaste artefakten som innehåller `national-study-
 perioder/kön/åldrar. Att vägen fungerar för två Övrigt-grenar är inte bevis för att andra
 kontextfel saknas. CSV-likvärdighet och fullständig produktionsimport är fortfarande overifierade.
 
-## Aktuell spärr – läs detta först
+## Tidigare spärr i all-routes – bevarat regressionstest
 
 Senaste större körning **42210008954** stoppade korrekt vid en permanent källkontextkonflikt,
 efter 41 färdiga noder och 1 038 sparade observationer. 211 noder återstår och en är blockerad.

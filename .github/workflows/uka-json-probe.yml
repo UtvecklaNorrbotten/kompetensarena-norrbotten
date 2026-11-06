@@ -8,6 +8,9 @@ on:
       - scripts/uka_json_plan.py
       - scripts/uka_json_queue.py
       - scripts/uka_study_first_probe.py
+      - scripts/uka_hst_coverage.py
+      - tests/test_uka_hst_coverage.py
+      - docs/uka-hst-subject-paths-2026-11-06.json
       - tests/test_uka_json_probe.py
       - tests/test_uka_hst_complete_probe.py
       - tests/test_uka_json_plan.py
@@ -31,7 +34,7 @@ permissions:
 
 concurrency:
   group: uka-json-probe-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   json_probe:
@@ -50,6 +53,7 @@ jobs:
           python -m unittest discover -s tests -p test_uka_hst_complete_probe.py -v
           python -m unittest discover -s tests -p test_uka_json_plan.py -v
           python -m unittest discover -s tests -p test_uka_json_queue.py -v
+          python -m unittest discover -s tests -p test_uka_hst_coverage.py -v
       - name: Välj verifierad återstartspunkt
         id: checkpoint
         env:
@@ -80,12 +84,14 @@ jobs:
         env:
           SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
         run: python scripts/uka_json_plan.py --snapshot "$SNAPSHOT" --output output/uka-json-probe/plan.json
-      - name: Verifiera hela HST-grafen i separat kö – ingen publicering
+      - name: Hämta nationell HST-graf – checkpoint vid budgetgräns
         env:
           SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
         run: |
           python scripts/uka_study_first_probe.py --cache output/uka-json-probe --snapshot "$SNAPSHOT" --output output/uka-json-probe/study-first-evidence.json --max-new-requests 4
           python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8' --snapshot "$SNAPSHOT" --strategy study-first --database output/uka-json-probe/national-study-first.sqlite --cache output/uka-json-probe --max-new-requests 1200 --max-nodes 1500 --seconds 720
+      - name: Kontrollera ämnesvägar och observationsnycklar
+        run: python scripts/uka_hst_coverage.py --database output/uka-json-probe/national-study-first.sqlite --metadata docs/uka-hst-subject-paths-2026-11-06.json --output output/uka-json-probe/hst-coverage.json
       - name: Verifiera begränsade JSON-urval – ingen produktionsimport
         env:
           SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
@@ -152,5 +158,10 @@ jobs:
                   out.write(f"Strategi: {q.get('strategy', 'all-routes')}. Stopp: {q['stop_reason']}.\n\n")
                   out.write(f"Noder: {q['states']}. Observationer: {q['observations']}. Nya anrop: {q['network_requests_this_run']}.\n\n")
                   out.write(f"Graf färdig: {q['graph_closed']}. Publicering tillåten: {q['publish_allowed']}.\n\n")
+              coverage = Path('output/uka-json-probe/hst-coverage.json')
+              if coverage.exists():
+                  c = json.loads(coverage.read_text())
+                  out.write(f"Ämnesvägar i detta urval: {c['represented_subject_paths']}/{c['metadata_subject_paths']}. Dubbletter: {c['duplicates']}. Ogiltiga vägar: {len(c['invalid_source_subject_paths'])}.\n\n")
+                  out.write('Ej annonserade urval är outredda, inte automatiskt nollvärden.\n\n')
               out.write('Ett godkänt stickprov bevisar inte full datatäckning eller CSV-likvärdighet. Ingen publicering utförs.\n')
           PY

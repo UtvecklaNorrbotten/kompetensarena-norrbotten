@@ -92,3 +92,15 @@ Exakta observationer och länkar finns i `uka-source-context-conflict-2026-11-06
 - `uka-web-control-2026-11-06.jpg`: webbens totalval.
 
 Begränsning: vi har jämfört DOM-urval, webbens publicerade formulärserialisering och faktiskt nedladdade filnamn. Vi har inte fångat råa HTTP-requestbytes från webbläsaren. Den interna orsaken till de tomma filerna och eventuell cachepåverkan behöver därför verifieras hos UKÄ.
+
+
+## Ytterligare diagnostik: frånvarande kombinationer ger HTTP 500
+
+Två direktanrop med universitet=32 (LTU), 2025/26, Kvinnor, age_group=8,
+Fristående kurser och Övrigt gav HTTP 500 för båda kända nationella sluggarna
+`12ab49225797148f21812a058af4630b755930ae` och
+`fdc158ac61cb17a0bbdbcd363ba99577f4048990`.
+Dessa Övrigt-rader annonserades inte i LTU:s motsvarande ämnesområden.
+Det är därför inte fastställt om urvalet saknar observationer eller om servern har ett annat fel.
+Vilken dokumenterad respons ska betyda ett legitimt tomt urval?
+Se `uka-absent-selection-probe-2026-11-06.json`. Underlaget är fortfarande inte skickat.
