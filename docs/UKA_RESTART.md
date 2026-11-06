@@ -47,12 +47,36 @@ Verifiera alltid checksumma och urval innan återanvändning. Efter utgångsdatu
 
 ## Nästa konkreta implementation
 
-1. Bygg en beständig kö per rotjobb med annonserade barnlänkar, kanonisk URL/dimensionsnyckel, status, källa-hash och felorsak. Spara varje godkänt steg atomiskt, inte bara en färdig graf.
-2. Lägg in global tids-/anropsbudget och återstart som enbart bearbetar ej färdiga noder. Testa avbrott mitt i en graf.
-3. Börja med ett nationellt HST-rotjobb. Mät verkliga noder, lärosätestäckning och värden innan fler perioder/kön/åldrar läggs till. Bevara hela källtotalen separat.
+1. Kömotorn är nu implementerad i `scripts/uka_json_queue.py` för HST. SQLite sparar nodvärde, källa-hash, barnlänkar, observationer och status atomiskt. Enbart ej färdiga noder bearbetas vid återstart. Skrivarlås förhindrar samtidiga arbetare i samma kö.
+2. Sex nya tester verifierar avbrott/återstart, identiska slutvärden, inga omhämtningar av färdiga noder, rollback av halva checkpoints, budgetstopp, källvärdeskonflikter, saknade värdefält, snapshot-konflikt och skrivarlås. Tidsbudgeten kontrolleras mellan anrop; ett pågående HTTP-anrop kan överskrida den.
+3. Ett nationellt HST-rotjobb (2025/26, Kvinnor, -24) har startats kontrollerat: lokalt 6 godkända noder, 199 observationer, 51 väntande noder efter budgetstopp. Först användes bara sparade svar, sedan 4 nya anrop före tidsstopp. Detta är inte en komplett nationell datamängd. Se `uka-queue-checkpoint-2026-11-06.json`.
 4. Återanvänd källans tidsserier där det är bevisat korrekt, men upptäck historiska grupper per period. Senaste årets ämnen/lärosäten räcker inte för historisk täckning.
 5. Lös oberoende referens, legitima tomma/saknade/sekretessvärden och källversion/revision innan full import.
 6. Implementera därefter UKÄ:s databas-resume/progress och manifestspärrar, samt återläsning efter publicering. Nuvarande UKÄ-abort raderar staging; ändra inte detta oprövat i produktion.
 
 Den konservativa HST-gränsen 138 600 gruppanrop är en planeringsgräns, inte ett uppmätt behov.
 Starta inte den stora tioårshämtningen för att bara få gröna jobb. Inga nya tillstånd behöver begäras för diagnostik inom denna avgränsning.
+
+## Återuppta nodkön efter pausen
+
+JSON-workflowet sparar nu även SQLite-kön och källcachen i artefakten `uka-json-probe`.
+Använd senaste körningen på PR #82, eftersom äldre körningar saknar köfilen.
+Återställ hela artefakten till `output/uka-json-probe`; generera inte en ny tom kö ovanpå den sparade.
+Kön binder exakt urval och snapshot. Fortsätt med samma snapshot-ID som körningen använde.
+
+```bash
+python scripts/uka_json_queue.py \
+  --root-url 'https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8' \
+  --snapshot 2026-11-06 \
+  --database output/uka-json-probe/national-queue.sqlite \
+  --max-new-requests 10 --max-nodes 20 --seconds 30
+```
+
+`request_budget`, `node_budget` och `time_budget` är avsiktliga stopp som bevarar kön.
+`source_error` stoppar fortsatt behandling och sparar nodens fel; fel ska undersökas, inte klassas som legitim tom statistik.
+`graph_closed` betyder bara att denna annonserade JSON-graf är uttömd. Publiceringsflaggan är alltid falsk.
+
+Nästa återstående kodsteg: verifiera kömotorn mot fler nationella HST-noder, testa återläsning av sparade observationer mot direktuttag,
+lägg till selektiv återförsökshantering för övergående fel och ett kampanjlager över rotjobben.
+Övriga nio indikatorers dimensioner stöds ännu inte av denna HST-kömotor.
+Källrevisioner och oberoende fullständighetsreferens blockerar fortfarande produktion.

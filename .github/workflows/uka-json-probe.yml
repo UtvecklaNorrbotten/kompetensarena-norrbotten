@@ -6,9 +6,11 @@ on:
       - scripts/uka_json_probe.py
       - scripts/uka_hst_complete_probe.py
       - scripts/uka_json_plan.py
+      - scripts/uka_json_queue.py
       - tests/test_uka_json_probe.py
       - tests/test_uka_hst_complete_probe.py
       - tests/test_uka_json_plan.py
+      - tests/test_uka_json_queue.py
       - .github/workflows/uka-json-probe.yml
   workflow_dispatch:
     inputs:
@@ -45,6 +47,7 @@ jobs:
           python -m unittest discover -s tests -p test_uka_json_probe.py -v
           python -m unittest discover -s tests -p test_uka_hst_complete_probe.py -v
           python -m unittest discover -s tests -p test_uka_json_plan.py -v
+          python -m unittest discover -s tests -p test_uka_json_queue.py -v
       - name: Bygg hämtningsplan utan API-anrop
         env:
           SNAPSHOT: ${{ inputs.snapshot }}
@@ -64,6 +67,9 @@ jobs:
           if [ -n "$SNAPSHOT" ]; then args+=(--snapshot "$SNAPSHOT"); fi
           python -u scripts/uka_json_probe.py "${args[@]}"
           python -u scripts/uka_hst_complete_probe.py "${args[@]}"
+          python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8' --database output/uka-json-probe/resume-demo.sqlite --max-nodes 1 "${args[@]}"
+          python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8' --database output/uka-json-probe/resume-demo.sqlite --max-nodes 100 "${args[@]}"
+          python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8' --database output/uka-json-probe/national-queue.sqlite --max-new-requests 10 --max-nodes 20 "${args[@]}"
       - name: Spara kontroller och återstartbara källsvar
         if: always()
         uses: actions/upload-artifact@v4
