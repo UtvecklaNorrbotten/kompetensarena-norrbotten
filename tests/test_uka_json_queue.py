@@ -36,6 +36,34 @@ class MemoryProbe:
 
 
 class QueueTests(unittest.TestCase):
+    def test_program_indicator_retains_decimal_source_values(self):
+        root = ROOT.replace('/33?', '/99?')
+        data = {root: {'indicator': {'id': 99}, 'groups': [{'column': 'Program', 'totals': [
+                    {'name': 'Exempelprogram', 'value': 1.7, 'url': root + '&group_slug=P'}]}],
+                    'yearly_totals': {'totals': [{'year': '2025/26', 'value': 2.3}]}},
+                root + '&group_slug=P': {'indicator': {'id': 99}, 'groups': [],
+                    'yearly_totals': {'totals': [{'year': '2025/26', 'value': 1.7}]}}}
+        with tempfile.TemporaryDirectory() as tmp, Queue(Path(tmp) / 'q.sqlite', root, 'example', indicator=99) as q:
+            r = q.run(MemoryProbe(data))
+            self.assertTrue(r['graph_closed'])
+            self.assertEqual(r['indicator'], 99)
+            self.assertEqual({json.loads(row[0]) for row in q.db.execute('SELECT value FROM nodes')}, {'2.3', '1.7'})
+
+    def test_unverified_dimension_is_blocked_for_other_indicator(self):
+        root = ROOT.replace('/33?', '/99?')
+        data = {root: {'indicator': {'id': 99}, 'groups': [{'column': 'Unexpected', 'totals': []}],
+                      'yearly_totals': {'totals': [{'year': '2025/26', 'value': 1.7}]}}}
+        with tempfile.TemporaryDirectory() as tmp, Queue(Path(tmp) / 'q.sqlite', root, 'example', indicator=99) as q:
+            r = q.run(MemoryProbe(data))
+            self.assertEqual(r['states'], {'error': 1})
+            self.assertFalse(r['graph_closed'])
+            self.assertEqual(r['observations'], 0)
+
+    def test_other_indicator_cannot_use_hst_specific_strategy(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaisesRegex(ValueError, 'only for HST'):
+                Queue(Path(tmp) / 'q.sqlite', ROOT.replace('/33?', '/99?'), 'example', 'study-first', indicator=99)
+
     def test_study_first_equals_all_routes_for_unambiguous_source(self):
         with tempfile.TemporaryDirectory() as tmp:
             results = []

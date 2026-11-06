@@ -1,6 +1,6 @@
 {
-  "run_id": "42217378947",
+  "run_id": "42221914330",
   "snapshot": "2026-11-06",
   "artifact": "uka-json-probe",
-  "purpose": "Completed study-first national graph: 857 nodes, 9731 observations. Retain legacy conflict fixture. Publication remains prohibited pending source coverage verification."
+  "purpose": "Reuse completed 24-case HST campaign and 18 non-HST route samples plus full national HST graph; no production approval"
 }

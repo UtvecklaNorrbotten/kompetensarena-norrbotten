@@ -1,4 +1,4 @@
-"""Single-writer, transactional HST discovery queue. No publication capability."""
+"""Single-writer, transactional UKÄ discovery queue. No publication capability."""
 import argparse
 from collections import Counter
 from datetime import date
@@ -22,12 +22,26 @@ def transient_error(error):
             error.response.status_code in (408, 425, 429, 500, 502, 503, 504))
 
 
+SOURCE_DIMENSIONS = {
+    13: ('Program',), 31: ('Studieform',),
+    33: (*SUBJECT_LEVELS, 'Studieform'), 97: ('Program',), 99: ('Program',),
+    108: ('Examenskategori', 'Examen'), 136: ('Examen',),
+    77: ('Utbildningsnivå', 'Studieform'), 134: ('Program',), 135: ('Program',),
+}
+
+
 class Queue:
-    def __init__(self, path, root_url, snapshot, strategy="all-routes"):
+    def __init__(self, path, root_url, snapshot, strategy="all-routes", indicator=33):
+        if indicator not in SOURCE_DIMENSIONS:
+            raise ValueError("Unsupported source indicator")
+        if indicator != 33 and strategy != "all-routes":
+            raise ValueError("Study-first strategy is verified only for HST")
+        self.indicator = indicator
+        self.source_dimensions = SOURCE_DIMENSIONS[indicator]
         if strategy not in ("all-routes", "study-first"):
             raise ValueError("Unknown discovery strategy")
         self.strategy = strategy
-        root = validate_url(root_url, 33)
+        root = validate_url(root_url, indicator)
         period = root['year']
         path = Path(path); path.parent.mkdir(parents=True, exist_ok=True)
         self.lock = open(str(path) + '.lock', 'a')
@@ -40,9 +54,11 @@ class Queue:
         self.db.row_factory = sqlite3.Row
         self.root = root
         self.period = period
-        binding = {'version': 1, 'root': self.root, 'snapshot': snapshot, 'indicator': 33}
+        binding = {'version': 1, 'root': self.root, 'snapshot': snapshot, 'indicator': self.indicator}
         if strategy != 'all-routes':
             binding['strategy'] = strategy
+        if indicator != 33:
+            binding['source_dimensions'] = list(self.source_dimensions)
         self.db.executescript('''
           CREATE TABLE IF NOT EXISTS meta (binding TEXT NOT NULL);
           CREATE TABLE IF NOT EXISTS nodes (
@@ -83,9 +99,9 @@ class Queue:
         # Observed UKÄ convention: institution-level terminal nodes omit groups.
         # Do not generalise this to missing root structure or national coverage.
         if ('groups' not in body and self.root['university'] != '1' and
-                all(k in dims for k in (*SUBJECT_LEVELS, 'Studieform'))):
+                all(k in dims for k in self.source_dimensions)):
             groups = []
-        if str(body.get('indicator', {}).get('id')) != '33' or not isinstance(groups, list):
+        if str(body.get('indicator', {}).get('id')) != str(self.indicator) or not isinstance(groups, list):
             raise ValueError('Incomplete or wrong source response')
         if any('value' not in row for row in body.get('yearly_totals', {}).get('totals', [])):
             raise ValueError('Missing source value field')
@@ -100,18 +116,18 @@ class Queue:
             column = group['column']
             if column == 'Lärosäten':
                 for row in group.get('totals', []):
-                    query = validate_url(row['url'], 33)
+                    query = validate_url(row['url'], self.indicator)
                     university = query.get('university')
                     if not university or university == self.root['university'] or university in universities:
                         raise ValueError('Duplicate or invalid university observation')
-                    if any(query.get(k) != validate_url(node['url'], 33).get(k)
+                    if any(query.get(k) != validate_url(node['url'], self.indicator).get(k)
                            for k in ('year', 'gender', 'age_group', 'group_slug')):
                         raise ValueError('University link changed another context filter')
                     universities.add(university)
                     observations.append({'university': university, 'name': row['name'],
                                          'value': None if row['value'] is None else canonical_value(str(row['value'])),
                                          'dimensions': dims})
-            elif column in (*SUBJECT_LEVELS, 'Studieform'):
+            elif column in self.source_dimensions:
                 # Enumerate Study x Subject using Study selections at the root only.
                 # Subject -> Study links are ambiguous for reused subject code 1051.
                 # The original all-routes strategy and its blocked queue stay intact.
@@ -120,9 +136,9 @@ class Queue:
                 if column in dims:
                     raise ValueError('Source reoffers selected dimension')
                 for row in group.get('totals', []):
-                    validate_follow(node['url'], row['url'], 33)
+                    validate_follow(node['url'], row['url'], self.indicator)
                     expected = None if row['value'] is None else canonical_value(str(row['value']))
-                    children.append((digest(validate_url(row['url'], 33)), row['url'],
+                    children.append((digest(validate_url(row['url'], self.indicator)), row['url'],
                                      json.dumps({**dims, column: row['name']}, ensure_ascii=False, sort_keys=True), expected))
             elif column not in ('Kön', 'Åldersgrupper'):
                 raise ValueError('Unknown source dimension: ' + column)
@@ -164,7 +180,7 @@ class Queue:
             if node is None:
                 break
             try:
-                body = probe.get(node['url'], 33)
+                body = probe.get(node['url'], self.indicator)
                 self.checkpoint(node, body)
             except RuntimeError as error:
                 if 'request budget exhausted' in str(error):
@@ -188,7 +204,7 @@ class Queue:
         if reason == 'graph_exhausted' and states.get('retry_wait'):
             reason = 'retry_backoff'
         done = self.db.execute("SELECT observations FROM nodes WHERE status='done'").fetchall()
-        return {'strategy': self.strategy, 'stop_reason': reason, 'processed_this_run': processed, 'states': states,
+        return {'indicator': self.indicator, 'strategy': self.strategy, 'stop_reason': reason, 'processed_this_run': processed, 'states': states,
                 'observations': sum(len(json.loads(r['observations'])) for r in done),
                 'university_codes': sorted({o['university'] for r in done for o in json.loads(r['observations'])}),
                 'errors': [dict(r) for r in self.db.execute("SELECT url,error,error_kind,attempts,retry_after FROM nodes WHERE status IN ('error','retry_wait') LIMIT 10")],
@@ -200,6 +216,7 @@ class Queue:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root-url', required=True)
+    parser.add_argument('--indicator', type=int, choices=sorted(SOURCE_DIMENSIONS), default=33)
     parser.add_argument('--snapshot', default=date.today().isoformat())
     parser.add_argument('--strategy', choices=('all-routes', 'study-first'), default='all-routes')
     parser.add_argument('--database', default='output/uka-json-probe/queue.sqlite')
@@ -211,7 +228,7 @@ if __name__ == '__main__':
     if args.max_new_requests < 0 or args.max_nodes < 1 or args.seconds <= 0:
         parser.error('Invalid work budget')
     probe = Probe(args.cache, args.snapshot, budget=args.max_new_requests)
-    with Queue(args.database, args.root_url, args.snapshot, strategy=args.strategy) as queue:
+    with Queue(args.database, args.root_url, args.snapshot, strategy=args.strategy, indicator=args.indicator) as queue:
         result = queue.run(probe, args.max_nodes, args.seconds)
     write_json(Path(args.database).with_suffix('.summary.json'), result)
     print(json.dumps(result, ensure_ascii=False, indent=2))

@@ -11,6 +11,7 @@ on:
       - scripts/uka_hst_coverage.py
       - scripts/uka_hst_validation.py
       - scripts/uka_indicator_routes.py
+      - scripts/uka_indicator_validation.py
       - tests/test_uka_hst_validation.py
       - tests/test_uka_indicator_routes.py
       - tests/test_uka_hst_coverage.py
@@ -117,6 +118,11 @@ jobs:
         env:
           SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
         run: python -u scripts/uka_indicator_routes.py --cache output/uka-json-probe --snapshot "$SNAPSHOT" --max-new-requests 80
+      - name: Verifiera nationella grafer för övriga nio indikatorer
+        if: ${{ !cancelled() && steps.checkpoint.outcome == 'success' }}
+        env:
+          SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
+        run: python -u scripts/uka_indicator_validation.py --cache output/uka-json-probe --snapshot "$SNAPSHOT" --max-new-requests 1000 --seconds 600
       - name: Kontrollera att det gamla källfelet fortfarande blockeras
         env:
           SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
@@ -181,6 +187,13 @@ jobs:
               if routes.exists():
                   r = json.loads(routes.read_text())
                   out.write(f"Övriga indikatorer: {r['verified_period_samples']}/18 periodprov med direkt lärosätesreferens.\n\n")
+              national = Path('output/uka-json-probe/indicator-validation.json')
+              if national.exists():
+                  n = json.loads(national.read_text())
+                  out.write(f"Nationella grafer för övriga indikatorer: {n['completed_indicators']}/9 avslutade. Nya anrop: {n['new_requests']}.\n\n")
+                  for i in n['indicators']:
+                      out.write(f"- {i['indicator']} / {i['period']}: {i['states']}, {i['observations']} observationer.\n")
+                  out.write('\nDetta avser källans Total kön/ålder, inte full tioårstäckning.\n\n')
               coverage = Path('output/uka-json-probe/hst-coverage.json')
               if coverage.exists():
                   c = json.loads(coverage.read_text())
