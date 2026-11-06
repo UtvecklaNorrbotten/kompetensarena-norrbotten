@@ -146,6 +146,8 @@ class Queue:
         with self.db:
             self.db.execute("UPDATE nodes SET status='pending' WHERE status='retry_wait' AND retry_after<=?", (time.time(),))
         while processed < max_nodes:
+            if self.db.execute("SELECT 1 FROM nodes WHERE status='error' LIMIT 1").fetchone():
+                reason = 'blocked_source_error'; break
             if time.monotonic() - started >= seconds:
                 reason = 'time_budget'; break
             node = self.db.execute("SELECT * FROM nodes WHERE status='pending' ORDER BY rowid LIMIT 1").fetchone()

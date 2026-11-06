@@ -24,7 +24,7 @@ from bs4 import BeautifulSoup
 
 INDICATORS = (13, 31, 33, 97, 99, 108, 136, 77, 134, 135)
 BASE = "https://statistik-www.uka.se/export"
-VERSION = 1
+VERSION = 2
 REQUIRED = {"Tidsperiod", "Lärosäte", "Kön", "Åldersgrupp", "Värde"}
 
 
@@ -72,19 +72,31 @@ def groups(html):
             if token == "TOTAL":
                 continue
             node, parent = token.split("_", 1)
-            parents[node] = parent or None
+            parent = parent or None
+            if node not in parents:
+                parents[node] = parent
+            elif parents[node] != parent:
+                choices = parents[node] if isinstance(parents[node], list) else [parents[node]]
+                if parent not in choices:
+                    parents[node] = choices + [parent]
         depths = {}
         def depth(node, trail=()):
             if node in trail:
                 raise ValueError("Cyclic source hierarchy")
-            parent = parents[node]
-            if parent is not None and parent not in parents:
-                raise ValueError("Unknown hierarchy parent: " + parent)
-            return 0 if parent is None else 1 + depth(parent, trail + (node,))
+            choices = parents[node] if isinstance(parents[node], list) else [parents[node]]
+            levels = set()
+            for parent in choices:
+                if parent is not None and parent not in parents:
+                    raise ValueError("Unknown hierarchy parent: " + parent)
+                levels.add(0 if parent is None else 1 + depth(parent, trail + (node,)))
+            if len(levels) != 1:
+                raise ValueError("Context-dependent hierarchy depth requires explicit path")
+            return levels.pop()
         for node in parents:
             depths[node] = depth(node)
         result.append({"index": marker.get_text(strip=True), "values": values,
-                       "parents": parents, "depths": depths})
+                       "parents": parents, "depths": depths,
+                       "multi_parent_codes": [node for node, p in parents.items() if isinstance(p, list)]})
     return result
 
 

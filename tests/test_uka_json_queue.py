@@ -95,6 +95,8 @@ class QueueTests(unittest.TestCase):
             with patch('uka_json_queue.time.time', return_value=9999):
                 r = q.run(later)
             self.assertNotIn(ROOT + '&group_slug=A', later.calls)
+            self.assertEqual(later.requests, 0)
+            self.assertEqual(r['stop_reason'], 'blocked_source_error')
             self.assertFalse(r['graph_closed'])
 
     def test_resume_mid_graph_skips_done_nodes_and_matches_uninterrupted(self):

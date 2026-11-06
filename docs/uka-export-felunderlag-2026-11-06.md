@@ -69,6 +69,23 @@ Vi har stoppat produktionsimporten från dessa tester tills vi kan verifiera ful
 
 ## Tekniskt underlag
 
+### Ytterligare verifierat problem i JSON-alternativet
+
+Exportfiltren återanvänder koden 1051 (Övrigt) under både 914 (Medicin och odontologi)
+och 915 (Naturvetenskap): `dynamic:1051_914` och `dynamic:1051_915`.
+För Riket, 2025/26, Kvinnor, age_group=8 listar följande medicinska delområdesnod
+dubbla studieformsetiketter med olika värden och olika gruppsluggar:
+
+https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=1806cec79a532daca1ef3c627f5681b8ad995441&gender=Kvinnor&age_group=8
+
+- Fristående kurser, **38,1**: slug `12ab49225797148f21812a058af4630b755930ae`. Barnanropet visar Biomedicinsk laboratorievetenskap, Medicinska tekniker och Övrigt inom medicin.
+- Fristående kurser, **56,2**: slug `fdc158ac61cb17a0bbdbcd363ba99577f4048990`. Barnanropet visar Husdjursvetenskap, Livsmedelsvetenskap och Övrigt inom naturvetenskap.
+
+Även Generella program och Yrkesexamensprogram förekommer dubbelt i detta svar.
+Kan ni bekräfta hur föräldrakontexten ska bevaras och vilka kombinerade sluggar som hör till respektive område?
+Vi har stoppat denna JSON-hämtning vid konflikten. Koppling till CSV-felet är ännu inte fastställd.
+Exakta observationer och länkar finns i `uka-source-context-conflict-2026-11-06.json`.
+
 - Reproducerbara GitHub-kontroller: https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/runs/42185017866.
 - `uka-web-control-2026-11-06.json`: webbens valda filter, nedladdade filnamn, filstorlekar och kontrollsummor.
 - `uka-source-control-2026-11-06.json`: kontrollresultat per indikator.

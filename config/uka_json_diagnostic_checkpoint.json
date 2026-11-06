@@ -1,6 +1,6 @@
 {
-  "run_id": "42202630673",
+  "run_id": "42210008954",
   "snapshot": "2026-11-06",
   "artifact": "uka-json-probe",
-  "purpose": "Frozen diagnostic campaign; not a source release or production approval"
+  "purpose": "Preserved blocked diagnostic queue with 1038 observations and permanent hierarchy conflict; not production approval"
 }

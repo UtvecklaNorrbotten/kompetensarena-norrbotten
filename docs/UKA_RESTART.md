@@ -4,6 +4,33 @@ Senast uppdaterat: 2026-11-06. Repo `UtvecklaNorrbotten/kompetensarena-norrbotte
 Arbetsgren `fix/uka-verified-checkpoint-import`, utkast PR #82.
 Ingen merge eller produktionsimport har gjorts av denna utredning.
 
+## Aktuell spärr – läs detta först
+
+Senaste större körning **42210008954** stoppade korrekt vid en permanent källkontextkonflikt,
+efter 41 färdiga noder och 1 038 sparade observationer. 211 noder återstår och en är blockerad.
+Artefakt `uka-json-probe`, ID **13497844492**, innehåller både kön och det utlösande källsvaret.
+`config/uka_json_diagnostic_checkpoint.json` pekar nu på denna blockerade artefakt för att bevara
+bevisen och undvika nya hämtningar av samma material. Ett rött källjobb är här avsiktligt.
+
+Verifierad källdetalj: koden **1051 / Övrigt** återanvänds under både
+914 (Medicin och odontologi) och 915 (Naturvetenskap) i exportfiltren.
+JSON-noden för den medicinska grenen annonserar två Fristående kurser-rader med samma etikett,
+värden **38,1** och **56,2**, och olika sluggar. Direkta anrop visar att 38,1-länken har medicinska
+ämnesgrupper medan 56,2-länken har naturvetenskapliga ämnesgrupper.
+Det räcker alltså inte att URL:ens kön/ålder/år är kvar och att barnvärdet matchar det annonserade värdet.
+Även ämnesgrenens kontext måste verifieras.
+
+Se `uka-source-context-conflict-2026-11-06.json` för exakta länkar, värden och ämnen.
+Metadata-parser version 2 bevarar båda föräldraplaceringarna; version 1 skrev över den första.
+Detta är ingen generell lösning på JSON-kontextproblemet. Slå inte ihop olika sluggar,
+summera inte de dubbla etiketterna och ge dem inte nya produktionsnycklar för att kringgå stoppet.
+Nästa utredning gäller fullständig källkontext/identifierare eller ett korrigerat bulkuttag från UKÄ.
+Det är fortfarande inte visat att detta också orsakar CSV-tjänstens nollbytefiler.
+
+Kömotorn gör nu **0 nya anrop** om en permanent felaktig nod redan finns, även om andra noder väntar.
+Tillfälliga fel kan återförsökas, högst tre gånger med väntetid; datakonflikter förblir blockerade.
+Senaste testuppsättningen omfattar 35 enhetstester. Felunderlaget till UKÄ har kompletterats men inte skickats.
+
 ## Auktorisation och krav
 
 Användaren har godkänt granskning, diagnostik, arbetsgrenar och PR.
@@ -60,7 +87,7 @@ Starta inte den stora tioårshämtningen för att bara få gröna jobb. Inga nya
 ## Återuppta nodkön efter pausen
 
 JSON-workflowet sparar nu även SQLite-kön och källcachen i artefakten `uka-json-probe`.
-Använd senaste godkända körningen på PR #82, eftersom äldre körningar saknar köfilen.
+Använd den i checkpointfilen utpekade artefakten på PR #82; den kan vara avsiktligt blockerad och ska då inte startas om blint.
 Återställ hela artefakten till `output/uka-json-probe`; generera inte en ny tom kö ovanpå den sparade.
 Kön binder exakt urval och snapshot. Fortsätt med samma snapshot-ID som körningen använde.
 

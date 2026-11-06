@@ -18,6 +18,17 @@ def raw_csv(value="14,40", extra=""):
 
 
 class AuditTests(unittest.TestCase):
+    def test_reused_code_preserves_both_parent_placements(self):
+        html = '''<div class="groupTitles"><h3><span class="dynamic-filter-index">7.</span>Ämne</h3>
+        <input value="dynamic:914_"><label>Exempelområde A</label>
+        <input value="dynamic:915_"><label>Exempelområde B</label>
+        <input value="dynamic:1051_914"><label>Övrigt</label>
+        <input value="dynamic:1051_915"><label>Övrigt</label></div>'''
+        group = uka.groups(html)[0]
+        self.assertEqual(group['parents']['1051'], ['914', '915'])
+        self.assertEqual(group['multi_parent_codes'], ['1051'])
+        self.assertEqual(group['depths']['1051'], 1)
+
     def test_empty_body_is_not_a_valid_empty_selection(self):
         self.assertEqual(uka.parse_csv(b"")["status"], "technical_empty_body")
         self.assertEqual(uka.parse_csv(HEADER.encode())["status"], "empty_selection_unconfirmed")
