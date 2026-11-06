@@ -1,0 +1,23 @@
+{
+  "controls": [
+    {
+      "case": "minimal-riket",
+      "status": "technical_failure",
+      "row_count": 0,
+      "bytes": null,
+      "file_url": null,
+      "sha256": null
+    },
+    {
+      "case": "small-women-only",
+      "status": "technical_failure",
+      "row_count": 0,
+      "bytes": null,
+      "file_url": null,
+      "sha256": null
+    }
+  ],
+  "publish_allowed": false,
+  "failure_origin": "Local network proxy: tunnel HTTP 403 Forbidden. Requests did not establish UKÄ response behavior.",
+  "meaning": "These controls are inconclusive. Earlier minimal zero-byte observations remain historical evidence; no new claim about filter-dependent failures is established."
+}

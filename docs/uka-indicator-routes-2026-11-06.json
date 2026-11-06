@@ -1,0 +1,640 @@
+{
+  "snapshot": "2026-11-06",
+  "publish_allowed": false,
+  "full_coverage_verified": false,
+  "scope": "First advertised dimension path and direct university observation; not exhaustive",
+  "indicators": [
+    {
+      "indicator": 13,
+      "periods": [
+        {
+          "period": "HT2026",
+          "source_total": "104093",
+          "root_url": "https://statistik-api.uka.se/api/totals/13?university=1&year=HT2026",
+          "dimension_columns": [
+            "Program"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "2.07E+3",
+            "url": "https://statistik-api.uka.se/api/totals/13?university=32&year=HT2026"
+          },
+          "route": [
+            {
+              "column": "Program",
+              "name": "Agronomexamen",
+              "value": "88",
+              "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=HT2026&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "42",
+            "name": "Sveriges lantbruksuniversitet",
+            "value": "88",
+            "url": "https://statistik-api.uka.se/api/totals/13?university=42&year=HT2026&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f"
+          },
+          "verified_sample": true
+        },
+        {
+          "period": "VT2017",
+          "source_total": "33581",
+          "root_url": "https://statistik-api.uka.se/api/totals/13?university=1&year=VT2017",
+          "dimension_columns": [
+            "Program"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "589",
+            "url": "https://statistik-api.uka.se/api/totals/13?university=32&year=VT2017"
+          },
+          "route": [
+            {
+              "column": "Program",
+              "name": "Apotekarexamen",
+              "value": "131",
+              "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=VT2017&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "47",
+            "name": "Uppsala universitet",
+            "value": "131",
+            "url": "https://statistik-api.uka.se/api/totals/13?university=47&year=VT2017&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8"
+          },
+          "verified_sample": true
+        }
+      ]
+    },
+    {
+      "indicator": 31,
+      "periods": [
+        {
+          "period": "VT2026",
+          "source_total": "10869",
+          "root_url": "https://statistik-api.uka.se/api/totals/31?university=1&year=VT2026",
+          "dimension_columns": [
+            "Studieform"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "233",
+            "url": "https://statistik-api.uka.se/api/totals/31?university=32&year=VT2026"
+          },
+          "route": [
+            {
+              "column": "Studieform",
+              "name": "Agronomexamen",
+              "value": "5",
+              "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=VT2026&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "42",
+            "name": "Sveriges lantbruksuniversitet",
+            "value": "5",
+            "url": "https://statistik-api.uka.se/api/totals/31?university=42&year=VT2026&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f"
+          },
+          "verified_sample": true
+        },
+        {
+          "period": "HT2016",
+          "source_total": "38226",
+          "root_url": "https://statistik-api.uka.se/api/totals/31?university=1&year=HT2016",
+          "dimension_columns": [
+            "Studieform"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "1.23E+3",
+            "url": "https://statistik-api.uka.se/api/totals/31?university=32&year=HT2016"
+          },
+          "route": [
+            {
+              "column": "Studieform",
+              "name": "Agronomexamen",
+              "value": "144",
+              "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=HT2016&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "42",
+            "name": "Sveriges lantbruksuniversitet",
+            "value": "144",
+            "url": "https://statistik-api.uka.se/api/totals/31?university=42&year=HT2016&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f"
+          },
+          "verified_sample": true
+        }
+      ]
+    },
+    {
+      "indicator": 97,
+      "periods": [
+        {
+          "period": "HT2026",
+          "source_total": "48829",
+          "root_url": "https://statistik-api.uka.se/api/totals/97?university=1&year=HT2026",
+          "dimension_columns": [
+            "Program"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "1727",
+            "url": "https://statistik-api.uka.se/api/totals/97?university=32&year=HT2026"
+          },
+          "route": [
+            {
+              "column": "Program",
+              "name": "Agronomexamen",
+              "value": "104",
+              "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=HT2026&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "42",
+            "name": "Sveriges lantbruksuniversitet",
+            "value": "104",
+            "url": "https://statistik-api.uka.se/api/totals/97?university=42&year=HT2026&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f"
+          },
+          "verified_sample": true
+        },
+        {
+          "period": "VT2017",
+          "source_total": "12547",
+          "root_url": "https://statistik-api.uka.se/api/totals/97?university=1&year=VT2017",
+          "dimension_columns": [
+            "Program"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "325",
+            "url": "https://statistik-api.uka.se/api/totals/97?university=32&year=VT2017"
+          },
+          "route": [
+            {
+              "column": "Program",
+              "name": "Apotekarexamen",
+              "value": "97",
+              "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=VT2017&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "47",
+            "name": "Uppsala universitet",
+            "value": "97",
+            "url": "https://statistik-api.uka.se/api/totals/97?university=47&year=VT2017&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8"
+          },
+          "verified_sample": true
+        }
+      ]
+    },
+    {
+      "indicator": 99,
+      "periods": [
+        {
+          "period": "HT2026",
+          "source_total": "2.1",
+          "root_url": "https://statistik-api.uka.se/api/totals/99?university=1&year=HT2026",
+          "dimension_columns": [
+            "Program"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "1.2",
+            "url": "https://statistik-api.uka.se/api/totals/99?university=32&year=HT2026"
+          },
+          "route": [
+            {
+              "column": "Program",
+              "name": "Agronomexamen",
+              "value": "0.8",
+              "url": "https://statistik-api.uka.se/api/totals/99?university=1&year=HT2026&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "42",
+            "name": "Sveriges lantbruksuniversitet",
+            "value": "0.8",
+            "url": "https://statistik-api.uka.se/api/totals/99?university=42&year=HT2026&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f"
+          },
+          "verified_sample": true
+        },
+        {
+          "period": "VT2017",
+          "source_total": "2.7",
+          "root_url": "https://statistik-api.uka.se/api/totals/99?university=1&year=VT2017",
+          "dimension_columns": [
+            "Program"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "1.8",
+            "url": "https://statistik-api.uka.se/api/totals/99?university=32&year=VT2017"
+          },
+          "route": [
+            {
+              "column": "Program",
+              "name": "Apotekarexamen",
+              "value": "1.4",
+              "url": "https://statistik-api.uka.se/api/totals/99?university=1&year=VT2017&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "47",
+            "name": "Uppsala universitet",
+            "value": "1.4",
+            "url": "https://statistik-api.uka.se/api/totals/99?university=47&year=VT2017&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8"
+          },
+          "verified_sample": true
+        }
+      ]
+    },
+    {
+      "indicator": 108,
+      "periods": [
+        {
+          "period": "2024/25",
+          "source_total": "76705",
+          "root_url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2024%2F25",
+          "dimension_columns": [
+            "Examenskategori"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "1459",
+            "url": "https://statistik-api.uka.se/api/totals/108?university=32&year=2024%2F25"
+          },
+          "route": [
+            {
+              "column": "Examenskategori",
+              "name": "Generella examina",
+              "value": "47358",
+              "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2024%2F25&group_slug=00ca1463f508a06a3efad5f8901e73186ed23764"
+            },
+            {
+              "column": "Examen",
+              "name": "Högskoleexamina",
+              "value": "1405",
+              "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2024%2F25&group_slug=87ec0dcb67199732d066bc1947b21515ab36c3aa"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "54",
+            "url": "https://statistik-api.uka.se/api/totals/108?university=32&year=2024%2F25&group_slug=87ec0dcb67199732d066bc1947b21515ab36c3aa"
+          },
+          "verified_sample": true
+        },
+        {
+          "period": "2015/16",
+          "source_total": "68291",
+          "root_url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2015%2F16",
+          "dimension_columns": [
+            "Examenskategori"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "1.5E+3",
+            "url": "https://statistik-api.uka.se/api/totals/108?university=32&year=2015%2F16"
+          },
+          "route": [
+            {
+              "column": "Examenskategori",
+              "name": "Generella examina",
+              "value": "43855",
+              "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2015%2F16&group_slug=00ca1463f508a06a3efad5f8901e73186ed23764"
+            },
+            {
+              "column": "Examen",
+              "name": "Högskoleexamina",
+              "value": "1378",
+              "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2015%2F16&group_slug=87ec0dcb67199732d066bc1947b21515ab36c3aa"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "95",
+            "url": "https://statistik-api.uka.se/api/totals/108?university=32&year=2015%2F16&group_slug=87ec0dcb67199732d066bc1947b21515ab36c3aa"
+          },
+          "verified_sample": true
+        }
+      ]
+    },
+    {
+      "indicator": 136,
+      "periods": [
+        {
+          "period": "2024",
+          "source_total": "84.8",
+          "root_url": "https://statistik-api.uka.se/api/totals/136?university=1&year=2024",
+          "dimension_columns": [
+            "Examen"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "87.5",
+            "url": "https://statistik-api.uka.se/api/totals/136?university=32&year=2024"
+          },
+          "route": [
+            {
+              "column": "Examen",
+              "name": "Agronomexamen/motsv",
+              "value": "94.3",
+              "url": "https://statistik-api.uka.se/api/totals/136?university=1&year=2024&group_slug=ca123c8f85f12647b4d52206e144ea29cf10368f"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "42",
+            "name": "Sveriges lantbruksuniversitet",
+            "value": "94.3",
+            "url": "https://statistik-api.uka.se/api/totals/136?university=42&year=2024&group_slug=ca123c8f85f12647b4d52206e144ea29cf10368f"
+          },
+          "verified_sample": true
+        },
+        {
+          "period": "2020",
+          "source_total": "84.4",
+          "root_url": "https://statistik-api.uka.se/api/totals/136?university=1&year=2020",
+          "dimension_columns": [
+            "Examen"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "84.7",
+            "url": "https://statistik-api.uka.se/api/totals/136?university=32&year=2020"
+          },
+          "route": [
+            {
+              "column": "Examen",
+              "name": "Agronomexamen/motsv",
+              "value": "88.5",
+              "url": "https://statistik-api.uka.se/api/totals/136?university=1&year=2020&group_slug=ca123c8f85f12647b4d52206e144ea29cf10368f"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "42",
+            "name": "Sveriges lantbruksuniversitet",
+            "value": "88.5",
+            "url": "https://statistik-api.uka.se/api/totals/136?university=42&year=2020&group_slug=ca123c8f85f12647b4d52206e144ea29cf10368f"
+          },
+          "verified_sample": true
+        }
+      ]
+    },
+    {
+      "indicator": 77,
+      "periods": [
+        {
+          "period": "2024/25",
+          "source_total": "74.1",
+          "root_url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2024%2F25",
+          "dimension_columns": [
+            "Utbildningsnivå",
+            "Studieform"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "54.8",
+            "url": "https://statistik-api.uka.se/api/totals/77?university=32&year=2024%2F25"
+          },
+          "route": [
+            {
+              "column": "Utbildningsnivå",
+              "name": "Avancerad nivå",
+              "value": "86.3",
+              "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2024%2F25&group_slug=71f92dcea64f7193d1aca2b6ff7cfd9ca7e4e44a"
+            },
+            {
+              "column": "Studieform",
+              "name": "Fristående kurser",
+              "value": "29.6",
+              "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2024%2F25&group_slug=52681956c99c60358378d72fdb63d281f77e52d3"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "0",
+            "url": "https://statistik-api.uka.se/api/totals/77?university=32&year=2024%2F25&group_slug=52681956c99c60358378d72fdb63d281f77e52d3"
+          },
+          "verified_sample": true
+        },
+        {
+          "period": "2015/16",
+          "source_total": "72",
+          "root_url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2015%2F16",
+          "dimension_columns": [
+            "Utbildningsnivå",
+            "Studieform"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "66.7",
+            "url": "https://statistik-api.uka.se/api/totals/77?university=32&year=2015%2F16"
+          },
+          "route": [
+            {
+              "column": "Utbildningsnivå",
+              "name": "Avancerad nivå",
+              "value": "83.7",
+              "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2015%2F16&group_slug=71f92dcea64f7193d1aca2b6ff7cfd9ca7e4e44a"
+            },
+            {
+              "column": "Studieform",
+              "name": "Fristående kurser",
+              "value": "27.4",
+              "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2015%2F16&group_slug=52681956c99c60358378d72fdb63d281f77e52d3"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "0",
+            "url": "https://statistik-api.uka.se/api/totals/77?university=32&year=2015%2F16&group_slug=52681956c99c60358378d72fdb63d281f77e52d3"
+          },
+          "verified_sample": true
+        }
+      ]
+    },
+    {
+      "indicator": 134,
+      "periods": [
+        {
+          "period": "2023/24",
+          "source_total": "78",
+          "root_url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2023%2F24",
+          "dimension_columns": [
+            "Program"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "70.3",
+            "url": "https://statistik-api.uka.se/api/totals/134?university=32&year=2023%2F24"
+          },
+          "route": [
+            {
+              "column": "Program",
+              "name": "Apotekarexamen",
+              "value": "71.5",
+              "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2023%2F24&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "10",
+            "name": "Göteborgs universitet",
+            "value": "67.3",
+            "url": "https://statistik-api.uka.se/api/totals/134?university=10&year=2023%2F24&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8"
+          },
+          "verified_sample": true
+        },
+        {
+          "period": "2014/15",
+          "source_total": "75",
+          "root_url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2014%2F15",
+          "dimension_columns": [
+            "Program"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "71.2",
+            "url": "https://statistik-api.uka.se/api/totals/134?university=32&year=2014%2F15"
+          },
+          "route": [
+            {
+              "column": "Program",
+              "name": "Agronomexamen",
+              "value": "81",
+              "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2014%2F15&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "42",
+            "name": "Sveriges lantbruksuniversitet",
+            "value": "81",
+            "url": "https://statistik-api.uka.se/api/totals/134?university=42&year=2014%2F15&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f"
+          },
+          "verified_sample": true
+        }
+      ]
+    },
+    {
+      "indicator": 135,
+      "periods": [
+        {
+          "period": "2021/22",
+          "source_total": "54.2",
+          "root_url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2021%2F22",
+          "dimension_columns": [
+            "Program"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "37.4",
+            "url": "https://statistik-api.uka.se/api/totals/135?university=32&year=2021%2F22"
+          },
+          "route": [
+            {
+              "column": "Program",
+              "name": "Folkhögskollärarexamen",
+              "value": "43.8",
+              "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2021%2F22&group_slug=7b898b346bed976b27f3da52823511242c5ed7db"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "31",
+            "name": "Linköpings universitet",
+            "value": "43.8",
+            "url": "https://statistik-api.uka.se/api/totals/135?university=31&year=2021%2F22&group_slug=7b898b346bed976b27f3da52823511242c5ed7db"
+          },
+          "verified_sample": true
+        },
+        {
+          "period": "2012/13",
+          "source_total": "56.3",
+          "root_url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2012%2F13",
+          "dimension_columns": [
+            "Program"
+          ],
+          "university_reference": {
+            "verified": true,
+            "university": "32",
+            "name": "Luleå tekniska universitet",
+            "value": "47.1",
+            "url": "https://statistik-api.uka.se/api/totals/135?university=32&year=2012%2F13"
+          },
+          "route": [
+            {
+              "column": "Program",
+              "name": "Agronomexamen",
+              "value": "41.3",
+              "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2012%2F13&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f"
+            }
+          ],
+          "group_university_reference": {
+            "verified": true,
+            "university": "42",
+            "name": "Sveriges lantbruksuniversitet",
+            "value": "41.3",
+            "url": "https://statistik-api.uka.se/api/totals/135?university=42&year=2012%2F13&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f"
+          },
+          "verified_sample": true
+        }
+      ]
+    }
+  ],
+  "new_requests": 58,
+  "verified_period_samples": 18,
+  "github_run": "42221914330"
+}

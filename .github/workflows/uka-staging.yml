@@ -1,0 +1,183 @@
+name: 90 · Diagnostik · UKÄ – tioårsstaging
+
+on:
+  pull_request:
+    paths:
+      - scripts/uka_campaign.py
+      - scripts/uka_csv_staging_audit.py
+      - scripts/uka_csv_bulk_probe.py
+      - tests/test_uka_csv_staging_audit.py
+      - tests/fixtures/uka-hst-bulk-2026-11-06.zip
+      - scripts/uka_json_plan.py
+      - scripts/uka_json_queue.py
+      - tests/test_uka_campaign.py
+      - config/uka_staging_campaign.json
+      - .github/workflows/uka-staging.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: uka-staging-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install requests beautifulsoup4 openpyxl pdfplumber
+      - run: python -m unittest discover -s tests -p 'test_uka*.py'
+
+  staging:
+    needs: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        indicator: [13, 31, 33, 97, 99, 108, 136, 77, 134, 135]
+    name: Staging · ${{ matrix.indicator }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install requests beautifulsoup4
+      - name: Läs fryst kampanj och återstartspunkt
+        id: campaign
+        run: |
+          python - <<'PY'
+          import json, os
+          c = json.load(open('config/uka_staging_campaign.json'))
+          if not c['source_run'].isdigit() or (c['resume_run'] and not c['resume_run'].isdigit()):
+              raise ValueError('Invalid artifact run ID')
+          if not (0 <= c['max_new_requests_per_indicator'] <= 1000 and
+                  0 < c['max_seconds_per_indicator'] <= 600 and
+                  0 < c['max_jobs_per_indicator'] <= 250):
+              raise ValueError('Invalid campaign budget')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
+              for k, v in c.items():
+                  out.write(f'{k}={v}\n')
+          PY
+      - uses: actions/download-artifact@v4
+        with:
+          name: uka-json-probe
+          path: base/uka-json-probe
+          run-id: ${{ steps.campaign.outputs.source_run }}
+          github-token: ${{ github.token }}
+      - name: Återställ endast denna indikators staging och nya källsvar
+        if: steps.campaign.outputs.resume_run != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: uka-staging-${{ matrix.indicator }}
+          path: output/uka-staging
+          run-id: ${{ steps.campaign.outputs.resume_run }}
+          github-token: ${{ github.token }}
+      - name: Hämta och kontrollera avgränsade urval – ingen databasanslutning
+        env:
+          INDICATOR: ${{ matrix.indicator }}
+          SNAPSHOT: ${{ steps.campaign.outputs.snapshot }}
+          REQUESTS: ${{ steps.campaign.outputs.max_new_requests_per_indicator }}
+          SECONDS_LIMIT: ${{ steps.campaign.outputs.max_seconds_per_indicator }}
+          JOBS_LIMIT: ${{ steps.campaign.outputs.max_jobs_per_indicator }}
+          SOURCE_RUN: ${{ steps.campaign.outputs.source_run }}
+          RESUME_RUN: ${{ steps.campaign.outputs.resume_run }}
+        run: |
+          mkdir -p output/uka-staging
+          python - <<'PY'
+          import json, os
+          with open('output/uka-staging/artifact-lineage.json', 'w') as out:
+              json.dump({k: os.environ[k] for k in ('SOURCE_RUN','RESUME_RUN','SNAPSHOT','INDICATOR','GITHUB_SHA','GITHUB_RUN_ID')}, out, indent=2)
+          PY
+          python -u scripts/uka_campaign.py --indicator "$INDICATOR" --snapshot "$SNAPSHOT" --root output/uka-staging --base base/uka-json-probe --max-new-requests "$REQUESTS" --max-jobs "$JOBS_LIMIT" --seconds "$SECONDS_LIMIT"
+      - name: Kontrollera CSV-deluttag mot nationell staging utan nya anrop
+        if: matrix.indicator == 33
+        env:
+          SNAPSHOT: ${{ steps.campaign.outputs.snapshot }}
+        run: |
+          python - <<'PYCODE'
+          from pathlib import Path
+          import zipfile
+          root = Path('output/csv-reference').resolve()
+          root.mkdir(parents=True, exist_ok=True)
+          with zipfile.ZipFile('tests/fixtures/uka-hst-bulk-2026-11-06.zip') as archive:
+              for item in archive.infolist():
+                  if not (root / item.filename).resolve().is_relative_to(root):
+                      raise ValueError('Unsafe CSV fixture archive')
+              archive.extractall(root)
+          PYCODE
+          python scripts/uka_csv_staging_audit.py --root output/csv-reference --metadata output/csv-reference/export-filters.json --database output/uka-staging/campaign.sqlite --snapshot "$SNAPSHOT" --period 2025/26 --universities 1 32 171 --output output/uka-staging/csv-staging-audit.json
+          python - <<'PYCODE'
+          import json, os
+          r = json.load(open('output/uka-staging/csv-staging-audit.json'))
+          assert r['new_exports'] == 0 and not r['staging_written'] and not r['publish_allowed']
+          c = next(c for c in r['comparisons'] if c['gender'] == 'Kvinnor' and c['age'] == '-24')
+          assert c['identical_shared_values'] == c['shared_observations'] == 1235
+          assert c['only_reference'] == 8496 and c['only_actual'] == 0 and not c['different_values']
+          assert not c['national_selection_equivalent']
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
+              out.write('CSV-kontroll: 1 235 identiska observationer; 8 496 nationella referensobservationer saknas i deluttaget. Deluttaget får inte färdigställa det nationella urvalet.\n\n')
+          PYCODE
+      - name: Spara staging, köer och enbart nya källsvar
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uka-staging-${{ matrix.indicator }}
+          path: output/uka-staging
+          retention-days: 30
+      - name: Redovisa delresultat och spärrar
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p = Path('output/uka-staging/campaign-report.json')
+          if not p.exists():
+              raise ValueError('Missing staging coverage report')
+          r = json.loads(p.read_text())
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
+              out.write(f"## UKÄ {r['indicator']} – ej publicerad staging\n\n")
+              out.write(f"Färdiga urval: {r['completed_jobs']}/{r['planned_jobs']}. Jobbstatus: {r['job_states']}.\n\n")
+              out.write(f"Kontrollerade observationer i staging: {r['observations']}. Nya anrop: {r['new_requests']}.\n\n")
+              out.write(f"Alla planerade hämtningar klara: {r['discovery_complete']}. Publicering tillåten: {r['publish_allowed']}.\n\n")
+              out.write('Budgetstopp betyder ofullständig kampanj. Det är inte ett publiceringsgodkännande.\n')
+          if not r['discovery_complete']:
+              print('::warning::Ofullständig tioårskampanj – återuppta från sparad stagingartefakt. Ingen publicering.')
+          PY
+
+  coverage:
+    needs: staging
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: uka-staging-*
+          path: reports
+      - name: Sammanställ faktisk täckning per indikator
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          rows = [json.loads(p.read_text()) for p in Path('reports').glob('*/campaign-report.json')]
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
+              out.write('## UKÄ tioårskampanj – endast staging\n\n')
+              out.write('| Indikator | Färdiga/planerade urval | Observationer | Nya anrop |\n|---|---:|---:|---:|\n')
+              for r in sorted(rows, key=lambda x: x['indicator']):
+                  out.write(f"| {r['indicator']} | {r['completed_jobs']}/{r['planned_jobs']} | {r['observations']} | {r['new_requests']} |\n")
+              out.write('\nKällversion och full källtäckning är ännu inte verifierade. Inga data har publicerats.\n')
+          if len(rows) != 10:
+              raise ValueError(f'Missing indicator reports: {len(rows)}/10')
+          assert {r['indicator'] for r in rows} == {13,31,33,97,99,108,136,77,134,135}
+          assert len({r['plan_id'] for r in rows}) == 1
+          assert len({r['snapshot'] for r in rows}) == 1
+          assert sum(r['planned_jobs'] for r in rows) == rows[0]['global_planned_jobs']
+          assert all(not r['publish_allowed'] for r in rows)
+          PY

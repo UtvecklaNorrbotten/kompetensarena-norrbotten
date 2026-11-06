@@ -1,0 +1,42 @@
+{
+  "observed_date": "2026-11-06",
+  "ui_url": "https://statistik-www.uka.se/export/?indicator=33",
+  "indicator": "33",
+  "filters_read_from_ui": [
+    "from:2025/26",
+    "to:2025/26",
+    "uni:1",
+    "gender:Total",
+    "age:1",
+    "6.dynamic:TOTAL",
+    "7.dynamic:TOTAL"
+  ],
+  "matches_client_filter_values": true,
+  "same_filename_as_client_export": true,
+  "client_file_url": "https://statistik-www.uka.se/export//cache/2026-11-06-173736d9702a_33.csv",
+  "cases": [
+    {
+      "period": "2025/26",
+      "university": "Riket",
+      "gender": "Total",
+      "age": "Total",
+      "study": "Total",
+      "subject": "Total",
+      "browser_download_filename": "2026-11-06-173736d9702a_33.csv",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "period": "2024/25",
+      "university": "Riket",
+      "gender": "Total",
+      "age": "Total",
+      "study": "Total",
+      "subject": "Total",
+      "browser_download_filename": "2026-11-06-3fee596c0240_33.csv",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "limitation": "DOM selections, published form serialisation and downloaded filenames compared. Raw browser HTTP request bytes were not captured."
+}
