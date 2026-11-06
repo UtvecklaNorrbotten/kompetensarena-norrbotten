@@ -4,6 +4,31 @@ Senast uppdaterat: 2026-11-06. Repo `UtvecklaNorrbotten/kompetensarena-norrbotte
 Arbetsgren `fix/uka-verified-checkpoint-import`, utkast PR #82.
 Ingen merge eller produktionsimport har gjorts av denna utredning.
 
+## Ny prövning: studieform först
+
+Den alternativa strategin `study-first` väljer Studieform endast vid roten och går sedan
+Ämnesområde → Ämnesdelområde → Ämnesgrupp. Ämnestotaler utan studieformsval hämtas via
+rotens ämnesgrenar. Källtotaler summeras aldrig. Gamla `all-routes` är oförändrad standard;
+strategier kan inte bytas i en existerande kö. Den permanent blockerade kön bevaras.
+
+Verifierat 2026-11-06: Fristående kurser först ger rätt Övrigt-gren under både Medicin
+(38,1 HST, medicinska ämnesgrupper) och Naturvetenskap (56,2 HST, naturvetenskapliga grupper).
+Samtliga 48 observationsnycklar och värden för uni:171/Kvinnor/2025-26 över fyra åldrar
+är identiska med full referenstraversering. Kontrollskript `scripts/uka_study_first_probe.py`
+och `uka-study-first-evidence-2026-11-06.json` dokumenterar jämförelsen.
+
+Lokalt större prov: separat `national-study-first.sqlite` nådde 54 färdiga noder,
+1 199 observationer, 199 väntande och inga fel. Stoppet var en uttrycklig budget om
+24 nya anrop. Detta bevisar ännu inte full ämnes-/lärosätestäckning. Kön finns i
+`output/uka-conflict-42210008954/`, med samma snapshot 2026-11-06.
+Workflowet prövar också strategin separat och sparar den nya kön i samma artefakt.
+Enhetstester: 38 i den femdelade diagnostiksviten; 46 när samtliga test_uka*.py körs.
+
+Nästa steg: återställ den senaste artefakten som innehåller `national-study-first.sqlite`,
+återuppta just denna kö och verifiera full graf, källhierarki, universitetslistor samt flera
+perioder/kön/åldrar. Att vägen fungerar för två Övrigt-grenar är inte bevis för att andra
+kontextfel saknas. CSV-likvärdighet och fullständig produktionsimport är fortfarande overifierade.
+
 ## Aktuell spärr – läs detta först
 
 Senaste större körning **42210008954** stoppade korrekt vid en permanent källkontextkonflikt,

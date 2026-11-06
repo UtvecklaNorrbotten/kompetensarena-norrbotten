@@ -1,3 +1,9 @@
+> Uppdatering 2026-11-06: en separat `study-first`-strategi undviker de tvetydiga
+> Ämne→Studieform-länkarna genom att välja Studieform vid roten. Båda Övrigt-grenarnas
+> värden och ämnesgrupper är verifierade. 48 smågrafsobservationer är exakt lika referensen.
+> Ett större lokalt prov nådde 54 noder/1 199 observationer utan fel, men grafen är ofullständig.
+> Se UKA_RESTART.md och uka-study-first-evidence-2026-11-06.json. Ingen produktion är ändrad.
+
 # UKÄ: källutredning och importarkitektur
 
 Datum: 2026-11-06. Arbetsgren: `fix/uka-verified-checkpoint-import`, PR #82.

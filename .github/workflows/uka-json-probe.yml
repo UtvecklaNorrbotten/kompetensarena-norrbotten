@@ -7,6 +7,7 @@ on:
       - scripts/uka_hst_complete_probe.py
       - scripts/uka_json_plan.py
       - scripts/uka_json_queue.py
+      - scripts/uka_study_first_probe.py
       - tests/test_uka_json_probe.py
       - tests/test_uka_hst_complete_probe.py
       - tests/test_uka_json_plan.py
@@ -79,6 +80,12 @@ jobs:
         env:
           SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
         run: python scripts/uka_json_plan.py --snapshot "$SNAPSHOT" --output output/uka-json-probe/plan.json
+      - name: Pröva studieform före ämneshierarki i separat kö
+        env:
+          SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
+        run: |
+          python scripts/uka_study_first_probe.py --cache output/uka-json-probe --snapshot "$SNAPSHOT" --output output/uka-json-probe/study-first-evidence.json --max-new-requests 4
+          python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8' --snapshot "$SNAPSHOT" --strategy study-first --database output/uka-json-probe/national-study-first.sqlite --cache output/uka-json-probe --max-new-requests 60 --max-nodes 120 --seconds 120
       - name: Verifiera begränsade JSON-urval – ingen produktionsimport
         env:
           SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}

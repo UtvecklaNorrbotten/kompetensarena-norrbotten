@@ -1,0 +1,57 @@
+{
+  "publish_allowed": false,
+  "full_coverage_verified": false,
+  "small_graph_comparisons": [
+    {
+      "age": "Total",
+      "observations": 12,
+      "exact_keys_and_values_equal": true,
+      "source_total": "61.5"
+    },
+    {
+      "age": "8",
+      "observations": 12,
+      "exact_keys_and_values_equal": true,
+      "source_total": "14.4"
+    },
+    {
+      "age": "9",
+      "observations": 12,
+      "exact_keys_and_values_equal": true,
+      "source_total": "24.2"
+    },
+    {
+      "age": "10",
+      "observations": 12,
+      "exact_keys_and_values_equal": true,
+      "source_total": "22.9"
+    }
+  ],
+  "parent_context_checks": [
+    {
+      "area": "Medicin och odontologi",
+      "study": "Fristående kurser",
+      "subarea": "Övrigt",
+      "value": "38.1",
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=12ab49225797148f21812a058af4630b755930ae&gender=Kvinnor&age_group=8",
+      "subject_groups": [
+        "Biomedicinsk laboratorievetenskap",
+        "Medicinska tekniker",
+        "Övrigt inom medicin"
+      ]
+    },
+    {
+      "area": "Naturvetenskap",
+      "study": "Fristående kurser",
+      "subarea": "Övrigt",
+      "value": "56.2",
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=fdc158ac61cb17a0bbdbcd363ba99577f4048990&gender=Kvinnor&age_group=8",
+      "subject_groups": [
+        "Husdjursvetenskap",
+        "Livsmedelsvetenskap",
+        "Övrigt inom naturvetenskap"
+      ]
+    }
+  ],
+  "new_requests": 0
+}

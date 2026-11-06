@@ -36,6 +36,36 @@ class MemoryProbe:
 
 
 class QueueTests(unittest.TestCase):
+    def test_study_first_equals_all_routes_for_unambiguous_source(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            results = []
+            for strategy in ('all-routes', 'study-first'):
+                with Queue(Path(tmp) / (strategy + '.sqlite'), ROOT, 'example', strategy) as q:
+                    result = q.run(MemoryProbe(fixture()))
+                    self.assertTrue(result['graph_closed'])
+                    results.append(sorted((r['dimensions'], r['value']) for r in q.db.execute('SELECT dimensions,value FROM nodes')))
+            self.assertEqual(*results)
+
+    def test_study_first_avoids_polluted_subject_to_study_links(self):
+        data = fixture()
+        data[ROOT + '&group_slug=A']['groups'][0]['totals'].append(
+            {'name': 'Exempelform', 'url': ROOT + '&group_slug=WRONG', 'value': 999})
+        with tempfile.TemporaryDirectory() as tmp:
+            with Queue(Path(tmp) / 'q.sqlite', ROOT, 'example', 'study-first') as q:
+                probe = MemoryProbe(data)
+                result = q.run(probe)
+                self.assertTrue(result['graph_closed'])
+                self.assertEqual(result['observations'], 4)
+                self.assertNotIn(ROOT + '&group_slug=WRONG', probe.calls)
+
+    def test_strategy_cannot_change_when_resuming_queue(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / 'q.sqlite'
+            with Queue(path, ROOT, 'example'):
+                pass
+            with self.assertRaisesRegex(ValueError, 'mismatch'):
+                Queue(path, ROOT, 'example', 'study-first')
+
     def test_only_temporary_transport_and_selected_http_errors_are_retryable(self):
         for status in (408, 425, 429, 500, 502, 503, 504, 400, 401, 403, 404, 422):
             response = requests.Response(); response.status_code = status

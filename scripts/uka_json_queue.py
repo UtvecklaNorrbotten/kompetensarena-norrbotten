@@ -23,7 +23,10 @@ def transient_error(error):
 
 
 class Queue:
-    def __init__(self, path, root_url, snapshot):
+    def __init__(self, path, root_url, snapshot, strategy="all-routes"):
+        if strategy not in ("all-routes", "study-first"):
+            raise ValueError("Unknown discovery strategy")
+        self.strategy = strategy
         root = validate_url(root_url, 33)
         period = root['year']
         path = Path(path); path.parent.mkdir(parents=True, exist_ok=True)
@@ -38,6 +41,8 @@ class Queue:
         self.root = root
         self.period = period
         binding = {'version': 1, 'root': self.root, 'snapshot': snapshot, 'indicator': 33}
+        if strategy != 'all-routes':
+            binding['strategy'] = strategy
         self.db.executescript('''
           CREATE TABLE IF NOT EXISTS meta (binding TEXT NOT NULL);
           CREATE TABLE IF NOT EXISTS nodes (
@@ -107,6 +112,11 @@ class Queue:
                                          'value': None if row['value'] is None else canonical_value(str(row['value'])),
                                          'dimensions': dims})
             elif column in (*SUBJECT_LEVELS, 'Studieform'):
+                # Enumerate Study x Subject using Study selections at the root only.
+                # Subject -> Study links are ambiguous for reused subject code 1051.
+                # The original all-routes strategy and its blocked queue stay intact.
+                if self.strategy == 'study-first' and column == 'Studieform' and dims:
+                    continue
                 if column in dims:
                     raise ValueError('Source reoffers selected dimension')
                 for row in group.get('totals', []):
@@ -178,7 +188,7 @@ class Queue:
         if reason == 'graph_exhausted' and states.get('retry_wait'):
             reason = 'retry_backoff'
         done = self.db.execute("SELECT observations FROM nodes WHERE status='done'").fetchall()
-        return {'stop_reason': reason, 'processed_this_run': processed, 'states': states,
+        return {'strategy': self.strategy, 'stop_reason': reason, 'processed_this_run': processed, 'states': states,
                 'observations': sum(len(json.loads(r['observations'])) for r in done),
                 'university_codes': sorted({o['university'] for r in done for o in json.loads(r['observations'])}),
                 'errors': [dict(r) for r in self.db.execute("SELECT url,error,error_kind,attempts,retry_after FROM nodes WHERE status IN ('error','retry_wait') LIMIT 10")],
@@ -191,6 +201,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root-url', required=True)
     parser.add_argument('--snapshot', default=date.today().isoformat())
+    parser.add_argument('--strategy', choices=('all-routes', 'study-first'), default='all-routes')
     parser.add_argument('--database', default='output/uka-json-probe/queue.sqlite')
     parser.add_argument('--cache', default='output/uka-json-probe')
     parser.add_argument('--max-new-requests', type=int, default=0)
@@ -200,7 +211,7 @@ if __name__ == '__main__':
     if args.max_new_requests < 0 or args.max_nodes < 1 or args.seconds <= 0:
         parser.error('Invalid work budget')
     probe = Probe(args.cache, args.snapshot, budget=args.max_new_requests)
-    with Queue(args.database, args.root_url, args.snapshot) as queue:
+    with Queue(args.database, args.root_url, args.snapshot, strategy=args.strategy) as queue:
         result = queue.run(probe, args.max_nodes, args.seconds)
     write_json(Path(args.database).with_suffix('.summary.json'), result)
     print(json.dumps(result, ensure_ascii=False, indent=2))
