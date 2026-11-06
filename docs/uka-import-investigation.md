@@ -1,3 +1,14 @@
+> Nyaste källverifiering 2026-11-06: breda HST-CSV-uttag fungerar. 857 nationella
+> observationsnycklar/värden matchar JSON exakt. Gemensamma lärosätesuttag matchar
+> disjunkta uttag exakt (14 705 respektive 14 975 observationer i två läsår).
+> 144 uni:171- och 366 LTU-observationer matchar också JSON, liksom fyra källtotaler.
+> Det visar att den tidigare hypotesen om generellt trasig CSV-export var för bred.
+> Minimala nollbytesvar kvarstår som historisk evidens; intern orsak är okänd.
+> Senare minimikontroller blockerades av lokal proxy och ger ingen källslutsats.
+> Nästa steg är CSV-paket med fulla dimensioner per period/lärosäten, anslutna till
+> stagingkontrollerna. Den stora JSON-budgetökningen startades inte.
+> Läs UKA_RESTART.md och uka-csv-bulk-evidence-2026-11-06.json först.
+
 > Senaste genomförande 2026-11-06: fryst tioårsplan med 1 305 urval och ett
 > stagingjobb per indikator (högst två samtidigt). Körning 42228224045 passerade;
 > 48 urval och 25 342 observationer är kontrollerade och sparade i filbaserad staging.

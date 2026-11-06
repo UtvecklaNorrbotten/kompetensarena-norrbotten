@@ -4,6 +4,46 @@ Senast uppdaterat: 2026-11-06. Repo `UtvecklaNorrbotten/kompetensarena-norrbotte
 Arbetsgren `fix/uka-verified-checkpoint-import`, utkast PR #82.
 Ingen merge eller produktionsimport har gjorts av denna utredning.
 
+## Nyaste fynd: breda CSV-paket fungerar och matchar JSON
+
+Den exakta breda Riket-frågan från PR #81 gick att reproducera. För Kvinnor/-24/2025-26
+är **857/857 observationsnycklar och värden identiska** mellan CSV och hela JSON-grafen.
+Lärosäte, period, kön, ålder, studieform och hela ämnesvägen ingår i nyckeln; värdet gör det inte.
+
+Sju HST-exporter för Riket, LTU och uni:171, 2025/26 och 2016/17, alla kön och åldrar,
+är nu jämförda. Gemensamt uttag är exakt lika disjunkta lärosätesuttag:
+**14 705 observationer 2025/26** och **14 975 observationer 2016/17**.
+Alla 144 uni:171-observationer 2025/26 och 366 LTU-observationer för Kvinnor/-24
+matchar också motsvarande JSON-källobservationer. Fyra separata kontroller av källans
+egna grand total-värden passerar. Inga totaler summeras.
+
+Uni:171 saknar rader 2016/17 i ett lyckat bredare CSV-uttag där lärosätet uttryckligen
+begärdes; lärosätet saknas även i den bredare JSON-lärosäteslistan för perioden.
+Det ger positivt referensstöd för ett logiskt tomt urval. Ett direkt nollbyte-/500-svar
+är fortfarande ett tekniskt fel och får aldrig bli nollvärden.
+
+Detta korrigerar en alltför bred arbetshypotes: CSV-tjänsten är inte generellt obrukbar.
+De tidigare minimala nollbytesvaren är verifierade historiska observationer, men intern
+orsak och eventuell filter-/cache-/tidsberoende effekt är inte fastställda. Nya försök att
+återkontrollera de minimala frågorna blockerades av den lokala nätverksproxyn (tunnel 403)
+och säger inget om UKÄ:s aktuella respons. Inga sådana fel klassas som tomma data.
+
+Även indikator 97 och 99 har varsin CSV-jämförelse med **66/66 identiska nycklar/värden**
+för Riket/LTU/Total kön/Total ålder i senaste perioden. Övriga CSV-piloter är inte verifierade;
+metadataanrop för indikator 13 gav HTTP 503. Dra inga slutsatser om tomhet av det.
+
+`tests/fixtures/uka-hst-bulk-2026-11-06.zip` bevarar de sju CSV-filerna och kvittona
+(437 kB komprimerat). `scripts/uka_csv_bulk_probe.py` jämför dem mot den sparade JSON-basen
+med **0 nya exporter** som standard. Referenserna körs offline i JSON-workflowet.
+Dokumentation: `uka-csv-bulk-evidence-2026-11-06.json`,
+`uka-independent-hst-reference-2026-11-06.json` och `uka-other-csv-reference-2026-11-06.json`.
+
+Nästa steg är att ansluta den verifierade CSV-paketmetoden till kampanjens staging,
+med period/lärosätespaket, positiva täckningskontroller och JSON som kontroll/reserv.
+Det kan undvika många tunga JSON-anrop. Börja inte med stora nya JSON-budgetar innan
+CSV-vägen utvärderats. Alla nya kodtester passerar lokalt (79 UKÄ-tester).
+Ingen merge eller produktionsimport är gjord. Hela tioårsdata är fortfarande ofullständiga.
+
 ## Nyast: tioårsplan och återstartbar filbaserad staging
 
 Första kompletta stagingomgången **42228224045** passerade testjobb, alla tio
@@ -11,9 +51,11 @@ indikatorjobb och gemensam täckningskontroll. **48 av 1 305 urval** är färdig
 **25 342 källkontrollerade observationer** finns i staging. **1 257 urval är inte färdiga**.
 Budgetarna är avsiktliga; grön staging betyder inte färdig tioårshistorik eller publicering.
 
-`config/uka_staging_campaign.json` anger nu `resume_run=42228224045` och
-**0 nya anrop per indikator** för kontroll av återstarten. När verifieringen är klar kan
-budgeten höjas inom angivna gränser för nästa avgränsade hämtning. Ändra inte manifest,
+Återstarten i GitHub **42242045989** passerade med 0 nya anrop, oförändrade
+48 färdiga urval och oförändrade stagingkontrollsummor för samtliga tio indikatorer.
+`config/uka_staging_campaign.json` återupptar denna omgång med **0 nya anrop** medan
+CSV-paketmetoden nedan verifieras. Den planerade större JSON-omgången startades inte.
+Ändra inte manifest,
 snapshot eller indikatorpolicy i en befintlig kampanj.
 
 Gemensam bas: `source_run=42227843941`, artefakt `uka-json-probe` ID **13506706544**,

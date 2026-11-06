@@ -208,5 +208,82 @@
       "new_requests": 0,
       "staging_sha256": "5856d8fdbc7731aa5dbb8165434c1b606c18ccca6243cd9f0960779218f9e99e"
     }
-  ]
+  ],
+  "github_zero_budget_replay": {
+    "run_id": "42242045989",
+    "all_ten_hashes_unchanged": true,
+    "new_requests": 0,
+    "indicators": [
+      {
+        "indicator": 97,
+        "sha": "3d64e5915d47acf8ef22bff1a94f65a26ca5f668cd71a75ddd7a3fdb6855552e",
+        "requests": 0,
+        "completed": 3,
+        "observations": 1266
+      },
+      {
+        "indicator": 13,
+        "sha": "41e233ba0f0650846ece15b4e14bbb7f440f0758a4a20b9db2644bf8cb8b7715",
+        "requests": 0,
+        "completed": 3,
+        "observations": 1281
+      },
+      {
+        "indicator": 134,
+        "sha": "55bed0aaa26db5323166988c5d8744ac0f99eb23658a8e5d78ac31b107b59732",
+        "requests": 0,
+        "completed": 3,
+        "observations": 1445
+      },
+      {
+        "indicator": 135,
+        "sha": "a1140779057f569c5e706bc5e479ef57c30d6c332a819bef6d4cd862c42ee662",
+        "requests": 0,
+        "completed": 19,
+        "observations": 2006
+      },
+      {
+        "indicator": 136,
+        "sha": "5856d8fdbc7731aa5dbb8165434c1b606c18ccca6243cd9f0960779218f9e99e",
+        "requests": 0,
+        "completed": 2,
+        "observations": 1336
+      },
+      {
+        "indicator": 77,
+        "sha": "8cd784177f25bddabd656a2672e755eaa5e9acee014d5215885026691b9d364d",
+        "requests": 0,
+        "completed": 8,
+        "observations": 3997
+      },
+      {
+        "indicator": 108,
+        "sha": "4c2fc0711cdb43914b4a794b180c6b6bf9e04e532221b7a9d29b89769281a604",
+        "requests": 0,
+        "completed": 2,
+        "observations": 2048
+      },
+      {
+        "indicator": 33,
+        "sha": "8dc51aa302a694b4af67eddebb358ec0bd0fe0c7442d5a4df669f70fc06c27cc",
+        "requests": 0,
+        "completed": 1,
+        "observations": 9731
+      },
+      {
+        "indicator": 31,
+        "sha": "5a79e805669ccad57be09852788aeed36420c738502caaf2e275a5ccac6377ce",
+        "requests": 0,
+        "completed": 4,
+        "observations": 895
+      },
+      {
+        "indicator": 99,
+        "sha": "e626360d2b115af9cf021f6ea6146e83380a0776681861858920a975f2e3bb0b",
+        "requests": 0,
+        "completed": 3,
+        "observations": 1337
+      }
+    ]
+  }
 }

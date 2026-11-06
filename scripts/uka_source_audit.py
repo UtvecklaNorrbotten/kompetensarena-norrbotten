@@ -180,6 +180,7 @@ class Source:
         self.session.headers.update({"User-Agent": "Kompetensarena-UKA-ReadOnly-Audit/1.0",
                                      "X-Requested-With": "XMLHttpRequest"})
         self.network_exports = 0
+        self.export_budget = None
 
     def json_total(self, indicator, university, period):
         """Independent API total; never derive it by summing groups or genders."""
@@ -240,6 +241,8 @@ class Source:
                 parsed = parse_csv(raw)
                 if parsed["status"] == "data":
                     return {**cached, **parsed, "cached": True}
+        if self.export_budget is not None and self.network_exports >= self.export_budget:
+            raise RuntimeError("CSV export budget exhausted")
         self.network_exports += 1
         evidence = {"spec": spec, "key": key, "cached": False}
         try:

@@ -1,0 +1,23 @@
+{
+  "key": "fc94689c76a12f4e300f1b5f110fd12e890e62d6f783cce58185ee36aae50fe0",
+  "cached": false,
+  "export_http": 200,
+  "file_url": "https://statistik-www.uka.se/export//cache/2026-11-06-b106715bc03b_33.csv",
+  "download_http": 200,
+  "bytes": 362623,
+  "sha256": "9afaaaf8eed4cdc1fd6a4f707cb0248a053d299a29bfcfb471dc7bfb750a1b5c",
+  "status": "data",
+  "headers": [
+    "Tidsperiod",
+    "Lärosäte",
+    "Studieform",
+    "Ämnesområde[0]",
+    "Ämnesdelområde[1]",
+    "Ämnesgrupp[2]",
+    "Kön",
+    "Åldersgrupp",
+    "Värde"
+  ],
+  "row_count": 3420,
+  "reference": "Exact full-subject, all-age Riket/Kvinnor/2025-26 filter selection from PR81"
+}

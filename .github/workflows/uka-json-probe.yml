@@ -9,6 +9,9 @@ on:
       - scripts/uka_json_queue.py
       - scripts/uka_study_first_probe.py
       - scripts/uka_hst_coverage.py
+      - scripts/uka_csv_bulk_probe.py
+      - tests/test_uka_csv_bulk_probe.py
+      - tests/fixtures/uka-hst-bulk-2026-11-06.zip
       - scripts/uka_hst_validation.py
       - scripts/uka_indicator_routes.py
       - scripts/uka_indicator_validation.py
@@ -59,6 +62,7 @@ jobs:
           python -m unittest discover -s tests -p test_uka_json_plan.py -v
           python -m unittest discover -s tests -p test_uka_json_queue.py -v
           python -m unittest discover -s tests -p test_uka_hst_coverage.py -v
+          python -m unittest discover -s tests -p test_uka_csv_bulk_probe.py -v
           python -m unittest discover -s tests -p test_uka_hst_validation.py -v
           python -m unittest discover -s tests -p test_uka_indicator_routes.py -v
       - name: Välj verifierad återstartspunkt
@@ -123,6 +127,22 @@ jobs:
         env:
           SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
         run: python -u scripts/uka_indicator_validation.py --cache output/uka-json-probe --snapshot "$SNAPSHOT" --max-new-requests 1000 --seconds 600
+      - name: Verifiera fångade CSV-referenser utan nätverksanrop
+        env:
+          SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import zipfile
+          root = Path('output/uka-json-probe/csv-bulk').resolve()
+          root.mkdir(parents=True, exist_ok=True)
+          with zipfile.ZipFile('tests/fixtures/uka-hst-bulk-2026-11-06.zip') as archive:
+              for item in archive.infolist():
+                  if not (root / item.filename).resolve().is_relative_to(root):
+                      raise ValueError('Unsafe reference archive')
+              archive.extractall(root)
+          PY
+          python scripts/uka_csv_bulk_probe.py --root output/uka-json-probe/csv-bulk --metadata output/uka-json-probe/csv-bulk/export-filters.json --json-cache output/uka-json-probe --snapshot "$SNAPSHOT" --max-new-exports 0
       - name: Kontrollera att det gamla källfelet fortfarande blockeras
         env:
           SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
