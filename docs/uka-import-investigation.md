@@ -47,6 +47,12 @@ JSON-API:t ger **139,5** för uni:171 samma läsår. Dessa värden har hämtats 
 Detta stödjer att det aktuella exportproblemet inte är ett bevis på saknade HST-data.
 Den interna orsaken i UKÄ:s PHP/exporttjänst är inte verifierad.
 
+Den slutliga kontrollkörningen 42185017866 bekräftar nollbytefiler för **samtliga tio**
+minimala indikatoruttag, medan det oberoende JSON-API:t returnerar totalvärden för samma perioder.
+Den befintliga R-klienten misslyckas också med det minimala HST-uttaget efter tre försök
+(jobb 127783245416). Felet kan därmed inte förklaras enbart av den nya Python-klienten.
+Kontrollresultat och värden finns i `uka-source-control-2026-11-06.json`.
+
 Kontroller av alternativa gruppindex (webbgränssnittets JavaScript numrerar om grupper),
 indexerade formulärfält samt normalisering av dubbla snedstreck i fil-URL gav inte fungerande minimala exporter.
 Ingen av dessa hypoteser används därför som produktionsfix.
@@ -139,6 +145,9 @@ Implementerat i PR #82:
 
 Lokalt: tio enhetstester passerar. De är test av kontrollmekanismer, inte bevis för UKÄ-datatäckning.
 Första live-kampanjen: https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/runs/42184028162.
+Slutlig kampanj med minimal oberoende kontroll, begränsning av fortsatta uttag och R-kontroll:
+https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/runs/42185017866.
+Enhetstesterna passerade även i GitHub. Källjobben och R-kontrollen blev korrekt röda.
 Grönt får kräva alla obligatoriska jämförelser. Misslyckad referens eller överhoppad kontroll ger blockerat/rött resultat.
 
 Krav för produktionsgodkännande:

@@ -1,0 +1,192 @@
+{
+  "observed_date": "2026-11-06",
+  "workflow_run": 42185017866,
+  "code_commit": "b3adcff05218fdeaeb50ab5c92b73638c3f88689",
+  "meaning": "Minimal control selections; no production import or complete source snapshot",
+  "r_control": {
+    "job_id": 127783245416,
+    "result": "Three attempts using existing R/etl/uka_sync.R returned empty UKÄ export file"
+  },
+  "cases": [
+    {
+      "indicator": 13,
+      "job_id": 127783245665,
+      "control": {
+        "key": "aee11f3f50f161d318d3c27e28d99d039303e3c56eb2884c11defc3cf5820cfc",
+        "status": "technical_empty_body",
+        "independent_json_total": "104093"
+      },
+      "conclusion": "failure",
+      "new_production_observations": 0,
+      "period": "HT2026",
+      "selection": {
+        "university": "Riket",
+        "gender": "Total",
+        "age": "Total",
+        "dynamic_groups": "UKÄ Total for every offered group"
+      }
+    },
+    {
+      "indicator": 31,
+      "job_id": 127783245583,
+      "control": {
+        "key": "8f911315a5a914a952fb7b2e5b8b927d78b6bd22d8bc2bcf02f3247e73c6f549",
+        "status": "technical_empty_body",
+        "independent_json_total": "10869"
+      },
+      "conclusion": "failure",
+      "new_production_observations": 0,
+      "period": "VT2026",
+      "selection": {
+        "university": "Riket",
+        "gender": "Total",
+        "age": "Total",
+        "dynamic_groups": "UKÄ Total for every offered group"
+      }
+    },
+    {
+      "indicator": 33,
+      "job_id": 127783245545,
+      "control": {
+        "key": "3d2e2f052208d544e2ec8cf2892e5d4cb7d486ad420e9af1332f37770918a91e",
+        "status": "technical_empty_body",
+        "independent_json_total": "341246.6"
+      },
+      "conclusion": "failure",
+      "new_production_observations": 0,
+      "period": "2025/26",
+      "selection": {
+        "university": "Riket",
+        "gender": "Total",
+        "age": "Total",
+        "dynamic_groups": "UKÄ Total for every offered group"
+      }
+    },
+    {
+      "indicator": 77,
+      "job_id": 127783245667,
+      "control": {
+        "key": "0aded94341b5fff9448e7f5264bda01894abce7cfc620a56a8a8d0bd7629f967",
+        "status": "technical_empty_body",
+        "independent_json_total": "74.1"
+      },
+      "conclusion": "failure",
+      "new_production_observations": 0,
+      "period": "2024/25",
+      "selection": {
+        "university": "Riket",
+        "gender": "Total",
+        "age": "Total",
+        "dynamic_groups": "UKÄ Total for every offered group"
+      }
+    },
+    {
+      "indicator": 97,
+      "job_id": 127783245554,
+      "control": {
+        "key": "637776992f0bde4db2a673b3f9976785ce0f75e91255d5501b7a54648fd28ae0",
+        "status": "technical_empty_body",
+        "independent_json_total": "48829"
+      },
+      "conclusion": "failure",
+      "new_production_observations": 0,
+      "period": "HT2026",
+      "selection": {
+        "university": "Riket",
+        "gender": "Total",
+        "age": "Total",
+        "dynamic_groups": "UKÄ Total for every offered group"
+      }
+    },
+    {
+      "indicator": 99,
+      "job_id": 127783245810,
+      "control": {
+        "key": "c4cdbfd6616ca6f828f91bcb96bf00e8cd3cd77392a7954c6401ed1592b8eeda",
+        "status": "technical_empty_body",
+        "independent_json_total": "2.1"
+      },
+      "conclusion": "failure",
+      "new_production_observations": 0,
+      "period": "HT2026",
+      "selection": {
+        "university": "Riket",
+        "gender": "Total",
+        "age": "Total",
+        "dynamic_groups": "UKÄ Total for every offered group"
+      }
+    },
+    {
+      "indicator": 108,
+      "job_id": 127783245749,
+      "control": {
+        "key": "ab65fd4587949bd7b95bb93a44e92dc3db22114653d1be5acf519b15f2bc98f3",
+        "status": "technical_empty_body",
+        "independent_json_total": "76705"
+      },
+      "conclusion": "failure",
+      "new_production_observations": 0,
+      "period": "2024/25",
+      "selection": {
+        "university": "Riket",
+        "gender": "Total",
+        "age": "Total",
+        "dynamic_groups": "UKÄ Total for every offered group"
+      }
+    },
+    {
+      "indicator": 134,
+      "job_id": 127783245680,
+      "control": {
+        "key": "e2e16799d26b21d1583dda83c95a8997d3949d8c997841a011c2306e8428f22c",
+        "status": "technical_empty_body",
+        "independent_json_total": "78"
+      },
+      "conclusion": "failure",
+      "new_production_observations": 0,
+      "period": "2023/24",
+      "selection": {
+        "university": "Riket",
+        "gender": "Total",
+        "age": "Total",
+        "dynamic_groups": "UKÄ Total for every offered group"
+      }
+    },
+    {
+      "indicator": 135,
+      "job_id": 127783245699,
+      "control": {
+        "key": "549afcd14c2278eda3ad0638e29afccb582a9713fca492e6485a7dde6d1b9751",
+        "status": "technical_empty_body",
+        "independent_json_total": "54.2"
+      },
+      "conclusion": "failure",
+      "new_production_observations": 0,
+      "period": "2021/22",
+      "selection": {
+        "university": "Riket",
+        "gender": "Total",
+        "age": "Total",
+        "dynamic_groups": "UKÄ Total for every offered group"
+      }
+    },
+    {
+      "indicator": 136,
+      "job_id": 127783245693,
+      "control": {
+        "key": "e91fb574359c9114f7f43d400d466e38420696ae18bd6a1e675f456cb6abac2b",
+        "status": "technical_empty_body",
+        "independent_json_total": "84.8"
+      },
+      "conclusion": "failure",
+      "new_production_observations": 0,
+      "period": "2024",
+      "selection": {
+        "university": "Riket",
+        "gender": "Total",
+        "age": "Total",
+        "dynamic_groups": "UKÄ Total for every offered group"
+      }
+    }
+  ]
+}
