@@ -4,6 +4,26 @@ Datum: 2026-11-06. Arbetsgren: `fix/uka-verified-checkpoint-import`, PR #82.
 Status: diagnostik implementerad, importmetod och produktionspublicering **inte godkända**.
 Ingen ändring av produktionsimport, databasschema eller produktionsdata i denna gren.
 
+## Aktuellt resultat: JSON-kontextkonflikt blockerar fortsatt hämtning
+
+Den större fortsättningen från sparad artefakt stoppade i körning **42210008954** efter
+41 noder och 1 038 sparade observationer. Koden 1051/Övrigt förekommer under både
+Medicin och odontologi (914) och Naturvetenskap (915). JSON-noden för det medicinska
+delområdet annonserar dubbla studieformsetiketter. Direkta barnanrop för Fristående kurser
+ger 38,1 HST med medicinska ämnesgrupper respektive 56,2 HST med naturvetenskapliga ämnen.
+Detta är en verifierad kontextkonflikt i vårt JSON-uttag; samband med CSV-felet är inte fastställt.
+
+Metadata-parser version 2 bevarar båda föräldraplaceringarna i stället för att skriva över en.
+JSON-kömotorn gör selektiva återförsök av tillfälliga nätverksfel men blockerar datakonflikter.
+Körning **42211247897** passerade alla **35 enhetstester** och återställde den blockerade kön
+utan nya API-anrop. Källsteget förblev korrekt rött (`blocked_source_error`), med oförändrade
+1 038 sparade observationer. Ingen merge eller produktionsimport har gjorts.
+
+Läs `UKA_RESTART.md` och `uka-source-context-conflict-2026-11-06.json` före nästa körning.
+Den blockerade noden får inte öppnas genom att summera, slänga eller godtyckligt ge nya nycklar åt
+de dubbla etiketterna. Fullständig hierarkikontext eller ett korrigerat källuttag måste verifieras först.
+Felunderlaget till UKÄ är kompletterat men inte skickat.
+
 ## Uppföljning: webbexport och JSON-alternativ
 
 ### Uttömmande, avgränsat HST-prov
