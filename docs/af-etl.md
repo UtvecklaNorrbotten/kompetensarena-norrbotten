@@ -428,3 +428,27 @@ behöver bara agera på verkliga historiska förändringar.
 Efter införandet ska workflowet köras **en gång i läget `baseline`** för att skapa
 fingerprints för den redan publicerade historiken t.o.m. 2026-08. Därefter används
 läget `check`; schemalagda körningar använder alltid `check`.
+
+
+## Förväntad period och daglig kontroll
+
+AF:s månadsflöde använder `data_source_state` som beständig metadata i stället
+för en fristående metadatafil. Efter varje lyckad import sparas:
+
+- `latest_successful_period` – senast faktiskt importerad period,
+- `details.imported_period`,
+- `details.expected_period` – månaden efter senast importerad period,
+- `details.expected_check_from_local` – den 15:e i följande månad kl. 06:15
+  Europe/Stockholm,
+- kontrollpolicyn och källornas observerade perioder.
+
+Workflowet triggas dagligen på två UTC-tider för att följa svensk sommar- och
+vintertid. R-skriptet släpper bara igenom rätt lokala körning. Före den 15:e görs
+ingen extern AF-kontroll. Från den 15:e kontrolleras källorna dagligen tills
+`expected_period` finns synkroniserad i samtliga sex filer och har importerats.
+
+`expected_period` beräknas alltid som månaden efter
+`latest_successful_period`. Därmed fortsätter systemet att vänta på en försenad
+månad även över ett månadsskifte och kan inte tyst hoppa över en period. Om AF
+skulle hinna gå två perioder framåt innan den förväntade perioden importerats
+stoppas automatiken och flaggar glappet i stället.
