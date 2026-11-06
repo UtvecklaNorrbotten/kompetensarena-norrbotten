@@ -37,6 +37,18 @@ class AuditTests(unittest.TestCase):
         b[0]["Värde"] = "14.400"
         self.assertTrue(uka.compare(a, b)["exact"])
 
+    def test_matching_exports_cannot_hide_ignored_filters(self):
+        rows = uka.parse_csv(raw_csv())["rows"]
+        uka.validate_selection(rows, "from:2025/26", "Exempeluniversitet", "gender:Kvinnor", ["-24"])
+        for period, university, gender, ages in [
+            ("from:2024/25", "Exempeluniversitet", "gender:Kvinnor", ["-24"]),
+            ("from:2025/26", "Annat exempeluniversitet", "gender:Kvinnor", ["-24"]),
+            ("from:2025/26", "Exempeluniversitet", "gender:Män", ["-24"]),
+            ("from:2025/26", "Exempeluniversitet", "gender:Kvinnor", ["Total"]),
+        ]:
+            with self.assertRaisesRegex(ValueError, "unrequested"):
+                uka.validate_selection(rows, period, university, gender, ages)
+
     def test_duplicate_keys_rejected_even_when_values_differ(self):
         a = uka.parse_csv(raw_csv())["rows"]
         with self.assertRaisesRegex(ValueError, "Duplicate observation"):
@@ -98,6 +110,24 @@ class AuditTests(unittest.TestCase):
             self.assertEqual(source.session.post.call_count, 2)
             evidence = json.loads((Path(tmp) / "selections" / (first["key"] + ".json")).read_text())
             self.assertEqual(evidence["bytes"], 0)
+
+    def test_minimal_source_failure_prevents_larger_exports(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = uka.Source(tmp, "example-release")
+            source.metadata = Mock(return_value={
+                "metadata_hash": "meta", "groups": [],
+                "ages": [{"value": "age:1", "label": "Total"}],
+                "genders": [{"value": "gender:Total", "label": "Total"}],
+                "universities": [{"value": "uni:1", "label": "Riket"}],
+                "retained_periods": [{"value": "from:2025/26"}],
+            })
+            source.export = Mock(return_value={"key": "failed-control", "status": "technical_empty_body", "rows": []})
+            source.json_total = Mock(return_value="123")
+            report = uka.run_audit(source, 33)
+            self.assertFalse(report["verified"])
+            self.assertFalse(report["publish_allowed"])
+            self.assertEqual(source.export.call_count, 1)
+            self.assertEqual(report["control"]["independent_json_total"], "123")
 
 
 if __name__ == "__main__":

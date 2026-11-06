@@ -145,6 +145,21 @@ def compare(reference, candidate):
                          "changed": [{"key": k, "reference": a[k], "candidate": b[k]} for k in changed[:3]]}}
 
 
+def validate_selection(rows, period, university, gender, ages):
+    """Reject ignored/misapplied filters even if two exports agree with each other."""
+    observations(rows)
+    for row in rows:
+        if row["Tidsperiod"] != period.removeprefix("from:"):
+            raise ValueError("Source returned an unrequested period")
+        name = row["Lärosäte"] or "Riket"
+        if name != university:
+            raise ValueError("Source returned an unrequested university: " + name)
+        if row["Kön"] != gender.removeprefix("gender:"):
+            raise ValueError("Source returned an unrequested gender")
+        if row["Åldersgrupp"] not in ages:
+            raise ValueError("Source returned an unrequested age")
+
+
 class Source:
     def __init__(self, root, snapshot):
         self.root = Path(root)
@@ -153,6 +168,20 @@ class Source:
         self.session.headers.update({"User-Agent": "Kompetensarena-UKA-ReadOnly-Audit/1.0",
                                      "X-Requested-With": "XMLHttpRequest"})
         self.network_exports = 0
+
+    def json_total(self, indicator, university, period):
+        """Independent API total; never derive it by summing groups or genders."""
+        response = self.session.get(f"https://statistik-api.uka.se/api/totals/{indicator}/",
+                                    params={"university": university.removeprefix("uni:"),
+                                            "year": period.removeprefix("from:")}, timeout=60)
+        response.raise_for_status()
+        body = response.json()
+        write_json(self.root / "controls" / f"{indicator}-{digest([university, period])}.json", body)
+        values = [v["value"] for v in body.get("yearly_totals", {}).get("totals", [])
+                  if v.get("year") == period.removeprefix("from:")]
+        if len(values) != 1:
+            raise ValueError("Independent API does not confirm the requested source total")
+        return canonical_value(str(values[0]))
 
     def metadata(self, indicator):
         path = self.root / "metadata" / f"{indicator}.json"
@@ -235,6 +264,8 @@ def run_audit(source, indicator):
     dynamic = [g["index"] + v["value"] for g in meta["groups"] for v in g["values"]]
     ages = [v["value"] for v in meta["ages"]]
     genders = [v["value"] for v in meta["genders"]]
+    university_names = {v["value"]: v["label"] for v in meta["universities"]}
+    age_names = [v["label"] for v in meta["ages"]]
     locations = ["uni:1"]
     ltu = [v["value"] for v in meta["universities"] if v["label"] == "Luleå tekniska universitet"]
     locations += ltu
@@ -246,13 +277,40 @@ def run_audit(source, indicator):
     report = {"indicator": indicator, "metadata_hash": meta["metadata_hash"],
               "offered_periods": [v["value"] for v in periods], "offered_universities": meta["universities"],
               "offered_genders": genders, "offered_ages": ages, "cases": [], "publish_allowed": False}
+    # Check a tiny source total BEFORE requesting larger selections. A zero-byte
+    # file is a technical fault; recursive splitting only multiplies that fault.
+    period = selected_periods[0]
+    baseline_filters = [period, period.replace("from:", "to:", 1), "uni:1", "gender:Total", "age:1"]
+    baseline_filters += [g["index"] + "dynamic:TOTAL" for g in meta["groups"]]
+    baseline = source.export(indicator, baseline_filters, meta["metadata_hash"])
+    report["control"] = {"key": baseline["key"], "status": baseline["status"]}
+    try:
+        independent = source.json_total(indicator, "uni:1", period)
+        report["control"]["independent_json_total"] = independent
+        if baseline["status"] == "data":
+            validate_selection(baseline["rows"], period, "Riket", "gender:Total", ["Total"])
+            report["control"]["exact"] = len(baseline["rows"]) == 1 and canonical_value(baseline["rows"][0]["Värde"]) == independent
+    except (requests.RequestException, ValueError, KeyError) as error:
+        report["control"]["independent_error"] = str(error)
+    if not report["control"].get("exact", False):
+        report.update(verified=False, blocked="Minimal source total not verified; no larger requests made",
+                      network_exports=source.network_exports)
+        write_json(source.root / f"audit-{indicator}.json", report)
+        print(json.dumps(report["control"], ensure_ascii=False), flush=True)
+        return report
     largest = max(meta["groups"], key=lambda g: len(g["values"]), default=None)
     for period in selected_periods:
         for location in locations:
             for gender in genders:
                 base = [period, period.replace("from:", "to:", 1), location, gender] + ages
                 def export(filters):
-                    return source.export(indicator, base + filters, meta["metadata_hash"])
+                    result = source.export(indicator, base + filters, meta["metadata_hash"])
+                    if result["status"] == "data":
+                        try:
+                            validate_selection(result["rows"], period, university_names[location], gender, age_names)
+                        except ValueError as error:
+                            result = {**result, "status": "invalid_observations", "error": str(error)}
+                    return result
                 reference = export(dynamic)
                 case = {"period": period, "university": location, "gender": gender,
                         "reference": reference["key"], "reference_status": reference["status"], "checks": []}
