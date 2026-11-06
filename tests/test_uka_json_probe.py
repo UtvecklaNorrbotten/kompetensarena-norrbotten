@@ -1,6 +1,7 @@
 """Synthetic examples for the bounded JSON feasibility probe."""
 from pathlib import Path
 import sys
+import json
 import tempfile
 import unittest
 from unittest.mock import Mock
@@ -48,6 +49,25 @@ class JsonProbeTests(unittest.TestCase):
         self.assertIsNone(uka.edge_value(BASE, CHILD, body(None), None, 33))
         with self.assertRaises(ValueError):
             uka.edge_value(BASE, CHILD, body(0), None, 33)
+
+    def test_missing_value_field_is_not_source_null(self):
+        b = body(); del b['yearly_totals']['totals'][0]['value']
+        with self.assertRaisesRegex(ValueError, 'Missing source value'):
+            uka.yearly(b)
+
+    def test_cached_context_must_match_selected_snapshot_and_url(self):
+        for field, value in (('snapshot', 'wrong-snapshot'), ('url', CHILD)):
+            with tempfile.TemporaryDirectory() as tmp:
+                probe = uka.Probe(tmp, 'example', budget=1)
+                response = Mock(); response.json.return_value = body()
+                probe.session.get = Mock(return_value=response)
+                probe.get(BASE, 33)
+                path = next((Path(tmp) / 'responses').glob('*.json'))
+                cached = json.loads(path.read_text()); cached[field] = value
+                path.write_text(json.dumps(cached))
+                with self.assertRaisesRegex(ValueError, 'context mismatch'):
+                    probe.get(BASE, 33)
+                self.assertEqual(probe.session.get.call_count, 1)
 
     def test_cache_integrity_and_request_budget(self):
         with tempfile.TemporaryDirectory() as tmp:

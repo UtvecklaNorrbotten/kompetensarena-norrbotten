@@ -39,6 +39,8 @@ def validate_follow(parent, child, indicator):
 def yearly(body):
     result = {}
     for row in body.get("yearly_totals", {}).get("totals", []):
+        if "value" not in row:
+            raise ValueError("Missing source value field")
         key = row["year"]
         if key in result:
             raise ValueError("Duplicate source period")
@@ -76,6 +78,10 @@ class Probe:
         path = self.root / "responses" / (key + ".json")
         if path.exists():
             cached = json.loads(path.read_text())
+            if (cached.get("snapshot") != self.snapshot or
+                    validate_url(cached["url"], indicator) != query or
+                    str(cached["body"].get("indicator", {}).get("id")) != str(indicator)):
+                raise ValueError("Cached source context mismatch")
             if cached["sha256"] == digest(cached["body"]):
                 return cached["body"]
         if self.requests >= self.budget:

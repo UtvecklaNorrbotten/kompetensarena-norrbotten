@@ -9,6 +9,10 @@ on:
       - scripts/uka_json_queue.py
       - scripts/uka_study_first_probe.py
       - scripts/uka_hst_coverage.py
+      - scripts/uka_hst_validation.py
+      - scripts/uka_indicator_routes.py
+      - tests/test_uka_hst_validation.py
+      - tests/test_uka_indicator_routes.py
       - tests/test_uka_hst_coverage.py
       - docs/uka-hst-subject-paths-2026-11-06.json
       - tests/test_uka_json_probe.py
@@ -54,6 +58,8 @@ jobs:
           python -m unittest discover -s tests -p test_uka_json_plan.py -v
           python -m unittest discover -s tests -p test_uka_json_queue.py -v
           python -m unittest discover -s tests -p test_uka_hst_coverage.py -v
+          python -m unittest discover -s tests -p test_uka_hst_validation.py -v
+          python -m unittest discover -s tests -p test_uka_indicator_routes.py -v
       - name: Välj verifierad återstartspunkt
         id: checkpoint
         env:
@@ -102,6 +108,15 @@ jobs:
           python -u scripts/uka_hst_complete_probe.py "${args[@]}"
           python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8' --database output/uka-json-probe/resume-demo.sqlite --max-nodes 1 "${args[@]}"
           python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8' --database output/uka-json-probe/resume-demo.sqlite --max-nodes 100 "${args[@]}"
+      - name: Jämför fullständiga smågrafer över två perioder och alla kön och åldrar
+        env:
+          SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
+        run: python -u scripts/uka_hst_validation.py --cache output/uka-json-probe --snapshot "$SNAPSHOT" --max-new-requests 400 --seconds 480
+      - name: Kontrollera dimensionsvägar och lärosätesvärden för övriga nio indikatorer
+        if: ${{ !cancelled() && steps.checkpoint.outcome == 'success' }}
+        env:
+          SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
+        run: python -u scripts/uka_indicator_routes.py --cache output/uka-json-probe --snapshot "$SNAPSHOT" --max-new-requests 80
       - name: Kontrollera att det gamla källfelet fortfarande blockeras
         env:
           SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
@@ -158,6 +173,14 @@ jobs:
                   out.write(f"Strategi: {q.get('strategy', 'all-routes')}. Stopp: {q['stop_reason']}.\n\n")
                   out.write(f"Noder: {q['states']}. Observationer: {q['observations']}. Nya anrop: {q['network_requests_this_run']}.\n\n")
                   out.write(f"Graf färdig: {q['graph_closed']}. Publicering tillåten: {q['publish_allowed']}.\n\n")
+              campaign = Path('output/uka-json-probe/hst-validation.json')
+              if campaign.exists():
+                  c = json.loads(campaign.read_text())
+                  out.write(f"HST: {c.get('completed_cases', 0)}/24 fulla smågrafsprov matchar referensen. Nya anrop: {c.get('new_requests', 0)}.\n\n")
+              routes = Path('output/uka-json-probe/indicator-routes.json')
+              if routes.exists():
+                  r = json.loads(routes.read_text())
+                  out.write(f"Övriga indikatorer: {r['verified_period_samples']}/18 periodprov med direkt lärosätesreferens.\n\n")
               coverage = Path('output/uka-json-probe/hst-coverage.json')
               if coverage.exists():
                   c = json.loads(coverage.read_text())
