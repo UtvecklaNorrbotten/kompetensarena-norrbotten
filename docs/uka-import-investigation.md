@@ -1,3 +1,13 @@
+## Tillägg: CSV-paket jämfört med nationell staging, 2026-11-06
+
+Det skrivskyddade stagingtestet bekräftar 1 235 identiska CSV-/stagingobservationer för
+Riket/LTU/uni:171, Kvinnor/-24/2025-26. Det nationella stagingurvalet omfattar 9 731:
+8 496 observationer för andra lärosäten saknas i CSV-deluttaget. Deluttaget är korrekt
+inom sitt begärda urval men ofullständigt för det nationella jobbet och får inte färdigställa det.
+Ingen stagingrad ändras. Se `uka-csv-staging-audit-2026-11-06.json` och
+`scripts/uka_csv_staging_audit.py`. Detta är en integrationskontroll; CSV-importören
+för hela kampanjen är ännu inte implementerad.
+
 > Nyaste källverifiering 2026-11-06: breda HST-CSV-uttag fungerar. 857 nationella
 > observationsnycklar/värden matchar JSON exakt. Gemensamma lärosätesuttag matchar
 > disjunkta uttag exakt (14 705 respektive 14 975 observationer i två läsår).

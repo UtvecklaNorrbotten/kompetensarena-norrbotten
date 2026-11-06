@@ -4,6 +4,26 @@ Senast uppdaterat: 2026-11-06. Repo `UtvecklaNorrbotten/kompetensarena-norrbotte
 Arbetsgren `fix/uka-verified-checkpoint-import`, utkast PR #82.
 Ingen merge eller produktionsimport har gjorts av denna utredning.
 
+## Senaste verifieringen mot befintlig staging
+
+`scripts/uka_csv_staging_audit.py` jämför frysta CSV-paket med avslutade stagingurval
+via en skrivskyddad SQLite-anslutning. Snapshot, indikator, befintlig stagingkontrollsumma,
+observationsnycklar och värden kontrolleras. Inga rader eller jobbstatus ändras.
+
+Riket/LTU/uni:171-paketet 2025/26 har **1 235/1 235 identiska överlappande observationer**
+för Kvinnor/-24, men **8 496** av de **9 731** nationella referensobservationerna saknas.
+Ingen extra eller avvikande observation finns i överlappet. Därför får deluttaget inte
+färdigställa det nationella urvalet. Rapport: `uka-csv-staging-audit-2026-11-06.json`.
+Workflowet `uka-staging.yml` kör samma kontroll för HST utan nya exporter.
+Fem nya negativa/positiva tester täcker deluttag, värdeändring, lärosätesbyte, snapshot,
+period och manipulerad staging. **84 lokala UKÄ-tester passerar.**
+
+Föregående commit `c4de02e51bb8a884b21e45531e6c3af71af131ad` är verifierad i GitHub:
+CSV-/JSON-diagnostik **42250546000**, källtester **42250546020** och samtliga stagingjobb
+inklusive gemensam täckningskontroll **42250545962** passerade. Det nya staging-auditsteget
+ska dessutom verifieras efter denna commit. Staging är fortsatt 48/1 305 urval,
+25 342 observationer. Ingen merge eller produktionsimport.
+
 ## Nyaste fynd: breda CSV-paket fungerar och matchar JSON
 
 Den exakta breda Riket-frågan från PR #81 gick att reproducera. För Kvinnor/-24/2025-26
@@ -41,7 +61,7 @@ Dokumentation: `uka-csv-bulk-evidence-2026-11-06.json`,
 Nästa steg är att ansluta den verifierade CSV-paketmetoden till kampanjens staging,
 med period/lärosätespaket, positiva täckningskontroller och JSON som kontroll/reserv.
 Det kan undvika många tunga JSON-anrop. Börja inte med stora nya JSON-budgetar innan
-CSV-vägen utvärderats. Alla nya kodtester passerar lokalt (79 UKÄ-tester).
+CSV-vägen utvärderats. Alla nya kodtester passerar lokalt (84 UKÄ-tester).
 Ingen merge eller produktionsimport är gjord. Hela tioårsdata är fortfarande ofullständiga.
 
 ## Nyast: tioårsplan och återstartbar filbaserad staging

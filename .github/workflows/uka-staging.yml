@@ -4,6 +4,10 @@ on:
   pull_request:
     paths:
       - scripts/uka_campaign.py
+      - scripts/uka_csv_staging_audit.py
+      - scripts/uka_csv_bulk_probe.py
+      - tests/test_uka_csv_staging_audit.py
+      - tests/fixtures/uka-hst-bulk-2026-11-06.zip
       - scripts/uka_json_plan.py
       - scripts/uka_json_queue.py
       - tests/test_uka_campaign.py
@@ -93,6 +97,34 @@ jobs:
               json.dump({k: os.environ[k] for k in ('SOURCE_RUN','RESUME_RUN','SNAPSHOT','INDICATOR','GITHUB_SHA','GITHUB_RUN_ID')}, out, indent=2)
           PY
           python -u scripts/uka_campaign.py --indicator "$INDICATOR" --snapshot "$SNAPSHOT" --root output/uka-staging --base base/uka-json-probe --max-new-requests "$REQUESTS" --max-jobs "$JOBS_LIMIT" --seconds "$SECONDS_LIMIT"
+      - name: Kontrollera CSV-deluttag mot nationell staging utan nya anrop
+        if: matrix.indicator == 33
+        env:
+          SNAPSHOT: ${{ steps.campaign.outputs.snapshot }}
+        run: |
+          python - <<'PYCODE'
+          from pathlib import Path
+          import zipfile
+          root = Path('output/csv-reference').resolve()
+          root.mkdir(parents=True, exist_ok=True)
+          with zipfile.ZipFile('tests/fixtures/uka-hst-bulk-2026-11-06.zip') as archive:
+              for item in archive.infolist():
+                  if not (root / item.filename).resolve().is_relative_to(root):
+                      raise ValueError('Unsafe CSV fixture archive')
+              archive.extractall(root)
+          PYCODE
+          python scripts/uka_csv_staging_audit.py --root output/csv-reference --metadata output/csv-reference/export-filters.json --database output/uka-staging/campaign.sqlite --snapshot "$SNAPSHOT" --period 2025/26 --universities 1 32 171 --output output/uka-staging/csv-staging-audit.json
+          python - <<'PYCODE'
+          import json, os
+          r = json.load(open('output/uka-staging/csv-staging-audit.json'))
+          assert r['new_exports'] == 0 and not r['staging_written'] and not r['publish_allowed']
+          c = next(c for c in r['comparisons'] if c['gender'] == 'Kvinnor' and c['age'] == '-24')
+          assert c['identical_shared_values'] == c['shared_observations'] == 1235
+          assert c['only_reference'] == 8496 and c['only_actual'] == 0 and not c['different_values']
+          assert not c['national_selection_equivalent']
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
+              out.write('CSV-kontroll: 1 235 identiska observationer; 8 496 nationella referensobservationer saknas i deluttaget. Deluttaget får inte färdigställa det nationella urvalet.\n\n')
+          PYCODE
       - name: Spara staging, köer och enbart nya källsvar
         if: always()
         uses: actions/upload-artifact@v4
