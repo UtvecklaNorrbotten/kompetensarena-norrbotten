@@ -4,6 +4,53 @@ Senast uppdaterat: 2026-11-06. Repo `UtvecklaNorrbotten/kompetensarena-norrbotte
 Arbetsgren `fix/uka-verified-checkpoint-import`, utkast PR #82.
 Ingen merge eller produktionsimport har gjorts av denna utredning.
 
+## Senaste verifierade läge – alla tio indikatorer
+
+Körning **42223602896** passerade alla steg. Artefakt `uka-json-probe`,
+ID **13505255238**, utgår 2026-11-20. Konfigurationen pekar nu hit.
+Ingen merge, databasändring eller produktionsimport är gjord.
+
+- HST: den tidigare nationella grafen är färdig (857 noder, 9 731 observationer,
+  Kvinnor/-24/2025-26). Därutöver är **24/24** hela smågrafer för uni:171 verifierade:
+  2024/25 och 2025/26, Kvinnor/Män/Total och -24/25-34/35-/Total.
+  **288 observationsvärden och nycklar** är identiska mot full all-routes-referens.
+  Hela 24-fallskampanjen har återspelats med **0 nya anrop**.
+- Övriga nio: **18/18** periodprov (senaste/äldsta valda period) stämmer mot direkta
+  lärosätesanrop. Hela annonserade nationella grafen för senaste perioden/Total kön/Total ålder
+  är nu färdig för **9/9**, med **4 600 observationer och 0 dubbla observationsnycklar**.
+- Indikator 108 kräver även **Inriktning**, exempelvis inom Civilingenjörsexamina.
+  Ursprungliga `indicator-validation/108.sqlite` är bevarad med den korrekta spärren
+  Unknown source dimension: Inriktning. Den nya policyn har en separat kö,
+  `108-specialization.sqlite`; tidigare svar återanvändes från cache.
+  Resultat: 145 noder/1 238 observationer, 121 nya anrop. De övriga åtta köerna gjorde 0 nya anrop.
+- Kömotorn har uttryckliga tillåtna dimensioner för samtliga tio indikatorer.
+  Okända dimensioner, fel källvärden och dubbletter stoppar fortfarande en kö.
+  Icke-HST-policyer ingår i köbindningen och får inte ändras vid återstart.
+- **62 lokala tester** passerar (54 i JSON-workflowet). Saknat värdefält skiljs från uttrycklig
+  null; cachelagrad URL, indikator och snapshot måste stämma med det begärda urvalet.
+
+Bevisfiler: `uka-hst-validation-2026-11-06.json`, `uka-indicator-routes-2026-11-06.json`
+och `uka-national-validation-2026-11-06.json`.
+
+### Periodspecifik upptäckt behövs
+
+Programlistan för indikator 135 ändras med period. Agronomexamen har verifierat källvärde
+41,3 för 2012/13 men annonseras inte i 2021/22-urvalet. Det senare annonserar bara tre program.
+Se `uka-period-dependent-coverage-2026-11-06.json`. Bygg inte tioårshistoriken genom att
+bara upptäcka senaste periodens dimensioner. Den befintliga offlineplanen med periodvisa
+rotjobb ska behållas; varje period måste få en separat täckningskontroll.
+
+### Kvar före produktion
+
+Detta är avslutade annonserade grafer för avgränsade urval, inte full tioårs-/kön-/ålderstäckning.
+Olösta oannonserade urval får inte bli nollvärden. CSV-likvärdighet är fortfarande inte verifierad.
+Nästa steg är fullständig kampanjplan med källrevisioner och täckningsmanifest, därefter
+återstartbar staging samt serverkontroller före atomisk publicering. Repots nuvarande
+publicering kontrollerar klientangivna rad-/chunkantal och tar bort gammal aktiv batch;
+se publiceringsgranskningen sist i `uka-import-investigation.md`.
+
+## Tidigare verifieringar och historik
+
 ## Aktuellt genombrott – 2026-11-06
 
 Körning **42217378947** passerade samtliga steg. Den nya studieform-först-kön har

@@ -1,3 +1,12 @@
+> Nyaste läge 2026-11-06: Actions 42223602896 passerade. Samtliga tio indikatorer
+> stöds nu av den återstartbara diagnostikkön. HST:s 24 kön/ålders-/periodgrafer ger
+> 288 exakta referensmatchningar. De övriga nio har 18 godkända period-/lärosätesprov
+> och nio avslutade nationella grafer (4 600 observationer, noll dubbletter).
+> Examinerade kräver även Inriktning; stöd och separat verifierad kö är tillagda.
+> Programutbudet beror på period: indikator 135:s Agronomexamen 2012/13 (41,3)
+> saknas i senaste periodens programlista. Periodvisa rotjobb behövs.
+> Detta ger inte full tioårstäckning eller tillstånd till publicering.
+
 > Senaste verifiering 2026-11-06: Actions 42217378947 passerade. Hela annonserade
 > studieform-först-grafen för Riket/Kvinnor/-24/2025-26 är avslutad: 857 noder,
 > 9 731 observationer, inga väntande och inga fel. Metadata-audit ger noll dubbletter
@@ -274,3 +283,25 @@ Rapportera varje indikator separat och lämna en tidigare korrekt snapshot aktiv
 
 Se `uka-source-inventory-2026-11-06.json` för exakta periodlistor, antal lärosätesalternativ,
 kön, åldrar och gruppstruktur. Inventeringen är inte en rapport över importerade observationer.
+
+
+## Publiceringsgranskning efter utökad JSON-verifiering
+
+Granskning av repots kod, inte en kontroll av den driftsatta databasens funktioner:
+
+- `drizzle/migrations/0037_uka_nongeographic_storage.sql`: `uka_finalize_batch` kontrollerar
+  receiving/ready samt mottagna mot klientangivna rader och chunkar. Den byter aktiv batch
+  under transaktionslås. Det är ett transportsäkerhetsskydd, inte bevis för källtäckning.
+- Samma funktion tar bort föregående aktiva batch vid lyckad finalisering. Behåll föregående
+  korrekt snapshot tills käll- och publiceringskontrollerna är avslutade; gör därefter styrd gallring.
+- `R/etl/uka_sync.R`, `uka_publish_batch`: on.exit skickar abort vid varje misslyckande.
+  Även ett tillfälligt transportfel förlorar därmed möjligheten att fortsätta samma stagingbatch.
+- `src/lib/uka-etl.server.ts`, `handleUkaStart`: varje start skapar nytt körnings-ID och ny batch.
+  Återstart behöver en stabil importnyckel, samma manifesthash och ett progress/status-anrop;
+  färdiga chunkar ska inte laddas upp igen. Fel som bryter manifestet får inte automatiskt återöppnas.
+- Före byte av aktiv batch krävs hela planens färdiga hämtningar, frysta källmetadata,
+  kontrollerad period/kön/ålder/lärosätestäckning, unika observationsnycklar, bevarade källtotaler
+  och inga olösta tekniska tomsvar. Avslutad graf för ett urval räcker inte för en tioårssnapshot.
+
+Dessa ändringar är ännu inte implementerade eller driftsatta. Ingen migration eller
+produktionspublicering har gjorts inom diagnostiken. JSON-köerna saknar publiceringskapacitet.

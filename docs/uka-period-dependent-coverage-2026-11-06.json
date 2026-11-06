@@ -1,0 +1,19 @@
+{
+  "indicator": 135,
+  "source_urls": [
+    "https://statistik-api.uka.se/api/totals/135?university=1&year=2012%2F13",
+    "https://statistik-api.uka.se/api/totals/135?university=1&year=2021%2F22"
+  ],
+  "old_period": "2012/13",
+  "latest_period": "2021/22",
+  "historical_source_observation": {
+    "id": "3ee1be52a7407a83d74d3620fe4357683a21365f",
+    "name": "Agronomexamen",
+    "value": 41.3,
+    "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2012%2F13&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f"
+  },
+  "not_advertised_in_latest": true,
+  "meaning": "Latest-period graph alone omits advertised historical program observations. Period-specific discovery is required. No zero value is inferred.",
+  "direct_reference_verified": true,
+  "direct_reference_value": 41.3
+}
