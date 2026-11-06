@@ -25,7 +25,7 @@ def transient_error(error):
 SOURCE_DIMENSIONS = {
     13: ('Program',), 31: ('Studieform',),
     33: (*SUBJECT_LEVELS, 'Studieform'), 97: ('Program',), 99: ('Program',),
-    108: ('Examenskategori', 'Examen'), 136: ('Examen',),
+    108: ('Examenskategori', 'Examen', 'Inriktning'), 136: ('Examen',),
     77: ('Utbildningsnivå', 'Studieform'), 134: ('Program',), 135: ('Program',),
 }
 
@@ -96,9 +96,9 @@ class Queue:
     def checkpoint(self, node, body):
         dims = json.loads(node['dimensions'])
         groups = body.get('groups')
-        # Observed UKÄ convention: institution-level terminal nodes omit groups.
+        # Observed HST convention: institution-level terminal nodes omit groups.
         # Do not generalise this to missing root structure or national coverage.
-        if ('groups' not in body and self.root['university'] != '1' and
+        if ('groups' not in body and self.indicator == 33 and self.root['university'] != '1' and
                 all(k in dims for k in self.source_dimensions)):
             groups = []
         if str(body.get('indicator', {}).get('id')) != str(self.indicator) or not isinstance(groups, list):

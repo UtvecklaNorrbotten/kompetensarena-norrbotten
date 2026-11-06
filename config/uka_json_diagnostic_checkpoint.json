@@ -1,6 +1,6 @@
 {
-  "run_id": "42221914330",
+  "run_id": "42222716335",
   "snapshot": "2026-11-06",
   "artifact": "uka-json-probe",
-  "purpose": "Reuse completed 24-case HST campaign and 18 non-HST route samples plus full national HST graph; no production approval"
+  "purpose": "Reuse completed eight non-HST national graphs and 24 HST cases; preserve original 108 unknown-Inriktning failure; validate specialization in a new queue using cached responses"
 }

@@ -1,5 +1,6 @@
 """Synthetic crash/resume and transaction integrity examples."""
 import copy
+from decimal import Decimal
 import json
 from pathlib import Path
 import sys
@@ -36,6 +37,25 @@ class MemoryProbe:
 
 
 class QueueTests(unittest.TestCase):
+    def test_degree_indicator_follows_specialization_and_retains_source_totals(self):
+        root = ROOT.replace('/33?', '/108?')
+        data = {}
+        for slug, value, column, name, child, expected in (
+                ('', 100, 'Examenskategori', 'Exempelkategori', 'C', 40),
+                ('C', 40, 'Examen', 'Exempelcivilingenjör', 'E', 30),
+                ('E', 30, 'Inriktning', 'Exempelinriktning', 'S', 10)):
+            url = root + ('&group_slug=' + slug if slug else '')
+            data[url] = {'indicator': {'id': 108}, 'groups': [{'column': column, 'totals': [
+                {'name': name, 'value': expected, 'url': root + '&group_slug=' + child}]}],
+                'yearly_totals': {'totals': [{'year': '2025/26', 'value': value}]}}
+        data[root + '&group_slug=S'] = {'indicator': {'id': 108}, 'groups': [],
+            'yearly_totals': {'totals': [{'year': '2025/26', 'value': 10}]}}
+        with tempfile.TemporaryDirectory() as tmp, Queue(Path(tmp) / 'q.sqlite', root, 'example', indicator=108) as q:
+            r = q.run(MemoryProbe(data))
+            self.assertTrue(r['graph_closed'])
+            self.assertEqual(r['observations'], 4)
+            self.assertEqual({Decimal(json.loads(row[0])) for row in q.db.execute('SELECT value FROM nodes')}, {100, 40, 30, 10})
+
     def test_program_indicator_retains_decimal_source_values(self):
         root = ROOT.replace('/33?', '/99?')
         data = {root: {'indicator': {'id': 99}, 'groups': [{'column': 'Program', 'totals': [

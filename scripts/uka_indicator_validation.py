@@ -24,7 +24,9 @@ def run(cache, snapshot, inventory, budget=1000, seconds=600):
         period = item['periods'][0]
         url = BASE + f'/{indicator}?' + urlencode({'university': '1', 'year': period})
         probe = Probe(root, snapshot, budget=max(0, budget - requests))
-        with Queue(root / 'indicator-validation' / f'{indicator}.sqlite', url, snapshot, indicator=indicator) as queue:
+        # Preserve the original 108 queue as evidence of the missing dimension.
+        filename = '108-specialization.sqlite' if indicator == 108 else f'{indicator}.sqlite'
+        with Queue(root / 'indicator-validation' / filename, url, snapshot, indicator=indicator) as queue:
             result = queue.run(probe, max_nodes=300, seconds=max(0.1, seconds - (time.monotonic() - started)))
         requests += probe.requests
         report['indicators'].append({'indicator': indicator, 'period': period, 'gender': 'Total', 'age': 'Total', **result})
