@@ -4,6 +4,47 @@ Senast uppdaterat: 2026-11-06. Repo `UtvecklaNorrbotten/kompetensarena-norrbotte
 Arbetsgren `fix/uka-verified-checkpoint-import`, utkast PR #82.
 Ingen merge eller produktionsimport har gjorts av denna utredning.
 
+## Nyast: tioårsplan och återstartbar filbaserad staging
+
+Första kompletta stagingomgången **42228224045** passerade testjobb, alla tio
+indikatorjobb och gemensam täckningskontroll. **48 av 1 305 urval** är färdiga och
+**25 342 källkontrollerade observationer** finns i staging. **1 257 urval är inte färdiga**.
+Budgetarna är avsiktliga; grön staging betyder inte färdig tioårshistorik eller publicering.
+
+`config/uka_staging_campaign.json` anger nu `resume_run=42228224045` och
+**0 nya anrop per indikator** för kontroll av återstarten. När verifieringen är klar kan
+budgeten höjas inom angivna gränser för nästa avgränsade hämtning. Ändra inte manifest,
+snapshot eller indikatorpolicy i en befintlig kampanj.
+
+Gemensam bas: `source_run=42227843941`, artefakt `uka-json-probe` ID **13506706544**,
+sparad till 2026-12-06. Både JSON-diagnostiken och staging pekar på denna beständiga bas.
+Stagingomgången har tio separata artefakter `uka-staging-<id>`, sparade i 30 dagar.
+De innehåller indikatorns nya svar, egna källköer, stagingdatabas, körplan och rapport.
+Basens råsvar kopieras inte tio gånger. Alla artefakter i kedjan måste finnas vid återstart.
+
+Lokal återstart från samma sparade staging bevisar **0 nya anrop, oförändrat antal
+färdiga urval och oförändrad stagingkontrollsumma för alla tio indikatorer**.
+Se `uka-staging-progress-2026-11-06.json` och `UKA_CAMPAIGN.md` för protokoll och begränsningar.
+Rapporterna redovisar period, kön, ålder och lärosäteskoder per färdigt urval.
+
+Endast hela annonserade grafer får gå till staging. Varje värde/lärosäte och källhash
+kontrolleras mot sparat källsvar med noll nätverksbudget, samt HST:s ämneshierarki.
+Rader och färdigmarkering skrivs atomiskt. Färdiga stagingrader har kontrollsummor som
+måste stämma vid återstart. Pågående köer kan fortsätta utan att färdiga noder hämtas om.
+En budgetkontroll får inte göra ett tidigare tekniskt fel till ett godkänt tomt urval.
+
+**72 lokala tester passerar**, varav tio nya gäller kampanj och staging: avbrott/rollback,
+återstart, ändrat manifest, fel period, manipulerat värde, ändrad färdig staging,
+basläsning utan kopiering samt bibehållen felstatus vid nollbudget. Första GitHub-omgången
+stoppade i testmiljön på saknad openpyxl; beroendet är rättat och nästa omgång passerade.
+
+Ingen databasanslutning eller publicering finns i stagingkoden. Full källtäckning,
+tomsemantik och källversion är fortfarande overifierade. Publicering är alltid spärrad.
+Serverns återstartbara uppladdning/publiceringsmanifest återstår. Ingen merge,
+produktionsimport eller migration är gjord.
+
+## Föregående verifieringar
+
 ## Senaste verifierade läge – alla tio indikatorer
 
 Körning **42223602896** passerade alla steg. Artefakt `uka-json-probe`,

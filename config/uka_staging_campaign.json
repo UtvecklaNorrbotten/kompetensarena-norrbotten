@@ -1,8 +1,8 @@
 {
   "snapshot": "2026-11-06",
   "source_run": "42227843941",
-  "resume_run": "",
-  "max_new_requests_per_indicator": 120,
+  "resume_run": "42228224045",
+  "max_new_requests_per_indicator": 0,
   "max_seconds_per_indicator": 150,
   "max_jobs_per_indicator": 50
 }

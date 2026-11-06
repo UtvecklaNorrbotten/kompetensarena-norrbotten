@@ -1,6 +1,6 @@
 {
-  "run_id": "42223602896",
+  "run_id": "42227843941",
   "snapshot": "2026-11-06",
   "artifact": "uka-json-probe",
-  "purpose": "All ten indicators have completed advertised diagnostic graphs; 24 HST cases and 18 other-indicator period references verified; publication and full coverage remain unapproved"
+  "purpose": "Shared immutable source baseline retained 30 days, also used by partitioned staging. No production approval."
 }

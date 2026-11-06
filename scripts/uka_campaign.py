@@ -212,12 +212,16 @@ class Campaign:
         for row in self.db.execute('SELECT * FROM jobs ORDER BY ordinal'):
             spec = json.loads(row['spec']); summary = json.loads(row['summary']) if row['summary'] else {}
             coverage.append({**{k: spec[k] for k in ('period', 'gender', 'age')}, 'status': row['status'],
-                             'observations': summary.get('observations', 0), 'states': summary.get('states', {}),
+                             'observations': summary.get('observations', 0) if row['status'] == 'done' else 0,
+                             'university_codes': summary.get('university_codes', []) if row['status'] == 'done' else [],
+                             'validated_queue_observations': summary.get('observations', 0),
+                             'states': summary.get('states', {}),
                              'errors': summary.get('errors', [])})
         checksum = rows_digest(self.db.execute('SELECT key,payload,source_hash FROM observations ORDER BY key'))
         result = {'plan_id': self.plan['plan_id'], 'snapshot': self.plan['snapshot'],
                   'indicator': self.indicator, 'planned_jobs': len(coverage), 'job_states': statuses,
                   'completed_jobs': statuses.get('done', 0),
+                  'staged_university_codes': sorted({u for c in coverage for u in c['university_codes']}),
                   'observations': self.db.execute('SELECT count(*) FROM observations').fetchone()[0],
                   'staging_sha256': checksum, 'manifest_sha256': digest(self.manifest),
                   'global_planned_jobs': len(self.plan['jobs']), 'new_requests': requests, 'seeded_jobs': seeded,
@@ -269,6 +273,11 @@ class Campaign:
                     self.stage_or_block(spec, queue, summary)
                 else:
                     state = 'blocked' if summary['states'].get('error') else 'waiting' if summary['states'].get('retry_wait') else 'pending'
+                    # A budget-only replay does not resolve an earlier source failure.
+                    if row['status'] == 'waiting' and summary['stop_reason'] == 'request_budget' and probe.requests == before:
+                        state = 'waiting'
+                        previous = json.loads(row['summary'])
+                        summary['errors'] = previous.get('errors', [])
                     with self.db:
                         self.db.execute('UPDATE jobs SET status=?,summary=? WHERE id=?',
                                         (state, json.dumps(summary, ensure_ascii=False), spec['job_id']))

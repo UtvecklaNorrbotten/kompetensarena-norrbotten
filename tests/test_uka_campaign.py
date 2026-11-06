@@ -5,7 +5,8 @@ import sqlite3
 import sys
 import tempfile
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
+import requests
 sys.path.insert(0, str(Path(__file__).parents[1] / 'scripts'))
 from uka_campaign import Campaign, CampaignProbe
 from uka_json_plan import build_plan
@@ -146,3 +147,21 @@ class CampaignTests(unittest.TestCase):
                 c.db.execute("UPDATE observations SET payload='{}'"); c.db.commit()
             with self.assertRaisesRegex(ValueError, 'Previously staged observations changed'):
                 Campaign(tmp, plan, 99)
+
+    def test_budget_only_resume_keeps_prior_source_failure_unresolved(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            plan = build_plan(inventory(), 'example', tmp)
+            failed = CampaignProbe(tmp, 'example', 1)
+            response = requests.Response(); response.status_code = 500
+            failed.session.get = Mock(side_effect=requests.HTTPError(response=response))
+            with Campaign(tmp, plan, 99) as c:
+                with patch('uka_json_queue.time.time', return_value=1000):
+                    first = c.run(failed, max_jobs=1)
+                self.assertEqual(first['job_states'].get('waiting'), 1)
+            with Campaign(tmp, plan, 99) as c:
+                with patch('uka_json_queue.time.time', return_value=1040):
+                    replay = c.run(CampaignProbe(tmp, 'example', 0), max_jobs=1)
+                self.assertEqual(replay['job_states'].get('waiting'), 1)
+                self.assertEqual(replay['observations'], 0)
+                self.assertEqual(replay['new_requests'], 0)
+                self.assertEqual(replay['coverage'][0]['errors'][0]['error_kind'], 'transient')

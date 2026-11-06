@@ -1,0 +1,212 @@
+{
+  "github_run": "42228224045",
+  "global_planned_jobs": 1305,
+  "completed_jobs": 48,
+  "observations": 25342,
+  "new_requests": 1138,
+  "publish_allowed": false,
+  "indicators": [
+    {
+      "indicator": 13,
+      "planned_jobs": 240,
+      "completed_jobs": 3,
+      "job_states": {
+        "done": 3,
+        "pending": 237
+      },
+      "observations": 1281,
+      "new_requests": 120,
+      "staging_sha256": "41e233ba0f0650846ece15b4e14bbb7f440f0758a4a20b9db2644bf8cb8b7715",
+      "manifest_sha256": "9053c97d8220ef1737a5e05f565bcf34262717fa40c19f52d358bd9b8995e675",
+      "publish_allowed": false
+    },
+    {
+      "indicator": 31,
+      "planned_jobs": 240,
+      "completed_jobs": 4,
+      "job_states": {
+        "done": 4,
+        "pending": 236
+      },
+      "observations": 895,
+      "new_requests": 120,
+      "staging_sha256": "5a79e805669ccad57be09852788aeed36420c738502caaf2e275a5ccac6377ce",
+      "manifest_sha256": "109278f03c700c1e03ff70675ef5a5e03da070242daadfff33bd5d89f41e86fa",
+      "publish_allowed": false
+    },
+    {
+      "indicator": 33,
+      "planned_jobs": 120,
+      "completed_jobs": 1,
+      "job_states": {
+        "done": 1,
+        "pending": 119
+      },
+      "observations": 9731,
+      "new_requests": 58,
+      "staging_sha256": "8dc51aa302a694b4af67eddebb358ec0bd0fe0c7442d5a4df669f70fc06c27cc",
+      "manifest_sha256": "ce07ea20485cbc1e84bbb40a0218485d8bed534d89fe070e0dafac5dd503106b",
+      "publish_allowed": false
+    },
+    {
+      "indicator": 77,
+      "planned_jobs": 30,
+      "completed_jobs": 8,
+      "job_states": {
+        "done": 8,
+        "pending": 22
+      },
+      "observations": 3997,
+      "new_requests": 120,
+      "staging_sha256": "8cd784177f25bddabd656a2672e755eaa5e9acee014d5215885026691b9d364d",
+      "manifest_sha256": "da88136b0e9ce8432ef230625e34a329c3573244367f091f86661a30c6f922f9",
+      "publish_allowed": false
+    },
+    {
+      "indicator": 97,
+      "planned_jobs": 240,
+      "completed_jobs": 3,
+      "job_states": {
+        "done": 3,
+        "pending": 237
+      },
+      "observations": 1266,
+      "new_requests": 120,
+      "staging_sha256": "3d64e5915d47acf8ef22bff1a94f65a26ca5f668cd71a75ddd7a3fdb6855552e",
+      "manifest_sha256": "ddf74bb7c679824b8fdc76d5082c1b6b64dcdda1d9c159870ec104394d88077c",
+      "publish_allowed": false
+    },
+    {
+      "indicator": 99,
+      "planned_jobs": 60,
+      "completed_jobs": 3,
+      "job_states": {
+        "done": 3,
+        "pending": 57
+      },
+      "observations": 1337,
+      "new_requests": 120,
+      "staging_sha256": "e626360d2b115af9cf021f6ea6146e83380a0776681861858920a975f2e3bb0b",
+      "manifest_sha256": "2d49f06749d865db15695ca8315906d051681270ed673cea7a91d3f821f03be5",
+      "publish_allowed": false
+    },
+    {
+      "indicator": 108,
+      "planned_jobs": 120,
+      "completed_jobs": 2,
+      "job_states": {
+        "done": 2,
+        "pending": 118
+      },
+      "observations": 2048,
+      "new_requests": 120,
+      "staging_sha256": "4c2fc0711cdb43914b4a794b180c6b6bf9e04e532221b7a9d29b89769281a604",
+      "manifest_sha256": "bf1741d201ed78b8e5665c7853e4aa199a37041bef31529522a79443062dea27",
+      "publish_allowed": false
+    },
+    {
+      "indicator": 134,
+      "planned_jobs": 120,
+      "completed_jobs": 3,
+      "job_states": {
+        "done": 3,
+        "pending": 117
+      },
+      "observations": 1445,
+      "new_requests": 120,
+      "staging_sha256": "55bed0aaa26db5323166988c5d8744ac0f99eb23658a8e5d78ac31b107b59732",
+      "manifest_sha256": "965676269224174d84dd73c344614257a9018f98a6cd98f8d54cd061de489d95",
+      "publish_allowed": false
+    },
+    {
+      "indicator": 135,
+      "planned_jobs": 120,
+      "completed_jobs": 19,
+      "job_states": {
+        "done": 19,
+        "pending": 101
+      },
+      "observations": 2006,
+      "new_requests": 120,
+      "staging_sha256": "a1140779057f569c5e706bc5e479ef57c30d6c332a819bef6d4cd862c42ee662",
+      "manifest_sha256": "2266044fbf039f48b4df36583ad4f845355d27a9392c917e0385d912dae661ee",
+      "publish_allowed": false
+    },
+    {
+      "indicator": 136,
+      "planned_jobs": 15,
+      "completed_jobs": 2,
+      "job_states": {
+        "done": 2,
+        "pending": 13
+      },
+      "observations": 1336,
+      "new_requests": 120,
+      "staging_sha256": "5856d8fdbc7731aa5dbb8165434c1b606c18ccca6243cd9f0960779218f9e99e",
+      "manifest_sha256": "5dbb9e1a5a85f2c9984eed35f9130ed5c02f29ab2a0c3055409eeb7625b71ce5",
+      "publish_allowed": false
+    }
+  ],
+  "zero_budget_replay": [
+    {
+      "indicator": 13,
+      "unchanged": true,
+      "new_requests": 0,
+      "staging_sha256": "41e233ba0f0650846ece15b4e14bbb7f440f0758a4a20b9db2644bf8cb8b7715"
+    },
+    {
+      "indicator": 31,
+      "unchanged": true,
+      "new_requests": 0,
+      "staging_sha256": "5a79e805669ccad57be09852788aeed36420c738502caaf2e275a5ccac6377ce"
+    },
+    {
+      "indicator": 33,
+      "unchanged": true,
+      "new_requests": 0,
+      "staging_sha256": "8dc51aa302a694b4af67eddebb358ec0bd0fe0c7442d5a4df669f70fc06c27cc"
+    },
+    {
+      "indicator": 77,
+      "unchanged": true,
+      "new_requests": 0,
+      "staging_sha256": "8cd784177f25bddabd656a2672e755eaa5e9acee014d5215885026691b9d364d"
+    },
+    {
+      "indicator": 97,
+      "unchanged": true,
+      "new_requests": 0,
+      "staging_sha256": "3d64e5915d47acf8ef22bff1a94f65a26ca5f668cd71a75ddd7a3fdb6855552e"
+    },
+    {
+      "indicator": 99,
+      "unchanged": true,
+      "new_requests": 0,
+      "staging_sha256": "e626360d2b115af9cf021f6ea6146e83380a0776681861858920a975f2e3bb0b"
+    },
+    {
+      "indicator": 108,
+      "unchanged": true,
+      "new_requests": 0,
+      "staging_sha256": "4c2fc0711cdb43914b4a794b180c6b6bf9e04e532221b7a9d29b89769281a604"
+    },
+    {
+      "indicator": 134,
+      "unchanged": true,
+      "new_requests": 0,
+      "staging_sha256": "55bed0aaa26db5323166988c5d8744ac0f99eb23658a8e5d78ac31b107b59732"
+    },
+    {
+      "indicator": 135,
+      "unchanged": true,
+      "new_requests": 0,
+      "staging_sha256": "a1140779057f569c5e706bc5e479ef57c30d6c332a819bef6d4cd862c42ee662"
+    },
+    {
+      "indicator": 136,
+      "unchanged": true,
+      "new_requests": 0,
+      "staging_sha256": "5856d8fdbc7731aa5dbb8165434c1b606c18ccca6243cd9f0960779218f9e99e"
+    }
+  ]
+}

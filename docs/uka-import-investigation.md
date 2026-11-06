@@ -1,3 +1,10 @@
+> Senaste genomförande 2026-11-06: fryst tioårsplan med 1 305 urval och ett
+> stagingjobb per indikator (högst två samtidigt). Körning 42228224045 passerade;
+> 48 urval och 25 342 observationer är kontrollerade och sparade i filbaserad staging.
+> Lokal nollbudgetåterstart bevarar samtliga tio kontrollsummor med 0 nya API-anrop.
+> 72 lokala tester passerar. Ingen databas/publicering används. Full källtäckning,
+> källversion och tomsemantik är fortfarande olösta. Läs UKA_CAMPAIGN.md först.
+
 > Nyaste läge 2026-11-06: Actions 42223602896 passerade. Samtliga tio indikatorer
 > stöds nu av den återstartbara diagnostikkön. HST:s 24 kön/ålders-/periodgrafer ger
 > 288 exakta referensmatchningar. De övriga nio har 18 godkända period-/lärosätesprov
