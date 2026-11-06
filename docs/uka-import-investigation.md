@@ -4,6 +4,45 @@ Datum: 2026-11-06. Arbetsgren: `fix/uka-verified-checkpoint-import`, PR #82.
 Status: diagnostik implementerad, importmetod och produktionspublicering **inte godkända**.
 Ingen ändring av produktionsimport, databasschema eller produktionsdata i denna gren.
 
+## Uppföljning: webbexport och JSON-alternativ
+
+Den 6 november testades UKÄ:s riktiga webbformulär för HST, Riket och enbart källtotaler.
+Både 2025/26 och 2024/25 gav faktiskt nedladdade CSV-filer på **0 byte**.
+För 2025/26 matchar webbens filtervärden klientens, och samma cachefilnamn returneras.
+2024/25 provades först via webbgränssnittet i denna undersökning; det var inte en upprepning av vårt tidigare minimala CSV-anrop.
+Det bevisar inte att servercachen är oskyldig eller att UKÄ:s alla exporter är trasiga.
+Råa browser-requestbytes har inte fångats. Reproducerbart felunderlag finns i
+`uka-export-felunderlag-2026-11-06.md` och har **inte skickats** till UKÄ.
+
+JSON-API:t är en fungerande kandidat till reservkälla:
+
+- Alla tio indikatorer gav källans egna totalvärden för både senaste och äldsta period i vårt valda tioårsurval (fem år för indikator 136 där källfiltret erbjuder det).
+- Sex HST-stickprov passerade för Riket, LTU och uni:171 under 2025/26, 2024/25 respektive 2016/17.
+- Kön och ålder bevarades när API:ts egna länkar följdes genom studieform, ämnesområde, ämnesdelområde och ämnesgrupp.
+- För uni:171, 2025/26, verifierades hela matrisen Kvinnor/Män/Total × -24/25–34/35–/Total: **12 källobservationer** utan konstruerade totaler.
+- För de fyra lärosätesproven överensstämde totalvärdet exakt mellan direkt lärosätesanrop och motsvarande observation i Rikets lärosäteslista.
+- Ämne → studieform och studieform → ämne gav samma serie med faktiska årsvärden. API:t kan hänvisa båda vägar till samma kombinerade endpoint, vilket redovisas explicit och inte beskrivs som en oberoende CSV-referens.
+
+`group_slug` får inte antas beteckna bara en dimension. API:t returnerar nya sluggar för kombinationer.
+Exempel från källan: uni:171, Kvinnor, -24, 2025/26 ger 14,4 HST totalt och
+11,6 inom Humaniora och teologi på Generella program. Den kombinerade länken bevarar båda gruppvalen.
+Skriptet `scripts/uka_json_probe.py` följer annonserade länkar, jämför källvärden,
+kontrollerar att kontextfilter inte försvinner och återanvänder kontrollsummade svar.
+Dess sex nya enhetstester kompletterar de tio befintliga. Källprovet har en fast total budget
+på högst 74 nya JSON-anrop (20 periodkontroller, 42 HST-länkanrop, 12 kön/åldersanrop).
+Källsvar sparas i diagnostikartefakter, inte som dubbla rådatakopior i git.
+Resultat och svarsfingeravtryck finns i `uka-json-probe-2026-11-06.json`.
+
+Detta verifierar **stickproven**, inte en komplett alternativ import. Före byte av källa återstår:
+
+1. Fullständig traverseringsplan för historiska ämnen, studieformer och lärosäten för alla tio indikatorer, inklusive sådant som saknas senaste året.
+2. Verifierad skillnad mellan saknad grupp, nollvärde, sekretess/null och tekniskt fel.
+3. Jämförelse med oberoende referensexporter för samtliga logiska observationer, inklusive källans precision.
+4. Volymberäkning innan större hämtning. HST har upp till 5 × 231 dynamiska kombinationer; tio år × tre kön × fyra ålderskategorier kan innebära många API-anrop även om lärosäten hämtas tillsammans från Rikets gruppsvar.
+5. Källversion/revisionshantering och publiceringsspärrar enligt arkitekturen nedan.
+
+Grönt i `uka-json-probe.yml` betyder godkända begränsade prover. Det får aldrig användas som automatiskt godkännande för produktionsimport eller merge av hela importlösningen.
+
 ## 1. Verifierad felkedja och kvarstående osäkerhet
 
 Granskade körningar:

@@ -1,0 +1,1828 @@
+{
+  "snapshot": "2026-11-06",
+  "publish_allowed": false,
+  "csv_equivalence_verified": false,
+  "inventory": [
+    {
+      "indicator": 13,
+      "periods": [
+        {
+          "period": "HT2026",
+          "source_total": "104093",
+          "all_source_periods": [
+            "HT1995",
+            "HT1996",
+            "HT1997",
+            "HT1998",
+            "HT1999",
+            "HT2000",
+            "HT2001",
+            "HT2002",
+            "HT2003",
+            "HT2004",
+            "HT2005",
+            "HT2006",
+            "HT2007",
+            "HT2008",
+            "HT2009",
+            "HT2010",
+            "HT2011",
+            "HT2012",
+            "HT2013",
+            "HT2014",
+            "HT2015",
+            "HT2016",
+            "HT2017",
+            "HT2018",
+            "HT2019",
+            "HT2020",
+            "HT2021",
+            "HT2022",
+            "HT2023",
+            "HT2024",
+            "HT2025",
+            "HT2026",
+            "VT1996",
+            "VT1997",
+            "VT1998",
+            "VT1999",
+            "VT2000",
+            "VT2001",
+            "VT2002",
+            "VT2003",
+            "VT2004",
+            "VT2005",
+            "VT2006",
+            "VT2007",
+            "VT2008",
+            "VT2009",
+            "VT2010",
+            "VT2011",
+            "VT2012",
+            "VT2013",
+            "VT2014",
+            "VT2015",
+            "VT2016",
+            "VT2017",
+            "VT2018",
+            "VT2019",
+            "VT2020",
+            "VT2021",
+            "VT2022",
+            "VT2023",
+            "VT2024",
+            "VT2025",
+            "VT2026"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=HT2026",
+          "group_columns": [
+            "Lärosäten",
+            "Program",
+            "Kön",
+            "Åldersgrupper"
+          ]
+        },
+        {
+          "period": "VT2017",
+          "source_total": "33581",
+          "all_source_periods": [
+            "HT1995",
+            "HT1996",
+            "HT1997",
+            "HT1998",
+            "HT1999",
+            "HT2000",
+            "HT2001",
+            "HT2002",
+            "HT2003",
+            "HT2004",
+            "HT2005",
+            "HT2006",
+            "HT2007",
+            "HT2008",
+            "HT2009",
+            "HT2010",
+            "HT2011",
+            "HT2012",
+            "HT2013",
+            "HT2014",
+            "HT2015",
+            "HT2016",
+            "HT2017",
+            "HT2018",
+            "HT2019",
+            "HT2020",
+            "HT2021",
+            "HT2022",
+            "HT2023",
+            "HT2024",
+            "HT2025",
+            "HT2026",
+            "VT1996",
+            "VT1997",
+            "VT1998",
+            "VT1999",
+            "VT2000",
+            "VT2001",
+            "VT2002",
+            "VT2003",
+            "VT2004",
+            "VT2005",
+            "VT2006",
+            "VT2007",
+            "VT2008",
+            "VT2009",
+            "VT2010",
+            "VT2011",
+            "VT2012",
+            "VT2013",
+            "VT2014",
+            "VT2015",
+            "VT2016",
+            "VT2017",
+            "VT2018",
+            "VT2019",
+            "VT2020",
+            "VT2021",
+            "VT2022",
+            "VT2023",
+            "VT2024",
+            "VT2025",
+            "VT2026"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=VT2017",
+          "group_columns": [
+            "Lärosäten",
+            "Program",
+            "Kön",
+            "Åldersgrupper"
+          ]
+        }
+      ]
+    },
+    {
+      "indicator": 31,
+      "periods": [
+        {
+          "period": "VT2026",
+          "source_total": "10869",
+          "all_source_periods": [
+            "HT1993",
+            "HT1994",
+            "HT1995",
+            "HT1996",
+            "HT1997",
+            "HT1998",
+            "HT1999",
+            "HT2000",
+            "HT2001",
+            "HT2002",
+            "HT2003",
+            "HT2004",
+            "HT2005",
+            "HT2006",
+            "HT2007",
+            "HT2008",
+            "HT2009",
+            "HT2010",
+            "HT2011",
+            "HT2012",
+            "HT2013",
+            "HT2014",
+            "HT2015",
+            "HT2016",
+            "HT2017",
+            "HT2018",
+            "HT2019",
+            "HT2020",
+            "HT2021",
+            "HT2022",
+            "HT2023",
+            "HT2024",
+            "HT2025",
+            "VT1994",
+            "VT1995",
+            "VT1996",
+            "VT1997",
+            "VT1998",
+            "VT1999",
+            "VT2000",
+            "VT2001",
+            "VT2002",
+            "VT2003",
+            "VT2004",
+            "VT2005",
+            "VT2006",
+            "VT2007",
+            "VT2008",
+            "VT2009",
+            "VT2010",
+            "VT2011",
+            "VT2012",
+            "VT2013",
+            "VT2014",
+            "VT2015",
+            "VT2016",
+            "VT2017",
+            "VT2018",
+            "VT2019",
+            "VT2020",
+            "VT2021",
+            "VT2022",
+            "VT2023",
+            "VT2024",
+            "VT2025",
+            "VT2026"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=VT2026",
+          "group_columns": [
+            "Lärosäten",
+            "Studieform",
+            "Kön",
+            "Åldersgrupper"
+          ]
+        },
+        {
+          "period": "HT2016",
+          "source_total": "38226",
+          "all_source_periods": [
+            "HT1993",
+            "HT1994",
+            "HT1995",
+            "HT1996",
+            "HT1997",
+            "HT1998",
+            "HT1999",
+            "HT2000",
+            "HT2001",
+            "HT2002",
+            "HT2003",
+            "HT2004",
+            "HT2005",
+            "HT2006",
+            "HT2007",
+            "HT2008",
+            "HT2009",
+            "HT2010",
+            "HT2011",
+            "HT2012",
+            "HT2013",
+            "HT2014",
+            "HT2015",
+            "HT2016",
+            "HT2017",
+            "HT2018",
+            "HT2019",
+            "HT2020",
+            "HT2021",
+            "HT2022",
+            "HT2023",
+            "HT2024",
+            "HT2025",
+            "VT1994",
+            "VT1995",
+            "VT1996",
+            "VT1997",
+            "VT1998",
+            "VT1999",
+            "VT2000",
+            "VT2001",
+            "VT2002",
+            "VT2003",
+            "VT2004",
+            "VT2005",
+            "VT2006",
+            "VT2007",
+            "VT2008",
+            "VT2009",
+            "VT2010",
+            "VT2011",
+            "VT2012",
+            "VT2013",
+            "VT2014",
+            "VT2015",
+            "VT2016",
+            "VT2017",
+            "VT2018",
+            "VT2019",
+            "VT2020",
+            "VT2021",
+            "VT2022",
+            "VT2023",
+            "VT2024",
+            "VT2025",
+            "VT2026"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=HT2016",
+          "group_columns": [
+            "Lärosäten",
+            "Studieform",
+            "Kön",
+            "Åldersgrupper"
+          ]
+        }
+      ]
+    },
+    {
+      "indicator": 33,
+      "periods": [
+        {
+          "period": "2025/26",
+          "source_total": "341246.6",
+          "all_source_periods": [
+            "2007/08",
+            "2008/09",
+            "2009/10",
+            "2010/11",
+            "2011/12",
+            "2012/13",
+            "2013/14",
+            "2014/15",
+            "2015/16",
+            "2016/17",
+            "2017/18",
+            "2018/19",
+            "2019/20",
+            "2020/21",
+            "2021/22",
+            "2022/23",
+            "2023/24",
+            "2024/25",
+            "2025/26"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26",
+          "group_columns": [
+            "Lärosäten",
+            "Ämnesområde",
+            "Studieform",
+            "Kön",
+            "Åldersgrupper"
+          ]
+        },
+        {
+          "period": "2016/17",
+          "source_total": "293789.6",
+          "all_source_periods": [
+            "2007/08",
+            "2008/09",
+            "2009/10",
+            "2010/11",
+            "2011/12",
+            "2012/13",
+            "2013/14",
+            "2014/15",
+            "2015/16",
+            "2016/17",
+            "2017/18",
+            "2018/19",
+            "2019/20",
+            "2020/21",
+            "2021/22",
+            "2022/23",
+            "2023/24",
+            "2024/25",
+            "2025/26"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17",
+          "group_columns": [
+            "Lärosäten",
+            "Ämnesområde",
+            "Studieform",
+            "Kön",
+            "Åldersgrupper"
+          ]
+        }
+      ]
+    },
+    {
+      "indicator": 97,
+      "periods": [
+        {
+          "period": "HT2026",
+          "source_total": "48829",
+          "all_source_periods": [
+            "HT1995",
+            "HT1996",
+            "HT1997",
+            "HT1998",
+            "HT1999",
+            "HT2000",
+            "HT2001",
+            "HT2002",
+            "HT2003",
+            "HT2004",
+            "HT2005",
+            "HT2006",
+            "HT2007",
+            "HT2008",
+            "HT2009",
+            "HT2010",
+            "HT2011",
+            "HT2012",
+            "HT2013",
+            "HT2014",
+            "HT2015",
+            "HT2016",
+            "HT2017",
+            "HT2018",
+            "HT2019",
+            "HT2020",
+            "HT2021",
+            "HT2022",
+            "HT2023",
+            "HT2024",
+            "HT2025",
+            "HT2026",
+            "VT1996",
+            "VT1997",
+            "VT1998",
+            "VT1999",
+            "VT2000",
+            "VT2001",
+            "VT2002",
+            "VT2003",
+            "VT2004",
+            "VT2005",
+            "VT2006",
+            "VT2007",
+            "VT2008",
+            "VT2009",
+            "VT2010",
+            "VT2011",
+            "VT2012",
+            "VT2013",
+            "VT2014",
+            "VT2015",
+            "VT2016",
+            "VT2017",
+            "VT2018",
+            "VT2019",
+            "VT2020",
+            "VT2021",
+            "VT2022",
+            "VT2023",
+            "VT2024",
+            "VT2025",
+            "VT2026"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=HT2026",
+          "group_columns": [
+            "Lärosäten",
+            "Program",
+            "Kön",
+            "Åldersgrupper"
+          ]
+        },
+        {
+          "period": "VT2017",
+          "source_total": "12547",
+          "all_source_periods": [
+            "HT1995",
+            "HT1996",
+            "HT1997",
+            "HT1998",
+            "HT1999",
+            "HT2000",
+            "HT2001",
+            "HT2002",
+            "HT2003",
+            "HT2004",
+            "HT2005",
+            "HT2006",
+            "HT2007",
+            "HT2008",
+            "HT2009",
+            "HT2010",
+            "HT2011",
+            "HT2012",
+            "HT2013",
+            "HT2014",
+            "HT2015",
+            "HT2016",
+            "HT2017",
+            "HT2018",
+            "HT2019",
+            "HT2020",
+            "HT2021",
+            "HT2022",
+            "HT2023",
+            "HT2024",
+            "HT2025",
+            "HT2026",
+            "VT1996",
+            "VT1997",
+            "VT1998",
+            "VT1999",
+            "VT2000",
+            "VT2001",
+            "VT2002",
+            "VT2003",
+            "VT2004",
+            "VT2005",
+            "VT2006",
+            "VT2007",
+            "VT2008",
+            "VT2009",
+            "VT2010",
+            "VT2011",
+            "VT2012",
+            "VT2013",
+            "VT2014",
+            "VT2015",
+            "VT2016",
+            "VT2017",
+            "VT2018",
+            "VT2019",
+            "VT2020",
+            "VT2021",
+            "VT2022",
+            "VT2023",
+            "VT2024",
+            "VT2025",
+            "VT2026"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=VT2017",
+          "group_columns": [
+            "Lärosäten",
+            "Program",
+            "Kön",
+            "Åldersgrupper"
+          ]
+        }
+      ]
+    },
+    {
+      "indicator": 99,
+      "periods": [
+        {
+          "period": "HT2026",
+          "source_total": "2.1",
+          "all_source_periods": [
+            "HT1996",
+            "HT1997",
+            "HT1998",
+            "HT1999",
+            "HT2000",
+            "HT2001",
+            "HT2002",
+            "HT2003",
+            "HT2004",
+            "HT2005",
+            "HT2006",
+            "HT2007",
+            "HT2008",
+            "HT2009",
+            "HT2010",
+            "HT2011",
+            "HT2012",
+            "HT2013",
+            "HT2014",
+            "HT2015",
+            "HT2016",
+            "HT2017",
+            "HT2018",
+            "HT2019",
+            "HT2020",
+            "HT2021",
+            "HT2022",
+            "HT2023",
+            "HT2024",
+            "HT2025",
+            "HT2026",
+            "VT1997",
+            "VT1998",
+            "VT1999",
+            "VT2000",
+            "VT2001",
+            "VT2002",
+            "VT2003",
+            "VT2004",
+            "VT2005",
+            "VT2006",
+            "VT2007",
+            "VT2008",
+            "VT2009",
+            "VT2010",
+            "VT2011",
+            "VT2012",
+            "VT2013",
+            "VT2014",
+            "VT2015",
+            "VT2016",
+            "VT2017",
+            "VT2018",
+            "VT2019",
+            "VT2020",
+            "VT2021",
+            "VT2022",
+            "VT2023",
+            "VT2024",
+            "VT2025",
+            "VT2026"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/99?university=1&year=HT2026",
+          "group_columns": [
+            "Lärosäten",
+            "Program",
+            "Kön"
+          ]
+        },
+        {
+          "period": "VT2017",
+          "source_total": "2.7",
+          "all_source_periods": [
+            "HT1996",
+            "HT1997",
+            "HT1998",
+            "HT1999",
+            "HT2000",
+            "HT2001",
+            "HT2002",
+            "HT2003",
+            "HT2004",
+            "HT2005",
+            "HT2006",
+            "HT2007",
+            "HT2008",
+            "HT2009",
+            "HT2010",
+            "HT2011",
+            "HT2012",
+            "HT2013",
+            "HT2014",
+            "HT2015",
+            "HT2016",
+            "HT2017",
+            "HT2018",
+            "HT2019",
+            "HT2020",
+            "HT2021",
+            "HT2022",
+            "HT2023",
+            "HT2024",
+            "HT2025",
+            "HT2026",
+            "VT1997",
+            "VT1998",
+            "VT1999",
+            "VT2000",
+            "VT2001",
+            "VT2002",
+            "VT2003",
+            "VT2004",
+            "VT2005",
+            "VT2006",
+            "VT2007",
+            "VT2008",
+            "VT2009",
+            "VT2010",
+            "VT2011",
+            "VT2012",
+            "VT2013",
+            "VT2014",
+            "VT2015",
+            "VT2016",
+            "VT2017",
+            "VT2018",
+            "VT2019",
+            "VT2020",
+            "VT2021",
+            "VT2022",
+            "VT2023",
+            "VT2024",
+            "VT2025",
+            "VT2026"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/99?university=1&year=VT2017",
+          "group_columns": [
+            "Lärosäten",
+            "Program",
+            "Kön"
+          ]
+        }
+      ]
+    },
+    {
+      "indicator": 108,
+      "periods": [
+        {
+          "period": "2024/25",
+          "source_total": "76705",
+          "all_source_periods": [
+            "1995/96",
+            "1996/97",
+            "1997/98",
+            "1998/99",
+            "1999/00",
+            "2000/01",
+            "2001/02",
+            "2002/03",
+            "2003/04",
+            "2004/05",
+            "2005/06",
+            "2006/07",
+            "2007/08",
+            "2008/09",
+            "2009/10",
+            "2010/11",
+            "2011/12",
+            "2012/13",
+            "2013/14",
+            "2014/15",
+            "2015/16",
+            "2016/17",
+            "2017/18",
+            "2018/19",
+            "2019/20",
+            "2020/21",
+            "2021/22",
+            "2022/23",
+            "2023/24",
+            "2024/25"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2024%2F25",
+          "group_columns": [
+            "Lärosäten",
+            "Examenskategori",
+            "Kön",
+            "Åldersgrupper"
+          ]
+        },
+        {
+          "period": "2015/16",
+          "source_total": "68291",
+          "all_source_periods": [
+            "1995/96",
+            "1996/97",
+            "1997/98",
+            "1998/99",
+            "1999/00",
+            "2000/01",
+            "2001/02",
+            "2002/03",
+            "2003/04",
+            "2004/05",
+            "2005/06",
+            "2006/07",
+            "2007/08",
+            "2008/09",
+            "2009/10",
+            "2010/11",
+            "2011/12",
+            "2012/13",
+            "2013/14",
+            "2014/15",
+            "2015/16",
+            "2016/17",
+            "2017/18",
+            "2018/19",
+            "2019/20",
+            "2020/21",
+            "2021/22",
+            "2022/23",
+            "2023/24",
+            "2024/25"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2015%2F16",
+          "group_columns": [
+            "Lärosäten",
+            "Examenskategori",
+            "Kön",
+            "Åldersgrupper"
+          ]
+        }
+      ]
+    },
+    {
+      "indicator": 136,
+      "periods": [
+        {
+          "period": "2024",
+          "source_total": "84.8",
+          "all_source_periods": [
+            "2020",
+            "2021",
+            "2022",
+            "2023",
+            "2024"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/136?university=1&year=2024",
+          "group_columns": [
+            "Lärosäten",
+            "Examen",
+            "Kön"
+          ]
+        },
+        {
+          "period": "2020",
+          "source_total": "84.4",
+          "all_source_periods": [
+            "2020",
+            "2021",
+            "2022",
+            "2023",
+            "2024"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/136?university=1&year=2020",
+          "group_columns": [
+            "Lärosäten",
+            "Examen",
+            "Kön"
+          ]
+        }
+      ]
+    },
+    {
+      "indicator": 77,
+      "periods": [
+        {
+          "period": "2024/25",
+          "source_total": "74.1",
+          "all_source_periods": [
+            "2000/01",
+            "2001/02",
+            "2002/03",
+            "2003/04",
+            "2004/05",
+            "2005/06",
+            "2006/07",
+            "2007/08",
+            "2008/09",
+            "2009/10",
+            "2010/11",
+            "2011/12",
+            "2012/13",
+            "2013/14",
+            "2014/15",
+            "2015/16",
+            "2016/17",
+            "2017/18",
+            "2018/19",
+            "2019/20",
+            "2020/21",
+            "2021/22",
+            "2022/23",
+            "2023/24",
+            "2024/25"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2024%2F25",
+          "group_columns": [
+            "Lärosäten",
+            "Utbildningsnivå",
+            "Studieform",
+            "Kön"
+          ]
+        },
+        {
+          "period": "2015/16",
+          "source_total": "72",
+          "all_source_periods": [
+            "2000/01",
+            "2001/02",
+            "2002/03",
+            "2003/04",
+            "2004/05",
+            "2005/06",
+            "2006/07",
+            "2007/08",
+            "2008/09",
+            "2009/10",
+            "2010/11",
+            "2011/12",
+            "2012/13",
+            "2013/14",
+            "2014/15",
+            "2015/16",
+            "2016/17",
+            "2017/18",
+            "2018/19",
+            "2019/20",
+            "2020/21",
+            "2021/22",
+            "2022/23",
+            "2023/24",
+            "2024/25"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2015%2F16",
+          "group_columns": [
+            "Lärosäten",
+            "Utbildningsnivå",
+            "Studieform",
+            "Kön"
+          ]
+        }
+      ]
+    },
+    {
+      "indicator": 134,
+      "periods": [
+        {
+          "period": "2023/24",
+          "source_total": "78",
+          "all_source_periods": [
+            "2007/08",
+            "2008/09",
+            "2009/10",
+            "2010/11",
+            "2011/12",
+            "2012/13",
+            "2013/14",
+            "2014/15",
+            "2015/16",
+            "2016/17",
+            "2017/18",
+            "2018/19",
+            "2019/20",
+            "2020/21",
+            "2021/22",
+            "2022/23",
+            "2023/24"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2023%2F24",
+          "group_columns": [
+            "Lärosäten",
+            "Program",
+            "Kön",
+            "Åldersgrupper"
+          ]
+        },
+        {
+          "period": "2014/15",
+          "source_total": "75",
+          "all_source_periods": [
+            "2007/08",
+            "2008/09",
+            "2009/10",
+            "2010/11",
+            "2011/12",
+            "2012/13",
+            "2013/14",
+            "2014/15",
+            "2015/16",
+            "2016/17",
+            "2017/18",
+            "2018/19",
+            "2019/20",
+            "2020/21",
+            "2021/22",
+            "2022/23",
+            "2023/24"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2014%2F15",
+          "group_columns": [
+            "Lärosäten",
+            "Program",
+            "Kön",
+            "Åldersgrupper"
+          ]
+        }
+      ]
+    },
+    {
+      "indicator": 135,
+      "periods": [
+        {
+          "period": "2021/22",
+          "source_total": "54.2",
+          "all_source_periods": [
+            "2007/08",
+            "2008/09",
+            "2009/10",
+            "2010/11",
+            "2011/12",
+            "2012/13",
+            "2013/14",
+            "2014/15",
+            "2015/16",
+            "2016/17",
+            "2017/18",
+            "2018/19",
+            "2019/20",
+            "2020/21",
+            "2021/22"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2021%2F22",
+          "group_columns": [
+            "Lärosäten",
+            "Program",
+            "Kön",
+            "Åldersgrupper"
+          ]
+        },
+        {
+          "period": "2012/13",
+          "source_total": "56.3",
+          "all_source_periods": [
+            "2007/08",
+            "2008/09",
+            "2009/10",
+            "2010/11",
+            "2011/12",
+            "2012/13",
+            "2013/14",
+            "2014/15",
+            "2015/16",
+            "2016/17",
+            "2017/18",
+            "2018/19",
+            "2019/20",
+            "2020/21",
+            "2021/22"
+          ],
+          "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2012%2F13",
+          "group_columns": [
+            "Lärosäten",
+            "Program",
+            "Kön",
+            "Åldersgrupper"
+          ]
+        }
+      ]
+    }
+  ],
+  "hst_samples": [
+    {
+      "university": "171",
+      "period": "2025/26",
+      "gender": "Kvinnor",
+      "age": "-24",
+      "root_url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8",
+      "source_total": "14.4",
+      "edges": [
+        {
+          "dimension": "Ämnesområde",
+          "category": "Humaniora och teologi",
+          "value": "14.4",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8&group_slug=7f05b9d467b370adae7b3ec3c9c3bec655bc8a66"
+        },
+        {
+          "dimension": "Studieform",
+          "category": "Fristående kurser",
+          "value": "2.8",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8&group_slug=c0bc3a9977470b4e8f6ed2d86a1f5f16373c5a99"
+        },
+        {
+          "dimension": "Studieform",
+          "category": "Fristående kurser",
+          "value": "2.8",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesområde",
+          "category": "Humaniora och teologi",
+          "value": "2.8",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesdelområde",
+          "category": "Religionsvetenskap",
+          "value": "2.8",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&group_slug=20472cd33f4f4a372bfadea0dd80b4dab1b9989d&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesgrupp",
+          "category": "Teologi",
+          "value": "2.8",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&group_slug=1efff100ab2cc285a3cf8d669ccc174cbf060460&gender=Kvinnor&age_group=8"
+        }
+      ],
+      "two_navigation_orders": {
+        "same_endpoint": true,
+        "exact_yearly_observations": true,
+        "periods_compared": [
+          "2022/23",
+          "2023/24",
+          "2024/25",
+          "2025/26"
+        ]
+      },
+      "deepest_joint_value": "2.8",
+      "verified_sample": true,
+      "university_group_check": {
+        "exact": true,
+        "parent_url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8",
+        "name": "Akademi för Ledarskap och Teologi"
+      }
+    },
+    {
+      "university": "171",
+      "period": "2024/25",
+      "gender": "Kvinnor",
+      "age": "-24",
+      "root_url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2024%2F25&gender=Kvinnor&age_group=8",
+      "source_total": "17.1",
+      "edges": [
+        {
+          "dimension": "Ämnesområde",
+          "category": "Humaniora och teologi",
+          "value": "17.1",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2024%2F25&gender=Kvinnor&age_group=8&group_slug=7f05b9d467b370adae7b3ec3c9c3bec655bc8a66"
+        },
+        {
+          "dimension": "Studieform",
+          "category": "Fristående kurser",
+          "value": "5.3",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2024%2F25&gender=Kvinnor&age_group=8&group_slug=c0bc3a9977470b4e8f6ed2d86a1f5f16373c5a99"
+        },
+        {
+          "dimension": "Studieform",
+          "category": "Fristående kurser",
+          "value": "5.3",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2024%2F25&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesområde",
+          "category": "Humaniora och teologi",
+          "value": "5.3",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2024%2F25&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesdelområde",
+          "category": "Religionsvetenskap",
+          "value": "5.3",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2024%2F25&group_slug=20472cd33f4f4a372bfadea0dd80b4dab1b9989d&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesgrupp",
+          "category": "Teologi",
+          "value": "5.3",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2024%2F25&group_slug=1efff100ab2cc285a3cf8d669ccc174cbf060460&gender=Kvinnor&age_group=8"
+        }
+      ],
+      "two_navigation_orders": {
+        "same_endpoint": true,
+        "exact_yearly_observations": true,
+        "periods_compared": [
+          "2022/23",
+          "2023/24",
+          "2024/25",
+          "2025/26"
+        ]
+      },
+      "deepest_joint_value": "5.3",
+      "verified_sample": true,
+      "university_group_check": {
+        "exact": true,
+        "parent_url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2024%2F25&gender=Kvinnor&age_group=8",
+        "name": "Akademi för Ledarskap och Teologi"
+      }
+    },
+    {
+      "university": "32",
+      "period": "2025/26",
+      "gender": "Kvinnor",
+      "age": "-24",
+      "root_url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&gender=Kvinnor&age_group=8",
+      "source_total": "1897.6",
+      "edges": [
+        {
+          "dimension": "Ämnesområde",
+          "category": "Humaniora och teologi",
+          "value": "132.5",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&gender=Kvinnor&age_group=8&group_slug=7f05b9d467b370adae7b3ec3c9c3bec655bc8a66"
+        },
+        {
+          "dimension": "Studieform",
+          "category": "Fristående kurser",
+          "value": "3.7E+2",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&gender=Kvinnor&age_group=8&group_slug=c0bc3a9977470b4e8f6ed2d86a1f5f16373c5a99"
+        },
+        {
+          "dimension": "Studieform",
+          "category": "Fristående kurser",
+          "value": "5E+1",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesområde",
+          "category": "Humaniora och teologi",
+          "value": "5E+1",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesdelområde",
+          "category": "Historisk-filosofiska ämnen",
+          "value": "19.3",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&group_slug=fbad4febbb8dab39ba5d53cd0a5ddc15f4765cbe&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesgrupp",
+          "category": "Historia",
+          "value": "19.3",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&group_slug=9e31760fa4778cb1025a0c9f6592935d21812e53&gender=Kvinnor&age_group=8"
+        }
+      ],
+      "two_navigation_orders": {
+        "same_endpoint": true,
+        "exact_yearly_observations": true,
+        "periods_compared": [
+          "2007/08",
+          "2008/09",
+          "2009/10",
+          "2010/11",
+          "2011/12",
+          "2012/13",
+          "2013/14",
+          "2014/15",
+          "2015/16",
+          "2016/17",
+          "2017/18",
+          "2018/19",
+          "2019/20",
+          "2020/21",
+          "2021/22",
+          "2022/23",
+          "2023/24",
+          "2024/25",
+          "2025/26"
+        ]
+      },
+      "deepest_joint_value": "19.3",
+      "verified_sample": true,
+      "university_group_check": {
+        "exact": true,
+        "parent_url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8",
+        "name": "Luleå tekniska universitet"
+      }
+    },
+    {
+      "university": "32",
+      "period": "2016/17",
+      "gender": "Kvinnor",
+      "age": "-24",
+      "root_url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2016%2F17&gender=Kvinnor&age_group=8",
+      "source_total": "1921.2",
+      "edges": [
+        {
+          "dimension": "Ämnesområde",
+          "category": "Humaniora och teologi",
+          "value": "226.4",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2016%2F17&gender=Kvinnor&age_group=8&group_slug=7f05b9d467b370adae7b3ec3c9c3bec655bc8a66"
+        },
+        {
+          "dimension": "Studieform",
+          "category": "Fristående kurser",
+          "value": "230.3",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2016%2F17&gender=Kvinnor&age_group=8&group_slug=c0bc3a9977470b4e8f6ed2d86a1f5f16373c5a99"
+        },
+        {
+          "dimension": "Studieform",
+          "category": "Fristående kurser",
+          "value": "74.2",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2016%2F17&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesområde",
+          "category": "Humaniora och teologi",
+          "value": "74.2",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2016%2F17&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesdelområde",
+          "category": "Historisk-filosofiska ämnen",
+          "value": "7",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2016%2F17&group_slug=fbad4febbb8dab39ba5d53cd0a5ddc15f4765cbe&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesgrupp",
+          "category": "Filosofi",
+          "value": "1.5",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2016%2F17&group_slug=e085de897e8cfbff81bef602dd1b1457d75513ac&gender=Kvinnor&age_group=8"
+        }
+      ],
+      "two_navigation_orders": {
+        "same_endpoint": true,
+        "exact_yearly_observations": true,
+        "periods_compared": [
+          "2007/08",
+          "2008/09",
+          "2009/10",
+          "2010/11",
+          "2011/12",
+          "2012/13",
+          "2013/14",
+          "2014/15",
+          "2015/16",
+          "2016/17",
+          "2017/18",
+          "2018/19",
+          "2019/20",
+          "2020/21",
+          "2021/22",
+          "2022/23",
+          "2023/24",
+          "2024/25",
+          "2025/26"
+        ]
+      },
+      "deepest_joint_value": "1.5",
+      "verified_sample": true,
+      "university_group_check": {
+        "exact": true,
+        "parent_url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17&gender=Kvinnor&age_group=8",
+        "name": "Luleå tekniska universitet"
+      }
+    },
+    {
+      "university": "1",
+      "period": "2025/26",
+      "gender": "Kvinnor",
+      "age": "-24",
+      "root_url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8",
+      "source_total": "112580.5",
+      "edges": [
+        {
+          "dimension": "Ämnesområde",
+          "category": "Humaniora och teologi",
+          "value": "14312.8",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8&group_slug=7f05b9d467b370adae7b3ec3c9c3bec655bc8a66"
+        },
+        {
+          "dimension": "Studieform",
+          "category": "Fristående kurser",
+          "value": "19643.7",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8&group_slug=c0bc3a9977470b4e8f6ed2d86a1f5f16373c5a99"
+        },
+        {
+          "dimension": "Studieform",
+          "category": "Fristående kurser",
+          "value": "6353.5",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesområde",
+          "category": "Humaniora och teologi",
+          "value": "6353.5",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesdelområde",
+          "category": "Historisk-filosofiska ämnen",
+          "value": "2390.5",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=fbad4febbb8dab39ba5d53cd0a5ddc15f4765cbe&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesgrupp",
+          "category": "Antikens kultur",
+          "value": "43.4",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=ec920040fcb90b1927e7f14c72ffa6a24e927190&gender=Kvinnor&age_group=8"
+        }
+      ],
+      "two_navigation_orders": {
+        "same_endpoint": true,
+        "exact_yearly_observations": true,
+        "periods_compared": [
+          "2007/08",
+          "2008/09",
+          "2009/10",
+          "2010/11",
+          "2011/12",
+          "2012/13",
+          "2013/14",
+          "2014/15",
+          "2015/16",
+          "2016/17",
+          "2017/18",
+          "2018/19",
+          "2019/20",
+          "2020/21",
+          "2021/22",
+          "2022/23",
+          "2023/24",
+          "2024/25",
+          "2025/26"
+        ]
+      },
+      "deepest_joint_value": "43.4",
+      "verified_sample": true
+    },
+    {
+      "university": "1",
+      "period": "2016/17",
+      "gender": "Kvinnor",
+      "age": "-24",
+      "root_url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17&gender=Kvinnor&age_group=8",
+      "source_total": "94229.3",
+      "edges": [
+        {
+          "dimension": "Ämnesområde",
+          "category": "Humaniora och teologi",
+          "value": "12381",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17&gender=Kvinnor&age_group=8&group_slug=7f05b9d467b370adae7b3ec3c9c3bec655bc8a66"
+        },
+        {
+          "dimension": "Studieform",
+          "category": "Fristående kurser",
+          "value": "16798.6",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17&gender=Kvinnor&age_group=8&group_slug=c0bc3a9977470b4e8f6ed2d86a1f5f16373c5a99"
+        },
+        {
+          "dimension": "Studieform",
+          "category": "Fristående kurser",
+          "value": "5641.2",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesområde",
+          "category": "Humaniora och teologi",
+          "value": "5641.2",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesdelområde",
+          "category": "Historisk-filosofiska ämnen",
+          "value": "1997.2",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17&group_slug=fbad4febbb8dab39ba5d53cd0a5ddc15f4765cbe&gender=Kvinnor&age_group=8"
+        },
+        {
+          "dimension": "Ämnesgrupp",
+          "category": "Antikens kultur",
+          "value": "27.1",
+          "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17&group_slug=ec920040fcb90b1927e7f14c72ffa6a24e927190&gender=Kvinnor&age_group=8"
+        }
+      ],
+      "two_navigation_orders": {
+        "same_endpoint": true,
+        "exact_yearly_observations": true,
+        "periods_compared": [
+          "2007/08",
+          "2008/09",
+          "2009/10",
+          "2010/11",
+          "2011/12",
+          "2012/13",
+          "2013/14",
+          "2014/15",
+          "2015/16",
+          "2016/17",
+          "2017/18",
+          "2018/19",
+          "2019/20",
+          "2020/21",
+          "2021/22",
+          "2022/23",
+          "2023/24",
+          "2024/25",
+          "2025/26"
+        ]
+      },
+      "deepest_joint_value": "27.1",
+      "verified_sample": true
+    }
+  ],
+  "gender_age_grid": {
+    "university": "171",
+    "period": "2025/26",
+    "observations": [
+      {
+        "gender": "Total",
+        "age": "Total",
+        "value": "139.5",
+        "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26"
+      },
+      {
+        "gender": "Total",
+        "age": "-24",
+        "value": "45",
+        "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&age_group=8"
+      },
+      {
+        "gender": "Total",
+        "age": "25-34",
+        "value": "51.1",
+        "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&age_group=9"
+      },
+      {
+        "gender": "Total",
+        "age": "35-",
+        "value": "43.3",
+        "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&age_group=10"
+      },
+      {
+        "gender": "Kvinnor",
+        "age": "Total",
+        "value": "61.5",
+        "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor"
+      },
+      {
+        "gender": "Kvinnor",
+        "age": "-24",
+        "value": "14.4",
+        "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8"
+      },
+      {
+        "gender": "Kvinnor",
+        "age": "25-34",
+        "value": "24.2",
+        "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=9"
+      },
+      {
+        "gender": "Kvinnor",
+        "age": "35-",
+        "value": "22.9",
+        "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=10"
+      },
+      {
+        "gender": "Män",
+        "age": "Total",
+        "value": "78",
+        "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=M%C3%A4n"
+      },
+      {
+        "gender": "Män",
+        "age": "-24",
+        "value": "30.6",
+        "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=M%C3%A4n&age_group=8"
+      },
+      {
+        "gender": "Män",
+        "age": "25-34",
+        "value": "26.9",
+        "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=M%C3%A4n&age_group=9"
+      },
+      {
+        "gender": "Män",
+        "age": "35-",
+        "value": "20.5",
+        "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=M%C3%A4n&age_group=10"
+      }
+    ],
+    "verified_sample": true
+  },
+  "sample_checks_passed": true,
+  "hst_new_requests": 1,
+  "response_fingerprints": [
+    {
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=HT2016",
+      "canonical_json_sha256": "f59409ac63b9482004f5cdcc114819d608a2408c5756bb6f264215b8e6df0686"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "53bc04a824d23cfb51ba2e3f6207bf264fb93f1ef9ef2b80d478584f91a8e80c"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8&group_slug=7f05b9d467b370adae7b3ec3c9c3bec655bc8a66",
+      "canonical_json_sha256": "6423d577dda87f1f48af6b73c0e88f71b5c0cd2bdebe2469ec6cea7b966d61ec"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&group_slug=1efff100ab2cc285a3cf8d669ccc174cbf060460&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "cd7926f5230531314b8f4ebd600b83535e4de0870c3167b9c6a3cef5a5307507"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&age_group=10",
+      "canonical_json_sha256": "3ff9816e4aaaec207308b0da709655bfe2edc6bca7de30382b07b31507df8df5"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2016%2F17&group_slug=e085de897e8cfbff81bef602dd1b1457d75513ac&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "75e8a14c4773099e93533803b265201a32b23e370ce6d2c545127c50fb1a186c"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2014%2F15",
+      "canonical_json_sha256": "261973d73a29f11e83e1860403d461b56f04da61ca7a26e002629dd22c9b957a"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26",
+      "canonical_json_sha256": "d8b7f61ccba176577562f5b178476f6316f4132832888c684e71dca9d40267ba"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2024%2F25&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "302832e85d557bb643a987b7a9b4e7758d361f8683987fcbf75632fbec9a9c56"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2024%2F25&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "72752f1f6aca6815a4d466b3b02d49d299d166c9fc8c7dbbc7fe29c7e89db245"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=M%C3%A4n&age_group=10",
+      "canonical_json_sha256": "2a55352c5e9258106a66481573ac95c79468f2e72963825eb1adcb94abb104a4"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "0b77c6ecff785bc338c2726ec65cc7f29abb231e7c8008e6dac78f78a3ac9761"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/136?university=1&year=2020",
+      "canonical_json_sha256": "80bae7d5ddc0c629f48131780a5ce819d5d7554a3e0e69b89fbf351532d514ed"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17&gender=Kvinnor&age_group=8&group_slug=7f05b9d467b370adae7b3ec3c9c3bec655bc8a66",
+      "canonical_json_sha256": "1cd55c4c5b0f55384a82c19ce223e0967b6c42a9893b17f73e50b6251d345f87"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2024%2F25&gender=Kvinnor&age_group=8&group_slug=c0bc3a9977470b4e8f6ed2d86a1f5f16373c5a99",
+      "canonical_json_sha256": "c98d7786034b679f2d6da81eabbd4d9aadfdd456b7c811ee524e055b5599f47a"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=VT2026",
+      "canonical_json_sha256": "2d834ef42154dd021a5243fce2a88c74f77c2393dd0a1268be160bd3304c697d"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8&group_slug=c0bc3a9977470b4e8f6ed2d86a1f5f16373c5a99",
+      "canonical_json_sha256": "86944468ddc304a73971d34d6fdfe045c59523163cf8fa32a8e166d0e5d16d10"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2016%2F17&group_slug=fbad4febbb8dab39ba5d53cd0a5ddc15f4765cbe&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "125059aa99ae0b3cf1686b64024bbd7c54c74283f89db7491c8ef83272a105da"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "7ad6bc2fe4ce0fd019f36f8a8f1a5cd9ad8a8afda449130ab035f2e5afcd9169"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2024%2F25",
+      "canonical_json_sha256": "a732f98ba1618e6784d1cdcd2a796d7d62af50103f4caf35df3350b3ade5adf5"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/99?university=1&year=VT2017",
+      "canonical_json_sha256": "ad83b5c2795ff584740907b7fc090d8ba23b10a2745fa36aa6ab80a09348e174"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2023%2F24",
+      "canonical_json_sha256": "4afe763a2669eaa3744cfde422f86c2d0702dcfa17806c6506161209173b7ebb"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2024%2F25&group_slug=1efff100ab2cc285a3cf8d669ccc174cbf060460&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "202c4b44b3356b0fd270e8cad809c63efda9bd289d0fe2147d5a6921ed9dea7a"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor",
+      "canonical_json_sha256": "22f4632e7f1b2803439ade2c3de44f7b6447026980566973a1fa4a1a1e6ea220"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "575f70c61a297099bd97b35db43c0c5d0dd81d54991e42626fa29c9dc7fd0d05"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2016%2F17&gender=Kvinnor&age_group=8&group_slug=7f05b9d467b370adae7b3ec3c9c3bec655bc8a66",
+      "canonical_json_sha256": "3d4c899f90a580760fbfcc70fe367a20b6f097fb9b7bc884930a948b49c4eb43"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&age_group=8",
+      "canonical_json_sha256": "48198692a4ff39eabf5984e1e6e91331b896c276f1ea3087ed08fef1496ac59d"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2016%2F17&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "9f371ac6e736f80f127628b4df327c86305936d917919e35c0f9017505aa3097"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17&group_slug=fbad4febbb8dab39ba5d53cd0a5ddc15f4765cbe&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "e4352be6095b17f4cf7cfb905a15ab9f6ec5a33e19c4c895e2fc7436ff5475f4"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/136?university=1&year=2024",
+      "canonical_json_sha256": "6b261c0f49f71655c85a3e4610a3a6136b2784f69b38512e65585da041467374"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2016%2F17&gender=Kvinnor&age_group=8&group_slug=c0bc3a9977470b4e8f6ed2d86a1f5f16373c5a99",
+      "canonical_json_sha256": "66e578d30d6ac48c5959bedad9049d00f5be9a38ffdca31b369ac2c3375fab2f"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2016%2F17&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "0b7940ab5091b0fa65f491c9bd0740f054cd01abd5b664826ec94551772761da"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=10",
+      "canonical_json_sha256": "13f91ec5217d234ac49829b63d621cf3026b7ee4a65b78e7305c279349e10244"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2015%2F16",
+      "canonical_json_sha256": "d611f866b0f10dd89b7dcb0e09cc63a018c1b07f3b212bcb3e2b9f450d608b09"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&gender=Kvinnor&age_group=8&group_slug=c0bc3a9977470b4e8f6ed2d86a1f5f16373c5a99",
+      "canonical_json_sha256": "1a6278b0dc1a89fc790f93924e83e001fdc04380bdb62ed5e2a241de44c762de"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=ec920040fcb90b1927e7f14c72ffa6a24e927190&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "ea9f9734c980368501579438e8bf69f52d082d15b504993f1304a20b6de6d7f5"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26",
+      "canonical_json_sha256": "093f371cea3f1d80fa08595bb18b05df9914771378d9a7f4dc4811305644301b"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=VT2017",
+      "canonical_json_sha256": "9153b5acf5da36b6d8f3df90edc7cea639922fa427f1a1a288529ef1b272c1cf"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&group_slug=fbad4febbb8dab39ba5d53cd0a5ddc15f4765cbe&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "a074862b2c907bbf56625a51068b51c40cd58ab204b4b2788c728b6f611b06e8"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=M%C3%A4n&age_group=8",
+      "canonical_json_sha256": "94e9fcf2aa0ea03f089a855c5fab0f650a877944fa06556b9b97c8cf5c805ede"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&group_slug=9e31760fa4778cb1025a0c9f6592935d21812e53&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "880ce73c97e97940cbc1989b0fe28e663750c6ad14acd7c7aaf9e3dee8ac1ef2"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=HT2026",
+      "canonical_json_sha256": "b2921b2004f34180cd1f38ccd7b59bd1973a03192194e95af2028fe3323ae8a5"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/99?university=1&year=HT2026",
+      "canonical_json_sha256": "e3cd9acf137423389fb5e0a1c47fedb1e7c9d4b42cbf087b5540e1fd88d6463f"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=9",
+      "canonical_json_sha256": "41646b5223e3fa244cf5a46d2f9584688d56f350e4f5ac672071a4e36cc61e03"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "5ed023caec0020008097a1de4b4d282f1b4f9568b54c6f67ff4cc5c328065f77"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "72dd6cc0ef04b84949026c19af9828a34aedc8878ad76bc27019bd85129e502b"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2015%2F16",
+      "canonical_json_sha256": "cf95522565651501f3e761293f7933b90105a4d12bd9ec585f439433af4b4e9d"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17&gender=Kvinnor&age_group=8&group_slug=c0bc3a9977470b4e8f6ed2d86a1f5f16373c5a99",
+      "canonical_json_sha256": "eb453e4d9cc68e8bb9c7ebd723f938522f9c9c634363444cb62c66beea01e2d5"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8&group_slug=c0bc3a9977470b4e8f6ed2d86a1f5f16373c5a99",
+      "canonical_json_sha256": "52625f43968cb4a1883e99d5ea14cb1958b355603aad6f8919905a1184949b24"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2021%2F22",
+      "canonical_json_sha256": "63b7df2df2f134e1a9389e45d169cbd254646bffe6023762b337f05f96cd1693"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=M%C3%A4n&age_group=9",
+      "canonical_json_sha256": "568581c84d95fb375fbf783409ed74a850d030e0c8e92a7b8b5dd4748f034252"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17&group_slug=ec920040fcb90b1927e7f14c72ffa6a24e927190&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "e4b78cf2d0562b96562b27951bc0178392061f62a0a0197c154be474511e0dcd"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=VT2017",
+      "canonical_json_sha256": "bb9cdf1bb0e9a2ac501ee90fa751e8639d66ea2e421989f06aa9fdccd4bdfe25"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "42dfa6f2b15f04ac65abafe0ee111a8a5c3b3dff828e3348fc64248898a45f04"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=HT2026",
+      "canonical_json_sha256": "5b90f0e9760fa933cf228f9828c3847aba9ff33c787268d807170bdb9bd60061"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2024%2F25&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "d818fd0c6876508e8eb9b28063ed954d9ee5a4e45ef21098663051a906fb940e"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2024%2F25&gender=Kvinnor&age_group=8&group_slug=7f05b9d467b370adae7b3ec3c9c3bec655bc8a66",
+      "canonical_json_sha256": "d5cfdc68b4f8700b379c02ce11e5e525707c50b9d0a0d29d9a080c52e12c5c38"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2024%2F25",
+      "canonical_json_sha256": "e37a6f39bfcaf1fee7110deae533ef41a752b2b7614c7b2774c5fe994bb73097"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=M%C3%A4n",
+      "canonical_json_sha256": "0af7e68bf49d275b02d5de7c0c20bf9b25928fb54a07fe3db24cfcf522a2c99c"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&group_slug=20472cd33f4f4a372bfadea0dd80b4dab1b9989d&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "fabab6abd4c8432316c9b91a43eaf3cf207c4ad9d402244bcdbb0ab131c5d6d5"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&group_slug=b1dfcf3f53547aa1d6147f2293542bd30641bd0b&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "56f614fa5cf92a428dd8a42eb48061e1c9f52c9ad67e7152af8137903d31f0cc"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&gender=Kvinnor&age_group=8&group_slug=7f05b9d467b370adae7b3ec3c9c3bec655bc8a66",
+      "canonical_json_sha256": "e427b12a42c1be04a2a0b1a82615a3ce2f441471c0b511b4c782af54a797bc98"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2012%2F13",
+      "canonical_json_sha256": "d7a7f0ced82006c5222605c65b8858e9ddf181500b09ba56e62f82cf99f2b7c1"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2024%2F25&group_slug=20472cd33f4f4a372bfadea0dd80b4dab1b9989d&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "62f8872b3f81f4d4c2f1dd21b553ea95aa6e7a56bb52b308972136b0378544e6"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=fbad4febbb8dab39ba5d53cd0a5ddc15f4765cbe&gender=Kvinnor&age_group=8",
+      "canonical_json_sha256": "68c9eacaaf68651a73127691c79814eca0890957e431f77aba9a2f4e21f4ff1c"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8&group_slug=7f05b9d467b370adae7b3ec3c9c3bec655bc8a66",
+      "canonical_json_sha256": "c952cfa9269b108b322cc54cb1fe26da357cb9ff19b65a4b8aa34b1f07325af2"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&age_group=9",
+      "canonical_json_sha256": "1dd1fb5cab5edf4d22e28394dfcd4561778c919a491b4f8a4320215a7883ac0b"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17",
+      "canonical_json_sha256": "2087f2b5476a16bbc66c31b53851ddd63e4430519fec51734bb130f17af4105a"
+    }
+  ]
+}

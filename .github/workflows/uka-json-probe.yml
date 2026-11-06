@@ -1,0 +1,78 @@
+name: 90 · Diagnostik · UKÄ – JSON-alternativ
+
+on:
+  pull_request:
+    paths:
+      - scripts/uka_json_probe.py
+      - tests/test_uka_json_probe.py
+      - .github/workflows/uka-json-probe.yml
+  workflow_dispatch:
+    inputs:
+      resume_run:
+        description: "Tidigare JSON-diagnostikkörning med sparade källsvar (valfritt)"
+        type: string
+        default: ""
+      snapshot:
+        description: "Samma snapshot-ID som återstartens körning; tomt = dagens datum"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: uka-json-probe-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  json_probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install requests beautifulsoup4
+      - name: Testa observationsvärden, länkar och återstart
+        run: |
+          python -m unittest discover -s tests -p test_uka_source_audit.py -v
+          python -m unittest discover -s tests -p test_uka_json_probe.py -v
+      - uses: actions/download-artifact@v4
+        if: github.event_name == 'workflow_dispatch' && inputs.resume_run != ''
+        with:
+          name: uka-json-probe
+          path: output/uka-json-probe
+          run-id: ${{ inputs.resume_run }}
+          github-token: ${{ github.token }}
+      - name: Verifiera begränsade JSON-urval – ingen produktionsimport
+        env:
+          SNAPSHOT: ${{ inputs.snapshot }}
+        run: |
+          args=()
+          if [ -n "$SNAPSHOT" ]; then args+=(--snapshot "$SNAPSHOT"); fi
+          python -u scripts/uka_json_probe.py "${args[@]}"
+      - name: Spara kontroller och återstartbara källsvar
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uka-json-probe
+          path: output/uka-json-probe
+          retention-days: 14
+      - name: Redovisa vad ett grönt test faktiskt bevisar
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          path = Path('output/uka-json-probe/summary.json')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
+              out.write('## UKÄ JSON – begränsat källprov\n\n')
+              if path.exists():
+                  r = json.loads(path.read_text())
+                  out.write(f"Indikatorer med periodprov: {len(r['inventory'])}/10.\n\n")
+                  out.write(f"Godkända HST-prov: {sum(c['verified_sample'] for c in r['hst_samples'])}/6.\n\n")
+                  out.write(f"Kön/åldersprov: {len(r.get('gender_age_grid', {}).get('observations', []))}/12.\n\n")
+              out.write('Ett godkänt stickprov bevisar inte full datatäckning eller CSV-likvärdighet. Ingen publicering utförs.\n')
+          PY
