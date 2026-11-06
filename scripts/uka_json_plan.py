@@ -48,7 +48,7 @@ def build_plan(inventory, snapshot, cache):
                         except (ValueError, KeyError, TypeError):
                             state = "invalid_cache"
                     jobs.append({"job_id": digest(spec), "indicator": indicator, "period": period,
-                                 "gender": gender, "age": age, "url": url,
+                                 "gender": gender, "age": age, "age_parameter": query.get("age_group"), "url": url,
                                  "cache_key": cache_key, "root_state": state,
                                  "discovery_state": "pending", "publication_state": "blocked"})
                     count += 1

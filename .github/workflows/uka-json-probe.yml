@@ -158,7 +158,7 @@ jobs:
         with:
           name: uka-json-probe
           path: output/uka-json-probe
-          retention-days: 14
+          retention-days: 30
       - name: Redovisa vad ett grönt test faktiskt bevisar
         if: always()
         run: |
