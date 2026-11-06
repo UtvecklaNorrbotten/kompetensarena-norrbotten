@@ -1,0 +1,94 @@
+name: 90 · Diagnostik · UKÄ – källobservationer
+
+on:
+  pull_request:
+    paths:
+      - scripts/uka_source_audit.py
+      - tests/test_uka_source_audit.py
+      - .github/workflows/uka-source-audit.yml
+  workflow_dispatch:
+    inputs:
+      resume_run:
+        description: "Återanvänd verifierade källfiler från detta diagnostikkörnings-ID (valfritt)"
+        type: string
+        default: ""
+      snapshot:
+        description: "Samma snapshot-ID som återstartens körning; tomt = dagens UTC-datum"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: uka-source-audit-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install requests beautifulsoup4
+      - run: python -m unittest discover -s tests -p test_uka_source_audit.py -v
+
+  source:
+    needs: unit
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        indicator: [13, 31, 33, 97, 99, 108, 136, 77, 134, 135]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install requests beautifulsoup4
+      - uses: actions/download-artifact@v4
+        if: github.event_name == 'workflow_dispatch' && inputs.resume_run != ''
+        with:
+          name: uka-source-${{ matrix.indicator }}
+          path: output/uka-source-audit
+          run-id: ${{ inputs.resume_run }}
+          github-token: ${{ github.token }}
+      - name: Jämför verkliga observationer och källtotaler utan publicering
+        env:
+          INDICATOR: ${{ matrix.indicator }}
+          SNAPSHOT: ${{ inputs.snapshot }}
+        run: |
+          args=()
+          if [ -n "$SNAPSHOT" ]; then args+=(--snapshot "$SNAPSHOT"); fi
+          python -u scripts/uka_source_audit.py --indicator "$INDICATOR" "${args[@]}"
+      - name: Spara återstartbara källfiler och kontroller även vid fel
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uka-source-${{ matrix.indicator }}
+          path: output/uka-source-audit
+          retention-days: 14
+      - name: Redovisa kontrollstatus
+        if: always()
+        env:
+          INDICATOR: ${{ matrix.indicator }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          path = Path('output/uka-source-audit') / ('audit-' + os.environ['INDICATOR'] + '.json')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
+              out.write('### UKÄ ' + os.environ['INDICATOR'] + '\n\n')
+              if not path.exists():
+                  out.write('Ingen komplett kontrollrapport. Se diagnostikartefakten. Publicering spärrad.\n')
+              else:
+                  report = json.loads(path.read_text())
+                  cases = report['cases']
+                  out.write(f"Verifierade urval: {sum(c['verified'] for c in cases)}/{len(cases)}.\n\n")
+                  out.write('Detta är källtester, ingen produktionsimport.\n')
+          PY
