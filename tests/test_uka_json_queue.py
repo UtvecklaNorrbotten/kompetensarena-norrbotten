@@ -1,5 +1,6 @@
 """Synthetic crash/resume and transaction integrity examples."""
 import copy
+import json
 from pathlib import Path
 import sys
 import tempfile
@@ -88,6 +89,19 @@ class QueueTests(unittest.TestCase):
             r = q.run(MemoryProbe(data))
             self.assertEqual(r['states'], {'error': 1})
             self.assertFalse(r['graph_closed'])
+
+    def test_missing_groups_allowed_only_at_verified_terminal_scope(self):
+        with tempfile.TemporaryDirectory() as tmp, Queue(Path(tmp) / 'q.sqlite', ROOT, 'example') as q:
+            dims = {k: 'Exempel' for k in ('Ämnesområde', 'Ämnesdelområde', 'Ämnesgrupp', 'Studieform')}
+            with q.db:
+                q.db.execute('UPDATE nodes SET dimensions=?', (json.dumps(dims, sort_keys=True),))
+            data = fixture(); del data[ROOT]['groups']
+            self.assertTrue(q.run(MemoryProbe(data))['graph_closed'])
+
+    def test_missing_groups_at_root_is_still_an_error(self):
+        data = fixture(); del data[ROOT]['groups']
+        with tempfile.TemporaryDirectory() as tmp, Queue(Path(tmp) / 'q.sqlite', ROOT, 'example') as q:
+            self.assertEqual(q.run(MemoryProbe(data))['states'], {'error': 1})
 
 
 if __name__ == '__main__':

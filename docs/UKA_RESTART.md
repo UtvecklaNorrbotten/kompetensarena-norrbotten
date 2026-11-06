@@ -48,7 +48,7 @@ Verifiera alltid checksumma och urval innan återanvändning. Efter utgångsdatu
 ## Nästa konkreta implementation
 
 1. Kömotorn är nu implementerad i `scripts/uka_json_queue.py` för HST. SQLite sparar nodvärde, källa-hash, barnlänkar, observationer och status atomiskt. Enbart ej färdiga noder bearbetas vid återstart. Skrivarlås förhindrar samtidiga arbetare i samma kö.
-2. Sex nya tester verifierar avbrott/återstart, identiska slutvärden, inga omhämtningar av färdiga noder, rollback av halva checkpoints, budgetstopp, källvärdeskonflikter, saknade värdefält, snapshot-konflikt och skrivarlås. Tidsbudgeten kontrolleras mellan anrop; ett pågående HTTP-anrop kan överskrida den.
+2. Åtta nya tester verifierar avbrott/återstart, identiska slutvärden, inga omhämtningar av färdiga noder, rollback av halva checkpoints, budgetstopp, källvärdeskonflikter, saknade värdefält, snapshot-konflikt och skrivarlås. Tidsbudgeten kontrolleras mellan anrop; ett pågående HTTP-anrop kan överskrida den.
 3. Ett nationellt HST-rotjobb (2025/26, Kvinnor, -24) har startats kontrollerat: lokalt 6 godkända noder, 199 observationer, 51 väntande noder efter budgetstopp. Först användes bara sparade svar, sedan 4 nya anrop före tidsstopp. Detta är inte en komplett nationell datamängd. Se `uka-queue-checkpoint-2026-11-06.json`.
 4. Återanvänd källans tidsserier där det är bevisat korrekt, men upptäck historiska grupper per period. Senaste årets ämnen/lärosäten räcker inte för historisk täckning.
 5. Lös oberoende referens, legitima tomma/saknade/sekretessvärden och källversion/revision innan full import.
@@ -60,7 +60,7 @@ Starta inte den stora tioårshämtningen för att bara få gröna jobb. Inga nya
 ## Återuppta nodkön efter pausen
 
 JSON-workflowet sparar nu även SQLite-kön och källcachen i artefakten `uka-json-probe`.
-Använd senaste körningen på PR #82, eftersom äldre körningar saknar köfilen.
+Använd senaste godkända körningen på PR #82, eftersom äldre körningar saknar köfilen.
 Återställ hela artefakten till `output/uka-json-probe`; generera inte en ny tom kö ovanpå den sparade.
 Kön binder exakt urval och snapshot. Fortsätt med samma snapshot-ID som körningen använde.
 
@@ -80,3 +80,5 @@ Nästa återstående kodsteg: verifiera kömotorn mot fler nationella HST-noder,
 lägg till selektiv återförsökshantering för övergående fel och ett kampanjlager över rotjobben.
 Övriga nio indikatorers dimensioner stöds ännu inte av denna HST-kömotor.
 Källrevisioner och oberoende fullständighetsreferens blockerar fortfarande produktion.
+
+Källdetalj verifierad under kötestet: UKÄ utelämnar `groups` i vissa institutionsspecifika slutnoder. Kömotorn accepterar detta endast när ämnesområde, delområde, ämnesgrupp och studieform redan är valda och källans periodvärde verifieras. Saknad struktur i rotnoder eller nationella noder förblir ett fel. Regressionstester täcker båda fallen.

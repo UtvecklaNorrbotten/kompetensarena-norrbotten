@@ -58,7 +58,14 @@ class Queue:
         self.db.close(); self.lock.close()
 
     def checkpoint(self, node, body):
-        if str(body.get('indicator', {}).get('id')) != '33' or not isinstance(body.get('groups'), list):
+        dims = json.loads(node['dimensions'])
+        groups = body.get('groups')
+        # Observed UKÄ convention: institution-level terminal nodes omit groups.
+        # Do not generalise this to missing root structure or national coverage.
+        if ('groups' not in body and self.root['university'] != '1' and
+                all(k in dims for k in (*SUBJECT_LEVELS, 'Studieform'))):
+            groups = []
+        if str(body.get('indicator', {}).get('id')) != '33' or not isinstance(groups, list):
             raise ValueError('Incomplete or wrong source response')
         if any('value' not in row for row in body.get('yearly_totals', {}).get('totals', [])):
             raise ValueError('Missing source value field')
@@ -66,11 +73,10 @@ class Queue:
         if self.period not in series:
             raise ValueError('Requested period absent from source')
         value = series[self.period]
-        dims = json.loads(node['dimensions'])
         observations = [{'university': self.root['university'], 'value': value, 'dimensions': dims}]
         children = []
         universities = set()
-        for group in body['groups']:
+        for group in groups:
             column = group['column']
             if column == 'Lärosäten':
                 for row in group.get('totals', []):
