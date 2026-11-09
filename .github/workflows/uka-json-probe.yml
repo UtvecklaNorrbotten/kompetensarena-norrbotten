@@ -46,6 +46,9 @@ concurrency:
 
 jobs:
   json_probe:
+    # Broad historical diagnostics must not expand a single-indicator PR task.
+    # Offline regression tests run in uka-staging.yml; this job is manual only.
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

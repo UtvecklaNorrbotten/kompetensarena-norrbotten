@@ -101,7 +101,22 @@ inte källans sekretesssemantik. YAML och `git diff --check` passerar.
 Workflowet `uka-staging.yml` kör nu endast **33** vid PR-kontroll. Manuell
 körning väljer exakt en indikator (33 som förval). HST-steget återspelar
 piloten två gånger och sparar paketdatabas/manifest/rapporter i staging-33-
-artefakten. Övriga indikatorer har inte körts i denna arbetsomgång.
+artefakten. Ingen ny utredning eller staging av övriga indikatorer har gjorts.
+
+GitHub-verifiering av funktionscommit `4396514dca173c95ae968f3b2173858419adcc50`:
+run [42630773876](https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/runs/42630773876),
+96 tester och endast `Staging · 33`. CSV-skrivning, återstart och uppladdning
+av stagingartefakten passerar. Använd denna körnings `uka-staging-33` som
+ny återstartspunkt; pilotmanifestet och den gemensamma basen behålls.
+
+Avvikelse vid PR-uppdateringen: GitHub utvärderade PR:ens samlade ändrade
+sökvägar och startade även äldre JSON-diagnostik, run `42630774000`.
+Den återspelade tidigare kontroller för övriga nio indikatorer; deras
+nationella köloggar visar `processed_this_run: 0` och
+`network_requests_this_run: 0`. Ingen ny indikator påbörjades, men den
+automatiska återspelningen låg utanför den avsedda avgränsningen.
+`uka-json-probe.yml` har därför fått en jobbspärr: endast uttrycklig manuell
+körning. PR-regressionstester finns kvar i HST-stagingworkflowet.
 
 ### Återspela kontrollpunkten
 
