@@ -29,7 +29,8 @@ def reference_observations(manifest, reference_root, probe, subject_metadata):
     """Rebuild closed source graphs, rather than trusting a saved done flag."""
     scope = manifest['scope']; result = {}; contexts = set()
     ages = {'-24': '8', '25-34': '9', '35-': '10', 'Total': None}
-    expected = {(u, g, a) for u in scope['universities'] for g in scope['genders'] for a in scope['ages']}
+    reference_universities = manifest.get('reference_universities', scope['universities'])
+    expected = {(u, g, a) for u in reference_universities for g in scope['genders'] for a in scope['ages']}
     with tempfile.TemporaryDirectory() as temporary:
         for index, reference in enumerate(manifest['references']):
             if Path(reference['file']).name != reference['file']:
@@ -61,8 +62,15 @@ def reference_observations(manifest, reference_root, probe, subject_metadata):
             if coverage['duplicates'] or coverage['invalid_source_subject_paths']:
                 raise ValueError('Reference subject paths differ')
             part = queue_reference(replay)
-            if not part or part != queue_reference(path) or any(json.loads(k)[1] != context[0] for k in part):
+            if not part or part != queue_reference(path):
                 raise ValueError('Reference observations differ from source replay')
+            if context[0] != '1' and any(json.loads(k)[1] != context[0] for k in part):
+                raise ValueError('Institution reference returned another university')
+            # Projection is explicit in the frozen manifest. Verify the entire
+            # national graph first, then select the admitted institution scope.
+            part = {k: v for k, v in part.items() if json.loads(k)[1] in scope['universities']}
+            if not part:
+                raise ValueError('No positive observations in reference projection')
             if result.keys() & part.keys():
                 raise ValueError('Duplicate reference observations')
             result.update(part)
@@ -131,7 +139,10 @@ def run(root, csv_root, metadata_path, reference_root, bases, manifest_path, out
         raise ValueError('CSV metadata projection or provenance changed')
     # Exact receipt/filter/checksum replay only. This command has no live option.
     source = Source(csv_root, manifest['snapshot']); source.export_budget = 0
-    filters = ['from:' + scope['period'], 'to:' + scope['period']] + ['uni:' + u for u in scope['universities']]
+    export_scope = manifest.get('export_scope', scope)
+    if export_scope['period'] != scope['period'] or not set(scope['universities']) <= set(export_scope['universities']):
+        raise ValueError('Staging scope is outside CSV export scope')
+    filters = ['from:' + export_scope['period'], 'to:' + export_scope['period']] + ['uni:' + u for u in export_scope['universities']]
     filters += [v['value'] for v in metadata['genders']] + [v['value'] for v in metadata['ages']]
     filters += [g['index'] + v['value'] for g in metadata['groups'] for v in g['values']]
     exported = source.export(33, filters, metadata['metadata_hash'])
@@ -142,7 +153,9 @@ def run(root, csv_root, metadata_path, reference_root, bases, manifest_path, out
     probe = CampaignProbe(root, manifest['snapshot'], budget=0, bases=bases)
     with Campaign(root, plan, 33, bases) as campaign:
         before = campaign.report()
-        actual = observations(exported['rows'], metadata, scope['period'], scope['universities'], campaign.subject_metadata['paths'])
+        full = observations(exported['rows'], metadata, export_scope['period'], export_scope['universities'], campaign.subject_metadata['paths'])
+        actual = {k: v for k, v in full.items() if json.loads(k)[1] in scope['universities']
+                  and json.loads(k)[2] in scope['genders'] and json.loads(k)[3] in scope['ages']}
         reference = reference_observations(manifest, reference_root, probe, campaign.subject_metadata)
         package_id, written = stage_package(campaign, manifest, actual, reference)
         after = campaign.report()

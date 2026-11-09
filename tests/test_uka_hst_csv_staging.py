@@ -128,6 +128,26 @@ class CSVPackageTests(unittest.TestCase):
 
 
 class ReferenceReplayTests(unittest.TestCase):
+    def test_explicit_projection_verifies_full_national_graph_then_selects_ltu(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); url = BASE + '/33?university=1&year=2025%2F26'
+            q = validate_url(url, 33)
+            body = {'indicator': {'id': 33}, 'yearly_totals': {'totals': [{'year': '2025/26', 'value': 12.5}]},
+                    'groups': [{'column': 'Lärosäten', 'totals': [{'name': 'Exempel LTU', 'value': 1.25,
+                               'url': BASE + '/33?university=32&year=2025%2F26'}]}]}
+            write_json(root / 'responses' / (digest(['example', 33, q]) + '.json'),
+                       {'snapshot': 'example', 'url': url, 'sha256': digest(body), 'body': body})
+            database = root / 'reference.sqlite'; probe = CampaignProbe(root, 'example', 0)
+            with Queue(database, url, 'example', 'study-first', 33) as queue:
+                self.assertTrue(queue.run(probe)['graph_closed'])
+                binding = json.loads(queue.db.execute('SELECT binding FROM meta').fetchone()[0])
+            manifest = {'snapshot': 'example', 'scope': {'period': '2025/26', 'universities': ['32'], 'genders': ['Total'], 'ages': ['Total']},
+                        'reference_universities': ['1'], 'references': [{'file': database.name, 'sha256': file_hash(database), 'binding': binding}]}
+            self.assertEqual(reference_observations(manifest, root, probe, {'paths': []}), {identity('32'): '1.25'})
+            manifest['scope']['universities'] = ['999']
+            with self.assertRaisesRegex(ValueError, 'No positive'):
+                reference_observations(manifest, root, probe, {'paths': []})
+
     def test_fresh_replay_checks_source_hash_graph_and_frozen_reference(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp); url = BASE + '/33?university=171&year=2025%2F26'

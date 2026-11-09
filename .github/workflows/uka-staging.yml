@@ -7,8 +7,11 @@ on:
       - scripts/uka_csv_staging_audit.py
       - scripts/uka_csv_bulk_probe.py
       - scripts/uka_hst_csv_staging.py
+      - scripts/uka_hst_full_csv.py
       - config/uka_hst_csv_pilot.json
+      - config/uka_hst_csv_ltu.json
       - tests/test_uka_hst_csv_staging.py
+      - tests/test_uka_hst_full_csv.py
       - tests/test_uka_csv_staging_audit.py
       - tests/fixtures/uka-hst-bulk-2026-11-06.zip
       - scripts/uka_json_plan.py
@@ -146,6 +149,20 @@ jobs:
           b = json.load(open('output/uka-staging/csv-pilot-resume.json'))
           assert a['packages'] == b['packages'] and not b['staging_written']
           assert a['observations'] == b['observations'] == 144
+          assert all(r['national_unchanged'] and not r['publish_allowed'] and r['new_requests'] == r['new_exports'] == 0 for r in (a,b))
+          PYCODE
+      - name: Verifiera och återspela LTU-projektion med frysta referenser
+        if: matrix.indicator == 33
+        run: |
+          for pass in first resume; do
+            python scripts/uka_hst_csv_staging.py --root output/uka-staging --csv-root output/csv-reference --metadata output/csv-reference/export-filters.json --reference-root base/uka-json-probe --base base/uka-json-probe --manifest config/uka_hst_csv_ltu.json --output "output/uka-staging/ltu-${pass}.json"
+          done
+          python - <<'PYCODE'
+          import json
+          a = json.load(open('output/uka-staging/ltu-first.json'))
+          b = json.load(open('output/uka-staging/ltu-resume.json'))
+          assert a['packages'] == b['packages'] and not b['staging_written']
+          assert a['observations'] == b['observations'] == 366
           assert all(r['national_unchanged'] and not r['publish_allowed'] and r['new_requests'] == r['new_exports'] == 0 for r in (a,b))
           PYCODE
       - name: Spara staging, köer och enbart nya källsvar

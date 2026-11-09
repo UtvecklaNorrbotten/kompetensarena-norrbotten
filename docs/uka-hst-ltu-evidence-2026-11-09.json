@@ -1,0 +1,92 @@
+{
+  "indicator": 33,
+  "snapshot": "2026-11-06",
+  "plan_id": "4c4683bf5d379e6d3bbef8020a0d3e6c920ec0b593ad05f8a1843e3f9672badc",
+  "package_id": "6e1e2d916c31192af204db634800df159dd9a15aa1eacf90ff8cea216da32a18",
+  "manifest_sha256": "5fd47bfbffa90f4068c37651a9d8f97a00bc1792f2ed66763592542189e06077",
+  "staging_written": true,
+  "csv_sha256": "4614f48710b9d2e024e7e0e10669d10af44d8d0b4840f31b9498347c4e7570c7",
+  "observations": 366,
+  "coverage": [
+    {
+      "period": "2025/26",
+      "university": "32",
+      "gender": "Kvinnor",
+      "age": "-24",
+      "observations": 366
+    }
+  ],
+  "packages": [
+    {
+      "package_id": "6e1e2d916c31192af204db634800df159dd9a15aa1eacf90ff8cea216da32a18",
+      "scope": {
+        "ages": [
+          "-24"
+        ],
+        "genders": [
+          "Kvinnor"
+        ],
+        "period": "2025/26",
+        "universities": [
+          "32"
+        ]
+      },
+      "observations": 366,
+      "staging_sha256": "a81fb4ba1c613d5f990e82d8e152c97121fcee90af4028673e898a2931c96ef5"
+    },
+    {
+      "package_id": "7b46201077227d78058f66b011f46e119f29f312c121baf190c6221c86a496b5",
+      "scope": {
+        "ages": [
+          "-24",
+          "25-34",
+          "35-",
+          "Total"
+        ],
+        "genders": [
+          "Kvinnor",
+          "Män",
+          "Total"
+        ],
+        "period": "2025/26",
+        "universities": [
+          "171"
+        ]
+      },
+      "observations": 144,
+      "staging_sha256": "ad5f56c8d946f2f7d31e027e889ff60ad99fc25258db87605d34a0a01e9e52c1"
+    }
+  ],
+  "reference_graphs": 1,
+  "national_overlap_observations": 366,
+  "new_requests": 0,
+  "new_exports": 0,
+  "national_completed_jobs": 1,
+  "national_observations": 9731,
+  "national_staging_sha256": "8dc51aa302a694b4af67eddebb358ec0bd0fe0c7442d5a4df669f70fc06c27cc",
+  "national_unchanged": true,
+  "full_source_coverage_verified": false,
+  "source_release_verified": false,
+  "publish_allowed": false,
+  "resume": {
+    "indicator": 33,
+    "snapshot": "2026-11-06",
+    "plan_id": "4c4683bf5d379e6d3bbef8020a0d3e6c920ec0b593ad05f8a1843e3f9672badc",
+    "package_id": "6e1e2d916c31192af204db634800df159dd9a15aa1eacf90ff8cea216da32a18",
+    "manifest_sha256": "5fd47bfbffa90f4068c37651a9d8f97a00bc1792f2ed66763592542189e06077",
+    "staging_written": false,
+    "csv_sha256": "4614f48710b9d2e024e7e0e10669d10af44d8d0b4840f31b9498347c4e7570c7",
+    "observations": 366,
+    "reference_graphs": 1,
+    "national_overlap_observations": 366,
+    "new_requests": 0,
+    "new_exports": 0,
+    "national_completed_jobs": 1,
+    "national_observations": 9731,
+    "national_staging_sha256": "8dc51aa302a694b4af67eddebb358ec0bd0fe0c7442d5a4df669f70fc06c27cc",
+    "national_unchanged": true,
+    "full_source_coverage_verified": false,
+    "source_release_verified": false,
+    "publish_allowed": false
+  }
+}

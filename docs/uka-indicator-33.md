@@ -1,7 +1,7 @@
 # UKÄ 33 – Helårsstudenter
 
-Senaste kontrollpunkt: **2**, verifierat CSV-paket i återstartbar staging.
-Nästa åtgärd står sist. Full tioårstäckning är inte klar.
+Senaste kontrollpunkt: **3**, LTU och första hela året verifierade; resterande
+år hämtas i en separat kampanj. Aktuell status och nästa åtgärd står sist.
 
 ## Kontrollpunkt 1 – återställning 2026-11-09
 
@@ -140,7 +140,7 @@ vara false, observationerna 144 och paketkontrollsumman
 false, och publicering är alltid false. Originalbasen har giltighetstid till
 2026-12-06 enligt återstartskontrollen; artefaktkedjan måste bevaras.
 
-## Exakt nästa åtgärd
+## Nästa åtgärd efter kontrollpunkt 2 (nu genomförd)
 
 Fortsätt endast HST. Nästa avgränsade paket bör vara **LTU (32), Kvinnor,
 -24, 2025/26**, där det redan finns 366 matchande CSV-/JSON-observationer.
@@ -156,3 +156,62 @@ Ingen större tioårshämtning behövs för detta steg. Nya källanrop har budge
 **0** tills nästa konkreta osäkerhet kräver ett separat avgränsat prov.
 Återstående större luckor är övriga perioder/lärosäten/kombinationer,
 tom-/sekretesssemantik och revisioner. Ingen produktionsanslutning eller merge.
+
+## Kontrollpunkt 3 – LTU och ett helt år, 2026-11-09
+
+Användaren har nu godkänt samtliga tre steg: LTU-projektion, ett kontrollerat
+helårsuttag för alla lärosäten och därefter resterande nio HST-år om första
+året passerar. Avgränsningen är fortsatt endast 33; ingen publicering/merge.
+
+**Steg 1 klart:** LTU/Kvinnor/-24/2025-26 matchar exakt **366/366**
+observationer efter att hela den frysta nationella JSON-grafen återbyggts
+offline. Det breda CSV-uttaget och stagingurvalet binds nu separat i
+[LTU-manifestet](../config/uka_hst_csv_ltu.json). Skrivning och återstart är
+verifierade med noll nya anrop. Nationella rader, jobb och manifest är
+oförändrade. Se [LTU-belägget](uka-hst-ltu-evidence-2026-11-09.json).
+
+**Steg 2 klart:** en ny kampanj med snapshotnamn **2026-11-09** har skapats,
+separat från 2026-11-06. Aktuella HST-filter har hämtats igen; de erbjuder
+78 lärosätesalternativ, tre kön, fyra åldrar och perioderna 2016/17–2025/26.
+Ämnesvägarna är oförändrade mot den frysta referensen. Snapshotnamnet är
+fortfarande inte ett officiellt versions-ID från UKÄ.
+
+2025/26 har **115 689** observationer och 50 observerade lärosäteskoder,
+inklusive Riket. Alla 78 alternativ har uttryckligen efterfrågats. Årets
+breda CSV är exakt lika unionen av två disjunkta lärosätesuttag och exakt
+lika unionen av två disjunkta studieformsuttag. Inga nycklar, värden eller
+totaler har konstruerats genom summering.
+
+För samtliga tolv köns-/ålderskombinationer har även UKÄ:s positiva nationella
+JSON-rotsvar kontrollerats: egna totaler, annonserade lärosäten, studieformer
+och ämnesområden. Alla kontroller måste finnas med oförändrade värden i CSV.
+Lärosätesmängden i CSV måste vara exakt samma som i respektive positiva
+rotreferens. Oannonserade lärosäten redovisas per kombination utan att tomma
+urval eller nollvärden skapas. Ett separat rotsvar efter hämtningen matchar
+svaret före kontrollerna. Se [årskontrollen](uka-hst-year-check-2026-11-09.json).
+
+**Steg 3 pågår:** `scripts/uka_hst_full_csv.py` hämtar resterande nio år med
+samma spärrar. Budget för detta block: högst 45 nya CSV-exporter och 117
+JSON-anrop. Varje år skrivs atomiskt tillsammans med sin kontrollsumma;
+fel lämnar en blockerad kontrollpunkt och ingen färdigmarkering för året.
+Återstart validerar tidigare stagingrader och hoppar över färdiga år.
+
+Viktig begränsning: lika breda och uppdelade CSV-exporter kan dela samma
+källfel. JSON-rotkontrollerna motverkar felaktigt urval och saknade lärosäten,
+men verifierar inte varje detaljcell mot en oberoende JSON-bladreferens.
+Källans sekretessmarkörer bevaras; deras semantik är inte allmänt fastställd.
+Därför förblir `full_source_coverage_verified`, `source_release_verified`
+och `publish_allowed` false även om alla tio år har hämtats och kontrollerats.
+
+108 lokala UKÄ-tester passerar. PR-workflowet återspelar både den ursprungliga
+piloten och LTU-projektionen offline. Den nya helårskampanjen är separat och
+startas inte automatiskt vid PR-uppdateringar.
+
+## Exakt nästa åtgärd vid kontrollpunkt 3
+
+Slutför den pågående, budgetbegränsade nioårskörningen. Vid fel: läs endast
+det blockerade årets kontrollpunkt; ändra inga tidigare manifest och
+färdigmarkera inte året. Efter sista året: kör återstart med noll nätbudget,
+kontrollera alla års kontrollsummor och spara ett komplett återstartspaket
+med källsvar, exportkvitton, metadata, SQLite och rapporter. Dokumentera
+resultatet här. Ingen annan indikator, merge eller produktion ingår.
