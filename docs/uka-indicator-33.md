@@ -272,7 +272,11 @@ dubbletter, felaktiga urval, ändrade källsvar,
 `git diff --check` passerar. GitHub-run
 [42637759039](https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/runs/42637759039)
 verifierade föregående funktionskontrollpunkt med 108 tester, HST-pilot och
-LTU-återstart; slutversionens verifiering redovisas separat efter commit.
+LTU-återstart. Slutfunktionscommit `4bb0a303817a2749febc584807b4cc02c958ddaf`
+är verifierad i run
+[42639626185](https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/runs/42639626185):
+109 tester, HST-staging inklusive båda CSV-paketen och täckningsrapporten
+passerar. Bred äldre JSON-diagnostik är korrekt överhoppad.
 
 Samlad maskinläsbar status finns i
 [helårsrapporten](uka-hst-full-collection-2026-11-09.json).
@@ -281,6 +285,11 @@ SQLite, oförändrade CSV-källfiler, metadata, exportkvitton, JSON-kontroller,
 kontrollpunkter, källfilernas kontrollsummor samt kod och äldre HST-referenser.
 Den nya datamängden ligger i `hst-collection/hst-full.sqlite`; äldre pilot-
 och LTU-staging hålls separat och ska inte adderas till de nya årssiffrorna.
+
+Paketet är sparat och tillgängligt: **165 606 969 byte**, ZIP-CRC och
+filinventering verifierade. SHA-256:
+`2e65e8cd1e34ebbf67341a3fc472280af47b932dba693b16225ca08a9f1ccd1c`.
+SQLite `quick_check` ger `ok`. Se även [leveranskvittot](uka-hst-delivery-2026-11-09.json).
 
 Efter uppackning körs hela kontrollen utan nya källanrop från arkivets rot:
 

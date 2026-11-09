@@ -1,0 +1,16 @@
+{
+  "bytes": 165606969,
+  "file_count": 1448,
+  "sha256": "2e65e8cd1e34ebbf67341a3fc472280af47b932dba693b16225ca08a9f1ccd1c",
+  "indicator": 33,
+  "observations": 1151372,
+  "years": 10,
+  "archive_crc_verified": true,
+  "sqlite_quick_check": "ok",
+  "saved": true,
+  "functional_commit": "4bb0a303817a2749febc584807b4cc02c958ddaf",
+  "github_validation_run": "42639626185",
+  "tests": 109,
+  "publish_allowed": false,
+  "filename": "UKA_HST_2016-17_2025-26_2026-11-09.zip"
+}
