@@ -1,7 +1,9 @@
 # UKÄ 33 – Helårsstudenter
 
-Senaste kontrollpunkt: **3**, LTU och första hela året verifierade; resterande
-år hämtas i en separat kampanj. Aktuell status och nästa åtgärd står sist.
+Senaste kontrollpunkt: **4**, alla tre beställda steg genomförda. Hela
+2016/17–2025/26 är hämtad och kontrollerad i separat återstartbar staging:
+**1 151 372 observationer**. Ingen publicering eller merge. Begränsningar och
+exakt nästa åtgärd står sist.
 
 ## Kontrollpunkt 1 – återställning 2026-11-09
 
@@ -207,7 +209,7 @@ och `publish_allowed` false även om alla tio år har hämtats och kontrollerats
 piloten och LTU-projektionen offline. Den nya helårskampanjen är separat och
 startas inte automatiskt vid PR-uppdateringar.
 
-## Exakt nästa åtgärd vid kontrollpunkt 3
+## Nästa åtgärd vid kontrollpunkt 3 (nu genomförd)
 
 Slutför den pågående, budgetbegränsade nioårskörningen. Vid fel: läs endast
 det blockerade årets kontrollpunkt; ändra inga tidigare manifest och
@@ -215,3 +217,99 @@ färdigmarkera inte året. Efter sista året: kör återstart med noll nätbudge
 kontrollera alla års kontrollsummor och spara ett komplett återstartspaket
 med källsvar, exportkvitton, metadata, SQLite och rapporter. Dokumentera
 resultatet här. Ingen annan indikator, merge eller produktion ingår.
+
+## Kontrollpunkt 4 – samtliga tre steg klara, 2026-11-09
+
+**Steg 1:** LTU 366/366 verifierat och återstartbart, enligt kontrollpunkt 3.
+
+**Steg 2:** 2025/26 passerar alla deklarerade helårskontroller: 115 689
+observationer, två exakta CSV-partitionsjämförelser och tolv positiva
+köns-/åldersreferenser. Årskontrollen gav klartecken till det tredje steget.
+
+**Steg 3:** samtliga resterande nio år har hämtats och passerat samma kontroller.
+Det finns nu **1 151 372 observationer**, tio färdiga år, tjugo exakta
+CSV-layoutjämförelser, 120 kontrollerade nationella köns-/åldersrotsvar och
+7 343 jämförda källtotaler/annonserade kontrollvärden. Samtliga tio separata
+slutkontroller av nationell rot stämmer med respektive års första svar.
+50 CSV-exporter och 130 JSON-svar är sparade tillsammans med sina kvitton.
+
+| Period | Observationer | Observerade lärosäteskoder, inklusive Riket |
+|---|---:|---:|
+| 2025/26 | 115 689 | 50 |
+| 2024/25 | 115 862 | 50 |
+| 2023/24 | 115 600 | 50 |
+| 2022/23 | 115 125 | 50 |
+| 2021/22 | 114 926 | 49 |
+| 2020/21 | 114 247 | 49 |
+| 2019/20 | 114 511 | 49 |
+| 2018/19 | 114 930 | 49 |
+| 2017/18 | 114 990 | 49 |
+| 2016/17 | 115 492 | 49 |
+
+Alla **78** metadataalternativ för lärosäte efterfrågades uttryckligen varje
+år. **56** koder, inklusive Riket, förekommer någon gång under perioden;
+22 förekommer inte i något år. Års- och köns-/åldersspecifik frånvaro finns
+i kontrollpunkternas positiva rotreferenser. Det är inte 78 uppmätta
+lärosäten varje år, och frånvarande rader har inte ersatts med nollor.
+Samtliga tre kön, fyra åldrar, fem studieformsval inklusive källans Total
+och alla metadataannonserade ämnesvägar har ingått i varje exporturval.
+Inga saknat-/sekretessmarkörer förekom i dessa exporter.
+
+En kompletterande revisionskontroll visar att **9 731/9 731** observationer
+för Kvinnor/-24/2025-26 är exakt oförändrade mot den fullständiga nationella
+referensen från 2026-11-06. Detta gäller det urvalet, inte en identifierad
+officiell källversion. Se [revisionskontrollen](uka-hst-revision-check-2026-11-09.json).
+
+**Återstarten passerar:** samtliga tio år återspelas med **0** nya exporter,
+**0** nya JSON-anrop och **0** nya insättningar. Alla års kontrollsummor
+är identiska. Vid återstart verifieras även de sparade CSV-bytena och
+kvittona, JSON-rotsvarens hash/kontext och de separata slutkontrollerna.
+Ändrade råfiler, kontrollrader, manifest eller stagingrader stoppar återstart.
+
+**Kod och tester:** 109 lokala UKÄ-tester passerar, inklusive avbrott,
+dubbletter, felaktiga urval, ändrade källsvar,
+ändrade råfiler, ändrat manifest och samtidiga skrivare. YAML och
+`git diff --check` passerar. GitHub-run
+[42637759039](https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/runs/42637759039)
+verifierade föregående funktionskontrollpunkt med 108 tester, HST-pilot och
+LTU-återstart; slutversionens verifiering redovisas separat efter commit.
+
+Samlad maskinläsbar status finns i
+[helårsrapporten](uka-hst-full-collection-2026-11-09.json).
+Återstartspaketet heter `UKA_HST_2016-17_2025-26_2026-11-09.zip` och innehåller
+SQLite, oförändrade CSV-källfiler, metadata, exportkvitton, JSON-kontroller,
+kontrollpunkter, källfilernas kontrollsummor samt kod och äldre HST-referenser.
+Den nya datamängden ligger i `hst-collection/hst-full.sqlite`; äldre pilot-
+och LTU-staging hålls separat och ska inte adderas till de nya årssiffrorna.
+
+Efter uppackning körs hela kontrollen utan nya källanrop från arkivets rot:
+
+```bash
+python scripts/uka_hst_full_csv.py \
+  --root hst-collection \
+  --metadata hst-collection/metadata.json \
+  --snapshot 2026-11-09 --all-years
+```
+
+Budgetarna är noll som standard. Kommandot måste ge tio år, 1 151 372 rader,
+oförändrade årskontrollsummor och noll nya anrop/exporter.
+
+**Kvarstående begränsningar:** CSV-layoutjämförelser och JSON-rotsvar
+verifierar de deklarerade kontrollerna; varje detaljcell har inte jämförts
+mot ett separat JSON-blad. Två CSV-layoutar kan dela samma källfel.
+Källans sekretesssemantik och ett officiellt oföränderligt källversions-ID
+är inte fastställda. Därför förblir `full_source_coverage_verified`,
+`source_release_verified` och `publish_allowed` false. Alla beställda
+hämtningar är genomförda; dessa kvarstående produktionsspärrar får inte
+döljas bakom tio färdiga år eller gröna tester.
+
+## Exakt nästa åtgärd
+
+Ingen ytterligare fullhämtning behövs för den beställda tioårsperioden.
+Före en separat produktionsintegration: fastställ vilken verifiering som
+ska krävas för detaljceller och sekretess, samt hur en ny källrevision ska
+identifieras och publiceras atomiskt. Återanvänd detta paket som underlag;
+ändra inte det frysta manifestet för att lägga till en ny period/revision.
+Backendens återstartbara uppladdning och serverkontrollerade manifest är
+fortsatt separat arbete. Ingen merge, migration eller publicering har gjorts,
+och nästa indikator har inte startats.

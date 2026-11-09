@@ -8,6 +8,7 @@ This verifies the declared checks, not every leaf against independent JSON.
 import argparse
 from collections import Counter
 import fcntl
+import hashlib
 import json
 from pathlib import Path
 import sqlite3
@@ -102,7 +103,10 @@ class Collection:
                         'periods': self.periods, 'universities': self.universities,
                         'genders': self.genders, 'ages': self.ages}
         self.lock = open(self.root / 'hst-full.sqlite.lock', 'a')
-        fcntl.flock(self.lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        try:
+            fcntl.flock(self.lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            self.lock.close(); raise ValueError('Another worker owns HST collection')
         self.db = sqlite3.connect(self.root / 'hst-full.sqlite'); self.db.row_factory = sqlite3.Row
         self.db.execute('PRAGMA foreign_keys=ON')
         self.db.executescript('''
@@ -120,7 +124,10 @@ class Collection:
         self.probe = Probe(self.root, snapshot, max_requests)
         self.bookends = Probe(self.root / 'bookends', snapshot, max_requests)
         self.max_requests = max_requests
-        self.validate_staged()
+        try:
+            self.validate_staged()
+        except (ValueError, KeyError, OSError, sqlite3.Error):
+            self.close(); raise
         write_json(self.root / 'collection-manifest.json', self.binding)
 
     def __enter__(self):
@@ -132,13 +139,33 @@ class Collection:
     def close(self):
         self.db.close(); self.lock.close()
 
-    def validate_staged(self):
-        for row in self.db.execute('SELECT period,summary FROM years'):
+    def validate_staged(self, period=None):
+        query = 'SELECT period,summary FROM years' + (' WHERE period=?' if period else '')
+        for row in self.db.execute(query, (period,) if period else ()):
             summary = json.loads(row['summary'])
             rows = self.db.execute('SELECT key,payload,source_hash FROM observations WHERE period=? ORDER BY key', (row['period'],)).fetchall()
             if (summary['binding_hash'] != digest(self.binding) or summary['period'] != row['period'] or
                     len(rows) != summary['observations'] or rows_digest(rows) != summary['staging_sha256']):
                 raise ValueError('Previously staged full-year rows or manifest changed')
+            for receipt in summary['exports']:
+                key = digest(receipt['spec'])
+                saved = json.loads((self.root / 'selections' / (key + '.json')).read_text())
+                path = self.root / 'selections' / (key + '.csv')
+                with path.open('rb') as stream:
+                    checksum = hashlib.file_digest(stream, 'sha256').hexdigest()
+                if saved.get('spec') != receipt['spec'] or saved.get('sha256') != receipt['sha256'] or checksum != receipt['sha256']:
+                    raise ValueError('Previously verified CSV source or receipt changed')
+            for url, expected in summary['root_hashes'].items():
+                key = digest([self.snapshot, 33, validate_url(url, 33)])
+                saved = json.loads((self.root / 'responses' / (key + '.json')).read_text())
+                if saved['sha256'] != expected or digest(saved['body']) != expected or saved['snapshot'] != self.snapshot or validate_url(saved['url'], 33) != validate_url(url, 33):
+                    raise ValueError('Previously verified JSON root changed')
+            total_url = BASE + '/33?' + urlencode({'university': '1', 'year': row['period']})
+            key = digest([self.snapshot, 33, validate_url(total_url, 33)])
+            end = json.loads((self.root / 'bookends' / 'responses' / (key + '.json')).read_text())
+            if (end['sha256'] != summary['root_hashes'][total_url] or digest(end['body']) != end['sha256'] or
+                    end['snapshot'] != self.snapshot or validate_url(end['url'], 33) != validate_url(total_url, 33)):
+                raise ValueError('Previously verified source bookend changed')
 
     def export(self, period, universities, studies):
         m = self.metadata
@@ -175,7 +202,7 @@ class Collection:
             raise ValueError('Year is outside frozen collection plan')
         saved = self.db.execute('SELECT summary FROM years WHERE period=?', (period,)).fetchone()
         if saved:
-            self.validate_staged()
+            self.validate_staged(period)
             return {**json.loads(saved[0]), 'written_this_run': False}
         checkpoint = self.root / 'checkpoints' / (period.replace('/', '-') + '.json')
         evidence = {'period': period, 'binding_hash': digest(self.binding), 'publish_allowed': False,
@@ -264,7 +291,8 @@ if __name__ == '__main__':
             for period in (collection.periods if args.all_years else args.period):
                 r = collection.collect_year(period)
                 print(json.dumps({k: r[k] for k in ('period', 'observations', 'staging_sha256', 'written_this_run')}, ensure_ascii=False), flush=True)
-                collection.report()
+                if r['written_this_run']:
+                    collection.report()
         finally:
             result = collection.report()
             print(json.dumps({k: v for k, v in result.items() if k not in ('years', 'planned_years')}, ensure_ascii=False), flush=True)

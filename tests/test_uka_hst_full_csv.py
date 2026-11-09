@@ -1,5 +1,6 @@
 """Synthetic year/coverage/transaction examples; no live source requests."""
 import copy
+import hashlib
 import json
 from pathlib import Path
 import sqlite3
@@ -12,7 +13,7 @@ from urllib.parse import urlencode
 sys.path.insert(0, str(Path(__file__).parents[1] / 'scripts'))
 from uka_hst_full_csv import Collection, observation_key, root_control, union_exact
 from uka_json_probe import BASE, validate_url
-from uka_source_audit import digest
+from uka_source_audit import digest, write_json
 
 
 def metadata():
@@ -43,7 +44,14 @@ class FullYearTests(unittest.TestCase):
         self.c = Collection(self.root, self.m, 'example')
         self.addCleanup(lambda: self.c.close() if self.c is not None else None)
         self.c.export = self.export
-        self.c.probe.get = body; self.c.bookends.get = body
+        self.c.probe.get = lambda url, indicator: self.capture(self.root, url, indicator)
+        self.c.bookends.get = lambda url, indicator: self.capture(self.root / 'bookends', url, indicator)
+
+    def capture(self, root, url, indicator):
+        value = body(url, indicator)
+        path = root / 'responses' / (digest(['example', 33, validate_url(url, 33)]) + '.json')
+        write_json(path, {'snapshot': 'example', 'url': url, 'body': value, 'sha256': digest(value)})
+        return value
 
     def export(self, period, universities, studies):
         observations = {}
@@ -53,7 +61,12 @@ class FullYearTests(unittest.TestCase):
                     for study in studies:
                         dims = {} if study['label'] == 'Total' else {'Studieform': study['label']}
                         observations[observation_key(period, u, g, a, dims)] = '1.25'
-        return observations, {'sha256': digest([period, universities, studies]), 'status': 'data'}
+        spec = {'period': period, 'universities': universities, 'studies': studies}
+        raw = json.dumps(observations, sort_keys=True).encode()
+        receipt = {'spec': spec, 'sha256': hashlib.sha256(raw).hexdigest(), 'status': 'data'}
+        p = self.root / 'selections' / (digest(spec) + '.csv'); p.parent.mkdir(exist_ok=True)
+        p.write_bytes(raw); write_json(p.with_suffix('.json'), receipt)
+        return observations, receipt
 
     def test_verified_year_and_resume_do_not_repeat_exports(self):
         first = self.c.collect_year('2025/26')
@@ -114,7 +127,16 @@ class FullYearTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Previously staged'):
             self.c.collect_year('2025/26')
 
+    def test_changed_source_bytes_block_completed_year_resume(self):
+        r = self.c.collect_year('2025/26')
+        p = self.root / 'selections' / (digest(r['exports'][0]['spec']) + '.csv')
+        p.write_bytes(p.read_bytes() + b'changed')
+        with self.assertRaisesRegex(ValueError, 'CSV source or receipt changed'):
+            self.c.collect_year('2025/26')
+
     def test_changed_manifest_and_unplanned_year_are_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'Another worker'):
+            Collection(self.root, self.m, 'example')
         with self.assertRaisesRegex(ValueError, 'outside frozen'):
             self.c.collect_year('2000/01')
         self.c.close(); self.c = None
