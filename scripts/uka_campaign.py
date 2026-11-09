@@ -129,6 +129,10 @@ class Campaign:
             actual = rows_digest(self.db.execute('SELECT key,payload,source_hash FROM observations WHERE job_id=? ORDER BY key', (row['id'],)))
             if actual != summary.get('staging_sha256'):
                 self.close(); raise ValueError('Previously staged observations changed')
+        try:
+            self.csv_packages()
+        except (ValueError, KeyError, sqlite3.Error):
+            self.close(); raise
         write_json(self.root / 'campaign-manifest.json', self.manifest)
 
     def __enter__(self):
@@ -139,6 +143,30 @@ class Campaign:
 
     def close(self):
         self.db.close(); self.lock.close()
+
+    def csv_packages(self):
+        """Scoped CSV progress is independent of national discovery completion."""
+        tables = {r[0] for r in self.db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        if not {'csv_packages', 'csv_observations'} & tables:
+            return []
+        if not {'csv_packages', 'csv_observations'} <= tables or self.indicator != 33:
+            raise ValueError('Invalid CSV staging tables')
+        result = []
+        for package in self.db.execute('SELECT * FROM csv_packages ORDER BY id'):
+            manifest = json.loads(package['manifest'])
+            if (digest(manifest) != package['manifest_hash'] or
+                    manifest['plan_id'] != self.plan['plan_id'] or
+                    manifest['snapshot'] != self.plan['snapshot'] or manifest['indicator'] != 33 or
+                    package['id'] != digest([33, manifest['plan_id'], manifest['scope']])):
+                raise ValueError('CSV package manifest changed')
+            rows = self.db.execute('SELECT key,payload,source_hash FROM csv_observations WHERE package_id=? ORDER BY key', (package['id'],)).fetchall()
+            if len(rows) != manifest['expected_observations'] or rows_digest(rows) != package['staging_sha256']:
+                raise ValueError('Previously staged CSV observations changed')
+            result.append({'package_id': package['id'], 'scope': manifest['scope'],
+                           'observations': len(rows), 'staging_sha256': package['staging_sha256']})
+        if self.db.execute('SELECT 1 FROM csv_observations o LEFT JOIN csv_packages p ON o.package_id=p.id WHERE p.id IS NULL LIMIT 1').fetchone():
+            raise ValueError('Orphan CSV staging observations')
+        return result
 
     def queue(self, spec):
         return Queue(self.root / 'queues' / (spec['job_id'] + '.sqlite'), spec['url'],
@@ -230,6 +258,9 @@ class Campaign:
                   'publish_allowed': False,
                   'blockers': ['Full source coverage and empty semantics unresolved',
                                'Verified source release missing', 'Database publication unavailable']}
+        if self.indicator == 33:
+            result['csv_packages'] = self.csv_packages()
+            result['csv_package_observations'] = sum(p['observations'] for p in result['csv_packages'])
         write_json(self.root / 'campaign-report.json', result)
         return result
 

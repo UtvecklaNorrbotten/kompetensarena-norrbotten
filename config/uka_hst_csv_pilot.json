@@ -1,0 +1,217 @@
+{
+  "version": 1,
+  "indicator": 33,
+  "snapshot": "2026-11-06",
+  "plan_id": "4c4683bf5d379e6d3bbef8020a0d3e6c920ec0b593ad05f8a1843e3f9672badc",
+  "scope": {
+    "period": "2025/26",
+    "universities": [
+      "171"
+    ],
+    "genders": [
+      "Kvinnor",
+      "Män",
+      "Total"
+    ],
+    "ages": [
+      "-24",
+      "25-34",
+      "35-",
+      "Total"
+    ]
+  },
+  "csv_sha256": "6c9429e2f34da0b89f4ccc084eb7f5cde2d94086b34a7372b916cada410b1e3e",
+  "metadata_projection_hash": "b8920bce1c115af45b3f8b0b6f6f11527824b49758bbbfdaa19c91900b0637db",
+  "metadata_hash": "3d89b9db3b30fa1da6ebba3a36222a15b49488a6ce1b88c7467b47a1b47dbdcc",
+  "subject_metadata_hash": "ceb2cfb567d1de34c2dc192a9b0a7f3b0d8ebc83b5e41e7870a92e2fcf9a5f2c",
+  "expected_observations": 144,
+  "references": [
+    {
+      "file": "00193ca0f3620eb0119ef0de5f44855d037514f76f2522ec1337563dfde87b4e.sqlite",
+      "sha256": "bec8cedbf94d27f7e8534c0269e634ec36fec25a6ba34289b069207cd214ecc1",
+      "binding": {
+        "indicator": 33,
+        "root": {
+          "age_group": "8",
+          "university": "171",
+          "year": "2025/26"
+        },
+        "snapshot": "2026-11-06",
+        "strategy": "study-first",
+        "version": 1
+      }
+    },
+    {
+      "file": "0e0a71b7a9152ae0fea0919fb918d1789a95812097a1df7908dd6f047f69e741.sqlite",
+      "sha256": "1f1747d9ff4896b11258cee2dac0e494205222a703182c7c9ca7eeddf194930b",
+      "binding": {
+        "indicator": 33,
+        "root": {
+          "age_group": "8",
+          "gender": "Män",
+          "university": "171",
+          "year": "2025/26"
+        },
+        "snapshot": "2026-11-06",
+        "strategy": "study-first",
+        "version": 1
+      }
+    },
+    {
+      "file": "2a2192075bdc2506ddec7872684c83fe7b6a66884a27722a542d3e9de0e481e8.sqlite",
+      "sha256": "cf81a50edc3c3379b997257a4cc6f2b77bd4d575fdd9f281c363ddc0a5dc5012",
+      "binding": {
+        "indicator": 33,
+        "root": {
+          "gender": "Kvinnor",
+          "university": "171",
+          "year": "2025/26"
+        },
+        "snapshot": "2026-11-06",
+        "strategy": "study-first",
+        "version": 1
+      }
+    },
+    {
+      "file": "3aef5f96937c4a4a4b3081bd98f0dd7b3a1772e8040b32327ac721c2103fac2d.sqlite",
+      "sha256": "5cfeb5edbc1ec8c80fce44f7a4b10462155ddfbf4e320aceae9c703a0525c6a2",
+      "binding": {
+        "indicator": 33,
+        "root": {
+          "age_group": "10",
+          "gender": "Kvinnor",
+          "university": "171",
+          "year": "2025/26"
+        },
+        "snapshot": "2026-11-06",
+        "strategy": "study-first",
+        "version": 1
+      }
+    },
+    {
+      "file": "6de1a25d4f943f4812dad120d7b56253dd93d64af596c103852b3d3a3a345466.sqlite",
+      "sha256": "6fa243cd46bdcbde2dc137c87cdb59cb312d5968ce5c989c1de783779fdddc4d",
+      "binding": {
+        "indicator": 33,
+        "root": {
+          "age_group": "8",
+          "gender": "Kvinnor",
+          "university": "171",
+          "year": "2025/26"
+        },
+        "snapshot": "2026-11-06",
+        "strategy": "study-first",
+        "version": 1
+      }
+    },
+    {
+      "file": "9a78152b63ce4e249e3fc63053fca22b09ff56d9c41cf450542678ed53c8f18b.sqlite",
+      "sha256": "2a2d01a70ad8593e31070d93b73551b89716e65f3389e92f7a922fa8d56be867",
+      "binding": {
+        "indicator": 33,
+        "root": {
+          "age_group": "10",
+          "gender": "Män",
+          "university": "171",
+          "year": "2025/26"
+        },
+        "snapshot": "2026-11-06",
+        "strategy": "study-first",
+        "version": 1
+      }
+    },
+    {
+      "file": "9beec2f275fd461a65641a5a0dd300d6639765a159a9e514f19810ea3d6069e0.sqlite",
+      "sha256": "78bdc68e53d8a4e9b457dc036ad2af785d105559875d686af0333da38a629500",
+      "binding": {
+        "indicator": 33,
+        "root": {
+          "age_group": "10",
+          "university": "171",
+          "year": "2025/26"
+        },
+        "snapshot": "2026-11-06",
+        "strategy": "study-first",
+        "version": 1
+      }
+    },
+    {
+      "file": "b06b961272dee740ce9008f994cec6aa3b33c6514c5d4d76d09c5e0fe7499067.sqlite",
+      "sha256": "0048f742bcec6632b41fc5173651ecf65859d7e40f519fd05d483f430f03678e",
+      "binding": {
+        "indicator": 33,
+        "root": {
+          "gender": "Män",
+          "university": "171",
+          "year": "2025/26"
+        },
+        "snapshot": "2026-11-06",
+        "strategy": "study-first",
+        "version": 1
+      }
+    },
+    {
+      "file": "ccc0b745c23572d21f9c29636b7711a5c8f7d7588053e14668630e99909df603.sqlite",
+      "sha256": "d117d28a209edae49253e8a6f064788322fb4131a5874cb454968e7a058121eb",
+      "binding": {
+        "indicator": 33,
+        "root": {
+          "age_group": "9",
+          "gender": "Män",
+          "university": "171",
+          "year": "2025/26"
+        },
+        "snapshot": "2026-11-06",
+        "strategy": "study-first",
+        "version": 1
+      }
+    },
+    {
+      "file": "d0dd680add13b5ca97c68519d378ef51938ae5b4b6731b92382ca5449340b8ae.sqlite",
+      "sha256": "ab40ba95fff6c4cba58d904565c1dc44f7933ddf4269ef4843cc660d2ef747d7",
+      "binding": {
+        "indicator": 33,
+        "root": {
+          "age_group": "9",
+          "university": "171",
+          "year": "2025/26"
+        },
+        "snapshot": "2026-11-06",
+        "strategy": "study-first",
+        "version": 1
+      }
+    },
+    {
+      "file": "e0eb0b26fdc21cdcb7171278d3d66cf4fe73d2e93a5fa743f5393773efe10e80.sqlite",
+      "sha256": "ff5ac2d902f909e2aea39cbecbf344b4bf906fff98933f5b70278d28b25de3cc",
+      "binding": {
+        "indicator": 33,
+        "root": {
+          "age_group": "9",
+          "gender": "Kvinnor",
+          "university": "171",
+          "year": "2025/26"
+        },
+        "snapshot": "2026-11-06",
+        "strategy": "study-first",
+        "version": 1
+      }
+    },
+    {
+      "file": "ff68d54f0b5f6a1d0e02e25e1ef7ce3c40849c586d9bff943c16896f5015fbf5.sqlite",
+      "sha256": "a23e36069057df23f9b69ba6dc6f24a939ec0c303a6b9da85eade6c12564c491",
+      "binding": {
+        "indicator": 33,
+        "root": {
+          "university": "171",
+          "year": "2025/26"
+        },
+        "snapshot": "2026-11-06",
+        "strategy": "study-first",
+        "version": 1
+      }
+    }
+  ],
+  "source_release_verified": false,
+  "publish_allowed": false
+}

@@ -1,5 +1,9 @@
 # UKÄ – en indikator per chatt
 
+Aktuell HST-kontrollpunkt: [uka-indicator-33.md](uka-indicator-33.md).
+Den daterade inventeringen nedan bevaras; HST:s skrivande CSV-pilot och
+workflowets indikatorval har därefter införts enligt statusfilen.
+
 Kontrollerat 2026-11-09 mot PR #82 och funktionscommit `38c729a10b4cd302e2d2d08bc99cf2fc282747a3`.
 Repo: UtvecklaNorrbotten/kompetensarena-norrbotten.
 Arbetsgren: `fix/uka-verified-checkpoint-import`. PR #82 är öppen, draft och inte mergad.
@@ -91,8 +95,7 @@ Kvar:
 - Skriv resultat i `docs/uka-indicator-<API-ID>.md`: verifierat, belägg, osäkert, kod/teststatus och exakt nästa åtgärd.
 - Länka detaljerade underlag i stället för att duplicera dem. Bevara tidigare belägg.
 - Vid start: läs aktuell PR/gren och vald indikators statusfil om den finns; denna kontroll är en daterad utgångspunkt.
-- Starta inte nuvarande `uka-staging.yml` i tron att det väljer en indikator: workflow_dispatch saknar indikatorval och matrisen kör alla tio.
-  Använd avgränsad lokal CLI eller inför och verifiera uttryckligt indikatorval innan manuell körning.
+- `uka-staging.yml` har nu uttryckligt indikatorval: manuell körning väljer exakt en, med 33 som förval. PR-kontrollen kör endast 33. Budgeten är fortfarande noll nya källanrop.
 - Indikator 108 kräver Inriktning. Indikator 135 kräver periodvis programupptäckt; senaste periodens programlista räcker inte historiskt.
 - Ingen merge, migration eller produktionspublicering ingår i indikatorchattens arbete.
 - Avsluta med länk till statusfilen och en kort överlämning. Starta inte nästa indikator automatiskt.

@@ -32,7 +32,8 @@ Manifestet låser plan-ID, urval, snapshot, indikatorpolicy och, för HST, ämne
 
 ## Jobb och återstart
 
-`.github/workflows/uka-staging.yml` har ett jobb per indikator, högst två samtidigt.
+`.github/workflows/uka-staging.yml` kör en vald indikator per manuell körning
+(33 som förval); PR-kontrollen kör endast 33. Den globala planen ovan bevaras.
 Varje jobb har både anropsbudget och tidsbudget. En budgetgräns pausar hämtningen;
 den betyder inte att datamängden är komplett.
 
@@ -75,7 +76,15 @@ Andra indikatorer och andra urval kan ändå fortsätta inom sina budgetar.
 `campaign-report.json` visar färdiga och planerade urval samt observationer som faktiskt sparats i staging.
 Ofullständiga köers observationer räknas separat och är inte tillåtna i staging.
 Rapporten redovisar period, kön, ålder och lärosäteskoder per färdigt urval.
-GitHub sammanställer alla tio rapporter och kontrollerar att de hör till samma plan och snapshot.
+GitHub kontrollerar rapportens plan och snapshot för vald indikator.
+
+Uppdatering 2026-11-09: workflowet kontrollerar nu den enda valda indikatorns
+rapport. HST har dessutom separat pakettäckning i `csv_packages` och
+`csv_observations` i samma SQLite-databas. Paketets färdigmarkering och rader
+skrivs atomiskt efter exakt källjämförelse, utan att färdigmarkera ett nationellt
+jobb. Paketrader kan överlappa nationella observationer och ska inte summeras
+med dem. Manifest och radkontrollsummor kontrolleras vid återstart.
+Se [HST:s aktuella kontrollpunkt](uka-indicator-33.md).
 
 ## Vad som återstår före publicering
 

@@ -6,6 +6,9 @@ on:
       - scripts/uka_campaign.py
       - scripts/uka_csv_staging_audit.py
       - scripts/uka_csv_bulk_probe.py
+      - scripts/uka_hst_csv_staging.py
+      - config/uka_hst_csv_pilot.json
+      - tests/test_uka_hst_csv_staging.py
       - tests/test_uka_csv_staging_audit.py
       - tests/fixtures/uka-hst-bulk-2026-11-06.zip
       - scripts/uka_json_plan.py
@@ -14,6 +17,12 @@ on:
       - config/uka_staging_campaign.json
       - .github/workflows/uka-staging.yml
   workflow_dispatch:
+    inputs:
+      indicator:
+        description: "Endast en indikator per körning"
+        type: choice
+        default: '33'
+        options: ['33', '99', '97', '13', '31', '108', '136', '77', '134', '135']
 
 permissions:
   contents: read
@@ -42,7 +51,8 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        indicator: [13, 31, 33, 97, 99, 108, 136, 77, 134, 135]
+        # PR validation is deliberately HST-only; dispatch selects exactly one.
+        indicator: ${{ fromJSON(format('[{0}]', inputs.indicator || '33')) }}
     name: Staging · ${{ matrix.indicator }}
     steps:
       - uses: actions/checkout@v5
@@ -125,6 +135,19 @@ jobs:
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
               out.write('CSV-kontroll: 1 235 identiska observationer; 8 496 nationella referensobservationer saknas i deluttaget. Deluttaget får inte färdigställa det nationella urvalet.\n\n')
           PYCODE
+      - name: Skriv och återspela verifierat HST-paket utan nya anrop
+        if: matrix.indicator == 33
+        run: |
+          python scripts/uka_hst_csv_staging.py --root output/uka-staging --csv-root output/csv-reference --metadata output/csv-reference/export-filters.json --reference-root base/uka-json-probe/validation --base base/uka-json-probe --output output/uka-staging/csv-pilot-first.json
+          python scripts/uka_hst_csv_staging.py --root output/uka-staging --csv-root output/csv-reference --metadata output/csv-reference/export-filters.json --reference-root base/uka-json-probe/validation --base base/uka-json-probe --output output/uka-staging/csv-pilot-resume.json
+          python - <<'PYCODE'
+          import json
+          a = json.load(open('output/uka-staging/csv-pilot-first.json'))
+          b = json.load(open('output/uka-staging/csv-pilot-resume.json'))
+          assert a['packages'] == b['packages'] and not b['staging_written']
+          assert a['observations'] == b['observations'] == 144
+          assert all(r['national_unchanged'] and not r['publish_allowed'] and r['new_requests'] == r['new_exports'] == 0 for r in (a,b))
+          PYCODE
       - name: Spara staging, köer och enbart nya källsvar
         if: always()
         uses: actions/upload-artifact@v4
@@ -156,6 +179,8 @@ jobs:
     needs: staging
     if: always()
     runs-on: ubuntu-latest
+    env:
+      SELECTED_INDICATOR: ${{ inputs.indicator || '33' }}
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -173,11 +198,11 @@ jobs:
               for r in sorted(rows, key=lambda x: x['indicator']):
                   out.write(f"| {r['indicator']} | {r['completed_jobs']}/{r['planned_jobs']} | {r['observations']} | {r['new_requests']} |\n")
               out.write('\nKällversion och full källtäckning är ännu inte verifierade. Inga data har publicerats.\n')
-          if len(rows) != 10:
-              raise ValueError(f'Missing indicator reports: {len(rows)}/10')
-          assert {r['indicator'] for r in rows} == {13,31,33,97,99,108,136,77,134,135}
+          if len(rows) != 1:
+              raise ValueError(f'Expected one selected indicator report, got {len(rows)}')
+          assert {r['indicator'] for r in rows} == {int(os.environ['SELECTED_INDICATOR'])}
           assert len({r['plan_id'] for r in rows}) == 1
           assert len({r['snapshot'] for r in rows}) == 1
-          assert sum(r['planned_jobs'] for r in rows) == rows[0]['global_planned_jobs']
+          assert sum(r['planned_jobs'] for r in rows) <= rows[0]['global_planned_jobs']
           assert all(not r['publish_allowed'] for r in rows)
           PY
