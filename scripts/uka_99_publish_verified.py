@@ -27,7 +27,7 @@ GENDERS = ["Kvinnor", "Män", "Total"]
 STAGING = "collection-99/99-full.sqlite"
 METADATA = "collection-99/metadata/99.json"
 CHUNK_ROWS = 5000
-VALUE_TEXT = __import__("re").compile(r"^[0-9]+(\.[0-9]+)?$")
+VALUE_TEXT = __import__("re").compile(r"^[0-9]+(\.[0-9]+)?([Ee][+-]?[0-9]+)?$")
 
 
 def sha256_file(path: Path) -> str:
