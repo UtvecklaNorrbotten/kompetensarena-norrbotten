@@ -88,23 +88,23 @@ class HstPublishTest(unittest.TestCase):
             hst.missing_chunks({"received_indices": [231]}, 231)
 
     def test_publish_resume_skips_received_and_refuses_new_import(self):
-        _, (manifest, payloads) = self.build()
+        _, (manifest, _) = self.build()
+        payloads = ["p0", "p1", "p2"]
+        stored = {0, 2}
         calls = []
 
         def rpc(name, body, timeout=300):
             calls.append((name, body.get("p_index")))
             if name == "uka_verified_start":
                 return {"resumed": True}
+            if name == "uka_verified_chunk":
+                stored.add(body["p_index"])
+                return {"ok": True}
             if name == "uka_verified_status":
-                done = len([c for c in calls if c[0] == "uka_verified_chunk"]) > 0
-                return {"received_chunks": 1 if not done else len(payloads),
-                        "received_indices": [] if done is False and False else ([0] if not done else list(range(len(payloads)))),
+                return {"received_chunks": len(stored), "received_indices": sorted(stored),
                         "received_rows": manifest["rows"], "status": "ready"}
             return {"ok": True}
 
-        if len(payloads) == 1:
-            payloads = payloads + payloads  # exercise skip logic with two chunks
-            manifest = dict(manifest, chunks=manifest["chunks"] * 2)
         hst.publish(rpc, manifest, payloads, "k", None)
         self.assertEqual([c[1] for c in calls if c[0] == "uka_verified_chunk"], [1])
         self.assertEqual(calls[-1][0], "uka_verified_finalize")
