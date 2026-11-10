@@ -77,11 +77,8 @@ class PublishMappingTests(unittest.TestCase):
             pub.normalize(staging(Path(tempfile.mkdtemp()), [row()]), collision)
 
     def test_rejects_duplicates_and_coverage_mismatch(self):
-        with self.assertRaises(sqlite3.IntegrityError):
-            pass_rows = [row(), row()]
-            path = staging(self.tmp, pass_rows)
-            pub.normalize(path, META)
-            raise sqlite3.IntegrityError  # unreachable when duplicates are rejected
+        with self.assertRaisesRegex(ValueError, "Dubblett"):
+            pub.normalize(staging(self.tmp, [row(), row()]), META)
         with self.assertRaisesRegex(ValueError, "Radantal per termin"):
             pub.normalize(staging(Path(tempfile.mkdtemp()), [row()],
                                   coverage=[{"gender": "Total", "observations": 2}]), META)
