@@ -12,6 +12,9 @@ import {
   wrapChartLabel,
 } from "@/lib/education-export";
 import { useId, useMemo, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getUkaEducationSlice } from "@/lib/aggregates.functions";
+import { readAllUkaPages, toUkaRows } from "@/lib/uka-education";
 import { flushSync } from "react-dom";
 import {
   Bar,
@@ -35,6 +38,8 @@ import {
   ukaDetailPeriods,
   ukaGenderSeries,
   ukaRankCategories,
+  ukaTarget,
+  type UkaCatalogEntry,
   type UkaFilters,
   type UkaRow,
 } from "@/lib/uka-view";
@@ -110,15 +115,44 @@ function CategoryTick({
   );
 }
 
+/** Hämta exakt den uppdelning och det urval en figur visar, i begränsade sidor. */
+function useUkaSlice(
+  university: string,
+  indicatorId: string,
+  target: ReturnType<typeof ukaTarget>,
+  enabled = true,
+) {
+  const breakdown = target.breakdown;
+  const selection = Object.fromEntries(
+    Object.entries(target.selection).sort(([a], [b]) => a.localeCompare(b)),
+  );
+  return useQuery({
+    queryKey: ["uka-education-slice", university, indicatorId, breakdown ?? null, selection],
+    enabled: enabled && breakdown !== undefined,
+    staleTime: 5 * 60 * 1000,
+    queryFn: async (): Promise<UkaRow[]> =>
+      toUkaRows(
+        indicatorId,
+        university,
+        breakdown!,
+        await readAllUkaPages((offset) =>
+          getUkaEducationSlice({
+            data: { university, indicatorId, breakdown: breakdown!, selection, offset },
+          }),
+        ),
+      ),
+  });
+}
+
 export function EducationFigure({
   indicator,
-  rows,
+  catalog,
   filters,
   university,
   fetched,
 }: {
   indicator: EducationIndicator;
-  rows: UkaRow[];
+  catalog: UkaCatalogEntry;
   filters: UkaFilters;
   university: string;
   fetched: string | null;
@@ -138,12 +172,24 @@ export function EducationFigure({
   const chartRef = useRef<HTMLDivElement>(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
-  const source = useMemo(
-    () => rows.filter((r) => r.indicator_id === indicator.id),
-    [rows, indicator.id],
+  const overviewTarget = useMemo(() => ukaTarget(catalog, filters), [catalog, filters]);
+  const detailTarget = useMemo(() => ukaTarget(catalog, filters, true), [catalog, filters]);
+  const overviewQuery = useUkaSlice(university, indicator.id, overviewTarget);
+  const detailQuery = useUkaSlice(university, indicator.id, detailTarget, detail);
+  const activeQuery = detail ? detailQuery : overviewQuery;
+  const sliceLoading =
+    (overviewQuery.isPending && overviewQuery.fetchStatus !== "idle") ||
+    (detail && detailQuery.isPending && detailQuery.fetchStatus !== "idle");
+  const sliceError = overviewQuery.isError || (detail && detailQuery.isError);
+  const overview = useMemo(
+    () => selectUkaRows(overviewQuery.data ?? [], filters, false, catalog),
+    [overviewQuery.data, filters, catalog],
   );
-  const overview = useMemo(() => selectUkaRows(source, filters), [source, filters]);
-  const selected = detail ? selectUkaRows(source, filters, true) : overview;
+  const detailSelected = useMemo(
+    () => selectUkaRows(detailQuery.data ?? [], filters, true, catalog),
+    [detailQuery.data, filters, catalog],
+  );
+  const selected = detail ? detailSelected : overview;
   const historyContext = JSON.stringify([
     indicator.id,
     university,
@@ -389,7 +435,25 @@ export function EducationFigure({
           </p>
         </div>
       )}
-      {!hasValues ? (
+      {sliceError ? (
+        <div className="mt-5 rounded-lg bg-neutral-surface p-6 text-sm" role="alert">
+          UKÄ-data kunde inte läsas. Inga exempelvärden visas.{" "}
+          <button
+            type="button"
+            className="text-brand-dark underline"
+            onClick={() => {
+              void overviewQuery.refetch();
+              if (detail) void activeQuery.refetch();
+            }}
+          >
+            Försök igen
+          </button>
+        </div>
+      ) : sliceLoading ? (
+        <div className="mt-5 rounded-lg bg-neutral-surface p-6 text-sm" role="status">
+          Hämtar UKÄ-data…
+        </div>
+      ) : !hasValues ? (
         <div className="mt-5 rounded-lg bg-neutral-surface p-6 text-sm" role="status">
           {overview.ambiguous && !detail
             ? "Urvalet omfattar flera överlappande grupper. Precisera urvalet i sidans filter eller välj fördjupning för att se grupperna separat."

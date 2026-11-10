@@ -5,7 +5,8 @@ import { Section } from "@/components/layout/Section";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ExplainedTerm } from "@/components/ui/ExplainedTerm";
 import { educationIndicators, educationSections } from "@/config/education";
-import { getUkaEducation, getUkaUniversities } from "@/lib/aggregates.functions";
+import { getUkaEducationCatalog, getUkaUniversities } from "@/lib/aggregates.functions";
+import { catalogComboRows } from "@/lib/uka-education";
 import { dimensionOptions, type UkaFilters } from "@/lib/uka-view";
 import { EducationFilters } from "./EducationFilters";
 import { EducationFigure } from "./EducationFigure";
@@ -21,15 +22,19 @@ export function EducationPage({ initialSection = "" }: { initialSection?: string
     queryFn: () => getUkaUniversities(),
     staleTime: 60 * 60 * 1000,
   });
+  // Katalogen: perioder, uppdelningar och kategorier. Värden hämtas per figur och urval.
   const dataQuery = useQuery({
-    queryKey: ["uka-education", university],
-    queryFn: () => getUkaEducation({ data: { university } }),
+    queryKey: ["uka-education-catalog", university],
+    queryFn: () => getUkaEducationCatalog({ data: { university } }),
     staleTime: 5 * 60 * 1000,
   });
-  const rows = dataQuery.data?.rows ?? [];
+  const comboRows = useMemo(
+    () => catalogComboRows(dataQuery.data?.combos ?? {}),
+    [dataQuery.data],
+  );
   const options = useMemo(
-    () => dimensionOptions(dataQuery.data?.rows ?? [], filters.dimensions),
-    [dataQuery.data, filters.dimensions],
+    () => dimensionOptions(comboRows, filters.dimensions),
+    [comboRows, filters.dimensions],
   );
 
   useEffect(() => {
@@ -196,7 +201,9 @@ export function EducationPage({ initialSection = "" }: { initialSection?: string
                       <EducationFigure
                         key={indicator.id}
                         indicator={indicator}
-                        rows={rows}
+                        catalog={
+                          dataQuery.data.indicators[indicator.id] ?? { periods: [], breakdowns: [] }
+                        }
                         university={university}
                         filters={filters}
                         fetched={
