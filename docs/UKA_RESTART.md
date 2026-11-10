@@ -1,3 +1,5 @@
+> **Aktuell fortsättning 2026-11-10:** PR #82 är mergad. Se [UKA_COVERAGE.md](UKA_COVERAGE.md) för den nya kontrollpunkten för alla tio indikatorer i PR #84, exakta dimensioner, verifierade uttag och kvarvarande produktionskrav. Nedanstående daterade uppgifter bevaras som historik.
+
 # UKÄ – återuppta här
 
 Senast uppdaterat: 2026-11-06. Repo `UtvecklaNorrbotten/kompetensarena-norrbotten`.

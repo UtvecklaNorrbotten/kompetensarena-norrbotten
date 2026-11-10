@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-10",
+  "repository": "UtvecklaNorrbotten/kompetensarena-norrbotten",
+  "pr": 84,
+  "branch": "fix/uka-all-indicator-coverage",
+  "verified_function_commit": "09e1ad47ab255a159892be363e712a2ecc66522d",
+  "github_test_run": 42776769942,
+  "github_test_result": "success",
+  "local_uka_tests": 138,
+  "github_scoped_tests": 14,
+  "all_ten_planned_histories_staged": true,
+  "total_periods": 135,
+  "total_observations": 1639839,
+  "new_csv_indicators": [
+    13,
+    31,
+    97,
+    108,
+    136,
+    77,
+    134,
+    135
+  ],
+  "new_periods": 105,
+  "new_observations": 468872,
+  "artifact": {
+    "file_name": "UKA_tackning_8_indikatorer_2026-11-10.zip",
+    "bytes": 64455690,
+    "sha256": "1be12b057d06285fa97b9eaa314d31e0898de57130f7c4d99c3a4093e2eb4170",
+    "verified_files": 2412,
+    "saved": true,
+    "includes": "Eight new source collections, metadata, raw CSV/JSON, coverage report, legacy references, zero-budget restart proofs; earlier HST/99 packages remain separate"
+  },
+  "publication": {
+    "performed": false,
+    "publish_allowed": false,
+    "server_endpoints_changed": false,
+    "full_independent_leaf_coverage_verified": false,
+    "immutable_source_release_verified": false
+  }
+}
