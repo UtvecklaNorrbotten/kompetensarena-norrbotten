@@ -1852,6 +1852,44 @@ export type Database = {
           },
         ]
       }
+      uka_verified_imports: {
+        Row: {
+          batch_id: string
+          created_at: string
+          import_key: string
+          manifest: Json
+          manifest_hash: string
+          previous_batch_id: string | null
+          published_at: string | null
+        }
+        Insert: {
+          batch_id: string
+          created_at?: string
+          import_key: string
+          manifest: Json
+          manifest_hash: string
+          previous_batch_id?: string | null
+          published_at?: string | null
+        }
+        Update: {
+          batch_id?: string
+          created_at?: string
+          import_key?: string
+          manifest?: Json
+          manifest_hash?: string
+          previous_batch_id?: string | null
+          published_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "uka_verified_imports_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: true
+            referencedRelation: "uka_batches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -1909,6 +1947,10 @@ export type Database = {
         Args: { p_reason?: string; p_sync_id: string }
         Returns: Json
       }
+      afr_abort_sync_apply: {
+        Args: { p_reason?: string; p_sync_id: string }
+        Returns: Json
+      }
       afr_ae_canonical: { Args: { p: Json }; Returns: string }
       afr_assert_deferred_ready: { Args: never; Returns: undefined }
       afr_backfill_primary_sni: {
@@ -1925,6 +1967,10 @@ export type Database = {
         Returns: Json
       }
       afr_finalize_sync: {
+        Args: { p_stats?: Json; p_sync_id: string }
+        Returns: Json
+      }
+      afr_finalize_sync_apply: {
         Args: { p_stats?: Json; p_sync_id: string }
         Returns: Json
       }
@@ -2102,6 +2148,25 @@ export type Database = {
           p_indicator_id: string
           p_observations: Json
         }
+        Returns: Json
+      }
+      uka_verified_chunk: {
+        Args: { p_import_key: string; p_index: number; p_payload: string }
+        Returns: Json
+      }
+      uka_verified_finalize: { Args: { p_import_key: string }; Returns: Json }
+      uka_verified_start: {
+        Args: { p_import_key: string; p_manifest: Json }
+        Returns: Json
+      }
+      uka_verified_status: { Args: { p_import_key: string }; Returns: Json }
+      uka99_verified_chunk: {
+        Args: { p_import_key: string; p_index: number; p_payload: string }
+        Returns: Json
+      }
+      uka99_verified_finalize: { Args: { p_import_key: string }; Returns: Json }
+      uka99_verified_start: {
+        Args: { p_import_key: string; p_manifest: Json }
         Returns: Json
       }
     }
