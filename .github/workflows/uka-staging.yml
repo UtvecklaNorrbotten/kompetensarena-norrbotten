@@ -54,8 +54,8 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        # PR validation is deliberately HST-only; dispatch selects exactly one.
-        indicator: ${{ fromJSON(format('[{0}]', inputs.indicator || '33')) }}
+        # PR validation follows the current single-indicator investigation (99).
+        indicator: ${{ fromJSON(format('[{0}]', inputs.indicator || '99')) }}
     name: Staging · ${{ matrix.indicator }}
     steps:
       - uses: actions/checkout@v5
@@ -197,7 +197,7 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     env:
-      SELECTED_INDICATOR: ${{ inputs.indicator || '33' }}
+      SELECTED_INDICATOR: ${{ inputs.indicator || '99' }}
     steps:
       - uses: actions/download-artifact@v4
         with:

@@ -1,0 +1,23 @@
+name: 90 · Diagnostik · UKÄ 99 – söktryck
+on:
+  pull_request:
+    paths:
+      - scripts/uka_99_full_csv.py
+      - scripts/uka_99_values.py
+      - tests/test_uka_99*.py
+      - tests/fixtures/uka-99-pilot-2026-11-10.zip
+      - .github/workflows/uka-99-check.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  indicator-99:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install requests beautifulsoup4
+      - run: python -m unittest discover -s tests -p 'test_uka_99*.py'

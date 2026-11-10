@@ -1,0 +1,20 @@
+{
+  "old_csv_vs_old_json": {
+    "exact": true,
+    "reference_observations": 66,
+    "actual_observations": 66,
+    "only_reference": 0,
+    "only_actual": 0,
+    "different_values": []
+  },
+  "old_full_staging_vs_new_csv": {
+    "exact": true,
+    "reference_observations": 1337,
+    "actual_observations": 1337,
+    "only_reference": 0,
+    "only_actual": 0,
+    "different_values": []
+  },
+  "new_campaign_separate": true,
+  "official_source_version_verified": false
+}
