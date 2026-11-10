@@ -72,10 +72,25 @@ Flaggorna och grunden lagras i manifestet och i körningens `data_source_runs.de
 Sätt `uka_active_batches.active_batch_id` för `uka-soktryck-yrkesprogram` tillbaka till
 `4892c284-c21a-4ec5-b9c8-2b78b5ce61db` och kör `agg_refresh_uka()`.
 
-## Kända begränsningar
+## Kända begränsningar (åtgärdade 2026-11-10, se `docs/uka-fixes-2026-11-10.md`)
 
-- Riket-vyn i `getUkaEducation` returnerar redan ett serialiseringsfel
-  ("pending output limit") eftersom Riket har ~139 000 aggregatrader, främst HST.
-  Felet beror inte på indikator 99 (oförändrat radantal) men hindrar visning av Riket på sidan.
-- Den äldre R-ETL:n (`etl-uka.yml`, `uka_finalize_batch`) raderar föregående batch och kan
-  ersätta denna publicering vid en körning för "all" eller 99.
+- ~~Riket-vyn i `getUkaEducation` gav serialiseringsfel ("pending output limit").~~
+  Åtgärdat: `getUkaEducation` är ersatt av en katalog (`getUkaEducationCatalog`) och
+  behovsstyrda, sidbegränsade urval per figur (`getUkaEducationSlice`, högst 4 000 rader per svar).
+- ~~Den äldre R-ETL:n (`etl-uka.yml`, `uka_finalize_batch`) kunde ersätta denna publicering
+  och radera föregående batch.~~ Åtgärdat i databasen (migration
+  `0044_uka_legacy_publication_guard.sql`): äldre chunk/finalisering stoppas med SQLSTATE 55000
+  (HTTP 409) för indikatorer med verifierad import, före aktivering och radering.
+
+## Slutstatus 2026-11-10 (efter åtgärderna)
+
+- Aktiv 99-batch: `be0322b3-7016-4d03-9619-9bac577b381b` (19 595 rader), oförändrad.
+- Rollbackbatch: `4892c284-c21a-4ec5-b9c8-2b78b5ce61db` (19 595 rader), kvar.
+- HST: aktiv `60e861fa-…` oförändrad; verifierad uppladdning `5c6a7d55-…` 155/231, orörd
+  (nu även skyddad mot äldre finalisering och äldre avbrott).
+- Webbsidan (riktig sidladdning i webbläsare): LTU Söktryck HT2026 Samtliga **1,2**;
+  Riket Söktryck HT2026 Samtliga **2,1**; Riket HST 2025/26 341 246,6; filtrerade urval
+  stämmer exakt mot `agg_uka_university`. Största svar vid filterbyte 10,7 kB.
+- Rollbacktest (transaktion som alltid rullas tillbaka, `tests/uka-legacy-guard.sql`): äldre
+  chunk och finalisering blockeras, inga rader raderas, verifierad 99-revision fungerar och
+  behåller båda tidigare batcher.
