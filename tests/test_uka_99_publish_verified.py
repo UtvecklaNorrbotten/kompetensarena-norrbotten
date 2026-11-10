@@ -55,12 +55,13 @@ class PublishMappingTests(unittest.TestCase):
 
     def test_maps_codes_riket_program_total_and_keeps_exact_value_text(self):
         rows, _ = pub.normalize(staging(self.tmp, [
-            row(), row("23", "Kvinnor", "Läkarexamen", "0"), row("23", "Män", "Läkarexamen", "12.75")]), META)
+            row(), row("23", "Kvinnor", "Läkarexamen", "0"), row("23", "Män", "Läkarexamen", "12.75"),
+            row("23", "Total", "Läkarexamen", "1E+1")]), META)
         self.assertEqual(rows[0], {"period": "HT2026", "university": "Riket", "gender": "Total",
                                    "dimensions": {}, "value": "2.3"})
         self.assertEqual(rows[1]["university"], "Luleå tekniska universitet")
         self.assertEqual(rows[1]["dimensions"], {"program": "Läkarexamen"})
-        self.assertEqual([r["value"] for r in rows], ["2.3", "0", "12.75"])
+        self.assertEqual([r["value"] for r in rows], ["2.3", "0", "12.75", "1E+1"])
 
     def test_rejects_age_breakdown_unknown_gender_marker_and_extra_dimension(self):
         for bad in [row(age="-24"), row(gender="Okänt"), row(value=".."), row(value="2,3"),
