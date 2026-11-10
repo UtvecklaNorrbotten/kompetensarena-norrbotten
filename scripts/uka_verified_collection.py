@@ -14,6 +14,7 @@ from pathlib import Path
 import re
 import sqlite3
 import time
+import requests
 from urllib.parse import urlencode
 
 from uka_99_full_csv import DeadlineSession, observation_key, union_exact
@@ -28,6 +29,10 @@ GROUP_LEVELS = {13: [('Program',)], 31: [('Studieform',)], 97: [('Program',)],
                 136: [('Examen',)], 77: [('Studieform',), ('Utbildningsnivå',)],
                 134: [('Program',)], 135: [('Program',)]}
 POLICY = 'csv-all-universities-partitions-every-root-v1'
+
+
+class TechnicalSourceError(RuntimeError):
+    pass
 
 
 def paths(group, levels):
@@ -226,8 +231,10 @@ class Collection:
         filters += [o['value'] for o in m['genders']] + [o['value'] for o in m['ages']]
         filters += [g['index'] + o['value'] for g in m['groups'] for o in g['values']]
         receipt = self.source.export(self.indicator, filters, m['metadata_hash'])
+        if receipt['status'] in ('technical_empty_body', 'technical_failure', 'invalid_csv'):
+            raise TechnicalSourceError('Technical CSV failure: ' + receipt['status'])
         if receipt['status'] != 'data':
-            raise ValueError('Technical/unconfirmed CSV: ' + receipt['status'])
+            raise ValueError('Unconfirmed CSV selection: ' + receipt['status'])
         return observations(receipt['rows'], m, period, universities), {k: v for k, v in receipt.items() if k not in ('rows', 'headers', 'cached')}
 
     def collect(self, period):
@@ -293,7 +300,9 @@ class Collection:
                 self.db.executemany('INSERT INTO observations VALUES (?,?,?,?)', ((k,period,p,h) for k,p,h in rows))
             write_json(checkpoint,s); return {**s,'written_this_run':True}
         except Exception as error:
-            s.update(state='blocked', error=str(error), classification='technical_error' if isinstance(error, (OSError, RuntimeError)) else 'unresolved_validation_error')
+            paused = isinstance(error, RuntimeError) and 'budget exhausted' in str(error).lower()
+            classification = 'technical_error' if isinstance(error, (requests.RequestException, TechnicalSourceError)) else 'unclear'
+            s.update(state='paused' if paused else 'blocked', error=str(error), classification=classification)
             write_json(checkpoint,s); raise
 
     def report(self):

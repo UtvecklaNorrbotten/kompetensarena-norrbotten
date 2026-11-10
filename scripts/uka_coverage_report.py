@@ -32,6 +32,7 @@ def independent_reference(indicator, metadata, collection_root, legacy_cache, ou
         database = Path(tmp) / 'reference.sqlite'
         with Queue(database, url, '2026-11-06', indicator=indicator) as q:
             state = q.run(probe,max_nodes=2000,seconds=120)
+            source_urls = [r[0] for r in q.db.execute('SELECT url FROM nodes ORDER BY url')]
         if not state['graph_closed'] or probe.requests:
             raise ValueError('Historical graph cannot be verified offline')
         reference = queue_reference(database)
@@ -48,7 +49,7 @@ def independent_reference(indicator, metadata, collection_root, legacy_cache, ou
     result={'indicator':indicator,'period':period,'gender':'Total','age':'Total',
             'historical_snapshot':'2026-11-06','comparison':compare(reference,actual),
             'new_requests':probe.requests,'graph_rebuilt_from_hash_checked_sources':True,
-            'source_release_verified':False}
+            'source_release_verified':False, 'source_urls':source_urls}
     write_json(output,result)
     if not result['comparison']['exact']:raise ValueError('Historical JSON / current CSV mismatch')
     return result
@@ -89,19 +90,29 @@ def build(root, output, legacy_cache=None):
                 staged_periods=status['staged_periods'],planned_periods=status['planned_periods'],observations=status['observations'])
             entry['periods']=[]
             for p in status['periods']:
-                period=p['period']; combinations={}; scalar=defaultdict(set); value_counts=Counter()
+                period=p['period']; combinations={}; scalar=defaultdict(set); value_counts=Counter(); university_dimensions=defaultdict(dict)
                 for (raw,) in c.db.execute('SELECT payload FROM observations WHERE period=?',(period,)):
                     row=json.loads(raw)
                     for field in ('university','gender','age'):scalar[field].add(row[field])
                     key=json.dumps(row['dimensions'],ensure_ascii=False,sort_keys=True)
                     combinations[key]=row['dimensions']
+                    university_dimensions[row['university']][key]=row['dimensions']
                     value_counts['suppressed_or_unreported' if row['value'] in (None,'','..','.','-','…') else 'verified_data']+=1
                 entry['periods'].append({'period':period,'observations':p['observations'],'staging_sha256':p['staging_sha256'],
                     'observed_values':{k:sorted(v) for k,v in scalar.items()},'observed_dimension_paths':list(combinations.values()),
+                    'observed_dimension_paths_by_university':{u:list(d.values()) for u,d in university_dimensions.items()},
                     'value_classifications':dict(value_counts),'source_controls':p['coverage'],
                     'csv_receipts':p['exports'],'json_root_hashes':p['root_hashes'],
                     'leaf_absence_classification':'unclear_without_further_positive_reference'})
                 for coverage in p['coverage']:
+                    for col, advertised in coverage['advertised_dimensions'].items():
+                        offered = {path[col] for group in entry['dimension_paths'] for path in group['paths'] if set(path) == {col}}
+                        omitted = sorted(offered - set(advertised))
+                        if omitted:
+                            entry['verified_missing_scopes'].append({'period':period,'gender':coverage['gender'],'age':coverage['age'],
+                                'universities':['1'],'dimensions':{col:omitted},'other_dimensions':'source total',
+                                'evidence':'Successful explicit broad CSV + positive national JSON category list',
+                                'cause':'Not inferred; reporting limits are documented separately'})
                     if coverage['not_advertised_universities']:
                         entry['verified_missing_scopes'].append({'period':period,'gender':coverage['gender'],'age':coverage['age'],
                             'universities':coverage['not_advertised_universities'],'dimensions':'all requested source dimensions',

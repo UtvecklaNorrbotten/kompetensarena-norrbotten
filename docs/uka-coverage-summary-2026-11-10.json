@@ -1,0 +1,2338 @@
+{
+  "date": "2026-11-10",
+  "base_commit": "64b0901eac2202df36afa4e0ece8c41cf88e17e6",
+  "previous_pr": 82,
+  "pr": 84,
+  "branch": "fix/uka-all-indicator-coverage",
+  "indicators": [
+    {
+      "indicator": 13,
+      "observations": 73268,
+      "staged_periods": 20,
+      "planned_periods": [
+        "HT2026",
+        "VT2026",
+        "HT2025",
+        "VT2025",
+        "HT2024",
+        "VT2024",
+        "HT2023",
+        "VT2023",
+        "HT2022",
+        "VT2022",
+        "HT2021",
+        "VT2021",
+        "HT2020",
+        "VT2020",
+        "HT2019",
+        "VT2019",
+        "HT2018",
+        "VT2018",
+        "HT2017",
+        "VT2017"
+      ],
+      "requested_university_options": 82,
+      "dimensions": [
+        "Program"
+      ],
+      "genders": [
+        "Kvinnor",
+        "Män",
+        "Total"
+      ],
+      "ages": [
+        "-24",
+        "25-34",
+        "35-",
+        "Total"
+      ],
+      "state": "staged",
+      "periods": [
+        {
+          "period": "HT2017",
+          "observations": 4679,
+          "staging_sha256": "c9805f86a539881b73d2465951e9ffcd47146c7c3bad53eb197bbdde1dee1b5b",
+          "observed_universities": 35,
+          "value_classifications": {
+            "verified_data": 4679
+          }
+        },
+        {
+          "period": "HT2018",
+          "observations": 4742,
+          "staging_sha256": "7487bddbd9e71f45499f42618894bf29ff053e6e1eec1218e361f4a899cfeb49",
+          "observed_universities": 35,
+          "value_classifications": {
+            "verified_data": 4742
+          }
+        },
+        {
+          "period": "HT2019",
+          "observations": 4725,
+          "staging_sha256": "f78723310c518583910c2a80d2f14344b1cdae06da0905e33aee978825619c58",
+          "observed_universities": 35,
+          "value_classifications": {
+            "verified_data": 4725
+          }
+        },
+        {
+          "period": "HT2020",
+          "observations": 4814,
+          "staging_sha256": "3e46d6535089224217c192ccbdbd397bca9507d9cf7756bb4441a0c88aa0c5fb",
+          "observed_universities": 35,
+          "value_classifications": {
+            "verified_data": 4814
+          }
+        },
+        {
+          "period": "HT2021",
+          "observations": 4912,
+          "staging_sha256": "665123eae9044fe3e2b2cfae6b3330f11234b9f17f1546b68f291f6bc19a24e4",
+          "observed_universities": 35,
+          "value_classifications": {
+            "verified_data": 4912
+          }
+        },
+        {
+          "period": "HT2022",
+          "observations": 4991,
+          "staging_sha256": "41abb0a8902144d8afff723ad42218d596efe3faa4e66a5cd5f59321edca0430",
+          "observed_universities": 36,
+          "value_classifications": {
+            "verified_data": 4991
+          }
+        },
+        {
+          "period": "HT2023",
+          "observations": 4921,
+          "staging_sha256": "602f85b6346c7c514485e62c0ac966815d5f0f1ee1facbd9e5db7d4e70bd2c67",
+          "observed_universities": 36,
+          "value_classifications": {
+            "verified_data": 4921
+          }
+        },
+        {
+          "period": "HT2024",
+          "observations": 5010,
+          "staging_sha256": "68b298ab60e2f6a8bcae894ddbda12ee0d8d9380aabd1a453ea39c08efc8f9aa",
+          "observed_universities": 36,
+          "value_classifications": {
+            "verified_data": 5010
+          }
+        },
+        {
+          "period": "HT2025",
+          "observations": 5047,
+          "staging_sha256": "c1b1ba0a64e0492ccfb067369297d385e66cccdd0c4a5cb20a1c3ba3961fd3e7",
+          "observed_universities": 36,
+          "value_classifications": {
+            "verified_data": 5047
+          }
+        },
+        {
+          "period": "HT2026",
+          "observations": 5046,
+          "staging_sha256": "f76c69e910384c7d6c6f2c0751f97e646431b28ae8cd3403381b09708c4851a6",
+          "observed_universities": 36,
+          "value_classifications": {
+            "verified_data": 5046
+          }
+        },
+        {
+          "period": "VT2017",
+          "observations": 2218,
+          "staging_sha256": "d2e0fe2cbae72837ac0c8f33570b956bc710e71779557a016bff1bd67a845e08",
+          "observed_universities": 30,
+          "value_classifications": {
+            "verified_data": 2218
+          }
+        },
+        {
+          "period": "VT2018",
+          "observations": 2317,
+          "staging_sha256": "da076b8a2b1af5ae2442f5341e52996ecaa734bc998e84aefc7d092842423a2e",
+          "observed_universities": 30,
+          "value_classifications": {
+            "verified_data": 2317
+          }
+        },
+        {
+          "period": "VT2019",
+          "observations": 2235,
+          "staging_sha256": "3b4d0dbf25dc082e78e57cd010be1560cbd874a9abbcc992bb0c78143ccaa1bc",
+          "observed_universities": 30,
+          "value_classifications": {
+            "verified_data": 2235
+          }
+        },
+        {
+          "period": "VT2020",
+          "observations": 2410,
+          "staging_sha256": "e44d349c7dde5a1862936630561aa72c07ecacf7e1536ce050495952728418e6",
+          "observed_universities": 30,
+          "value_classifications": {
+            "verified_data": 2410
+          }
+        },
+        {
+          "period": "VT2021",
+          "observations": 2416,
+          "staging_sha256": "2d7d231c7aaa5bdea1270e66b790e94c80c00df4c036f703add9e8c056234c9b",
+          "observed_universities": 30,
+          "value_classifications": {
+            "verified_data": 2416
+          }
+        },
+        {
+          "period": "VT2022",
+          "observations": 2465,
+          "staging_sha256": "395a6beb496dcc8c6341e195e628fc41e650203480905a381ee2565fbc41917f",
+          "observed_universities": 30,
+          "value_classifications": {
+            "verified_data": 2465
+          }
+        },
+        {
+          "period": "VT2023",
+          "observations": 2528,
+          "staging_sha256": "81d7deb0bf4c25fe90911bd26b845a727582f2721bc1fbfe1fd4ecb63eae6111",
+          "observed_universities": 30,
+          "value_classifications": {
+            "verified_data": 2528
+          }
+        },
+        {
+          "period": "VT2024",
+          "observations": 2548,
+          "staging_sha256": "9d0587f514527241e0474b8ea5b2c4e42900e5a307997ce844343fd6902be2d0",
+          "observed_universities": 30,
+          "value_classifications": {
+            "verified_data": 2548
+          }
+        },
+        {
+          "period": "VT2025",
+          "observations": 2609,
+          "staging_sha256": "fc8bdbe38edf420d745f4cd21c90d8e4769f22e4e20855a8f1d4890c053131e1",
+          "observed_universities": 31,
+          "value_classifications": {
+            "verified_data": 2609
+          }
+        },
+        {
+          "period": "VT2026",
+          "observations": 2635,
+          "staging_sha256": "ae6a01362b037beb7ff921f764bae0af9457b73a3deea9c1adfa76eb45fca13d",
+          "observed_universities": 31,
+          "value_classifications": {
+            "verified_data": 2635
+          }
+        }
+      ],
+      "verified_missing_scopes": 480,
+      "json_reference": {
+        "exact": true,
+        "reference_observations": 444,
+        "actual_observations": 444,
+        "only_reference": 0,
+        "only_actual": 0,
+        "different_values": []
+      },
+      "detail_controls": {
+        "indicator": 13,
+        "cases": [
+          {
+            "period": "HT2026",
+            "gender": "Kvinnor",
+            "age": "-24",
+            "checks": [
+              {
+                "university": "1",
+                "dimensions": {
+                  "Program": "Agronomexamen"
+                },
+                "value": "38",
+                "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=HT2026&gender=Kvinnor&age_group=8&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f",
+                "classification": "verified_data"
+              },
+              {
+                "university": "42",
+                "dimensions": {
+                  "Program": "Agronomexamen"
+                },
+                "value": "38",
+                "url": "https://statistik-api.uka.se/api/totals/13?university=42&year=HT2026&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f&gender=Kvinnor&age_group=8",
+                "classification": "verified_data"
+              }
+            ]
+          },
+          {
+            "period": "VT2017",
+            "gender": "Män",
+            "age": "35-",
+            "checks": [
+              {
+                "university": "1",
+                "dimensions": {
+                  "Program": "Apotekarexamen"
+                },
+                "value": "2",
+                "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=VT2017&gender=M%C3%A4n&age_group=10&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8",
+                "classification": "verified_data"
+              },
+              {
+                "university": "47",
+                "dimensions": {
+                  "Program": "Apotekarexamen"
+                },
+                "value": "2",
+                "url": "https://statistik-api.uka.se/api/totals/13?university=47&year=VT2017&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8&gender=M%C3%A4n&age_group=10",
+                "classification": "verified_data"
+              }
+            ]
+          }
+        ],
+        "new_requests": 4,
+        "all_checks_passed": true,
+        "publish_allowed": false
+      }
+    },
+    {
+      "indicator": 31,
+      "observations": 73716,
+      "staged_periods": 20,
+      "planned_periods": [
+        "VT2026",
+        "HT2025",
+        "VT2025",
+        "HT2024",
+        "VT2024",
+        "HT2023",
+        "VT2023",
+        "HT2022",
+        "VT2022",
+        "HT2021",
+        "VT2021",
+        "HT2020",
+        "VT2020",
+        "HT2019",
+        "VT2019",
+        "HT2018",
+        "VT2018",
+        "HT2017",
+        "VT2017",
+        "HT2016"
+      ],
+      "requested_university_options": 116,
+      "dimensions": [
+        "Studieform"
+      ],
+      "genders": [
+        "Kvinnor",
+        "Män",
+        "Total"
+      ],
+      "ages": [
+        "-24",
+        "25-34",
+        "35-",
+        "Total"
+      ],
+      "state": "staged",
+      "periods": [
+        {
+          "period": "HT2016",
+          "observations": 4724,
+          "staging_sha256": "0caea04f61036fb4c7ee7a4ab368e32374e3fd22ca945a38ba821180b11bbe3b",
+          "observed_universities": 37,
+          "value_classifications": {
+            "verified_data": 4724
+          }
+        },
+        {
+          "period": "HT2017",
+          "observations": 4725,
+          "staging_sha256": "3740fbd6415583f8443e8cf540fb53de09d557da356ee574e47dcc29dcb2e601",
+          "observed_universities": 38,
+          "value_classifications": {
+            "verified_data": 4725
+          }
+        },
+        {
+          "period": "HT2018",
+          "observations": 4727,
+          "staging_sha256": "86a75c7c6b5abaaa738a295880a9e22351629103e90d3f8965bca1637424dfee",
+          "observed_universities": 37,
+          "value_classifications": {
+            "verified_data": 4727
+          }
+        },
+        {
+          "period": "HT2019",
+          "observations": 4760,
+          "staging_sha256": "cfe9d94b96eba994db9d60d1b0afd449bb0bd6dc1ad50139c53804d9f4abd898",
+          "observed_universities": 38,
+          "value_classifications": {
+            "verified_data": 4760
+          }
+        },
+        {
+          "period": "HT2020",
+          "observations": 4763,
+          "staging_sha256": "09fc788d4b7d2b32a0f67bafc2e833a808944e97fb7d8bcf2f3098e49ae29c48",
+          "observed_universities": 36,
+          "value_classifications": {
+            "verified_data": 4763
+          }
+        },
+        {
+          "period": "HT2021",
+          "observations": 4878,
+          "staging_sha256": "ce7fe7501f9294eaf8787df9493cfe2b5f7a9ba4fd7b49ab9fd7c8bded923dea",
+          "observed_universities": 39,
+          "value_classifications": {
+            "verified_data": 4878
+          }
+        },
+        {
+          "period": "HT2022",
+          "observations": 4842,
+          "staging_sha256": "f9f20098721c6c3094ce0ff7206c808262735378a9905a89c279febe68e923f5",
+          "observed_universities": 38,
+          "value_classifications": {
+            "verified_data": 4842
+          }
+        },
+        {
+          "period": "HT2023",
+          "observations": 4828,
+          "staging_sha256": "c4c3190522127a5ab88ce74441845155d3bd19d61c58b7d568175ada9e272f11",
+          "observed_universities": 40,
+          "value_classifications": {
+            "verified_data": 4828
+          }
+        },
+        {
+          "period": "HT2024",
+          "observations": 4877,
+          "staging_sha256": "bd08837a211c85ff3fa565313b700f9d95db6012e4a401e1999fe9c4df3cbd52",
+          "observed_universities": 38,
+          "value_classifications": {
+            "verified_data": 4877
+          }
+        },
+        {
+          "period": "HT2025",
+          "observations": 4938,
+          "staging_sha256": "695acf104435f70bf4916b48c80affa5c17af0f1a99cee5d6aec713f0345e3b7",
+          "observed_universities": 39,
+          "value_classifications": {
+            "verified_data": 4938
+          }
+        },
+        {
+          "period": "VT2017",
+          "observations": 2508,
+          "staging_sha256": "57b98f3a0430674a63ad3cb92bac360fdf4ae9e2cb216f1ec79e633a5a08ce9c",
+          "observed_universities": 33,
+          "value_classifications": {
+            "verified_data": 2508
+          }
+        },
+        {
+          "period": "VT2018",
+          "observations": 2567,
+          "staging_sha256": "94541a369e29d5b64e5b7b8c379fdd5fbf343fd129084ac97408033b0174bef0",
+          "observed_universities": 33,
+          "value_classifications": {
+            "verified_data": 2567
+          }
+        },
+        {
+          "period": "VT2019",
+          "observations": 2559,
+          "staging_sha256": "fb53cbf75ab1d000a583d698401e47cf6f8877ae38da00217898dbb17f2b11d3",
+          "observed_universities": 34,
+          "value_classifications": {
+            "verified_data": 2559
+          }
+        },
+        {
+          "period": "VT2020",
+          "observations": 2613,
+          "staging_sha256": "1e206084f686a63268fe8cd0393c219cc18661500dc705d2c3f6a99dc9fe4566",
+          "observed_universities": 33,
+          "value_classifications": {
+            "verified_data": 2613
+          }
+        },
+        {
+          "period": "VT2021",
+          "observations": 2625,
+          "staging_sha256": "14cceae6932de26ba13949eb2a7f0a68c26dc03696baa3a04a74859c22b62f19",
+          "observed_universities": 33,
+          "value_classifications": {
+            "verified_data": 2625
+          }
+        },
+        {
+          "period": "VT2022",
+          "observations": 2521,
+          "staging_sha256": "50a62bf4670438e85174a9e1760c5255d8e87d5e59501fdab96415b03bb8156d",
+          "observed_universities": 32,
+          "value_classifications": {
+            "verified_data": 2521
+          }
+        },
+        {
+          "period": "VT2023",
+          "observations": 2558,
+          "staging_sha256": "c233704e6f17501e5af8e5bc5cfe2cfc7a2ea41d1a529c5cca269f3f2df7c957",
+          "observed_universities": 34,
+          "value_classifications": {
+            "verified_data": 2558
+          }
+        },
+        {
+          "period": "VT2024",
+          "observations": 2507,
+          "staging_sha256": "84371b0e02680f1d750a60f3ce6cf442ab21b0a7d1d6db52cf2cddf7c20bc6ce",
+          "observed_universities": 32,
+          "value_classifications": {
+            "verified_data": 2507
+          }
+        },
+        {
+          "period": "VT2025",
+          "observations": 2582,
+          "staging_sha256": "95af2e2764a5d01f1c1f1fe2a80d2976ef80f931ce547a20da1163ec66e45950",
+          "observed_universities": 33,
+          "value_classifications": {
+            "verified_data": 2582
+          }
+        },
+        {
+          "period": "VT2026",
+          "observations": 2614,
+          "staging_sha256": "a167781d514e905202884a1b05ac9ef7e1fec17b6aba8e955309431deecbf466",
+          "observed_universities": 33,
+          "value_classifications": {
+            "verified_data": 2614
+          }
+        }
+      ],
+      "verified_missing_scopes": 480,
+      "json_reference": {
+        "exact": true,
+        "reference_observations": 262,
+        "actual_observations": 262,
+        "only_reference": 0,
+        "only_actual": 0,
+        "different_values": []
+      },
+      "detail_controls": {
+        "indicator": 31,
+        "cases": [
+          {
+            "period": "VT2026",
+            "gender": "Kvinnor",
+            "age": "-24",
+            "checks": [
+              {
+                "university": "1",
+                "dimensions": {
+                  "Studieform": "Apotekarexamen"
+                },
+                "value": "56",
+                "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=VT2026&gender=Kvinnor&age_group=8&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8",
+                "classification": "verified_data"
+              },
+              {
+                "university": "10",
+                "dimensions": {
+                  "Studieform": "Apotekarexamen"
+                },
+                "value": "2",
+                "url": "https://statistik-api.uka.se/api/totals/31?university=10&year=VT2026&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8&gender=Kvinnor&age_group=8",
+                "classification": "verified_data"
+              }
+            ]
+          },
+          {
+            "period": "HT2016",
+            "gender": "Män",
+            "age": "35-",
+            "checks": [
+              {
+                "university": "1",
+                "dimensions": {
+                  "Studieform": "Agronomexamen"
+                },
+                "value": "2",
+                "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=HT2016&gender=M%C3%A4n&age_group=10&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f",
+                "classification": "verified_data"
+              },
+              {
+                "university": "42",
+                "dimensions": {
+                  "Studieform": "Agronomexamen"
+                },
+                "value": "2",
+                "url": "https://statistik-api.uka.se/api/totals/31?university=42&year=HT2016&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f&gender=M%C3%A4n&age_group=10",
+                "classification": "verified_data"
+              }
+            ]
+          }
+        ],
+        "new_requests": 4,
+        "all_checks_passed": true,
+        "publish_allowed": false
+      }
+    },
+    {
+      "indicator": 33,
+      "observations": 1151372,
+      "staged_periods": 10,
+      "planned_periods": [
+        "2025/26",
+        "2024/25",
+        "2023/24",
+        "2022/23",
+        "2021/22",
+        "2020/21",
+        "2019/20",
+        "2018/19",
+        "2017/18",
+        "2016/17"
+      ],
+      "requested_university_options": 78,
+      "dimensions": [
+        "Ämnesområde",
+        "Ämnesdelområde",
+        "Ämnesgrupp",
+        "Studieform"
+      ],
+      "genders": [
+        "Kvinnor",
+        "Män",
+        "Total"
+      ],
+      "ages": [
+        "-24",
+        "25-34",
+        "35-",
+        "Total"
+      ],
+      "state": "previous_collection_reverified_offline",
+      "offline_recheck": {
+        "archive_sha256": "2e65e8cd1e34ebbf67341a3fc472280af47b932dba693b16225ca08a9f1ccd1c",
+        "verified_files": 1446,
+        "observations": 1151372,
+        "periods": 10,
+        "new_requests": 0,
+        "new_exports": 0,
+        "staging_checksums_unchanged": true,
+        "publish_allowed": false
+      }
+    },
+    {
+      "indicator": 97,
+      "observations": 71394,
+      "staged_periods": 20,
+      "planned_periods": [
+        "HT2026",
+        "VT2026",
+        "HT2025",
+        "VT2025",
+        "HT2024",
+        "VT2024",
+        "HT2023",
+        "VT2023",
+        "HT2022",
+        "VT2022",
+        "HT2021",
+        "VT2021",
+        "HT2020",
+        "VT2020",
+        "HT2019",
+        "VT2019",
+        "HT2018",
+        "VT2018",
+        "HT2017",
+        "VT2017"
+      ],
+      "requested_university_options": 82,
+      "dimensions": [
+        "Program"
+      ],
+      "genders": [
+        "Kvinnor",
+        "Män",
+        "Total"
+      ],
+      "ages": [
+        "-24",
+        "25-34",
+        "35-",
+        "Total"
+      ],
+      "state": "staged",
+      "periods": [
+        {
+          "period": "HT2017",
+          "observations": 4598,
+          "staging_sha256": "d1e1d3bfd26c1dd800c2bb9920cbb23827a6bc25a957d69bdff4f2acff8f437f",
+          "observed_universities": 35,
+          "value_classifications": {
+            "verified_data": 4598
+          }
+        },
+        {
+          "period": "HT2018",
+          "observations": 4648,
+          "staging_sha256": "906d094ab3c081326956f14f37dcc83e27f2e6a2f41717cbdf444f06ad282e84",
+          "observed_universities": 35,
+          "value_classifications": {
+            "verified_data": 4648
+          }
+        },
+        {
+          "period": "HT2019",
+          "observations": 4641,
+          "staging_sha256": "6e88d3658f03705ef6abe8104f8a2e162275bd3fdb08a7f2d78c97165951c830",
+          "observed_universities": 35,
+          "value_classifications": {
+            "verified_data": 4641
+          }
+        },
+        {
+          "period": "HT2020",
+          "observations": 4712,
+          "staging_sha256": "95098c2dc8ceecfa29c010a81ec74e075bb9d986d96d543e5f30a5ba0f467c50",
+          "observed_universities": 35,
+          "value_classifications": {
+            "verified_data": 4712
+          }
+        },
+        {
+          "period": "HT2021",
+          "observations": 4790,
+          "staging_sha256": "2658732955b81de5fc099e6a40445ae8c6c15230129787caac6504a0e8827c5f",
+          "observed_universities": 35,
+          "value_classifications": {
+            "verified_data": 4790
+          }
+        },
+        {
+          "period": "HT2022",
+          "observations": 4867,
+          "staging_sha256": "cbd21e75a9c1d0e166e5bafaf65d8f5649d8f37c4fe3a2c8a6aa23cd5d209f91",
+          "observed_universities": 36,
+          "value_classifications": {
+            "verified_data": 4867
+          }
+        },
+        {
+          "period": "HT2023",
+          "observations": 4809,
+          "staging_sha256": "cf3e2cd84bcaf569a69c464aaf23bf91bb80544df5a3291f9ee2b864f7cc07da",
+          "observed_universities": 36,
+          "value_classifications": {
+            "verified_data": 4809
+          }
+        },
+        {
+          "period": "HT2024",
+          "observations": 4929,
+          "staging_sha256": "9b058477c33e3af6ca74ed6245625a3f023906734773b2a646afd70ed679c7db",
+          "observed_universities": 36,
+          "value_classifications": {
+            "verified_data": 4929
+          }
+        },
+        {
+          "period": "HT2025",
+          "observations": 4933,
+          "staging_sha256": "f36e874e4732879b2f75c3f770c3d05b43fd831c536301b39ed23b48ebe96ef2",
+          "observed_universities": 36,
+          "value_classifications": {
+            "verified_data": 4933
+          }
+        },
+        {
+          "period": "HT2026",
+          "observations": 4960,
+          "staging_sha256": "afed72c78223cbdaafada5f5aca193b983c63426a9461ef5599bfdb24d946297",
+          "observed_universities": 36,
+          "value_classifications": {
+            "verified_data": 4960
+          }
+        },
+        {
+          "period": "VT2017",
+          "observations": 2131,
+          "staging_sha256": "3601c951927dcc8d5e619fe62f2f8da2fa4d941147318f8f26578e9b6d31b11f",
+          "observed_universities": 30,
+          "value_classifications": {
+            "verified_data": 2131
+          }
+        },
+        {
+          "period": "VT2018",
+          "observations": 2243,
+          "staging_sha256": "6d85d6de1ca272fb61495ce8f642e9e5c692fa03928d862da071a85fbe032002",
+          "observed_universities": 30,
+          "value_classifications": {
+            "verified_data": 2243
+          }
+        },
+        {
+          "period": "VT2019",
+          "observations": 2152,
+          "staging_sha256": "722b7ab824887ff94931154bb9d5ef59cdd05fbbb2333eb32e6d571f2138cb08",
+          "observed_universities": 30,
+          "value_classifications": {
+            "verified_data": 2152
+          }
+        },
+        {
+          "period": "VT2020",
+          "observations": 2305,
+          "staging_sha256": "931536571405f81e81bab26a140e814fd040dfb1a0c2eaa41eb3b918737c1681",
+          "observed_universities": 30,
+          "value_classifications": {
+            "verified_data": 2305
+          }
+        },
+        {
+          "period": "VT2021",
+          "observations": 2346,
+          "staging_sha256": "89c4fcff18a4c0decf5dbcfccb203f260e49ae2b69a365fe22663e895f3119ea",
+          "observed_universities": 30,
+          "value_classifications": {
+            "verified_data": 2346
+          }
+        },
+        {
+          "period": "VT2022",
+          "observations": 2378,
+          "staging_sha256": "3abd678d51a1bfeb6cf0dd0605274ec114daff0e664dd92a08e333c48b70179c",
+          "observed_universities": 30,
+          "value_classifications": {
+            "verified_data": 2378
+          }
+        },
+        {
+          "period": "VT2023",
+          "observations": 2442,
+          "staging_sha256": "08a3095b305cc39bb80efe1ca3d60d79c4a786017756212291166710e8efb8de",
+          "observed_universities": 30,
+          "value_classifications": {
+            "verified_data": 2442
+          }
+        },
+        {
+          "period": "VT2024",
+          "observations": 2458,
+          "staging_sha256": "48c0c287e6f3e765262681212e4225e385cba1c4c6912a9228c0ac84ca05c582",
+          "observed_universities": 30,
+          "value_classifications": {
+            "verified_data": 2458
+          }
+        },
+        {
+          "period": "VT2025",
+          "observations": 2511,
+          "staging_sha256": "c2f52546536a2e8d88a9cb0f1a198a6f35a65950514bdff1a97738c1c0b074d1",
+          "observed_universities": 31,
+          "value_classifications": {
+            "verified_data": 2511
+          }
+        },
+        {
+          "period": "VT2026",
+          "observations": 2541,
+          "staging_sha256": "4e455ab9eab50e811b7e235a7f396f8b4101eed50872b860bca0ab4a97b4c20a",
+          "observed_universities": 31,
+          "value_classifications": {
+            "verified_data": 2541
+          }
+        }
+      ],
+      "verified_missing_scopes": 480,
+      "json_reference": {
+        "exact": true,
+        "reference_observations": 444,
+        "actual_observations": 444,
+        "only_reference": 0,
+        "only_actual": 0,
+        "different_values": []
+      },
+      "detail_controls": {
+        "indicator": 97,
+        "cases": [
+          {
+            "period": "HT2026",
+            "gender": "Kvinnor",
+            "age": "-24",
+            "checks": [
+              {
+                "university": "1",
+                "dimensions": {
+                  "Program": "Agronomexamen"
+                },
+                "value": "48",
+                "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=HT2026&gender=Kvinnor&age_group=8&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f",
+                "classification": "verified_data"
+              },
+              {
+                "university": "42",
+                "dimensions": {
+                  "Program": "Agronomexamen"
+                },
+                "value": "48",
+                "url": "https://statistik-api.uka.se/api/totals/97?university=42&year=HT2026&group_slug=3ee1be52a7407a83d74d3620fe4357683a21365f&gender=Kvinnor&age_group=8",
+                "classification": "verified_data"
+              }
+            ]
+          },
+          {
+            "period": "VT2017",
+            "gender": "Män",
+            "age": "35-",
+            "checks": [
+              {
+                "university": "1",
+                "dimensions": {
+                  "Program": "Apotekarexamen"
+                },
+                "value": "2",
+                "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=VT2017&gender=M%C3%A4n&age_group=10&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8",
+                "classification": "verified_data"
+              },
+              {
+                "university": "47",
+                "dimensions": {
+                  "Program": "Apotekarexamen"
+                },
+                "value": "2",
+                "url": "https://statistik-api.uka.se/api/totals/97?university=47&year=VT2017&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8&gender=M%C3%A4n&age_group=10",
+                "classification": "verified_data"
+              }
+            ]
+          }
+        ],
+        "new_requests": 4,
+        "all_checks_passed": true,
+        "publish_allowed": false
+      }
+    },
+    {
+      "indicator": 99,
+      "observations": 19595,
+      "staged_periods": 20,
+      "planned_periods": [
+        "HT2026",
+        "VT2026",
+        "HT2025",
+        "VT2025",
+        "HT2024",
+        "VT2024",
+        "HT2023",
+        "VT2023",
+        "HT2022",
+        "VT2022",
+        "HT2021",
+        "VT2021",
+        "HT2020",
+        "VT2020",
+        "HT2019",
+        "VT2019",
+        "HT2018",
+        "VT2018",
+        "HT2017",
+        "VT2017"
+      ],
+      "requested_university_options": 81,
+      "dimensions": [
+        "Program"
+      ],
+      "genders": [
+        "Kvinnor",
+        "Män",
+        "Total"
+      ],
+      "ages": [
+        "Total"
+      ],
+      "state": "previous_collection_reverified_offline",
+      "offline_recheck": {
+        "verified_files": 531,
+        "periods": 20,
+        "observations": 19595,
+        "new_requests": 0,
+        "new_exports": 0,
+        "new_insertions": 0,
+        "staging_checksums_unchanged": true,
+        "reference_66": {
+          "exact": true,
+          "reference_observations": 66,
+          "actual_observations": 66,
+          "only_reference": 0,
+          "only_actual": 0,
+          "different_values": []
+        },
+        "revision_1337": {
+          "exact": true,
+          "reference_observations": 1337,
+          "actual_observations": 1337,
+          "only_reference": 0,
+          "only_actual": 0,
+          "different_values": []
+        },
+        "publish_allowed": false
+      }
+    },
+    {
+      "indicator": 108,
+      "observations": 119840,
+      "staged_periods": 10,
+      "planned_periods": [
+        "2024/25",
+        "2023/24",
+        "2022/23",
+        "2021/22",
+        "2020/21",
+        "2019/20",
+        "2018/19",
+        "2017/18",
+        "2016/17",
+        "2015/16"
+      ],
+      "requested_university_options": 120,
+      "dimensions": [
+        "Examenskategori",
+        "Examen",
+        "Inriktning"
+      ],
+      "genders": [
+        "Kvinnor",
+        "Män",
+        "Total"
+      ],
+      "ages": [
+        "-24",
+        "25-34",
+        "35-",
+        "Total"
+      ],
+      "state": "staged",
+      "periods": [
+        {
+          "period": "2015/16",
+          "observations": 12197,
+          "staging_sha256": "12f582141adff76a9914ac750ae6ec11f152e5426ef53c8fb273a85abc173171",
+          "observed_universities": 48,
+          "value_classifications": {
+            "verified_data": 12197
+          }
+        },
+        {
+          "period": "2016/17",
+          "observations": 11884,
+          "staging_sha256": "62d3669307aea936c8ea4c86a7b1218eb2cbffd735b7d4e276aa9fa46ca7f6db",
+          "observed_universities": 48,
+          "value_classifications": {
+            "verified_data": 11884
+          }
+        },
+        {
+          "period": "2017/18",
+          "observations": 11957,
+          "staging_sha256": "fb7aa3f0c2aa9d2707a873b5318ca169384770c5a87d4184475f7d5d51aa91b6",
+          "observed_universities": 49,
+          "value_classifications": {
+            "verified_data": 11957
+          }
+        },
+        {
+          "period": "2018/19",
+          "observations": 11816,
+          "staging_sha256": "afb5ad2c1d9bc9f89e6b03c1f17082e0b950806679fe15a2bfb28aa21e081cbb",
+          "observed_universities": 47,
+          "value_classifications": {
+            "verified_data": 11816
+          }
+        },
+        {
+          "period": "2019/20",
+          "observations": 11775,
+          "staging_sha256": "4d6c3c237cf620632ccd3be0f21e01f8792410282966d552179d52314bbb1871",
+          "observed_universities": 46,
+          "value_classifications": {
+            "verified_data": 11775
+          }
+        },
+        {
+          "period": "2020/21",
+          "observations": 11990,
+          "staging_sha256": "84eda0e6e0c4ef706d9537950fbd9fe12f67c7f55beef174017ea4d4a136904b",
+          "observed_universities": 48,
+          "value_classifications": {
+            "verified_data": 11990
+          }
+        },
+        {
+          "period": "2021/22",
+          "observations": 11954,
+          "staging_sha256": "d14b1a5b2151eea3d6e9c146dae11d9107842a61d5eeac435465bc71547c34cb",
+          "observed_universities": 46,
+          "value_classifications": {
+            "verified_data": 11954
+          }
+        },
+        {
+          "period": "2022/23",
+          "observations": 11944,
+          "staging_sha256": "30e1be8eaad4f62cd71e0b442a01218fdcf306c21b086ba55405a9489c0c2075",
+          "observed_universities": 47,
+          "value_classifications": {
+            "verified_data": 11944
+          }
+        },
+        {
+          "period": "2023/24",
+          "observations": 12140,
+          "staging_sha256": "364ee3d0ee452be2484acc0b0cc72cfa4246eff063cc122653560e0c58636846",
+          "observed_universities": 49,
+          "value_classifications": {
+            "verified_data": 12140
+          }
+        },
+        {
+          "period": "2024/25",
+          "observations": 12183,
+          "staging_sha256": "3e65cbfe9714585db474a062cdcaa76c796028aefff95e68f16c5dcb38fe08c7",
+          "observed_universities": 50,
+          "value_classifications": {
+            "verified_data": 12183
+          }
+        }
+      ],
+      "verified_missing_scopes": 230,
+      "json_reference": {
+        "exact": true,
+        "reference_observations": 1238,
+        "actual_observations": 1238,
+        "only_reference": 0,
+        "only_actual": 0,
+        "different_values": []
+      },
+      "detail_controls": {
+        "indicator": 108,
+        "cases": [
+          {
+            "period": "2024/25",
+            "gender": "Kvinnor",
+            "age": "-24",
+            "checks": [
+              {
+                "university": "1",
+                "dimensions": {
+                  "Examenskategori": "Yrkesexamina"
+                },
+                "value": "6625",
+                "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2024%2F25&gender=Kvinnor&age_group=8&group_slug=d5fa129c254f73904ff5bb493f8ac61383194c48",
+                "classification": "verified_data"
+              },
+              {
+                "university": "1",
+                "dimensions": {
+                  "Examenskategori": "Yrkesexamina",
+                  "Examen": "Civilingenjörsexamina"
+                },
+                "value": "452",
+                "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2024%2F25&group_slug=a880bd9e312ea9fb63fc53e927a7d3a8cddb872b&gender=Kvinnor&age_group=8",
+                "classification": "verified_data"
+              },
+              {
+                "university": "1",
+                "dimensions": {
+                  "Examenskategori": "Yrkesexamina",
+                  "Examen": "Civilingenjörsexamina",
+                  "Inriktning": "Civilingenjörsexamina, arkitektur"
+                },
+                "value": "12",
+                "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2024%2F25&group_slug=c6c0d0fb45131abdd7c4339f74db88b44f2f8191&gender=Kvinnor&age_group=8",
+                "classification": "verified_data"
+              },
+              {
+                "university": "32",
+                "dimensions": {
+                  "Examenskategori": "Yrkesexamina",
+                  "Examen": "Civilingenjörsexamina",
+                  "Inriktning": "Civilingenjörsexamina, arkitektur"
+                },
+                "value": "8",
+                "url": "https://statistik-api.uka.se/api/totals/108?university=32&year=2024%2F25&group_slug=c6c0d0fb45131abdd7c4339f74db88b44f2f8191&gender=Kvinnor&age_group=8",
+                "classification": "verified_data"
+              }
+            ]
+          },
+          {
+            "period": "2015/16",
+            "gender": "Män",
+            "age": "35-",
+            "checks": [
+              {
+                "university": "1",
+                "dimensions": {
+                  "Examenskategori": "Yrkesexamina"
+                },
+                "value": "1888",
+                "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2015%2F16&gender=M%C3%A4n&age_group=10&group_slug=d5fa129c254f73904ff5bb493f8ac61383194c48",
+                "classification": "verified_data"
+              },
+              {
+                "university": "1",
+                "dimensions": {
+                  "Examenskategori": "Yrkesexamina",
+                  "Examen": "Civilingenjörsexamina"
+                },
+                "value": "218",
+                "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2015%2F16&group_slug=a880bd9e312ea9fb63fc53e927a7d3a8cddb872b&gender=M%C3%A4n&age_group=10",
+                "classification": "verified_data"
+              },
+              {
+                "university": "1",
+                "dimensions": {
+                  "Examenskategori": "Yrkesexamina",
+                  "Examen": "Civilingenjörsexamina",
+                  "Inriktning": "Civilingenjörsexamina, automatiseringsteknik"
+                },
+                "value": "2",
+                "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2015%2F16&group_slug=0e73f366e1d9944ff7379cfe9d012ff265e79134&gender=M%C3%A4n&age_group=10",
+                "classification": "verified_data"
+              },
+              {
+                "university": "4",
+                "dimensions": {
+                  "Examenskategori": "Yrkesexamina",
+                  "Examen": "Civilingenjörsexamina",
+                  "Inriktning": "Civilingenjörsexamina, automatiseringsteknik"
+                },
+                "value": "2",
+                "url": "https://statistik-api.uka.se/api/totals/108?university=4&year=2015%2F16&group_slug=0e73f366e1d9944ff7379cfe9d012ff265e79134&gender=M%C3%A4n&age_group=10",
+                "classification": "verified_data"
+              }
+            ]
+          }
+        ],
+        "new_requests": 8,
+        "all_checks_passed": true,
+        "publish_allowed": false
+      }
+    },
+    {
+      "indicator": 136,
+      "observations": 9899,
+      "staged_periods": 5,
+      "planned_periods": [
+        "2024",
+        "2023",
+        "2022",
+        "2021",
+        "2020"
+      ],
+      "requested_university_options": 52,
+      "dimensions": [
+        "Examen"
+      ],
+      "genders": [
+        "Kvinnor",
+        "Män",
+        "Total"
+      ],
+      "ages": [
+        "Total"
+      ],
+      "state": "staged",
+      "periods": [
+        {
+          "period": "2020",
+          "observations": 1998,
+          "staging_sha256": "17ee9fc4e00964d2ad83a839ad521fff57a1abf8f33b80a666d7183f3251e87e",
+          "observed_universities": 47,
+          "value_classifications": {
+            "verified_data": 1998
+          }
+        },
+        {
+          "period": "2021",
+          "observations": 1969,
+          "staging_sha256": "499a7343f7e5880e40aca40e31a4d504ee45ca52ea224d916bb6cd1b154966b6",
+          "observed_universities": 46,
+          "value_classifications": {
+            "verified_data": 1969
+          }
+        },
+        {
+          "period": "2022",
+          "observations": 2002,
+          "staging_sha256": "e97446c97b7fb19f09718c7c01d88af8e94d040e9ad954f918d81ac1368ccc42",
+          "observed_universities": 48,
+          "value_classifications": {
+            "verified_data": 2002
+          }
+        },
+        {
+          "period": "2023",
+          "observations": 1964,
+          "staging_sha256": "08efb21216bd2fad2b20e2734593eb6c94ccb22eaa1e9b7db57913a5a32bd609",
+          "observed_universities": 46,
+          "value_classifications": {
+            "verified_data": 1964
+          }
+        },
+        {
+          "period": "2024",
+          "observations": 1966,
+          "staging_sha256": "d96ae61f159f071335c96c4fa3c899b06dc4660a8d5cc68fb59e432f67333056",
+          "observed_universities": 47,
+          "value_classifications": {
+            "verified_data": 1966
+          }
+        }
+      ],
+      "verified_missing_scopes": 30,
+      "json_reference": {
+        "exact": true,
+        "reference_observations": 674,
+        "actual_observations": 674,
+        "only_reference": 0,
+        "only_actual": 0,
+        "different_values": []
+      },
+      "detail_controls": {
+        "indicator": 136,
+        "cases": [
+          {
+            "period": "2024",
+            "gender": "Kvinnor",
+            "age": "Total",
+            "checks": [
+              {
+                "university": "1",
+                "dimensions": {
+                  "Examen": "Agronomexamen/motsv"
+                },
+                "value": "94.1",
+                "url": "https://statistik-api.uka.se/api/totals/136?university=1&year=2024&gender=Kvinnor&group_slug=ca123c8f85f12647b4d52206e144ea29cf10368f",
+                "classification": "verified_data"
+              },
+              {
+                "university": "42",
+                "dimensions": {
+                  "Examen": "Agronomexamen/motsv"
+                },
+                "value": "94.1",
+                "url": "https://statistik-api.uka.se/api/totals/136?university=42&year=2024&group_slug=ca123c8f85f12647b4d52206e144ea29cf10368f&gender=Kvinnor",
+                "classification": "verified_data"
+              }
+            ]
+          },
+          {
+            "period": "2020",
+            "gender": "Män",
+            "age": "Total",
+            "checks": [
+              {
+                "university": "1",
+                "dimensions": {
+                  "Examen": "Agronomexamen/motsv"
+                },
+                "value": "0",
+                "url": "https://statistik-api.uka.se/api/totals/136?university=1&year=2020&gender=M%C3%A4n&group_slug=ca123c8f85f12647b4d52206e144ea29cf10368f",
+                "classification": "verified_data"
+              },
+              {
+                "university": "42",
+                "dimensions": {
+                  "Examen": "Agronomexamen/motsv"
+                },
+                "value": "0",
+                "url": "https://statistik-api.uka.se/api/totals/136?university=42&year=2020&group_slug=ca123c8f85f12647b4d52206e144ea29cf10368f&gender=M%C3%A4n",
+                "classification": "verified_data"
+              }
+            ]
+          }
+        ],
+        "new_requests": 4,
+        "all_checks_passed": true,
+        "publish_allowed": false
+      }
+    },
+    {
+      "indicator": 77,
+      "observations": 14812,
+      "staged_periods": 10,
+      "planned_periods": [
+        "2024/25",
+        "2023/24",
+        "2022/23",
+        "2021/22",
+        "2020/21",
+        "2019/20",
+        "2018/19",
+        "2017/18",
+        "2016/17",
+        "2015/16"
+      ],
+      "requested_university_options": 86,
+      "dimensions": [
+        "Utbildningsnivå",
+        "Studieform"
+      ],
+      "genders": [
+        "Kvinnor",
+        "Män",
+        "Total"
+      ],
+      "ages": [
+        "Total"
+      ],
+      "state": "staged",
+      "periods": [
+        {
+          "period": "2015/16",
+          "observations": 1438,
+          "staging_sha256": "1271795c064d307b104575193f766fb0334a8d89dafc124f3a7459236ea95e6c",
+          "observed_universities": 48,
+          "value_classifications": {
+            "verified_data": 1438
+          }
+        },
+        {
+          "period": "2016/17",
+          "observations": 1456,
+          "staging_sha256": "5aa80abedd8d991f9ce3ecfcceae380c4b4e006d4f8e2c4761016f3cebfb40bf",
+          "observed_universities": 45,
+          "value_classifications": {
+            "verified_data": 1456
+          }
+        },
+        {
+          "period": "2017/18",
+          "observations": 1472,
+          "staging_sha256": "9e3213e0e079576b508e9b1817d9b5ce81e9be4caf9834b5dc10fb286675cc11",
+          "observed_universities": 48,
+          "value_classifications": {
+            "verified_data": 1472
+          }
+        },
+        {
+          "period": "2018/19",
+          "observations": 1452,
+          "staging_sha256": "6e76d09be7f2b2f950d045fcc318c0cef6539ebd09bde46631bc55715452d142",
+          "observed_universities": 45,
+          "value_classifications": {
+            "verified_data": 1452
+          }
+        },
+        {
+          "period": "2019/20",
+          "observations": 1496,
+          "staging_sha256": "807f89afc14d36f5f25adf09ad9bd1690294cad8fa930f52f46580fe6f3511ed",
+          "observed_universities": 47,
+          "value_classifications": {
+            "verified_data": 1496
+          }
+        },
+        {
+          "period": "2020/21",
+          "observations": 1475,
+          "staging_sha256": "d8924ee6e3403a03d0e8ce994b11950c2254bb1ecb384b137ea7785be1e9324d",
+          "observed_universities": 46,
+          "value_classifications": {
+            "verified_data": 1475
+          }
+        },
+        {
+          "period": "2021/22",
+          "observations": 1508,
+          "staging_sha256": "e1a6c93ae984edebd08b01a3a8abbb5261b88c5e6d0504b1d8be95480ad4cd15",
+          "observed_universities": 48,
+          "value_classifications": {
+            "verified_data": 1508
+          }
+        },
+        {
+          "period": "2022/23",
+          "observations": 1501,
+          "staging_sha256": "26de4084a715b0b9eb4832e8b0a9c9b27027ff023839b634c8f4ffb62fb877ed",
+          "observed_universities": 48,
+          "value_classifications": {
+            "verified_data": 1501
+          }
+        },
+        {
+          "period": "2023/24",
+          "observations": 1508,
+          "staging_sha256": "e874b7512135ea201540a988071c6e962992bd7d70c918a959fac23216ff719d",
+          "observed_universities": 47,
+          "value_classifications": {
+            "verified_data": 1508
+          }
+        },
+        {
+          "period": "2024/25",
+          "observations": 1506,
+          "staging_sha256": "f9c43562efc2e4efe850c7f0041600b3400f998a6631852383deae7f183abb7c",
+          "observed_universities": 46,
+          "value_classifications": {
+            "verified_data": 1506
+          }
+        }
+      ],
+      "verified_missing_scopes": 51,
+      "json_reference": {
+        "exact": true,
+        "reference_observations": 517,
+        "actual_observations": 517,
+        "only_reference": 0,
+        "only_actual": 0,
+        "different_values": []
+      },
+      "detail_controls": {
+        "indicator": 77,
+        "cases": [
+          {
+            "period": "2024/25",
+            "gender": "Kvinnor",
+            "age": "Total",
+            "checks": [
+              {
+                "university": "1",
+                "dimensions": {
+                  "Studieform": "Fristående kurser"
+                },
+                "value": "47.4",
+                "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2024%2F25&gender=Kvinnor&group_slug=c0bc3a9977470b4e8f6ed2d86a1f5f16373c5a99",
+                "classification": "verified_data"
+              },
+              {
+                "university": "1",
+                "dimensions": {
+                  "Studieform": "Fristående kurser",
+                  "Utbildningsnivå": "Avancerad nivå"
+                },
+                "value": "31.3",
+                "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2024%2F25&group_slug=52681956c99c60358378d72fdb63d281f77e52d3&gender=Kvinnor",
+                "classification": "verified_data"
+              },
+              {
+                "university": "32",
+                "dimensions": {
+                  "Studieform": "Fristående kurser",
+                  "Utbildningsnivå": "Avancerad nivå"
+                },
+                "value": "0",
+                "url": "https://statistik-api.uka.se/api/totals/77?university=32&year=2024%2F25&group_slug=52681956c99c60358378d72fdb63d281f77e52d3&gender=Kvinnor",
+                "classification": "verified_data"
+              }
+            ]
+          },
+          {
+            "period": "2015/16",
+            "gender": "Män",
+            "age": "Total",
+            "checks": [
+              {
+                "university": "1",
+                "dimensions": {
+                  "Studieform": "Fristående kurser"
+                },
+                "value": "44.3",
+                "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2015%2F16&gender=M%C3%A4n&group_slug=c0bc3a9977470b4e8f6ed2d86a1f5f16373c5a99",
+                "classification": "verified_data"
+              },
+              {
+                "university": "1",
+                "dimensions": {
+                  "Studieform": "Fristående kurser",
+                  "Utbildningsnivå": "Avancerad nivå"
+                },
+                "value": "23.8",
+                "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2015%2F16&group_slug=52681956c99c60358378d72fdb63d281f77e52d3&gender=M%C3%A4n",
+                "classification": "verified_data"
+              },
+              {
+                "university": "32",
+                "dimensions": {
+                  "Studieform": "Fristående kurser",
+                  "Utbildningsnivå": "Avancerad nivå"
+                },
+                "value": "0",
+                "url": "https://statistik-api.uka.se/api/totals/77?university=32&year=2015%2F16&group_slug=52681956c99c60358378d72fdb63d281f77e52d3&gender=M%C3%A4n",
+                "classification": "verified_data"
+              }
+            ]
+          }
+        ],
+        "new_requests": 6,
+        "all_checks_passed": true,
+        "publish_allowed": false
+      }
+    },
+    {
+      "indicator": 134,
+      "observations": 56525,
+      "staged_periods": 10,
+      "planned_periods": [
+        "2023/24",
+        "2022/23",
+        "2021/22",
+        "2020/21",
+        "2019/20",
+        "2018/19",
+        "2017/18",
+        "2016/17",
+        "2015/16",
+        "2014/15"
+      ],
+      "requested_university_options": 66,
+      "dimensions": [
+        "Program"
+      ],
+      "genders": [
+        "Kvinnor",
+        "Män",
+        "Total"
+      ],
+      "ages": [
+        "-24",
+        "25-34",
+        "35-",
+        "Total"
+      ],
+      "state": "staged",
+      "periods": [
+        {
+          "period": "2014/15",
+          "observations": 5582,
+          "staging_sha256": "a34ab4a5bf611a40d8069ba1021e1160431119393913f3528aa643754d46dfe6",
+          "observed_universities": 44,
+          "value_classifications": {
+            "verified_data": 5582
+          }
+        },
+        {
+          "period": "2015/16",
+          "observations": 5683,
+          "staging_sha256": "1037fbf447eab90316b045b6e312a470a9342cbc8493002c0ae54ebd6519b6f1",
+          "observed_universities": 46,
+          "value_classifications": {
+            "verified_data": 5683
+          }
+        },
+        {
+          "period": "2016/17",
+          "observations": 5625,
+          "staging_sha256": "d7d196818a393b0bcf86d02e29c2c8edbc70770815f8e2fdcfa5752bc68240d9",
+          "observed_universities": 44,
+          "value_classifications": {
+            "verified_data": 5625
+          }
+        },
+        {
+          "period": "2017/18",
+          "observations": 5651,
+          "staging_sha256": "57da5d85bdba6941eb13a7ff2bfb8c7c0c307fdc2fafab3399a63ad0663e0ccb",
+          "observed_universities": 46,
+          "value_classifications": {
+            "verified_data": 5651
+          }
+        },
+        {
+          "period": "2018/19",
+          "observations": 5673,
+          "staging_sha256": "b823f83cb50676a11e7d9e442a68f9d2b45f2f3c2c77a5df773bb279cc0723ab",
+          "observed_universities": 44,
+          "value_classifications": {
+            "verified_data": 5673
+          }
+        },
+        {
+          "period": "2019/20",
+          "observations": 5686,
+          "staging_sha256": "816ac55a3af0500db039eac60dc593663f3c9edafd40595e519d362436d42d1d",
+          "observed_universities": 45,
+          "value_classifications": {
+            "verified_data": 5686
+          }
+        },
+        {
+          "period": "2020/21",
+          "observations": 5675,
+          "staging_sha256": "541931b3a4d87597e5c55d59e0228d87cb429ea1acaeedcb100eb808217865a3",
+          "observed_universities": 44,
+          "value_classifications": {
+            "verified_data": 5675
+          }
+        },
+        {
+          "period": "2021/22",
+          "observations": 5735,
+          "staging_sha256": "cb92cec9ccd638f139608246d9f2ffc9457c7415e43c0a22ce60c8542efa6e51",
+          "observed_universities": 46,
+          "value_classifications": {
+            "verified_data": 5735
+          }
+        },
+        {
+          "period": "2022/23",
+          "observations": 5607,
+          "staging_sha256": "78e35f5c6f2c6847a251cd3ede9eb2575682750e873c177fbaf11221a50ca82f",
+          "observed_universities": 44,
+          "value_classifications": {
+            "verified_data": 5607
+          }
+        },
+        {
+          "period": "2023/24",
+          "observations": 5608,
+          "staging_sha256": "a83e7d306f01f8e5ef0c57fef12efceece600898498d0a4abd39819a7b392769",
+          "observed_universities": 46,
+          "value_classifications": {
+            "verified_data": 5608
+          }
+        }
+      ],
+      "verified_missing_scopes": 240,
+      "json_reference": {
+        "exact": true,
+        "reference_observations": 507,
+        "actual_observations": 507,
+        "only_reference": 0,
+        "only_actual": 0,
+        "different_values": []
+      },
+      "detail_controls": {
+        "indicator": 134,
+        "cases": [
+          {
+            "period": "2023/24",
+            "gender": "Kvinnor",
+            "age": "-24",
+            "checks": [
+              {
+                "university": "1",
+                "dimensions": {
+                  "Program": "Apotekarexamen"
+                },
+                "value": "73.2",
+                "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2023%2F24&gender=Kvinnor&age_group=8&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8",
+                "classification": "verified_data"
+              },
+              {
+                "university": "10",
+                "dimensions": {
+                  "Program": "Apotekarexamen"
+                },
+                "value": "67.1",
+                "url": "https://statistik-api.uka.se/api/totals/134?university=10&year=2023%2F24&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8&gender=Kvinnor&age_group=8",
+                "classification": "verified_data"
+              }
+            ]
+          },
+          {
+            "period": "2014/15",
+            "gender": "Män",
+            "age": "35-",
+            "checks": [
+              {
+                "university": "1",
+                "dimensions": {
+                  "Program": "Apotekarexamen"
+                },
+                "value": "0",
+                "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2014%2F15&gender=M%C3%A4n&age_group=10&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8",
+                "classification": "verified_data"
+              },
+              {
+                "university": "10",
+                "dimensions": {
+                  "Program": "Apotekarexamen"
+                },
+                "value": "0",
+                "url": "https://statistik-api.uka.se/api/totals/134?university=10&year=2014%2F15&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8&gender=M%C3%A4n&age_group=10",
+                "classification": "verified_data"
+              }
+            ]
+          }
+        ],
+        "new_requests": 4,
+        "all_checks_passed": true,
+        "publish_allowed": false
+      }
+    },
+    {
+      "indicator": 135,
+      "observations": 49418,
+      "staged_periods": 10,
+      "planned_periods": [
+        "2021/22",
+        "2020/21",
+        "2019/20",
+        "2018/19",
+        "2017/18",
+        "2016/17",
+        "2015/16",
+        "2014/15",
+        "2013/14",
+        "2012/13"
+      ],
+      "requested_university_options": 64,
+      "dimensions": [
+        "Program"
+      ],
+      "genders": [
+        "Kvinnor",
+        "Män",
+        "Total"
+      ],
+      "ages": [
+        "-24",
+        "25-34",
+        "35-",
+        "Total"
+      ],
+      "state": "staged",
+      "periods": [
+        {
+          "period": "2012/13",
+          "observations": 6245,
+          "staging_sha256": "028b6cbbce75acb5951e99f0340a5ef12578291f6bee7b31cf724a42e1664bee",
+          "observed_universities": 45,
+          "value_classifications": {
+            "verified_data": 6245
+          }
+        },
+        {
+          "period": "2013/14",
+          "observations": 6248,
+          "staging_sha256": "4fae45e9a2c9a4cdea2f6f917d7232923f73b1cf6b82347482f5cbdfa2d4757d",
+          "observed_universities": 47,
+          "value_classifications": {
+            "verified_data": 6248
+          }
+        },
+        {
+          "period": "2014/15",
+          "observations": 6178,
+          "staging_sha256": "9c37a80bf28abdf6a1fa457dc2d7b26a15fda391db713310e6f6a064218c8196",
+          "observed_universities": 44,
+          "value_classifications": {
+            "verified_data": 6178
+          }
+        },
+        {
+          "period": "2015/16",
+          "observations": 6301,
+          "staging_sha256": "314025541df6e56e95856a4c98a88b2b3aa41c17aa30fed013baa6aa512fd57c",
+          "observed_universities": 46,
+          "value_classifications": {
+            "verified_data": 6301
+          }
+        },
+        {
+          "period": "2016/17",
+          "observations": 6249,
+          "staging_sha256": "a94b27899eb3c70cd8af00a6afef9c18519071783c1ea4965d9922e049d91091",
+          "observed_universities": 44,
+          "value_classifications": {
+            "verified_data": 6249
+          }
+        },
+        {
+          "period": "2017/18",
+          "observations": 5801,
+          "staging_sha256": "05594f1cfab581c556e4872ea768bf359e3baece411837c792816eccde45a3e4",
+          "observed_universities": 43,
+          "value_classifications": {
+            "verified_data": 5801
+          }
+        },
+        {
+          "period": "2018/19",
+          "observations": 5179,
+          "staging_sha256": "5e5717822f3178e69bcfa1a16c8df7be172a7af5889aa822a55e2e0391e70797",
+          "observed_universities": 42,
+          "value_classifications": {
+            "verified_data": 5179
+          }
+        },
+        {
+          "period": "2019/20",
+          "observations": 4250,
+          "staging_sha256": "0f447de2821e4f77be26a375b67ffeb733676b8e33d0f29bee1a0c15e58f88ab",
+          "observed_universities": 43,
+          "value_classifications": {
+            "verified_data": 4250
+          }
+        },
+        {
+          "period": "2020/21",
+          "observations": 2203,
+          "staging_sha256": "42765c377764386cbdd9f9a856a96799891da8772c1755ba0585385e8aa84cce",
+          "observed_universities": 41,
+          "value_classifications": {
+            "verified_data": 2203
+          }
+        },
+        {
+          "period": "2021/22",
+          "observations": 764,
+          "staging_sha256": "ba4633504efa80557f8272272e08d908982039c09578a370d4a212bab5c042ef",
+          "observed_universities": 31,
+          "value_classifications": {
+            "verified_data": 764
+          }
+        }
+      ],
+      "verified_missing_scopes": 240,
+      "json_reference": {
+        "exact": true,
+        "reference_observations": 68,
+        "actual_observations": 68,
+        "only_reference": 0,
+        "only_actual": 0,
+        "different_values": []
+      },
+      "detail_controls": {
+        "indicator": 135,
+        "cases": [
+          {
+            "period": "2021/22",
+            "gender": "Kvinnor",
+            "age": "-24",
+            "checks": [
+              {
+                "university": "1",
+                "dimensions": {
+                  "Program": "Hälso- och sjukvårdskuratorsexamen"
+                },
+                "value": "0",
+                "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2021%2F22&gender=Kvinnor&age_group=8&group_slug=5869fbead2d571699854e26183f1f19f56e7aef6",
+                "classification": "verified_data"
+              },
+              {
+                "university": "10",
+                "dimensions": {
+                  "Program": "Hälso- och sjukvårdskuratorsexamen"
+                },
+                "value": "0",
+                "url": "https://statistik-api.uka.se/api/totals/135?university=10&year=2021%2F22&group_slug=5869fbead2d571699854e26183f1f19f56e7aef6&gender=Kvinnor&age_group=8",
+                "classification": "verified_data"
+              }
+            ]
+          },
+          {
+            "period": "2012/13",
+            "gender": "Män",
+            "age": "35-",
+            "checks": [
+              {
+                "university": "1",
+                "dimensions": {
+                  "Program": "Apotekarexamen"
+                },
+                "value": "0",
+                "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2012%2F13&gender=M%C3%A4n&age_group=10&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8",
+                "classification": "verified_data"
+              },
+              {
+                "university": "10",
+                "dimensions": {
+                  "Program": "Apotekarexamen"
+                },
+                "value": "0",
+                "url": "https://statistik-api.uka.se/api/totals/135?university=10&year=2012%2F13&group_slug=f6bcfec7d9a2d30b70a55c200ad9853e9423a2e8&gender=M%C3%A4n&age_group=10",
+                "classification": "verified_data"
+              }
+            ]
+          }
+        ],
+        "new_requests": 4,
+        "all_checks_passed": true,
+        "publish_allowed": false
+      }
+    }
+  ],
+  "total_observations": 1639839,
+  "new_indicators": 8,
+  "new_periods": 105,
+  "new_observations": 468872,
+  "new_csv_exports": 315,
+  "json_root_controls": 1125,
+  "independent_historical_json_observations": 4154,
+  "direct_detail_controls": 38,
+  "offline_restart": {
+    "indicators": [
+      {
+        "indicator": 13,
+        "periods": 20,
+        "observations": 73268,
+        "new_requests": 0,
+        "new_exports": 0,
+        "new_insertions": 0,
+        "staging_checksums_unchanged": true,
+        "sqlite_integrity": "ok",
+        "publish_allowed": false
+      },
+      {
+        "indicator": 31,
+        "periods": 20,
+        "observations": 73716,
+        "new_requests": 0,
+        "new_exports": 0,
+        "new_insertions": 0,
+        "staging_checksums_unchanged": true,
+        "sqlite_integrity": "ok",
+        "publish_allowed": false
+      },
+      {
+        "indicator": 97,
+        "periods": 20,
+        "observations": 71394,
+        "new_requests": 0,
+        "new_exports": 0,
+        "new_insertions": 0,
+        "staging_checksums_unchanged": true,
+        "sqlite_integrity": "ok",
+        "publish_allowed": false
+      },
+      {
+        "indicator": 108,
+        "periods": 10,
+        "observations": 119840,
+        "new_requests": 0,
+        "new_exports": 0,
+        "new_insertions": 0,
+        "staging_checksums_unchanged": true,
+        "sqlite_integrity": "ok",
+        "publish_allowed": false
+      },
+      {
+        "indicator": 136,
+        "periods": 5,
+        "observations": 9899,
+        "new_requests": 0,
+        "new_exports": 0,
+        "new_insertions": 0,
+        "staging_checksums_unchanged": true,
+        "sqlite_integrity": "ok",
+        "publish_allowed": false
+      },
+      {
+        "indicator": 77,
+        "periods": 10,
+        "observations": 14812,
+        "new_requests": 0,
+        "new_exports": 0,
+        "new_insertions": 0,
+        "staging_checksums_unchanged": true,
+        "sqlite_integrity": "ok",
+        "publish_allowed": false
+      },
+      {
+        "indicator": 134,
+        "periods": 10,
+        "observations": 56525,
+        "new_requests": 0,
+        "new_exports": 0,
+        "new_insertions": 0,
+        "staging_checksums_unchanged": true,
+        "sqlite_integrity": "ok",
+        "publish_allowed": false
+      },
+      {
+        "indicator": 135,
+        "periods": 10,
+        "observations": 49418,
+        "new_requests": 0,
+        "new_exports": 0,
+        "new_insertions": 0,
+        "staging_checksums_unchanged": true,
+        "sqlite_integrity": "ok",
+        "publish_allowed": false
+      }
+    ],
+    "all_passed": true
+  },
+  "previous_current_root_checks": {
+    "cases": [
+      {
+        "indicator": 33,
+        "period": "2025/26",
+        "fresh_root_url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26",
+        "fresh_root_sha256": "093f371cea3f1d80fa08595bb18b05df9914771378d9a7f4dc4811305644301b",
+        "controls": {
+          "gender": "Total",
+          "age": "Total",
+          "native_controls": 63,
+          "observations": 10270,
+          "advertised_universities": [
+            "1",
+            "10",
+            "104",
+            "11",
+            "120",
+            "130",
+            "16",
+            "17",
+            "171",
+            "18",
+            "19",
+            "21",
+            "22",
+            "23",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "3",
+            "30",
+            "31",
+            "32",
+            "33",
+            "35",
+            "38",
+            "39",
+            "4",
+            "41",
+            "42",
+            "43",
+            "46",
+            "47",
+            "56",
+            "58",
+            "59",
+            "60",
+            "62",
+            "63",
+            "64",
+            "66",
+            "67",
+            "7",
+            "70",
+            "72",
+            "73",
+            "74",
+            "75",
+            "83",
+            "9"
+          ],
+          "not_advertised_universities": [
+            "100",
+            "101",
+            "102",
+            "103",
+            "20",
+            "34",
+            "36",
+            "37",
+            "44",
+            "5",
+            "55",
+            "57",
+            "6",
+            "61",
+            "65",
+            "68",
+            "69",
+            "71",
+            "82",
+            "85",
+            "86",
+            "87",
+            "88",
+            "91",
+            "94",
+            "96",
+            "97",
+            "99"
+          ],
+          "absence_meaning": "Absent in positive national root and controlled broad CSV; no zero values generated."
+        },
+        "comparison_passed": true,
+        "new_requests": 0
+      },
+      {
+        "indicator": 99,
+        "period": "HT2026",
+        "fresh_root_url": "https://statistik-api.uka.se/api/totals/99?university=1&year=HT2026",
+        "fresh_root_sha256": "e3cd9acf137423389fb5e0a1c47fedb1e7c9d4b42cbf087b5540e1fd88d6463f",
+        "controls": {
+          "gender": "Total",
+          "age": "Total",
+          "native_controls": 86,
+          "observations": 446,
+          "advertised_programs": [
+            "Agronomexamen",
+            "Apotekarexamen",
+            "Arbetsterapeutexamen",
+            "Arkitektexamen",
+            "Audionomexamen",
+            "Barnmorskeexamen",
+            "Biomedicinsk analytikerexamen",
+            "Brandingenjörsexamen",
+            "Civilekonomexamen",
+            "Civilingenjörsexamen",
+            "Dietistexamen",
+            "Djursjukskötarexamen",
+            "Folkhögskollärarexamen",
+            "Fysioterapeutexamen",
+            "Förskollärarexamen",
+            "Grundlärarexamen",
+            "Hippologexamen",
+            "Hälso- och sjukvårdskuratorsexamen",
+            "Högskoleingenjörsexamen",
+            "Juristexamen",
+            "Landskapsarkitektexamen",
+            "Landskapsingenjörsexamen",
+            "Lantmästarexamen",
+            "Logopedexamen",
+            "Läkarexamen",
+            "Lärarexamen",
+            "Officersexamen",
+            "Optikerexamen",
+            "Ortopedingenjörsexamen",
+            "Psykologexamen",
+            "Psykoterapeutexamen",
+            "Receptarieexamen",
+            "Röntgensjuksköterskeexamen",
+            "Sjukhusfysikerexamen",
+            "Sjuksköterskeexamen",
+            "Sjöingenjörsexamen",
+            "Sjökaptensexamen",
+            "Skogsmästarexamen",
+            "Socionomexamen",
+            "Specialistsjuksköterskeexamen",
+            "Speciallärarexamen",
+            "Specialpedagogexamen",
+            "Studie- och yrkesvägledarexamen",
+            "Tandhygienistexamen",
+            "Tandläkarexamen",
+            "Tandteknikerexamen",
+            "Trädgårdsingenjörsexamen",
+            "Veterinärexamen",
+            "Yrkeslärarexamen",
+            "Ämneslärarexamen"
+          ],
+          "advertised_universities": [
+            "1",
+            "10",
+            "16",
+            "17",
+            "18",
+            "19",
+            "21",
+            "22",
+            "23",
+            "25",
+            "26",
+            "27",
+            "29",
+            "3",
+            "30",
+            "31",
+            "32",
+            "33",
+            "35",
+            "38",
+            "39",
+            "4",
+            "41",
+            "42",
+            "43",
+            "46",
+            "47",
+            "56",
+            "59",
+            "60",
+            "62",
+            "63",
+            "64",
+            "66",
+            "67",
+            "9"
+          ],
+          "not_advertised_universities": [
+            "105",
+            "106",
+            "107",
+            "109",
+            "110",
+            "112",
+            "113",
+            "114",
+            "115",
+            "116",
+            "118",
+            "119",
+            "12",
+            "129",
+            "13",
+            "14",
+            "15",
+            "2",
+            "20",
+            "34",
+            "36",
+            "48",
+            "49",
+            "50",
+            "51",
+            "52",
+            "53",
+            "54",
+            "55",
+            "57",
+            "61",
+            "68",
+            "69",
+            "76",
+            "77",
+            "78",
+            "79",
+            "8",
+            "80",
+            "81",
+            "87",
+            "89",
+            "90",
+            "92",
+            "95"
+          ],
+          "absence_meaning": "Absent in positive national root and controlled broad CSV; no zero values generated."
+        },
+        "comparison_passed": true,
+        "new_requests": 0
+      }
+    ],
+    "source_release_verified": false
+  },
+  "tests": 138,
+  "production_import_performed": false,
+  "publish_allowed": false,
+  "full_independent_leaf_coverage_verified": false,
+  "source_release_verified": false,
+  "remaining": [
+    "Server-controlled manifest, resumable upload and idempotent publication",
+    "Retain previous active snapshot through aggregate/readback validation",
+    "Whole-campaign source revision checks before publication",
+    "Unadvertised detail/suppression reasons remain unclear where no positive evidence exists"
+  ]
+}

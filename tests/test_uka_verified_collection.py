@@ -94,6 +94,16 @@ class VerifiedCollectionTest(unittest.TestCase):
             m=metadata();m['ages'][0]['label']='-24'
             with self.assertRaisesRegex(ValueError,'metadata'):Collection(tmp,m,'example')
 
+    def test_technical_empty_and_unconfirmed_selection_have_different_status(self):
+        from uka_verified_collection import TechnicalSourceError
+        for status, classification in [('technical_empty_body','technical_error'),('technical_failure','technical_error'),('invalid_csv','technical_error'),('empty_selection_unconfirmed','unclear')]:
+            with tempfile.TemporaryDirectory() as tmp, Collection(tmp,metadata(),'example') as c:
+                with patch.object(c.source,'export',return_value={'status':status}):
+                    with self.assertRaises((ValueError,TechnicalSourceError)):c.collect('HT2026')
+                checkpoint=json.loads((Path(tmp)/'checkpoints/HT2026.json').read_text())
+                self.assertEqual(checkpoint['classification'],classification)
+                self.assertEqual(c.report()['observations'],0)
+
     def test_failed_export_never_commits_and_resume_zero_budget(self):
         with tempfile.TemporaryDirectory() as tmp:
             with Collection(tmp,metadata(),'example') as c:
