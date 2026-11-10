@@ -1,0 +1,7355 @@
+{
+  "policy": "csv-all-universities-partitions-every-root-v1",
+  "snapshot": "2026-11-10-all",
+  "archive_sha256": "1be12b057d06285fa97b9eaa314d31e0898de57130f7c4d99c3a4093e2eb4170",
+  "canonicalization": "jsonb-array(period,university,gender,dimensions,numeric-text-fixed); bytewise order; newline separator without final newline",
+  "indicators": [
+    {
+      "api_id": 13,
+      "indicator": "uka-forstahandssokande-yrkesprogram",
+      "rows": 73268,
+      "periods": [
+        {
+          "period": "HT2017",
+          "rows": 4679,
+          "sha256": "c0d59c23cdfd42d1d0bca3d9ffe4b66cb731cc019599fac949f67534252b2baf"
+        },
+        {
+          "period": "HT2018",
+          "rows": 4742,
+          "sha256": "2c19813af4a7f6c921f80e49eaff058c1c314442b703a607c3d01c1f54726baa"
+        },
+        {
+          "period": "HT2019",
+          "rows": 4725,
+          "sha256": "bfb372dc583186f9a9e0792245185f0318f23bad2aa331c648771e93a48e8f48"
+        },
+        {
+          "period": "HT2020",
+          "rows": 4814,
+          "sha256": "b5e36ae6dfe1ea44abd1b73d819b3f9f0e153c2fb20cc0d280522e8342bbf9d4"
+        },
+        {
+          "period": "HT2021",
+          "rows": 4912,
+          "sha256": "baf17365d26b3da4978886b7eb5c9460e7676feaf0a8f1e783554fef4014f195"
+        },
+        {
+          "period": "HT2022",
+          "rows": 4991,
+          "sha256": "f0586733f2abb9e186e67c726bb3ba1fab4880d601c625e9467f14c203999632"
+        },
+        {
+          "period": "HT2023",
+          "rows": 4921,
+          "sha256": "442f0110243765a85ada2987d5988ed1f773e7349168624868682d1e01ac0aec"
+        },
+        {
+          "period": "HT2024",
+          "rows": 5010,
+          "sha256": "5c17e19a7998adef778a9538a12fd6616520131f95c9a7d343caf2a54aa29fc3"
+        },
+        {
+          "period": "HT2025",
+          "rows": 5047,
+          "sha256": "43d68226a9332c519a3e877828d269fa83b04cba137d8c0e1cbe08ddc8a34b4b"
+        },
+        {
+          "period": "HT2026",
+          "rows": 5046,
+          "sha256": "43480553708df47690a54c11047482c7ab942b7e56cf1bc6325840681a64fe0f"
+        },
+        {
+          "period": "VT2017",
+          "rows": 2218,
+          "sha256": "a95e59bcca5e89e5530c9d88a4045de84ff905a8c754aa2ccc8c35d8a0d3b3ef"
+        },
+        {
+          "period": "VT2018",
+          "rows": 2317,
+          "sha256": "dd391deea0f41b287ccc358174d567ea9a92a3bfdb60d06f531eca3e92d98bc3"
+        },
+        {
+          "period": "VT2019",
+          "rows": 2235,
+          "sha256": "16c83f8abfdacff31e5212153e09400adba3feaf27942bab9b5fed5db5c150c2"
+        },
+        {
+          "period": "VT2020",
+          "rows": 2410,
+          "sha256": "e23b829b6818aa2828f741e1ae0713c0621051fcffef79c7010b4ec186bdfc08"
+        },
+        {
+          "period": "VT2021",
+          "rows": 2416,
+          "sha256": "f5c1aff8e10d8152bd7897b59e69be889becac6594d760b1c60c8ff92fa455f5"
+        },
+        {
+          "period": "VT2022",
+          "rows": 2465,
+          "sha256": "4dfc54675699413372064885971b1d548248284a42fef907931ddc986fe7d84b"
+        },
+        {
+          "period": "VT2023",
+          "rows": 2528,
+          "sha256": "2f72dab5ab41f1143fdcf5966a485c8698a96136ecedf7d523be3324e6580a83"
+        },
+        {
+          "period": "VT2024",
+          "rows": 2548,
+          "sha256": "60a2a3c4fb4e9a1227bacbc9d1a0395ed711074af3489966bc89d626c88ca8ab"
+        },
+        {
+          "period": "VT2025",
+          "rows": 2609,
+          "sha256": "246dc32a674a84451002b17c65c29908394f17d10596133034632269d5f72201"
+        },
+        {
+          "period": "VT2026",
+          "rows": 2635,
+          "sha256": "2351c16630d37a0677feafa4a152ab52a93f192694a90d9926403a86079178d3"
+        }
+      ],
+      "coverage": [
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 373
+        },
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 407
+        },
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 383
+        },
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 411
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 352
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 389
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 358
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 405
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 375
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 411
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 403
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 412
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 382
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 407
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 388
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 416
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 351
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 396
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 369
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 410
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 384
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 416
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 406
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 417
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 376
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 410
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 385
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 414
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 348
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 396
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 375
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 412
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 377
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 413
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 404
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 415
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 383
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 418
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 389
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 420
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 360
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 408
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 380
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 417
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 386
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 421
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 410
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 422
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 385
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 428
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 401
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 430
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 367
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 409
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 394
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 423
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 389
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 431
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 424
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 431
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 396
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 435
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 410
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 439
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 357
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 418
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 401
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 429
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 397
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 438
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 432
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 439
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 392
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 426
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 392
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 435
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 354
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 414
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 397
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 426
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 395
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 433
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 422
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 435
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 401
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 435
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 403
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 442
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 360
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 419
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 402
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 434
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 402
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 441
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 429
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 442
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 400
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 440
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 416
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 447
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 355
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 422
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 406
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 436
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 400
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 443
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 435
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 447
+        },
+        {
+          "period": "HT2026",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 398
+        },
+        {
+          "period": "HT2026",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 439
+        },
+        {
+          "period": "HT2026",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 423
+        },
+        {
+          "period": "HT2026",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 444
+        },
+        {
+          "period": "HT2026",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 366
+        },
+        {
+          "period": "HT2026",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 418
+        },
+        {
+          "period": "HT2026",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 404
+        },
+        {
+          "period": "HT2026",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 433
+        },
+        {
+          "period": "HT2026",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 399
+        },
+        {
+          "period": "HT2026",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 441
+        },
+        {
+          "period": "HT2026",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 437
+        },
+        {
+          "period": "HT2026",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 444
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 182
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 187
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 187
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 192
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 168
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 178
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 176
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 188
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 184
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 189
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 191
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 196
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 184
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 198
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 188
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 203
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 167
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 189
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 186
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 203
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 186
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 203
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 201
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 209
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 178
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 190
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 186
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 192
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 168
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 188
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 172
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 194
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 184
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 194
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 191
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 198
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 191
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 201
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 195
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 210
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 186
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 202
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 189
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 210
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 197
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 212
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 202
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 215
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 189
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 209
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 197
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 213
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 178
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 201
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 187
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 206
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 194
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 217
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 205
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 220
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 192
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 211
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 202
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 219
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 180
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 203
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 192
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 213
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 201
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 220
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 205
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 227
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 195
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 215
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 205
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 220
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 189
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 208
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 198
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 226
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 209
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 217
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 214
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 232
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 197
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 214
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 208
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 222
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 189
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 210
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 202
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 227
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 211
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 221
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 215
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 232
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 204
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 218
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 205
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 231
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 189
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 216
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 206
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 231
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 217
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 233
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 219
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 240
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 202
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 221
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 217
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 235
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 188
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 225
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 197
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 236
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 215
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 232
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 223
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 244
+        }
+      ]
+    },
+    {
+      "api_id": 31,
+      "indicator": "uka-nyborjare-yrkesprogram",
+      "rows": 73716,
+      "periods": [
+        {
+          "period": "HT2016",
+          "rows": 4724,
+          "sha256": "349e2325dedca346efee30a3fc8432d0cbe19f0233ff964bf8d197c32ac3802a"
+        },
+        {
+          "period": "HT2017",
+          "rows": 4725,
+          "sha256": "d290da4821da42c43db2b803208f1a2922cde347e268c23f43bf4d441e0d71a0"
+        },
+        {
+          "period": "HT2018",
+          "rows": 4727,
+          "sha256": "1891d8078d6409f32f449864deb962bc9b5f6e845d3a4767fa04d1a8f929a412"
+        },
+        {
+          "period": "HT2019",
+          "rows": 4760,
+          "sha256": "2ed66a7257e4e62282dcc1e696faaa40a62a71f8f8155601797d50831d05efe3"
+        },
+        {
+          "period": "HT2020",
+          "rows": 4763,
+          "sha256": "0ee9fa540830526b063faea11debd3bba0558c1436db99283ee50f794e8913eb"
+        },
+        {
+          "period": "HT2021",
+          "rows": 4878,
+          "sha256": "732e9d460ff562737b750f7296e486e6b59de81d8ed3123d328890fc46979e72"
+        },
+        {
+          "period": "HT2022",
+          "rows": 4842,
+          "sha256": "d805f03a3a7a66c664777c6f5edf36bbf0c1fbeb450851d1534a81b9fb105e0b"
+        },
+        {
+          "period": "HT2023",
+          "rows": 4828,
+          "sha256": "fd69a68c0a1901da8e803596bac141700c0525f6a9b67d39041726b9c12f6022"
+        },
+        {
+          "period": "HT2024",
+          "rows": 4877,
+          "sha256": "978269f66c5b1b29cc0c603efc88d133e17a84d9ed718daf53c00024fb42684b"
+        },
+        {
+          "period": "HT2025",
+          "rows": 4938,
+          "sha256": "5316b6e2c7a77c1360dc17b45081b3d08538931a08cc6e6353c4fd259114305b"
+        },
+        {
+          "period": "VT2017",
+          "rows": 2508,
+          "sha256": "45217a4aa8632ea386660fa19515830ac2c61d042242ffdcc043514b2c5f6011"
+        },
+        {
+          "period": "VT2018",
+          "rows": 2567,
+          "sha256": "bb986a4b6598130966254dfe88cf5d6f1dc3c8d36c277f9546d7a18e755be8be"
+        },
+        {
+          "period": "VT2019",
+          "rows": 2559,
+          "sha256": "be7197369b75e0c6164dc54313c0061b4b32ad33c79d222e902d24f5334c33be"
+        },
+        {
+          "period": "VT2020",
+          "rows": 2613,
+          "sha256": "c43a2135b784c5d7e6e223964a90d4a548cc07a415c622858b9301195caa8f2e"
+        },
+        {
+          "period": "VT2021",
+          "rows": 2625,
+          "sha256": "0f834ed4d09647f3a4fefc4496c09d26ab2a9c951d2877a83b453f5731102f3d"
+        },
+        {
+          "period": "VT2022",
+          "rows": 2521,
+          "sha256": "91285e7858eb8aa36e1c2dceb315d005f99cce3f5ab4fa19ce5a085fabf25edf"
+        },
+        {
+          "period": "VT2023",
+          "rows": 2558,
+          "sha256": "0cd9263171629e1bdb505909cfe32e1a0b5af6b2f4bca0860e2d4b2654e3ae3e"
+        },
+        {
+          "period": "VT2024",
+          "rows": 2507,
+          "sha256": "8fe5f24830550105d4b734a006a5ecb1fda8321a3c9f1524973ae50cb4296f36"
+        },
+        {
+          "period": "VT2025",
+          "rows": 2582,
+          "sha256": "13be51930c0c5ea64d6746bd3caf3190af190bbb1d8918c77be9a23bad624a8a"
+        },
+        {
+          "period": "VT2026",
+          "rows": 2614,
+          "sha256": "98a39450e2bbd1c363c759fa2f50bda483c5390b7c2db401c786a14f5eaf317f"
+        }
+      ],
+      "coverage": [
+        {
+          "period": "HT2016",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 377
+        },
+        {
+          "period": "HT2016",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 415
+        },
+        {
+          "period": "HT2016",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 366
+        },
+        {
+          "period": "HT2016",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 429
+        },
+        {
+          "period": "HT2016",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 354
+        },
+        {
+          "period": "HT2016",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 395
+        },
+        {
+          "period": "HT2016",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 327
+        },
+        {
+          "period": "HT2016",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 415
+        },
+        {
+          "period": "HT2016",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 383
+        },
+        {
+          "period": "HT2016",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 427
+        },
+        {
+          "period": "HT2016",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 406
+        },
+        {
+          "period": "HT2016",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 430
+        },
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 380
+        },
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 417
+        },
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 363
+        },
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 430
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 355
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 390
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 327
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 417
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 385
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 430
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 400
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 431
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 380
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 421
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 366
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 430
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 355
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 395
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 322
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 418
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 387
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 428
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 393
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 432
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 376
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 424
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 386
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 432
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 343
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 390
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 340
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 419
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 378
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 430
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 410
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 432
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 374
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 425
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 376
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 432
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 358
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 393
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 333
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 419
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 380
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 432
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 408
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 433
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 379
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 430
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 390
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 445
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 357
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 399
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 352
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 429
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 384
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 442
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 426
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 445
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 387
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 436
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 380
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 447
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 347
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 397
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 333
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 424
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 391
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 441
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 412
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 447
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 390
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 427
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 372
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 443
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 350
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 392
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 338
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 426
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 393
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 440
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 411
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 446
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 387
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 434
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 386
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 448
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 350
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 405
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 341
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 430
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 391
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 445
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 412
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 448
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 393
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 442
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 384
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 455
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 354
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 403
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 344
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 437
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 396
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 453
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 421
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 456
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 188
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 205
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 203
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 242
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 170
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 205
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 154
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 226
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 199
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 235
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 215
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 266
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 187
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 218
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 211
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 249
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 170
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 206
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 158
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 236
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 201
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 235
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 224
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 272
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 180
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 223
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 201
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 244
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 167
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 219
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 168
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 236
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 194
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 247
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 215
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 265
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 178
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 223
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 213
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 245
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 185
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 208
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 178
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 233
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 207
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 244
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 226
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 273
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 195
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 222
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 210
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 248
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 181
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 206
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 184
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 236
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 208
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 237
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 226
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 272
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 186
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 218
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 210
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 243
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 164
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 198
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 171
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 227
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 196
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 230
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 219
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 259
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 181
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 221
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 211
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 248
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 171
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 203
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 178
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 232
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 194
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 233
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 224
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 262
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 179
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 210
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 214
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 238
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 169
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 199
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 170
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 228
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 193
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 227
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 225
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 255
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 193
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 212
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 215
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 242
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 180
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 204
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 185
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 235
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 207
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 226
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 225
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 258
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 189
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 228
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 216
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 251
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 175
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 215
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 179
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 233
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 202
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 240
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 224
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 262
+        }
+      ]
+    },
+    {
+      "api_id": 97,
+      "indicator": "uka-antagna-yrkesprogram",
+      "rows": 71394,
+      "periods": [
+        {
+          "period": "HT2017",
+          "rows": 4598,
+          "sha256": "cace0dadb91fcaa69d80c5ba46ee26606e63d2ebe66d62c26a25d08fa83de2fc"
+        },
+        {
+          "period": "HT2018",
+          "rows": 4648,
+          "sha256": "c1f1b3aebf07029722add5368e6010e1fb28aa21bc75115f5498549caa26ed48"
+        },
+        {
+          "period": "HT2019",
+          "rows": 4641,
+          "sha256": "e93790479f4dbb256baade73d9a3dfb3bc7a9a6d5355c5488205c1e41d90ad2d"
+        },
+        {
+          "period": "HT2020",
+          "rows": 4712,
+          "sha256": "4b2f3d0b544ed8e5fd2f415bc677f387f61a2ebdc2da61c84f5cf330d80f64df"
+        },
+        {
+          "period": "HT2021",
+          "rows": 4790,
+          "sha256": "b238ff4d4b4d85a2a4709031f2b674d886a94d67a9d56033f480ca5c9574a6a8"
+        },
+        {
+          "period": "HT2022",
+          "rows": 4867,
+          "sha256": "a2d8ca5014847e3fff3717d632c96463f5770f45a8f2e0315552e0fa6bfae0d4"
+        },
+        {
+          "period": "HT2023",
+          "rows": 4809,
+          "sha256": "2a96229257b563db45bf45674377c2bd28bd8c4c3e17b40fec8b3f15f9f1f798"
+        },
+        {
+          "period": "HT2024",
+          "rows": 4929,
+          "sha256": "697702d218191689c5a943e435f248a750f9dfe2a720039d9ebd6bf99566edd6"
+        },
+        {
+          "period": "HT2025",
+          "rows": 4933,
+          "sha256": "b864bb66f6d6cd7cc820d0b95f2ca3ceb585ef90771784ed7a57ed0294070965"
+        },
+        {
+          "period": "HT2026",
+          "rows": 4960,
+          "sha256": "c559ec18fe3c11c1788583608e3133677d31da69c10825364b9495bfb2a5384e"
+        },
+        {
+          "period": "VT2017",
+          "rows": 2131,
+          "sha256": "f52e44edf33ce859c51e364c5a2ffddc6a752be8989ee17206cfb9c78a98a5f9"
+        },
+        {
+          "period": "VT2018",
+          "rows": 2243,
+          "sha256": "69feb568e88e38e756cc829d411938cbc871c6b2a6a194cf4da79b1744dcf208"
+        },
+        {
+          "period": "VT2019",
+          "rows": 2152,
+          "sha256": "dd84e602ad650ba263f73539a5f8ea08b05f4c0863b9d0fdb57288a253a26b37"
+        },
+        {
+          "period": "VT2020",
+          "rows": 2305,
+          "sha256": "a1c451f8e5669861abc7b11ec1850c09027157472cca69eba7308552e6d2dd26"
+        },
+        {
+          "period": "VT2021",
+          "rows": 2346,
+          "sha256": "0d3298f958fa6a8aefb5af10bcb07ed77f1b0d7a52a206090ba794e5a5649fe0"
+        },
+        {
+          "period": "VT2022",
+          "rows": 2378,
+          "sha256": "535a78275efc30033147b810b0d743c8917710741e8ebc4e1b57cf0c56de1319"
+        },
+        {
+          "period": "VT2023",
+          "rows": 2442,
+          "sha256": "4cc2ed49296e5976141a203d95b3e4f318c2bb07360fc1031806794d36466608"
+        },
+        {
+          "period": "VT2024",
+          "rows": 2458,
+          "sha256": "a3f1dd7d07475f9c4bad6a2ab44f71fc582fe6f275f6266537cbc03e0a158603"
+        },
+        {
+          "period": "VT2025",
+          "rows": 2511,
+          "sha256": "5ad33b555b1cd772a84ead36a50dff15f07d59c6137c004d0b66b1520b7fd391"
+        },
+        {
+          "period": "VT2026",
+          "rows": 2541,
+          "sha256": "a324095a0dff60d6f234c4fd41fd40acafa7ed55b44056c3766d3bbdfcdaf9ec"
+        }
+      ],
+      "coverage": [
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 369
+        },
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 399
+        },
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 365
+        },
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 411
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 348
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 381
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 333
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 402
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 374
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 409
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 395
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 412
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 369
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 406
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 369
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 415
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 348
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 392
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 343
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 407
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 375
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 414
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 393
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 417
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 368
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 408
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 376
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 415
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 343
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 378
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 347
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 405
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 369
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 415
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 402
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 415
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 368
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 414
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 387
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 420
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 353
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 396
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 340
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 413
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 372
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 421
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 406
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 422
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 375
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 423
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 386
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 431
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 350
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 395
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 358
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 417
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 377
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 430
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 417
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 431
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 389
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 431
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 392
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 439
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 348
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 398
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 362
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 422
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 391
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 435
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 421
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 439
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 386
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 421
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 385
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 432
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 349
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 388
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 364
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 418
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 389
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 430
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 414
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 433
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 385
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 434
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 397
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 442
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 354
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 407
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 386
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 427
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 388
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 441
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 426
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 442
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 387
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 434
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 396
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 447
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 352
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 409
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 377
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 430
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 388
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 444
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 422
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 447
+        },
+        {
+          "period": "HT2026",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 385
+        },
+        {
+          "period": "HT2026",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 437
+        },
+        {
+          "period": "HT2026",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 410
+        },
+        {
+          "period": "HT2026",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 444
+        },
+        {
+          "period": "HT2026",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 357
+        },
+        {
+          "period": "HT2026",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 406
+        },
+        {
+          "period": "HT2026",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 382
+        },
+        {
+          "period": "HT2026",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 432
+        },
+        {
+          "period": "HT2026",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 389
+        },
+        {
+          "period": "HT2026",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 441
+        },
+        {
+          "period": "HT2026",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 433
+        },
+        {
+          "period": "HT2026",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 444
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 174
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 184
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 180
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 188
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 160
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 172
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 150
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 180
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 176
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 188
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 186
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 193
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 176
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 197
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 186
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 202
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 165
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 185
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 154
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 194
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 183
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 201
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 195
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 205
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 176
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 185
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 179
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 191
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 164
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 182
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 145
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 187
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 180
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 191
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 180
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 192
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 178
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 200
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 190
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 206
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 173
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 186
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 171
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 198
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 188
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 205
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 199
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 211
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 181
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 202
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 187
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 208
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 174
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 194
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 180
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 204
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 187
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 213
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 200
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 216
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 189
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 205
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 191
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 217
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 170
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 192
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 171
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 212
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 194
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 213
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 201
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 223
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 183
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 208
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 200
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 217
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 178
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 203
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 188
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 218
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 195
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 216
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 211
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 225
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 188
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 208
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 200
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 219
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 180
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 203
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 188
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 222
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 196
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 214
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 211
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 229
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 197
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 212
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 202
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 225
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 183
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 206
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 191
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 223
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 207
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 223
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 211
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 231
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 194
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 221
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 212
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 231
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 177
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 212
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 185
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 226
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 201
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 227
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 216
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 239
+        }
+      ]
+    },
+    {
+      "api_id": 108,
+      "indicator": "uka-examinerade",
+      "rows": 119840,
+      "periods": [
+        {
+          "period": "2015/16",
+          "rows": 12197,
+          "sha256": "7e34505607cb00f5b48e5385327a1ec9cc0a2de79d7cc2e3c064d17be7fe3670"
+        },
+        {
+          "period": "2016/17",
+          "rows": 11884,
+          "sha256": "b35f1709aecd9b3cc3b093933252091746ce125e69f36076375eb152c955eb10"
+        },
+        {
+          "period": "2017/18",
+          "rows": 11957,
+          "sha256": "cb64ebb180ce82373396d055b54906a5c40106614f137e975322b7a7d52bf327"
+        },
+        {
+          "period": "2018/19",
+          "rows": 11816,
+          "sha256": "1a11c4878571fd6bbc171a73b0f2e4329e806f3d29ab1a5e7102cc79419448db"
+        },
+        {
+          "period": "2019/20",
+          "rows": 11775,
+          "sha256": "16204d3cfe5b64cbead38cb391764ec3d92a0e2941e6319c95040dd8fbb05c75"
+        },
+        {
+          "period": "2020/21",
+          "rows": 11990,
+          "sha256": "22ef02b71bc769eb1fb5863c150e50ea62c6a3928d277ff8bd058307c8af7489"
+        },
+        {
+          "period": "2021/22",
+          "rows": 11954,
+          "sha256": "e43b0165b2577ce63379cbd4a1cc34be98274e463c9a45ceb580eebad3e810c0"
+        },
+        {
+          "period": "2022/23",
+          "rows": 11944,
+          "sha256": "d4aaa73e364ae4ddffda0db3771a9c221b53a83f9dff72716e7d6d54f36dda03"
+        },
+        {
+          "period": "2023/24",
+          "rows": 12140,
+          "sha256": "2a73071ba6800dab6af5677848bfed5c3eefb22766f83d197218aa44afd6248e"
+        },
+        {
+          "period": "2024/25",
+          "rows": 12183,
+          "sha256": "81648fb565fd5cd1f4d87e9a7e0b874644037d97725462ea88d6fafa824c5ad9"
+        }
+      ],
+      "coverage": [
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 808
+        },
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 1074
+        },
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 971
+        },
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 1199
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 757
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 1004
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 862
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 1132
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 881
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 1158
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 1094
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 1257
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 806
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 1084
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 894
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 1169
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 776
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 1006
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 781
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 1094
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 882
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 1151
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 1016
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 1225
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 801
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 1076
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 900
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 1163
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 776
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 1028
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 807
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 1116
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 885
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 1152
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 1027
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 1226
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 791
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 1069
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 897
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 1154
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 768
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 1009
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 782
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 1101
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 873
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 1144
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 1016
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 1212
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 795
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 1069
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 883
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 1149
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 746
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 1009
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 800
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 1105
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 866
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 1144
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 1003
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 1206
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 827
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 1081
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 908
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 1158
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 752
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 1010
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 839
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 1114
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 893
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 1142
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 1049
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 1217
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 801
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 1092
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 910
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 1166
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 750
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 1008
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 842
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 1113
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 867
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 1156
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 1036
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 1213
+        },
+        {
+          "period": "2022/23",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 813
+        },
+        {
+          "period": "2022/23",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 1076
+        },
+        {
+          "period": "2022/23",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 913
+        },
+        {
+          "period": "2022/23",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 1155
+        },
+        {
+          "period": "2022/23",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 756
+        },
+        {
+          "period": "2022/23",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 1008
+        },
+        {
+          "period": "2022/23",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 837
+        },
+        {
+          "period": "2022/23",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 1107
+        },
+        {
+          "period": "2022/23",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 895
+        },
+        {
+          "period": "2022/23",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 1144
+        },
+        {
+          "period": "2022/23",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 1031
+        },
+        {
+          "period": "2022/23",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 1209
+        },
+        {
+          "period": "2023/24",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 823
+        },
+        {
+          "period": "2023/24",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 1099
+        },
+        {
+          "period": "2023/24",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 917
+        },
+        {
+          "period": "2023/24",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 1175
+        },
+        {
+          "period": "2023/24",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 772
+        },
+        {
+          "period": "2023/24",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 1026
+        },
+        {
+          "period": "2023/24",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 855
+        },
+        {
+          "period": "2023/24",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 1129
+        },
+        {
+          "period": "2023/24",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 906
+        },
+        {
+          "period": "2023/24",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 1165
+        },
+        {
+          "period": "2023/24",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 1051
+        },
+        {
+          "period": "2023/24",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 1222
+        },
+        {
+          "period": "2024/25",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 810
+        },
+        {
+          "period": "2024/25",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 1091
+        },
+        {
+          "period": "2024/25",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 948
+        },
+        {
+          "period": "2024/25",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 1190
+        },
+        {
+          "period": "2024/25",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 801
+        },
+        {
+          "period": "2024/25",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 1007
+        },
+        {
+          "period": "2024/25",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 848
+        },
+        {
+          "period": "2024/25",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 1113
+        },
+        {
+          "period": "2024/25",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 908
+        },
+        {
+          "period": "2024/25",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 1159
+        },
+        {
+          "period": "2024/25",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 1070
+        },
+        {
+          "period": "2024/25",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 1238
+        }
+      ]
+    },
+    {
+      "api_id": 136,
+      "indicator": "uka-etablering",
+      "rows": 9899,
+      "periods": [
+        {
+          "period": "2020",
+          "rows": 1998,
+          "sha256": "f822a05024c49bad48babacbc8cd3e41d0e2db9a7149a1499df0e598991a3439"
+        },
+        {
+          "period": "2021",
+          "rows": 1969,
+          "sha256": "44f60a0af3f1b3b968be9259271440c325dcb81dc8b5eb945895b3611225fc58"
+        },
+        {
+          "period": "2022",
+          "rows": 2002,
+          "sha256": "87015f6b6e5431b53f9621da49f63c6e418a089534ae63676f8ea6c98f596c4f"
+        },
+        {
+          "period": "2023",
+          "rows": 1964,
+          "sha256": "a05b8e41910362b533eb0deb038d0b8cffe4c9edd7124db330708ede571b3035"
+        },
+        {
+          "period": "2024",
+          "rows": 1966,
+          "sha256": "0d508d06c923bc02ecc408263f8fca17dacb7d864633ba7dc12e9f29a1a1a3c8"
+        }
+      ],
+      "coverage": [
+        {
+          "period": "2020",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 672
+        },
+        {
+          "period": "2020",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 636
+        },
+        {
+          "period": "2020",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 690
+        },
+        {
+          "period": "2021",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 655
+        },
+        {
+          "period": "2021",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 635
+        },
+        {
+          "period": "2021",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 679
+        },
+        {
+          "period": "2022",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 668
+        },
+        {
+          "period": "2022",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 642
+        },
+        {
+          "period": "2022",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 692
+        },
+        {
+          "period": "2023",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 659
+        },
+        {
+          "period": "2023",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 628
+        },
+        {
+          "period": "2023",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 677
+        },
+        {
+          "period": "2024",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 662
+        },
+        {
+          "period": "2024",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 630
+        },
+        {
+          "period": "2024",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 674
+        }
+      ]
+    },
+    {
+      "api_id": 77,
+      "indicator": "uka-kvarvaro-hogskolenyborjare",
+      "rows": 14812,
+      "periods": [
+        {
+          "period": "2015/16",
+          "rows": 1438,
+          "sha256": "f1c93310249e0f550220afe2b6cd9924644cd80fe0bf632ee6bd570735fab70c"
+        },
+        {
+          "period": "2016/17",
+          "rows": 1456,
+          "sha256": "1973ae9ee793f5ed6bf409608a0c239a87c5c9e1d1d5301d238b3af5a67fdd64"
+        },
+        {
+          "period": "2017/18",
+          "rows": 1472,
+          "sha256": "b760f5628654d31fa8364f76f2444d775afa26b444ce6fced745baf70bc0668e"
+        },
+        {
+          "period": "2018/19",
+          "rows": 1452,
+          "sha256": "e0df271774a278ac46fb7297b8da50302643fa24c1099176fd554da67edb682b"
+        },
+        {
+          "period": "2019/20",
+          "rows": 1496,
+          "sha256": "cf131f8657e7a271443ad48c57b164c5055a8d3428e7e3e44cfd02faccdb9bb7"
+        },
+        {
+          "period": "2020/21",
+          "rows": 1475,
+          "sha256": "2226161f1c068fbfe1f89092c402258cad37c0f63d6c01b1ad629f467be90e21"
+        },
+        {
+          "period": "2021/22",
+          "rows": 1508,
+          "sha256": "5f428ad6c7f116ee596b94fd5ebc47bb5f7449f5f70456da775b87f7f0d9ccc6"
+        },
+        {
+          "period": "2022/23",
+          "rows": 1501,
+          "sha256": "457d3c60efaad9b5ace90c6d09ef890474bcca8eaad04913778b180996890494"
+        },
+        {
+          "period": "2023/24",
+          "rows": 1508,
+          "sha256": "3ad86bdf4142ffaec2283a7cb28e7f33331ff6bd88330c0b6b66b41da5a19579"
+        },
+        {
+          "period": "2024/25",
+          "rows": 1506,
+          "sha256": "7469a290b2f1083c7ae75db2b9054250a4a45a34ab2f873252af758c760db643"
+        }
+      ],
+      "coverage": [
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 477
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 469
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 492
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 490
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 466
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 500
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 481
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 488
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 503
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 479
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 478
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 495
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 503
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 481
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 512
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 490
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 482
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 503
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 509
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 482
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 517
+        },
+        {
+          "period": "2022/23",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 507
+        },
+        {
+          "period": "2022/23",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 476
+        },
+        {
+          "period": "2022/23",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 518
+        },
+        {
+          "period": "2023/24",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 503
+        },
+        {
+          "period": "2023/24",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 491
+        },
+        {
+          "period": "2023/24",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 514
+        },
+        {
+          "period": "2024/25",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 496
+        },
+        {
+          "period": "2024/25",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 493
+        },
+        {
+          "period": "2024/25",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 517
+        }
+      ]
+    },
+    {
+      "api_id": 134,
+      "indicator": "uka-kvarvaro-program",
+      "rows": 56525,
+      "periods": [
+        {
+          "period": "2014/15",
+          "rows": 5582,
+          "sha256": "3be6243f6349b8b35f1fd9614c9c2daf48cabccc20c873b45b01294ddd429e5d"
+        },
+        {
+          "period": "2015/16",
+          "rows": 5683,
+          "sha256": "0a4fb172619ebcf956b7cf33f281c64a6106bffa27614e82b9a3410c391716f8"
+        },
+        {
+          "period": "2016/17",
+          "rows": 5625,
+          "sha256": "5fa06fe15fd36a7bfea712cc24062c1f85682d105c91a91ca268b2ae15e44788"
+        },
+        {
+          "period": "2017/18",
+          "rows": 5651,
+          "sha256": "ef4786126d6942c498b9caa58732a22271698866636c35aca2ba2ce65f7d3750"
+        },
+        {
+          "period": "2018/19",
+          "rows": 5673,
+          "sha256": "e2b01f3f7a9b714d31b51d24ea51144be323e2b5215722479b4eb9c54941552c"
+        },
+        {
+          "period": "2019/20",
+          "rows": 5686,
+          "sha256": "3d02a2608adb7d3b2aa306aef51dd340dfa6c0299cc24dd4ef44da879d08cc09"
+        },
+        {
+          "period": "2020/21",
+          "rows": 5675,
+          "sha256": "a8d9d2546e8b58134213de20c63b0bb67d6b43f1aaec8bf1c7f655af54ee834a"
+        },
+        {
+          "period": "2021/22",
+          "rows": 5735,
+          "sha256": "434b473e507e6edd8b0104197f6951bd1da65f8525e5fc2c12e8f9ee72d01c7a"
+        },
+        {
+          "period": "2022/23",
+          "rows": 5607,
+          "sha256": "e690c4a247ca7bcf5d7ec4e3c25d2337a0e54b69414f94f6d2498a328b8e8681"
+        },
+        {
+          "period": "2023/24",
+          "rows": 5608,
+          "sha256": "22852a72ced9468fbeea93551328460b6728cd3321a49c7e5cdaf380673371e3"
+        }
+      ],
+      "coverage": [
+        {
+          "period": "2014/15",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 455
+        },
+        {
+          "period": "2014/15",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 490
+        },
+        {
+          "period": "2014/15",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 438
+        },
+        {
+          "period": "2014/15",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 502
+        },
+        {
+          "period": "2014/15",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 440
+        },
+        {
+          "period": "2014/15",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 468
+        },
+        {
+          "period": "2014/15",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 367
+        },
+        {
+          "period": "2014/15",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 489
+        },
+        {
+          "period": "2014/15",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 460
+        },
+        {
+          "period": "2014/15",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 502
+        },
+        {
+          "period": "2014/15",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 467
+        },
+        {
+          "period": "2014/15",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 504
+        },
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 462
+        },
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 494
+        },
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 440
+        },
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 513
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 446
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 465
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 404
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 492
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 465
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 509
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 480
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 513
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 455
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 484
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 434
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 503
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 437
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 468
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 404
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 488
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 463
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 499
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 485
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 505
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 457
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 489
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 436
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 511
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 438
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 467
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 401
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 493
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 463
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 505
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 478
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 513
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 456
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 496
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 434
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 506
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 446
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 473
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 407
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 496
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 467
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 507
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 475
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 510
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 454
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 491
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 455
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 506
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 438
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 464
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 425
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 495
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 460
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 504
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 487
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 507
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 454
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 495
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 452
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 504
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 443
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 471
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 407
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 494
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 460
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 504
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 485
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 506
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 460
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 495
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 451
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 511
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 444
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 468
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 424
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 502
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 467
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 510
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 489
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 514
+        },
+        {
+          "period": "2022/23",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 453
+        },
+        {
+          "period": "2022/23",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 494
+        },
+        {
+          "period": "2022/23",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 429
+        },
+        {
+          "period": "2022/23",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 503
+        },
+        {
+          "period": "2022/23",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 437
+        },
+        {
+          "period": "2022/23",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 462
+        },
+        {
+          "period": "2022/23",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 405
+        },
+        {
+          "period": "2022/23",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 487
+        },
+        {
+          "period": "2022/23",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 462
+        },
+        {
+          "period": "2022/23",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 500
+        },
+        {
+          "period": "2022/23",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 470
+        },
+        {
+          "period": "2022/23",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 505
+        },
+        {
+          "period": "2023/24",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 454
+        },
+        {
+          "period": "2023/24",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 484
+        },
+        {
+          "period": "2023/24",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 429
+        },
+        {
+          "period": "2023/24",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 506
+        },
+        {
+          "period": "2023/24",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 435
+        },
+        {
+          "period": "2023/24",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 456
+        },
+        {
+          "period": "2023/24",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 410
+        },
+        {
+          "period": "2023/24",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 490
+        },
+        {
+          "period": "2023/24",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 461
+        },
+        {
+          "period": "2023/24",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 502
+        },
+        {
+          "period": "2023/24",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 474
+        },
+        {
+          "period": "2023/24",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 507
+        }
+      ]
+    },
+    {
+      "api_id": 135,
+      "indicator": "uka-examensfrekvens",
+      "rows": 49418,
+      "periods": [
+        {
+          "period": "2012/13",
+          "rows": 6245,
+          "sha256": "b1adedc8c8f5543985bc144740d325667bf31ba85fa640f62abc2083f7ef8ea5"
+        },
+        {
+          "period": "2013/14",
+          "rows": 6248,
+          "sha256": "0c01496540f3d8d22a13f82560e2cb97fe6c1e31e87ebc929e3b7e81444d6a9d"
+        },
+        {
+          "period": "2014/15",
+          "rows": 6178,
+          "sha256": "c74dfe378c6afda22726c35a72ce35a1255b3fb9009a073aa473ed179fe88f2b"
+        },
+        {
+          "period": "2015/16",
+          "rows": 6301,
+          "sha256": "53895dfc7b6ba6485b9ac19d5d9c1fb8ac870e7933c9439efc162aea463250ff"
+        },
+        {
+          "period": "2016/17",
+          "rows": 6249,
+          "sha256": "b674b0f2109c87dfbb124e4f9eb041c74c514da80315c88fd07acd2351905ee7"
+        },
+        {
+          "period": "2017/18",
+          "rows": 5801,
+          "sha256": "a8b85d362e6491e258730995cd8a19c6f4a0881e857e35597c8bc4d0fa130a2b"
+        },
+        {
+          "period": "2018/19",
+          "rows": 5179,
+          "sha256": "0b3ef6724fe9cb529093aba1efa5b5d6678388fb2260d39e4a7d048dc66208cc"
+        },
+        {
+          "period": "2019/20",
+          "rows": 4250,
+          "sha256": "baba80c8bc9be6694d8b21120f65398ef2007fdbb61b17c2373ef64b2e2c39d2"
+        },
+        {
+          "period": "2020/21",
+          "rows": 2203,
+          "sha256": "25c65458dcac3f3573b0d7396eb622c0abdb1485f4d7c6b00242506bfe12fca5"
+        },
+        {
+          "period": "2021/22",
+          "rows": 764,
+          "sha256": "7a37e0f7a6e85fa8d5716e08010de919cf595b37c80c6c1d75a8fa41c6cd5a54"
+        }
+      ],
+      "coverage": [
+        {
+          "period": "2012/13",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 504
+        },
+        {
+          "period": "2012/13",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 550
+        },
+        {
+          "period": "2012/13",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 493
+        },
+        {
+          "period": "2012/13",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 564
+        },
+        {
+          "period": "2012/13",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 479
+        },
+        {
+          "period": "2012/13",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 502
+        },
+        {
+          "period": "2012/13",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 439
+        },
+        {
+          "period": "2012/13",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 547
+        },
+        {
+          "period": "2012/13",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 510
+        },
+        {
+          "period": "2012/13",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 560
+        },
+        {
+          "period": "2012/13",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 530
+        },
+        {
+          "period": "2012/13",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 567
+        },
+        {
+          "period": "2013/14",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 508
+        },
+        {
+          "period": "2013/14",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 549
+        },
+        {
+          "period": "2013/14",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 501
+        },
+        {
+          "period": "2013/14",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 564
+        },
+        {
+          "period": "2013/14",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 475
+        },
+        {
+          "period": "2013/14",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 506
+        },
+        {
+          "period": "2013/14",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 431
+        },
+        {
+          "period": "2013/14",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 546
+        },
+        {
+          "period": "2013/14",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 509
+        },
+        {
+          "period": "2013/14",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 561
+        },
+        {
+          "period": "2013/14",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 533
+        },
+        {
+          "period": "2013/14",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 565
+        },
+        {
+          "period": "2014/15",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 499
+        },
+        {
+          "period": "2014/15",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 544
+        },
+        {
+          "period": "2014/15",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 493
+        },
+        {
+          "period": "2014/15",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 557
+        },
+        {
+          "period": "2014/15",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 474
+        },
+        {
+          "period": "2014/15",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 515
+        },
+        {
+          "period": "2014/15",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 413
+        },
+        {
+          "period": "2014/15",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 539
+        },
+        {
+          "period": "2014/15",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 507
+        },
+        {
+          "period": "2014/15",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 556
+        },
+        {
+          "period": "2014/15",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 522
+        },
+        {
+          "period": "2014/15",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 559
+        },
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 513
+        },
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 547
+        },
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 499
+        },
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 570
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 478
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 513
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 452
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 543
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 516
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 562
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 538
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 570
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 503
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 540
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 490
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 559
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 472
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 519
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 453
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 543
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 513
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 555
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 541
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 561
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 462
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 502
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 456
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 524
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 436
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 478
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 424
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 507
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 472
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 518
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 496
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 526
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 404
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 452
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 423
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 462
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 380
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 424
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 392
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 451
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 415
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 461
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 449
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 466
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 321
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 374
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 360
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 383
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 297
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 343
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 335
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 370
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 327
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 380
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 376
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 384
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 145
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 202
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 207
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 207
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 123
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 173
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 185
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 192
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 149
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 205
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 207
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 208
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "age": "-24",
+          "rows": 57
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "age": "25-34",
+          "rows": 66
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "age": "35-",
+          "rows": 68
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "age": "Total",
+          "rows": 68
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "age": "-24",
+          "rows": 52
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "age": "25-34",
+          "rows": 62
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "age": "35-",
+          "rows": 65
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "age": "Total",
+          "rows": 67
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "age": "-24",
+          "rows": 57
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "age": "25-34",
+          "rows": 66
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "age": "35-",
+          "rows": 68
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "age": "Total",
+          "rows": 68
+        }
+      ]
+    }
+  ]
+}
