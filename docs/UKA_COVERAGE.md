@@ -1,3 +1,5 @@
+> **Aktuell produktionsstatus 2026-11-10:** Alla tio indikatorer är publicerade och slutkontrollerade. Läs [UKA_PRODUCTION_IMPORT.md](UKA_PRODUCTION_IMPORT.md) för batchar, återläsning, källrevisionernas avgränsning och återstart. Nedanstående text är den bevarade historiska utredningskontrollpunkten; dess återstående produktionskrav ersätts av slutrapporten.
+
 # UKÄ – verifierbar datatillgång och import till staging
 
 Kontrollpunkt 2026-11-10. Fortsättning från den redan mergade PR #82,

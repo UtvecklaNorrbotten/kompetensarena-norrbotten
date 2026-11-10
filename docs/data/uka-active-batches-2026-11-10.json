@@ -1,0 +1,68 @@
+{
+  "rows": [
+    {
+      "active_batch_id": "c25937ba-575d-4561-a419-5b3e8b1cc545",
+      "indicator_id": "uka-antagna-yrkesprogram"
+    },
+    {
+      "active_batch_id": "b9a2ebb1-e18e-41da-81ff-7aa9c4e8edc2",
+      "indicator_id": "uka-etablering"
+    },
+    {
+      "active_batch_id": "1c8d5af7-32ae-409e-9ece-c732ad510173",
+      "indicator_id": "uka-examensfrekvens"
+    },
+    {
+      "active_batch_id": "899829e1-ce44-4891-a9d5-bfc855b8e8ef",
+      "indicator_id": "uka-examinerade"
+    },
+    {
+      "active_batch_id": "8a557419-b53f-4689-945b-b8e6a75f72bc",
+      "indicator_id": "uka-forstahandssokande-yrkesprogram"
+    },
+    {
+      "active_batch_id": "5c6a7d55-8337-4ebc-8e13-5b8b28218e09",
+      "indicator_id": "uka-hst"
+    },
+    {
+      "active_batch_id": "7e463b48-bf52-42ed-803d-5f284477590f",
+      "indicator_id": "uka-kvarvaro-hogskolenyborjare"
+    },
+    {
+      "active_batch_id": "db57d2f9-6094-45de-86b1-fe5a737ae876",
+      "indicator_id": "uka-kvarvaro-program"
+    },
+    {
+      "active_batch_id": "4d3143da-8525-4a54-a768-59b4d7b06169",
+      "indicator_id": "uka-nyborjare-yrkesprogram"
+    },
+    {
+      "active_batch_id": "32db1ec9-a0a9-4e4c-9dbc-cab8b58d3ffa",
+      "indicator_id": "uka-prestationsgrad"
+    },
+    {
+      "active_batch_id": "88593dbb-320e-4a08-85db-dc40b261ce69",
+      "indicator_id": "uka-regional-bosatta-andel"
+    },
+    {
+      "active_batch_id": "4b51ec38-18ba-4dc1-bb65-9552314912ae",
+      "indicator_id": "uka-regional-bosatta-antal"
+    },
+    {
+      "active_batch_id": "683f2316-f34b-43d5-9c57-9d2d76870fbe",
+      "indicator_id": "uka-regional-examinerade"
+    },
+    {
+      "active_batch_id": "1d04958f-c119-47c3-b817-9266b2fdcd51",
+      "indicator_id": "uka-regional-rekryterade-andel"
+    },
+    {
+      "active_batch_id": "db10036a-51ea-447a-b68c-a53e25d42ad9",
+      "indicator_id": "uka-regional-rekryterade-antal"
+    },
+    {
+      "active_batch_id": "be0322b3-7016-4d03-9619-9bac577b381b",
+      "indicator_id": "uka-soktryck-yrkesprogram"
+    }
+  ]
+}

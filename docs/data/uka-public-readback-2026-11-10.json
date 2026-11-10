@@ -1,0 +1,4018 @@
+{
+  "summary": {
+    "slices": 16,
+    "exact_values": 630,
+    "all_exact": true,
+    "max_response_bytes": 4091,
+    "aggregate_groups_verified": 16,
+    "aggregate_rows_verified": 69471
+  },
+  "aggregates": [
+    {
+      "indicator_id": "uka-antagna-yrkesprogram",
+      "rows": 2110,
+      "sha256": "d76df42867fbbfb168b6ce58451994708b1adee1737c96bc0bfe8304986bbdb2",
+      "university": "Luleå tekniska universitet"
+    },
+    {
+      "indicator_id": "uka-antagna-yrkesprogram",
+      "rows": 9106,
+      "sha256": "3db43ef07f67590785e26a8dfadda4d27f9b1f29081000971341f1ff6ee5bf85",
+      "university": "Riket"
+    },
+    {
+      "indicator_id": "uka-etablering",
+      "rows": 341,
+      "sha256": "1828d3724293545cde37ce3e04e33d275129abbc92ad77f1d4f12f8c23194850",
+      "university": "Luleå tekniska universitet"
+    },
+    {
+      "indicator_id": "uka-etablering",
+      "rows": 966,
+      "sha256": "e0e45739390e731dd88f82c3e3a3ab9f63ef13dc1cac8115b32c0848c04ffc32",
+      "university": "Riket"
+    },
+    {
+      "indicator_id": "uka-examensfrekvens",
+      "rows": 1551,
+      "sha256": "731b70cd1cb4509356f40812b57e1d5744485632bae0b663cf0d10531b8a14b8",
+      "university": "Luleå tekniska universitet"
+    },
+    {
+      "indicator_id": "uka-examensfrekvens",
+      "rows": 4553,
+      "sha256": "3919659bd361fb4f869e6e703a89c33869005ee73dfc60a0fb72799915fcd14b",
+      "university": "Riket"
+    },
+    {
+      "indicator_id": "uka-examinerade",
+      "rows": 4843,
+      "sha256": "83f82d08c8aa6c329dbd3f4a61b64c7fd70a08d862f347900d702c07e5a24458",
+      "university": "Luleå tekniska universitet"
+    },
+    {
+      "indicator_id": "uka-examinerade",
+      "rows": 14611,
+      "sha256": "b06040396e6a5628596df60ec3df109f71da432ef69b318044d19706b545ee37",
+      "university": "Riket"
+    },
+    {
+      "indicator_id": "uka-forstahandssokande-yrkesprogram",
+      "rows": 2162,
+      "sha256": "cab4f2c345b13c8ce87126b6c1bdc3b72097d76691092ac9987846cbf92d9fc9",
+      "university": "Luleå tekniska universitet"
+    },
+    {
+      "indicator_id": "uka-forstahandssokande-yrkesprogram",
+      "rows": 9328,
+      "sha256": "4ca8a0ea26e69f10c89a0d8a3544356c97c3dfe45224c81e0d1c3418ee606f8d",
+      "university": "Riket"
+    },
+    {
+      "indicator_id": "uka-kvarvaro-hogskolenyborjare",
+      "rows": 422,
+      "sha256": "a789b511e3f2ec67647d769909d9a39290902096b28b02f9d4704fa1a62dacf5",
+      "university": "Luleå tekniska universitet"
+    },
+    {
+      "indicator_id": "uka-kvarvaro-hogskolenyborjare",
+      "rows": 468,
+      "sha256": "91a0d2b60198f30649ee69da721231808a820af3c037027a30f85ca6d45c8373",
+      "university": "Riket"
+    },
+    {
+      "indicator_id": "uka-kvarvaro-program",
+      "rows": 1747,
+      "sha256": "4152a380c215b3262de8649762907fbcfac3262396d04336270bbea37872a759",
+      "university": "Luleå tekniska universitet"
+    },
+    {
+      "indicator_id": "uka-kvarvaro-program",
+      "rows": 5749,
+      "sha256": "28ee716ed8a73781b04c89dd45adea7b739c21a396e0f6005993635d3990a3e5",
+      "university": "Riket"
+    },
+    {
+      "indicator_id": "uka-nyborjare-yrkesprogram",
+      "rows": 2217,
+      "sha256": "edf503db18e6673477a639eb489d65e8be03bdc91b7f26ee977486d9798cc37b",
+      "university": "Luleå tekniska universitet"
+    },
+    {
+      "indicator_id": "uka-nyborjare-yrkesprogram",
+      "rows": 9297,
+      "sha256": "7f16b9e68ce9bf64ec2c6706c3b4a6f07bce69d29da71354b76784bea4428455",
+      "university": "Riket"
+    }
+  ],
+  "public_slices": [
+    {
+      "indicator": "uka-forstahandssokande-yrkesprogram",
+      "university": "Riket",
+      "status": 200,
+      "bytes": 4091,
+      "body": [
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 56846
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "category": "",
+          "value": 30972
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "category": "",
+          "value": 87818
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 56510
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "category": "",
+          "value": 30765
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "category": "",
+          "value": 87275
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 57309
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "category": "",
+          "value": 30729
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "category": "",
+          "value": 88038
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 65767
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "category": "",
+          "value": 34430
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "category": "",
+          "value": 100197
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 68842
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "category": "",
+          "value": 34982
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "category": "",
+          "value": 103824
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 62897
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "category": "",
+          "value": 32029
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "category": "",
+          "value": 94926
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 60338
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "category": "",
+          "value": 30929
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "category": "",
+          "value": 91267
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 64398
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "category": "",
+          "value": 32329
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "category": "",
+          "value": 96727
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 64705
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "category": "",
+          "value": 33367
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "category": "",
+          "value": 98072
+        },
+        {
+          "period": "HT2026",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 68953
+        },
+        {
+          "period": "HT2026",
+          "gender": "Män",
+          "category": "",
+          "value": 35140
+        },
+        {
+          "period": "HT2026",
+          "gender": "Total",
+          "category": "",
+          "value": 104093
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 25273
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "category": "",
+          "value": 8308
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "category": "",
+          "value": 33581
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 25188
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "category": "",
+          "value": 7987
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "category": "",
+          "value": 33175
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 24379
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "category": "",
+          "value": 7612
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "category": "",
+          "value": 31991
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 26256
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "category": "",
+          "value": 8149
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "category": "",
+          "value": 34405
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 30023
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "category": "",
+          "value": 8904
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "category": "",
+          "value": 38927
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 29951
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "category": "",
+          "value": 8998
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "category": "",
+          "value": 38949
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 27430
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "category": "",
+          "value": 7958
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "category": "",
+          "value": 35388
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 27629
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "category": "",
+          "value": 8029
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "category": "",
+          "value": 35658
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 28443
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "category": "",
+          "value": 8449
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "category": "",
+          "value": 36892
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 30535
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "category": "",
+          "value": 9078
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "category": "",
+          "value": 39613
+        }
+      ]
+    },
+    {
+      "indicator": "uka-forstahandssokande-yrkesprogram",
+      "university": "Luleå tekniska universitet",
+      "status": 200,
+      "bytes": 3997,
+      "body": [
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 1155
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "category": "",
+          "value": 895
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "category": "",
+          "value": 2050
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 1001
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "category": "",
+          "value": 879
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "category": "",
+          "value": 1880
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 1034
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "category": "",
+          "value": 827
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "category": "",
+          "value": 1861
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 1138
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "category": "",
+          "value": 956
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "category": "",
+          "value": 2094
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 1251
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "category": "",
+          "value": 954
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "category": "",
+          "value": 2205
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 1140
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "category": "",
+          "value": 790
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "category": "",
+          "value": 1930
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 1035
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "category": "",
+          "value": 711
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "category": "",
+          "value": 1746
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 1149
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "category": "",
+          "value": 714
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "category": "",
+          "value": 1863
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 1386
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "category": "",
+          "value": 766
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "category": "",
+          "value": 2152
+        },
+        {
+          "period": "HT2026",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 1214
+        },
+        {
+          "period": "HT2026",
+          "gender": "Män",
+          "category": "",
+          "value": 856
+        },
+        {
+          "period": "HT2026",
+          "gender": "Total",
+          "category": "",
+          "value": 2070
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 493
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "category": "",
+          "value": 96
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "category": "",
+          "value": 589
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 497
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "category": "",
+          "value": 109
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "category": "",
+          "value": 606
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 437
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "category": "",
+          "value": 106
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "category": "",
+          "value": 543
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 524
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "category": "",
+          "value": 112
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "category": "",
+          "value": 636
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 518
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "category": "",
+          "value": 147
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "category": "",
+          "value": 665
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 525
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "category": "",
+          "value": 142
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "category": "",
+          "value": 667
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 524
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "category": "",
+          "value": 118
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "category": "",
+          "value": 642
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 655
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "category": "",
+          "value": 146
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "category": "",
+          "value": 801
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 621
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "category": "",
+          "value": 133
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "category": "",
+          "value": 754
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 703
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "category": "",
+          "value": 153
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "category": "",
+          "value": 856
+        }
+      ]
+    },
+    {
+      "indicator": "uka-nyborjare-yrkesprogram",
+      "university": "Riket",
+      "status": 200,
+      "bytes": 4078,
+      "body": [
+        {
+          "period": "HT2016",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 22585
+        },
+        {
+          "period": "HT2016",
+          "gender": "Män",
+          "category": "",
+          "value": 15641
+        },
+        {
+          "period": "HT2016",
+          "gender": "Total",
+          "category": "",
+          "value": 38226
+        },
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 23219
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "category": "",
+          "value": 15329
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "category": "",
+          "value": 38548
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 23053
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "category": "",
+          "value": 15449
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "category": "",
+          "value": 38502
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 23040
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "category": "",
+          "value": 15627
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "category": "",
+          "value": 38667
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 25366
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "category": "",
+          "value": 16659
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "category": "",
+          "value": 42025
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 25009
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "category": "",
+          "value": 16401
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "category": "",
+          "value": 41410
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 23631
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "category": "",
+          "value": 15408
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "category": "",
+          "value": 39039
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 23783
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "category": "",
+          "value": 15042
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "category": "",
+          "value": 38825
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 25247
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "category": "",
+          "value": 15647
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "category": "",
+          "value": 40894
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 24450
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "category": "",
+          "value": 15458
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "category": "",
+          "value": 39908
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 8384
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "category": "",
+          "value": 2725
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "category": "",
+          "value": 11109
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 8866
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "category": "",
+          "value": 2646
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "category": "",
+          "value": 11512
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 8490
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "category": "",
+          "value": 2591
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "category": "",
+          "value": 11081
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 8673
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "category": "",
+          "value": 2799
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "category": "",
+          "value": 11472
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 9387
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "category": "",
+          "value": 2830
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "category": "",
+          "value": 12217
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 8748
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "category": "",
+          "value": 2695
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "category": "",
+          "value": 11443
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 8450
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "category": "",
+          "value": 2553
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "category": "",
+          "value": 11003
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 8239
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "category": "",
+          "value": 2488
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "category": "",
+          "value": 10727
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 8536
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "category": "",
+          "value": 2636
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "category": "",
+          "value": 11172
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 8217
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "category": "",
+          "value": 2652
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "category": "",
+          "value": 10869
+        }
+      ]
+    },
+    {
+      "indicator": "uka-nyborjare-yrkesprogram",
+      "university": "Luleå tekniska universitet",
+      "status": 200,
+      "bytes": 3979,
+      "body": [
+        {
+          "period": "HT2016",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 562
+        },
+        {
+          "period": "HT2016",
+          "gender": "Män",
+          "category": "",
+          "value": 668
+        },
+        {
+          "period": "HT2016",
+          "gender": "Total",
+          "category": "",
+          "value": 1230
+        },
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 555
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "category": "",
+          "value": 715
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "category": "",
+          "value": 1270
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 595
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "category": "",
+          "value": 694
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "category": "",
+          "value": 1289
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 605
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "category": "",
+          "value": 663
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "category": "",
+          "value": 1268
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 692
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "category": "",
+          "value": 817
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "category": "",
+          "value": 1509
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 703
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "category": "",
+          "value": 731
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "category": "",
+          "value": 1434
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 620
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "category": "",
+          "value": 622
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "category": "",
+          "value": 1242
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 598
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "category": "",
+          "value": 564
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "category": "",
+          "value": 1162
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 630
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "category": "",
+          "value": 532
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "category": "",
+          "value": 1162
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 687
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "category": "",
+          "value": 604
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "category": "",
+          "value": 1291
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 236
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "category": "",
+          "value": 58
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "category": "",
+          "value": 294
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 193
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "category": "",
+          "value": 71
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "category": "",
+          "value": 264
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 214
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "category": "",
+          "value": 77
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "category": "",
+          "value": 291
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 185
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "category": "",
+          "value": 60
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "category": "",
+          "value": 245
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 260
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "category": "",
+          "value": 123
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "category": "",
+          "value": 383
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 167
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "category": "",
+          "value": 69
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "category": "",
+          "value": 236
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 162
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "category": "",
+          "value": 75
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "category": "",
+          "value": 237
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 169
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "category": "",
+          "value": 69
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "category": "",
+          "value": 238
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 159
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "category": "",
+          "value": 66
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "category": "",
+          "value": 225
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 153
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "category": "",
+          "value": 80
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "category": "",
+          "value": 233
+        }
+      ]
+    },
+    {
+      "indicator": "uka-antagna-yrkesprogram",
+      "university": "Riket",
+      "status": 200,
+      "bytes": 4086,
+      "body": [
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 25606
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "category": "",
+          "value": 17013
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "category": "",
+          "value": 42619
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 26784
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "category": "",
+          "value": 17890
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "category": "",
+          "value": 44674
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 26386
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "category": "",
+          "value": 17654
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "category": "",
+          "value": 44040
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 29879
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "category": "",
+          "value": 19267
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "category": "",
+          "value": 49146
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 28255
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "category": "",
+          "value": 18688
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "category": "",
+          "value": 46943
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 28124
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "category": "",
+          "value": 18040
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "category": "",
+          "value": 46164
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 27988
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "category": "",
+          "value": 17397
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "category": "",
+          "value": 45385
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 30707
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "category": "",
+          "value": 18638
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "category": "",
+          "value": 49345
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 30399
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "category": "",
+          "value": 18816
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "category": "",
+          "value": 49215
+        },
+        {
+          "period": "HT2026",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 30164
+        },
+        {
+          "period": "HT2026",
+          "gender": "Män",
+          "category": "",
+          "value": 18665
+        },
+        {
+          "period": "HT2026",
+          "gender": "Total",
+          "category": "",
+          "value": 48829
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 9507
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "category": "",
+          "value": 3040
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "category": "",
+          "value": 12547
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 10178
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "category": "",
+          "value": 2985
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "category": "",
+          "value": 13163
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 10078
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "category": "",
+          "value": 3029
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "category": "",
+          "value": 13107
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 9982
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "category": "",
+          "value": 3186
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "category": "",
+          "value": 13168
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 10626
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "category": "",
+          "value": 3181
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "category": "",
+          "value": 13807
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 10297
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "category": "",
+          "value": 3206
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "category": "",
+          "value": 13503
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 10591
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "category": "",
+          "value": 3339
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "category": "",
+          "value": 13930
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 10692
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "category": "",
+          "value": 3361
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "category": "",
+          "value": 14053
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 11026
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "category": "",
+          "value": 3512
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "category": "",
+          "value": 14538
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 10432
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "category": "",
+          "value": 3491
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "category": "",
+          "value": 13923
+        }
+      ]
+    },
+    {
+      "indicator": "uka-antagna-yrkesprogram",
+      "university": "Luleå tekniska universitet",
+      "status": 200,
+      "bytes": 3979,
+      "body": [
+        {
+          "period": "HT2017",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 599
+        },
+        {
+          "period": "HT2017",
+          "gender": "Män",
+          "category": "",
+          "value": 768
+        },
+        {
+          "period": "HT2017",
+          "gender": "Total",
+          "category": "",
+          "value": 1367
+        },
+        {
+          "period": "HT2018",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 724
+        },
+        {
+          "period": "HT2018",
+          "gender": "Män",
+          "category": "",
+          "value": 807
+        },
+        {
+          "period": "HT2018",
+          "gender": "Total",
+          "category": "",
+          "value": 1531
+        },
+        {
+          "period": "HT2019",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 722
+        },
+        {
+          "period": "HT2019",
+          "gender": "Män",
+          "category": "",
+          "value": 773
+        },
+        {
+          "period": "HT2019",
+          "gender": "Total",
+          "category": "",
+          "value": 1495
+        },
+        {
+          "period": "HT2020",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 864
+        },
+        {
+          "period": "HT2020",
+          "gender": "Män",
+          "category": "",
+          "value": 1013
+        },
+        {
+          "period": "HT2020",
+          "gender": "Total",
+          "category": "",
+          "value": 1877
+        },
+        {
+          "period": "HT2021",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 809
+        },
+        {
+          "period": "HT2021",
+          "gender": "Män",
+          "category": "",
+          "value": 830
+        },
+        {
+          "period": "HT2021",
+          "gender": "Total",
+          "category": "",
+          "value": 1639
+        },
+        {
+          "period": "HT2022",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 745
+        },
+        {
+          "period": "HT2022",
+          "gender": "Män",
+          "category": "",
+          "value": 717
+        },
+        {
+          "period": "HT2022",
+          "gender": "Total",
+          "category": "",
+          "value": 1462
+        },
+        {
+          "period": "HT2023",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 700
+        },
+        {
+          "period": "HT2023",
+          "gender": "Män",
+          "category": "",
+          "value": 646
+        },
+        {
+          "period": "HT2023",
+          "gender": "Total",
+          "category": "",
+          "value": 1346
+        },
+        {
+          "period": "HT2024",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 827
+        },
+        {
+          "period": "HT2024",
+          "gender": "Män",
+          "category": "",
+          "value": 696
+        },
+        {
+          "period": "HT2024",
+          "gender": "Total",
+          "category": "",
+          "value": 1523
+        },
+        {
+          "period": "HT2025",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 869
+        },
+        {
+          "period": "HT2025",
+          "gender": "Män",
+          "category": "",
+          "value": 726
+        },
+        {
+          "period": "HT2025",
+          "gender": "Total",
+          "category": "",
+          "value": 1595
+        },
+        {
+          "period": "HT2026",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 896
+        },
+        {
+          "period": "HT2026",
+          "gender": "Män",
+          "category": "",
+          "value": 831
+        },
+        {
+          "period": "HT2026",
+          "gender": "Total",
+          "category": "",
+          "value": 1727
+        },
+        {
+          "period": "VT2017",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 275
+        },
+        {
+          "period": "VT2017",
+          "gender": "Män",
+          "category": "",
+          "value": 50
+        },
+        {
+          "period": "VT2017",
+          "gender": "Total",
+          "category": "",
+          "value": 325
+        },
+        {
+          "period": "VT2018",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 260
+        },
+        {
+          "period": "VT2018",
+          "gender": "Män",
+          "category": "",
+          "value": 57
+        },
+        {
+          "period": "VT2018",
+          "gender": "Total",
+          "category": "",
+          "value": 317
+        },
+        {
+          "period": "VT2019",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 267
+        },
+        {
+          "period": "VT2019",
+          "gender": "Män",
+          "category": "",
+          "value": 54
+        },
+        {
+          "period": "VT2019",
+          "gender": "Total",
+          "category": "",
+          "value": 321
+        },
+        {
+          "period": "VT2020",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 260
+        },
+        {
+          "period": "VT2020",
+          "gender": "Män",
+          "category": "",
+          "value": 63
+        },
+        {
+          "period": "VT2020",
+          "gender": "Total",
+          "category": "",
+          "value": 323
+        },
+        {
+          "period": "VT2021",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 256
+        },
+        {
+          "period": "VT2021",
+          "gender": "Män",
+          "category": "",
+          "value": 66
+        },
+        {
+          "period": "VT2021",
+          "gender": "Total",
+          "category": "",
+          "value": 322
+        },
+        {
+          "period": "VT2022",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 178
+        },
+        {
+          "period": "VT2022",
+          "gender": "Män",
+          "category": "",
+          "value": 47
+        },
+        {
+          "period": "VT2022",
+          "gender": "Total",
+          "category": "",
+          "value": 225
+        },
+        {
+          "period": "VT2023",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 213
+        },
+        {
+          "period": "VT2023",
+          "gender": "Män",
+          "category": "",
+          "value": 58
+        },
+        {
+          "period": "VT2023",
+          "gender": "Total",
+          "category": "",
+          "value": 271
+        },
+        {
+          "period": "VT2024",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 232
+        },
+        {
+          "period": "VT2024",
+          "gender": "Män",
+          "category": "",
+          "value": 59
+        },
+        {
+          "period": "VT2024",
+          "gender": "Total",
+          "category": "",
+          "value": 291
+        },
+        {
+          "period": "VT2025",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 219
+        },
+        {
+          "period": "VT2025",
+          "gender": "Män",
+          "category": "",
+          "value": 61
+        },
+        {
+          "period": "VT2025",
+          "gender": "Total",
+          "category": "",
+          "value": 280
+        },
+        {
+          "period": "VT2026",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 189
+        },
+        {
+          "period": "VT2026",
+          "gender": "Män",
+          "category": "",
+          "value": 72
+        },
+        {
+          "period": "VT2026",
+          "gender": "Total",
+          "category": "",
+          "value": 261
+        }
+      ]
+    },
+    {
+      "indicator": "uka-examinerade",
+      "university": "Riket",
+      "status": 200,
+      "bytes": 2078,
+      "body": [
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 43635
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "category": "",
+          "value": 24656
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "category": "",
+          "value": 68291
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 40671
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "category": "",
+          "value": 22747
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "category": "",
+          "value": 63418
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 42092
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "category": "",
+          "value": 23532
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "category": "",
+          "value": 65624
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 42077
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "category": "",
+          "value": 23850
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "category": "",
+          "value": 65927
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 46555
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "category": "",
+          "value": 25403
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "category": "",
+          "value": 71958
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 47292
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "category": "",
+          "value": 27372
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "category": "",
+          "value": 74664
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 47117
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "category": "",
+          "value": 26444
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "category": "",
+          "value": 73561
+        },
+        {
+          "period": "2022/23",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 46736
+        },
+        {
+          "period": "2022/23",
+          "gender": "Män",
+          "category": "",
+          "value": 25759
+        },
+        {
+          "period": "2022/23",
+          "gender": "Total",
+          "category": "",
+          "value": 72495
+        },
+        {
+          "period": "2023/24",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 51328
+        },
+        {
+          "period": "2023/24",
+          "gender": "Män",
+          "category": "",
+          "value": 27731
+        },
+        {
+          "period": "2023/24",
+          "gender": "Total",
+          "category": "",
+          "value": 79059
+        },
+        {
+          "period": "2024/25",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 48956
+        },
+        {
+          "period": "2024/25",
+          "gender": "Män",
+          "category": "",
+          "value": 27749
+        },
+        {
+          "period": "2024/25",
+          "gender": "Total",
+          "category": "",
+          "value": 76705
+        }
+      ]
+    },
+    {
+      "indicator": "uka-examinerade",
+      "university": "Luleå tekniska universitet",
+      "status": 200,
+      "bytes": 2029,
+      "body": [
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 849
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "category": "",
+          "value": 651
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "category": "",
+          "value": 1500
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 858
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "category": "",
+          "value": 685
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "category": "",
+          "value": 1543
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 832
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "category": "",
+          "value": 660
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "category": "",
+          "value": 1492
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 718
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "category": "",
+          "value": 573
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "category": "",
+          "value": 1291
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 1078
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "category": "",
+          "value": 793
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "category": "",
+          "value": 1871
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 861
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "category": "",
+          "value": 687
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "category": "",
+          "value": 1548
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 827
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "category": "",
+          "value": 651
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "category": "",
+          "value": 1478
+        },
+        {
+          "period": "2022/23",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 802
+        },
+        {
+          "period": "2022/23",
+          "gender": "Män",
+          "category": "",
+          "value": 591
+        },
+        {
+          "period": "2022/23",
+          "gender": "Total",
+          "category": "",
+          "value": 1393
+        },
+        {
+          "period": "2023/24",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 825
+        },
+        {
+          "period": "2023/24",
+          "gender": "Män",
+          "category": "",
+          "value": 585
+        },
+        {
+          "period": "2023/24",
+          "gender": "Total",
+          "category": "",
+          "value": 1410
+        },
+        {
+          "period": "2024/25",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 842
+        },
+        {
+          "period": "2024/25",
+          "gender": "Män",
+          "category": "",
+          "value": 617
+        },
+        {
+          "period": "2024/25",
+          "gender": "Total",
+          "category": "",
+          "value": 1459
+        }
+      ]
+    },
+    {
+      "indicator": "uka-etablering",
+      "university": "Riket",
+      "status": 200,
+      "bytes": 976,
+      "body": [
+        {
+          "period": "2020",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 84.3
+        },
+        {
+          "period": "2020",
+          "gender": "Män",
+          "category": "",
+          "value": 84.7
+        },
+        {
+          "period": "2020",
+          "gender": "Total",
+          "category": "",
+          "value": 84.4
+        },
+        {
+          "period": "2021",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 83.8
+        },
+        {
+          "period": "2021",
+          "gender": "Män",
+          "category": "",
+          "value": 83.8
+        },
+        {
+          "period": "2021",
+          "gender": "Total",
+          "category": "",
+          "value": 83.8
+        },
+        {
+          "period": "2022",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 85.7
+        },
+        {
+          "period": "2022",
+          "gender": "Män",
+          "category": "",
+          "value": 86
+        },
+        {
+          "period": "2022",
+          "gender": "Total",
+          "category": "",
+          "value": 85.8
+        },
+        {
+          "period": "2023",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 85.6
+        },
+        {
+          "period": "2023",
+          "gender": "Män",
+          "category": "",
+          "value": 85.7
+        },
+        {
+          "period": "2023",
+          "gender": "Total",
+          "category": "",
+          "value": 85.6
+        },
+        {
+          "period": "2024",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 84.4
+        },
+        {
+          "period": "2024",
+          "gender": "Män",
+          "category": "",
+          "value": 85.6
+        },
+        {
+          "period": "2024",
+          "gender": "Total",
+          "category": "",
+          "value": 84.8
+        }
+      ]
+    },
+    {
+      "indicator": "uka-etablering",
+      "university": "Luleå tekniska universitet",
+      "status": 200,
+      "bytes": 976,
+      "body": [
+        {
+          "period": "2020",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 82.6
+        },
+        {
+          "period": "2020",
+          "gender": "Män",
+          "category": "",
+          "value": 87.9
+        },
+        {
+          "period": "2020",
+          "gender": "Total",
+          "category": "",
+          "value": 84.7
+        },
+        {
+          "period": "2021",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 84.7
+        },
+        {
+          "period": "2021",
+          "gender": "Män",
+          "category": "",
+          "value": 87.3
+        },
+        {
+          "period": "2021",
+          "gender": "Total",
+          "category": "",
+          "value": 85.7
+        },
+        {
+          "period": "2022",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 87.2
+        },
+        {
+          "period": "2022",
+          "gender": "Män",
+          "category": "",
+          "value": 88.4
+        },
+        {
+          "period": "2022",
+          "gender": "Total",
+          "category": "",
+          "value": 87.7
+        },
+        {
+          "period": "2023",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 87.7
+        },
+        {
+          "period": "2023",
+          "gender": "Män",
+          "category": "",
+          "value": 87
+        },
+        {
+          "period": "2023",
+          "gender": "Total",
+          "category": "",
+          "value": 87.4
+        },
+        {
+          "period": "2024",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 87.6
+        },
+        {
+          "period": "2024",
+          "gender": "Män",
+          "category": "",
+          "value": 87.4
+        },
+        {
+          "period": "2024",
+          "gender": "Total",
+          "category": "",
+          "value": 87.5
+        }
+      ]
+    },
+    {
+      "indicator": "uka-kvarvaro-hogskolenyborjare",
+      "university": "Riket",
+      "status": 200,
+      "bytes": 2040,
+      "body": [
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 73.4
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "category": "",
+          "value": 70
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "category": "",
+          "value": 72
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 73.7
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "category": "",
+          "value": 70.3
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "category": "",
+          "value": 72.3
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 74
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "category": "",
+          "value": 72.1
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "category": "",
+          "value": 73.3
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 75.1
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "category": "",
+          "value": 73.3
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "category": "",
+          "value": 74.3
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 76.7
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "category": "",
+          "value": 74.3
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "category": "",
+          "value": 75.7
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 73.2
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "category": "",
+          "value": 70.7
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "category": "",
+          "value": 72.2
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 73.2
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "category": "",
+          "value": 70.9
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "category": "",
+          "value": 72.2
+        },
+        {
+          "period": "2022/23",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 75.1
+        },
+        {
+          "period": "2022/23",
+          "gender": "Män",
+          "category": "",
+          "value": 73.2
+        },
+        {
+          "period": "2022/23",
+          "gender": "Total",
+          "category": "",
+          "value": 74.3
+        },
+        {
+          "period": "2023/24",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 74.8
+        },
+        {
+          "period": "2023/24",
+          "gender": "Män",
+          "category": "",
+          "value": 73.4
+        },
+        {
+          "period": "2023/24",
+          "gender": "Total",
+          "category": "",
+          "value": 74.2
+        },
+        {
+          "period": "2024/25",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 74.9
+        },
+        {
+          "period": "2024/25",
+          "gender": "Män",
+          "category": "",
+          "value": 73
+        },
+        {
+          "period": "2024/25",
+          "gender": "Total",
+          "category": "",
+          "value": 74.1
+        }
+      ]
+    },
+    {
+      "indicator": "uka-kvarvaro-hogskolenyborjare",
+      "university": "Luleå tekniska universitet",
+      "status": 200,
+      "bytes": 2044,
+      "body": [
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 65.5
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "category": "",
+          "value": 67.8
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "category": "",
+          "value": 66.7
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 66.3
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "category": "",
+          "value": 64.4
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "category": "",
+          "value": 65.3
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 62
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "category": "",
+          "value": 66.1
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "category": "",
+          "value": 64.2
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 62.4
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "category": "",
+          "value": 65.2
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "category": "",
+          "value": 63.8
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 59.6
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "category": "",
+          "value": 61.9
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "category": "",
+          "value": 60.7
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 54.6
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "category": "",
+          "value": 55.7
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "category": "",
+          "value": 55.2
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 52.5
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "category": "",
+          "value": 49.5
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "category": "",
+          "value": 51
+        },
+        {
+          "period": "2022/23",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 55.8
+        },
+        {
+          "period": "2022/23",
+          "gender": "Män",
+          "category": "",
+          "value": 51.7
+        },
+        {
+          "period": "2022/23",
+          "gender": "Total",
+          "category": "",
+          "value": 53.6
+        },
+        {
+          "period": "2023/24",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 52.9
+        },
+        {
+          "period": "2023/24",
+          "gender": "Män",
+          "category": "",
+          "value": 51.4
+        },
+        {
+          "period": "2023/24",
+          "gender": "Total",
+          "category": "",
+          "value": 52.1
+        },
+        {
+          "period": "2024/25",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 56.5
+        },
+        {
+          "period": "2024/25",
+          "gender": "Män",
+          "category": "",
+          "value": 52.9
+        },
+        {
+          "period": "2024/25",
+          "gender": "Total",
+          "category": "",
+          "value": 54.8
+        }
+      ]
+    },
+    {
+      "indicator": "uka-kvarvaro-program",
+      "university": "Riket",
+      "status": 200,
+      "bytes": 2038,
+      "body": [
+        {
+          "period": "2014/15",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 76.8
+        },
+        {
+          "period": "2014/15",
+          "gender": "Män",
+          "category": "",
+          "value": 72.5
+        },
+        {
+          "period": "2014/15",
+          "gender": "Total",
+          "category": "",
+          "value": 75
+        },
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 76.9
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "category": "",
+          "value": 72.8
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "category": "",
+          "value": 75.2
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 76.8
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "category": "",
+          "value": 73.2
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "category": "",
+          "value": 75.3
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 76.8
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "category": "",
+          "value": 73.5
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "category": "",
+          "value": 75.4
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 77
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "category": "",
+          "value": 73.9
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "category": "",
+          "value": 75.7
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 79.1
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "category": "",
+          "value": 75.2
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "category": "",
+          "value": 77.5
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 77
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "category": "",
+          "value": 73
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "category": "",
+          "value": 75.4
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 75.8
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "category": "",
+          "value": 72.3
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "category": "",
+          "value": 74.3
+        },
+        {
+          "period": "2022/23",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 77.3
+        },
+        {
+          "period": "2022/23",
+          "gender": "Män",
+          "category": "",
+          "value": 74.7
+        },
+        {
+          "period": "2022/23",
+          "gender": "Total",
+          "category": "",
+          "value": 76.2
+        },
+        {
+          "period": "2023/24",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 78.6
+        },
+        {
+          "period": "2023/24",
+          "gender": "Män",
+          "category": "",
+          "value": 77.1
+        },
+        {
+          "period": "2023/24",
+          "gender": "Total",
+          "category": "",
+          "value": 78
+        }
+      ]
+    },
+    {
+      "indicator": "uka-kvarvaro-program",
+      "university": "Luleå tekniska universitet",
+      "status": 200,
+      "bytes": 2042,
+      "body": [
+        {
+          "period": "2014/15",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 73.7
+        },
+        {
+          "period": "2014/15",
+          "gender": "Män",
+          "category": "",
+          "value": 69.1
+        },
+        {
+          "period": "2014/15",
+          "gender": "Total",
+          "category": "",
+          "value": 71.2
+        },
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 73.5
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "category": "",
+          "value": 72.7
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "category": "",
+          "value": 73.1
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 75.4
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "category": "",
+          "value": 70.8
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "category": "",
+          "value": 73
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 72.2
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "category": "",
+          "value": 69.8
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "category": "",
+          "value": 70.9
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 72.3
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "category": "",
+          "value": 67.9
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "category": "",
+          "value": 70
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 73.8
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "category": "",
+          "value": 69.7
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "category": "",
+          "value": 71.7
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 73.5
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "category": "",
+          "value": 68.5
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "category": "",
+          "value": 70.9
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 66.4
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "category": "",
+          "value": 64
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "category": "",
+          "value": 65.2
+        },
+        {
+          "period": "2022/23",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 69.1
+        },
+        {
+          "period": "2022/23",
+          "gender": "Män",
+          "category": "",
+          "value": 65.6
+        },
+        {
+          "period": "2022/23",
+          "gender": "Total",
+          "category": "",
+          "value": 67.4
+        },
+        {
+          "period": "2023/24",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 71.4
+        },
+        {
+          "period": "2023/24",
+          "gender": "Män",
+          "category": "",
+          "value": 69.1
+        },
+        {
+          "period": "2023/24",
+          "gender": "Total",
+          "category": "",
+          "value": 70.3
+        }
+      ]
+    },
+    {
+      "indicator": "uka-examensfrekvens",
+      "university": "Riket",
+      "status": 200,
+      "bytes": 2044,
+      "body": [
+        {
+          "period": "2012/13",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 62.4
+        },
+        {
+          "period": "2012/13",
+          "gender": "Män",
+          "category": "",
+          "value": 47.6
+        },
+        {
+          "period": "2012/13",
+          "gender": "Total",
+          "category": "",
+          "value": 56.3
+        },
+        {
+          "period": "2013/14",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 63.3
+        },
+        {
+          "period": "2013/14",
+          "gender": "Män",
+          "category": "",
+          "value": 48.3
+        },
+        {
+          "period": "2013/14",
+          "gender": "Total",
+          "category": "",
+          "value": 57
+        },
+        {
+          "period": "2014/15",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 64.8
+        },
+        {
+          "period": "2014/15",
+          "gender": "Män",
+          "category": "",
+          "value": 49
+        },
+        {
+          "period": "2014/15",
+          "gender": "Total",
+          "category": "",
+          "value": 58.2
+        },
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 65.4
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "category": "",
+          "value": 50.4
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "category": "",
+          "value": 59.2
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 66.3
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "category": "",
+          "value": 52.7
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "category": "",
+          "value": 60.6
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 67.4
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "category": "",
+          "value": 53.8
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "category": "",
+          "value": 61.9
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 67.1
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "category": "",
+          "value": 53.8
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "category": "",
+          "value": 61.9
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 66.2
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "category": "",
+          "value": 52.2
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "category": "",
+          "value": 60.4
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 62.4
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "category": "",
+          "value": 55.1
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "category": "",
+          "value": 59.4
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 55.3
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "category": "",
+          "value": 52.5
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "category": "",
+          "value": 54.2
+        }
+      ]
+    },
+    {
+      "indicator": "uka-examensfrekvens",
+      "university": "Luleå tekniska universitet",
+      "status": 200,
+      "bytes": 2046,
+      "body": [
+        {
+          "period": "2012/13",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 55.1
+        },
+        {
+          "period": "2012/13",
+          "gender": "Män",
+          "category": "",
+          "value": 39.5
+        },
+        {
+          "period": "2012/13",
+          "gender": "Total",
+          "category": "",
+          "value": 47.1
+        },
+        {
+          "period": "2013/14",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 53.5
+        },
+        {
+          "period": "2013/14",
+          "gender": "Män",
+          "category": "",
+          "value": 37.7
+        },
+        {
+          "period": "2013/14",
+          "gender": "Total",
+          "category": "",
+          "value": 45.3
+        },
+        {
+          "period": "2014/15",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 58.7
+        },
+        {
+          "period": "2014/15",
+          "gender": "Män",
+          "category": "",
+          "value": 39.8
+        },
+        {
+          "period": "2014/15",
+          "gender": "Total",
+          "category": "",
+          "value": 48.6
+        },
+        {
+          "period": "2015/16",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 57
+        },
+        {
+          "period": "2015/16",
+          "gender": "Män",
+          "category": "",
+          "value": 40.7
+        },
+        {
+          "period": "2015/16",
+          "gender": "Total",
+          "category": "",
+          "value": 48.4
+        },
+        {
+          "period": "2016/17",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 62.4
+        },
+        {
+          "period": "2016/17",
+          "gender": "Män",
+          "category": "",
+          "value": 42.8
+        },
+        {
+          "period": "2016/17",
+          "gender": "Total",
+          "category": "",
+          "value": 52.6
+        },
+        {
+          "period": "2017/18",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 58.6
+        },
+        {
+          "period": "2017/18",
+          "gender": "Män",
+          "category": "",
+          "value": 44.6
+        },
+        {
+          "period": "2017/18",
+          "gender": "Total",
+          "category": "",
+          "value": 51.1
+        },
+        {
+          "period": "2018/19",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 64.1
+        },
+        {
+          "period": "2018/19",
+          "gender": "Män",
+          "category": "",
+          "value": 44.2
+        },
+        {
+          "period": "2018/19",
+          "gender": "Total",
+          "category": "",
+          "value": 55.6
+        },
+        {
+          "period": "2019/20",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 59.7
+        },
+        {
+          "period": "2019/20",
+          "gender": "Män",
+          "category": "",
+          "value": 43.6
+        },
+        {
+          "period": "2019/20",
+          "gender": "Total",
+          "category": "",
+          "value": 52.8
+        },
+        {
+          "period": "2020/21",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 61.3
+        },
+        {
+          "period": "2020/21",
+          "gender": "Män",
+          "category": "",
+          "value": 48.8
+        },
+        {
+          "period": "2020/21",
+          "gender": "Total",
+          "category": "",
+          "value": 54.7
+        },
+        {
+          "period": "2021/22",
+          "gender": "Kvinnor",
+          "category": "",
+          "value": 40.6
+        },
+        {
+          "period": "2021/22",
+          "gender": "Män",
+          "category": "",
+          "value": 31.4
+        },
+        {
+          "period": "2021/22",
+          "gender": "Total",
+          "category": "",
+          "value": 37.4
+        }
+      ]
+    }
+  ]
+}

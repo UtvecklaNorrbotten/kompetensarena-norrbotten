@@ -6,6 +6,13 @@ on:
       - scripts/uka_coverage_report.py
       - scripts/uka_detail_controls.py
       - scripts/uka_package_publication_audit.py
+      - scripts/uka_snapshot_publish_verified.py
+      - scripts/uka_snapshot_finalize_job.py
+      - tests/test_uka_snapshot_publish_verified.py
+      - tests/test_uka_snapshot_finalize_job.py
+      - tests/uka-snapshot-import.sql
+      - drizzle/uka_snapshot_verified_import.applied.sql
+      - docs/data/uka-snapshot-2026-11-10-all-pilot-13.json
       - tests/test_uka_package_publication_audit.py
       - tests/test_uka_verified_collection.py
       - tests/fixtures/uka-13-coverage-2026-11-10.zip
