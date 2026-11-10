@@ -2160,6 +2160,15 @@ export type Database = {
         Returns: Json
       }
       uka_verified_status: { Args: { p_import_key: string }; Returns: Json }
+      uka99_verified_chunk: {
+        Args: { p_import_key: string; p_index: number; p_payload: string }
+        Returns: Json
+      }
+      uka99_verified_finalize: { Args: { p_import_key: string }; Returns: Json }
+      uka99_verified_start: {
+        Args: { p_import_key: string; p_manifest: Json }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "editor" | "registered"
