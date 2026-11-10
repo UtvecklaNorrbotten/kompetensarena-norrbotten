@@ -5,5 +5,6 @@
 - [x] Automatisk omräkning av aggregat efter ny data
 - [x] Utbildningssidan: Riket laddas via begränsade, behovsstyrda urval
 - [x] Äldre UKÄ-ETL spärrad för indikatorer med verifierad import (99, HST)
+- [ ] HST (33): återbygg verifierad uppladdare, matcha alla 231 chunkhashar, skicka saknade chunkar, aktivera, verifiera, dokumentera
 - [ ] Geografifilter i UI (förval Norrbotten) — väntar på första visualisering
 - [ ] Enkätdata (D) — pausad av användaren
