@@ -83,7 +83,7 @@ begin
   raise exception 'ROLLBACK-ONLY SNAPSHOT TEST A: %', report;
 end $$;
 
--- ===== BLOCK B: copy flow, sparse/duplicate chunks, resume, legacy guard, finalize, idempotency =====
+-- ===== BLOCK B1: copy flow start, sparse/duplicate chunks, resume, binding, legacy guards =====
 do $$
 declare
   ind constant text := 'uka-forstahandssokande-yrkesprogram';
@@ -146,6 +146,32 @@ begin
   begin r := uka_snapshot_chunk(k, 1, 'x'); report := report || 'B5 FAIL upload into copy; ';
   exception when sqlstate '55000' then report := report || 'B5 PASS upload into copy import refused; '; end;
 
+  raise exception 'ROLLBACK-ONLY SNAPSHOT TEST B1: %', report;
+end $$;
+
+-- ===== BLOCK B2: full copy, finalize, read-back, idempotent publication, immutability =====
+do $$
+declare
+  ind constant text := 'uka-forstahandssokande-yrkesprogram';
+  k constant text := 'uka-13-test-copy-flow';
+  src uuid; m jsonb; r jsonb; s jsonb; report text := ''; nb uuid; n int; i int; lb uuid; agg_before bigint;
+begin
+  select active_batch_id into src from uka_active_batches where indicator_id = ind;
+  m := jsonb_build_object('version','1','mode','copy','policy','csv-all-universities-partitions-every-root-v1',
+    'snapshot','2026-11-10-all','archive_sha256','1be12b057d06285fa97b9eaa314d31e0898de57130f7c4d99c3a4093e2eb4170',
+    'canonicalization','jsonb-array(period,university,gender,dimensions,numeric-text-fixed); bytewise order; newline separator without final newline',
+    'api_id',13,'indicator',ind,'rows',(select count(*) from uka_observations where batch_id = src),
+    'periods', uka_snapshot_period_hashes(src),
+    'coverage', (select jsonb_agg(jsonb_build_object('period',period,'gender',gender,'age',age,'rows',cnt)
+                   order by period collate "C", gender collate "C", age collate "C")
+                 from (select period, gender, coalesce(dimensions->>'aldersgrupp','Total') age, count(*) cnt
+                       from uka_observations where batch_id = src group by 1,2,3) c),
+    'source_batch_id', src::text, 'source_release_verified', false, 'full_source_coverage_verified', false,
+    'publication_basis', 'TEST rollback-only manifest built from the active batch');
+  select count(*) into agg_before from agg_uka_university where indicator_id = ind;
+
+  r := uka_snapshot_start(k, m);
+  nb := (r->>'batch_id')::uuid; n := (r->>'planned_chunks')::int;
   -- complete and finalize
   for i in 0 .. n - 1 loop perform uka_snapshot_copy_chunk(k, i); end loop;
   r := uka_snapshot_finalize(k);
@@ -155,11 +181,12 @@ begin
     (select active_batch_id from uka_active_batches where indicator_id = ind) = nb,
     (select count(*) from uka_observations where batch_id = src), (select count(*) from uka_observations where batch_id = nb),
     (select count(*) from agg_uka_university where indicator_id = ind), agg_before,
-    not exists (select 1 from uka_observations o where o.batch_id = nb and not exists (
-      select 1 from agg_uka_university g where g.indicator_id = ind and g.university = o.university and g.period = o.period
-        and g.gender = o.gender and g.value is not distinct from o.value
-        and g.breakdown = coalesce((select string_agg(x, '|' order by x) from jsonb_object_keys(o.dimensions) x), '')
-        and g.category = coalesce((select string_agg(o.dimensions->>x, '|' order by x) from jsonb_object_keys(o.dimensions) x), ''))));
+    not exists (select o.university, o.period, o.gender,
+        coalesce((select string_agg(x, '|' order by x) from jsonb_object_keys(o.dimensions) x), ''),
+        coalesce((select string_agg(o.dimensions->>x, '|' order by x) from jsonb_object_keys(o.dimensions) x), ''), o.value
+      from uka_observations o where o.batch_id = nb
+      except select g.university, g.period, g.gender, g.breakdown, g.category, g.value
+      from agg_uka_university g where g.indicator_id = ind));
   report := report || format('B7 hashes_equal=%s; ', uka_snapshot_period_hashes(nb) = uka_snapshot_period_hashes(src));
 
   -- idempotent publication and immutability
@@ -176,7 +203,7 @@ begin
   begin delete from uka_snapshot_copy_plan where import_key = k; report := report || 'B9 FAIL plan delete; ';
   exception when sqlstate '55000' then report := report || 'B9 PASS plan immutable; '; end;
 
-  raise exception 'ROLLBACK-ONLY SNAPSHOT TEST B: %', report;
+  raise exception 'ROLLBACK-ONLY SNAPSHOT TEST B2: %', report;
 end $$;
 
 -- ===== BLOCK C: source batch changes after start (copy and finalize re-check) =====
