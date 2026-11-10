@@ -7,8 +7,8 @@ OUT = Path("artifacts/skolverket_browser_probe")
 OUT.mkdir(parents=True, exist_ok=True)
 
 URLS = {
-    "gr9": BASE + "/statistik-och-utvarderingar/statistik-om-forskola-skola-och-vuxenutbildning/sok-statistik-om-forskola-skola-och-vuxenutbildning?sok=SokC&omrade=Betyg%20%C3%A5rskurs%209&lasar=2025%2F26&verkform=Grundskola%20och%20sameskola&run=1",
-    "gy": BASE + "/statistik-och-utvarderingar/statistik-om-forskola-skola-och-vuxenutbildning/sok-statistik-om-forskola-skola-och-vuxenutbildning?exp=88&lasar=2025&niva=S&omr=gybetyg&sok=SokD&uttag=null&verkform=21",
+    "gr9": BASE + "/statistik-och-utvarderingar/statistik-om-forskola-och-skola/sok-statistik-om-forskola-skola-och-vuxenutbildning?sok=SokC&verkform=Grundskola&omrade=Betyg%20%C3%A5rskurs%209&lasar=2025&run=1",
+    "gy": BASE + "/statistik-och-utvarderingar/statistik-om-forskola-skola-och-vuxenutbildning/sok-statistik-om-forskola-skola-och-vuxenutbildning?sok=SokC&verkform=Gymnasieskola&omrade=Betyg%20och%20studieresultat&lasar=2025&run=1",
 }
 
 def collect(page, name, url):
