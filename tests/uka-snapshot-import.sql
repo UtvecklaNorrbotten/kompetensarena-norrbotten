@@ -18,9 +18,9 @@ begin
     'canonicalization','jsonb-array(period,university,gender,dimensions,numeric-text-fixed); bytewise order; newline separator without final newline',
     'api_id',13,'indicator',ind,'rows',(select count(*) from uka_observations where batch_id = src),
     'periods', uka_snapshot_period_hashes(src),
-    'coverage', (select jsonb_agg(jsonb_build_object('period',period,'gender',gender,'age',age,'rows',n)
+    'coverage', (select jsonb_agg(jsonb_build_object('period',period,'gender',gender,'age',age,'rows',cnt)
                    order by period collate "C", gender collate "C", age collate "C")
-                 from (select period, gender, coalesce(dimensions->>'aldersgrupp','Total') age, count(*) n
+                 from (select period, gender, coalesce(dimensions->>'aldersgrupp','Total') age, count(*) cnt
                        from uka_observations where batch_id = src group by 1,2,3) c),
     'source_batch_id', src::text, 'source_release_verified', false, 'full_source_coverage_verified', false,
     'publication_basis', 'TEST rollback-only manifest built from the active batch');
@@ -96,9 +96,9 @@ begin
     'canonicalization','jsonb-array(period,university,gender,dimensions,numeric-text-fixed); bytewise order; newline separator without final newline',
     'api_id',13,'indicator',ind,'rows',(select count(*) from uka_observations where batch_id = src),
     'periods', uka_snapshot_period_hashes(src),
-    'coverage', (select jsonb_agg(jsonb_build_object('period',period,'gender',gender,'age',age,'rows',n)
+    'coverage', (select jsonb_agg(jsonb_build_object('period',period,'gender',gender,'age',age,'rows',cnt)
                    order by period collate "C", gender collate "C", age collate "C")
-                 from (select period, gender, coalesce(dimensions->>'aldersgrupp','Total') age, count(*) n
+                 from (select period, gender, coalesce(dimensions->>'aldersgrupp','Total') age, count(*) cnt
                        from uka_observations where batch_id = src group by 1,2,3) c),
     'source_batch_id', src::text, 'source_release_verified', false, 'full_source_coverage_verified', false,
     'publication_basis', 'TEST rollback-only manifest built from the active batch');
@@ -191,9 +191,9 @@ begin
     'canonicalization','jsonb-array(period,university,gender,dimensions,numeric-text-fixed); bytewise order; newline separator without final newline',
     'api_id',13,'indicator',ind,'rows',(select count(*) from uka_observations where batch_id = src),
     'periods', uka_snapshot_period_hashes(src),
-    'coverage', (select jsonb_agg(jsonb_build_object('period',period,'gender',gender,'age',age,'rows',n)
+    'coverage', (select jsonb_agg(jsonb_build_object('period',period,'gender',gender,'age',age,'rows',cnt)
                    order by period collate "C", gender collate "C", age collate "C")
-                 from (select period, gender, coalesce(dimensions->>'aldersgrupp','Total') age, count(*) n
+                 from (select period, gender, coalesce(dimensions->>'aldersgrupp','Total') age, count(*) cnt
                        from uka_observations where batch_id = src group by 1,2,3) c),
     'source_batch_id', src::text, 'source_release_verified', false, 'full_source_coverage_verified', false,
     'publication_basis', 'TEST rollback-only manifest built from the active batch');
@@ -286,9 +286,9 @@ begin
     'canonicalization','jsonb-array(period,university,gender,dimensions,numeric-text-fixed); bytewise order; newline separator without final newline',
     'api_id',13,'indicator',ind,'rows',(select count(*) from uka_observations where batch_id = src),
     'periods', uka_snapshot_period_hashes(src),
-    'coverage', (select jsonb_agg(jsonb_build_object('period',period,'gender',gender,'age',age,'rows',n)
+    'coverage', (select jsonb_agg(jsonb_build_object('period',period,'gender',gender,'age',age,'rows',cnt)
                    order by period collate "C", gender collate "C", age collate "C")
-                 from (select period, gender, coalesce(dimensions->>'aldersgrupp','Total') age, count(*) n
+                 from (select period, gender, coalesce(dimensions->>'aldersgrupp','Total') age, count(*) cnt
                        from uka_observations where batch_id = src group by 1,2,3) c),
     'chunks', chunks, 'source_release_verified', false, 'full_source_coverage_verified', false,
     'publication_basis', 'TEST rollback-only upload manifest built from the active batch');
