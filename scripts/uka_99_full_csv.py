@@ -1,7 +1,7 @@
 """Bounded Indicator-99 ten-year CSV collection with independent layout controls.
 
 Uses a NEW campaign; never changes historical manifests, queues or public data.
-Each year must match two disjoint university exports and two program exports,
+Each term must match two disjoint university exports and two program exports,
 plus all three national gender JSON root controls, before a transactional staging write.
 This verifies the declared checks, not every leaf against independent JSON.
 """
@@ -19,7 +19,6 @@ from urllib.parse import urlencode
 from uka_campaign import rows_digest
 from uka_csv_bulk_probe import compare
 from uka_99_values import observations
-from uka_hst_coverage import source_paths
 from uka_json_probe import BASE, Probe, validate_url, yearly
 from uka_source_audit import Source, canonical_value, digest, write_json
 
@@ -103,6 +102,8 @@ def root_control(actual, body, period, gender, age, all_universities):
 
 class Collection:
     def __init__(self, root, metadata, snapshot, max_exports=0, max_requests=0, max_seconds=240):
+        if max_exports < 0 or max_requests < 0 or max_seconds <= 0:
+            raise ValueError('Invalid acquisition budget')
         self.root = Path(root); self.root.mkdir(parents=True, exist_ok=True)
         self.metadata, self.snapshot = metadata, snapshot
         if (metadata['indicator'] != 99 or metadata['snapshot'] != snapshot or
@@ -203,7 +204,7 @@ class Collection:
         actual = observations(receipt['rows'], m, period, universities, studies)
         allowed_study = {o['label'] for o in studies}
         if any(json.loads(k)[4].get('Program', 'Total') not in allowed_study for k in actual):
-            raise ValueError('CSV ignored study-form scope')
+            raise ValueError('CSV ignored program scope')
         return actual, {k: v for k, v in receipt.items() if k not in ('rows', 'headers', 'cached')}
 
     def roots(self, period, actual):
@@ -290,6 +291,7 @@ class Collection:
         self.validate_staged()
         summaries = [json.loads(r[0]) for r in self.db.execute('SELECT summary FROM years ORDER BY period DESC')]
         report = {'indicator': 99, 'snapshot': self.snapshot, 'policy': POLICY, 'binding_hash': digest(self.binding),
+                  'planned_periods': self.periods, 'staged_periods': len(summaries),
                   'planned_years': self.periods, 'staged_years': len(summaries),
                   'observations': sum(y['observations'] for y in summaries),
                   'requested_universities': len(self.universities),

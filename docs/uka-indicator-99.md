@@ -57,19 +57,92 @@ Total-rotsvar kontrollerar stabilitet. Varje källsvar/CSV har kvitto och hash.
 Staging skrivs atomiskt först efter godkända kontroller. Manifest, staging,
 kvitton, råfiler och JSON-kontroller valideras på nytt vid återstart.
 
-## Genomfört
+## Slutkontrollpunkt
 
-HT2026: 1 337 observationer; båda CSV-partitionskontrollerna och samtliga
-könsrotsvar/stabilitetskontrollen passerar. 12 syntetiska tester passerar.
-Historiken hämtas nu sekventiellt med kontrollpunkt per termin.
+Alla 20 terminer VT2017–HT2026 är färdiga i separat staging: **19 595
+observationer**. De tre könsvalen har 6 517 kvinnor, 6 517 män och 6 561
+källtotaler. Olika radantal betyder att könsuppdelning inte finns för alla
+identiteter; inga saknade kvinnor-/mänrader har konstruerats.
+
+**39 observerade lärosäteskoder inklusive Riket** och **52 program** förekommer
+någon gång. Alla 81 metadataalternativ för lärosäten och alla 78 programval
+begärdes varje termin; 42 lärosätesalternativ saknar observationer i hela
+perioden. Metadataalternativ är således inte faktiska årliga observationer.
+Hortonomexamen och Jägmästarexamen förekommer i historiken men inte i HT2026.
+Källans egna totalvärden ingår, utan summering eller medelvärdesbildning.
+
+100 CSV-exporter och 80 JSON-kontroller är sparade: 40 exakta
+CSV-partitionsjämförelser, 60 nationella könsrotsvar och 20 separata
+stabilitetskontroller. Totalt **4 384** källtotaler/annonserade värden har
+jämförts. Samtliga kontroller passerar. Inga saknat-/sekretessmarkörer
+förekommer i uttagen; detta fastställer inte källans allmänna sekretessregler.
+
+| Period | Observationer | Observerade lärosäten inkl. Riket | Program |
+|---|---:|---:|---:|
+| HT2026 | 1 337 | 36 | 50 |
+| VT2026 | 739 | 31 | 33 |
+| HT2025 | 1 341 | 36 | 50 |
+| VT2025 | 721 | 31 | 33 |
+| HT2024 | 1 328 | 36 | 49 |
+| VT2024 | 708 | 30 | 33 |
+| HT2023 | 1 311 | 36 | 49 |
+| VT2023 | 687 | 30 | 33 |
+| HT2022 | 1 317 | 36 | 49 |
+| VT2022 | 682 | 30 | 32 |
+| HT2021 | 1 293 | 35 | 49 |
+| VT2021 | 664 | 30 | 32 |
+| HT2020 | 1 266 | 35 | 49 |
+| VT2020 | 641 | 30 | 33 |
+| HT2019 | 1 245 | 35 | 48 |
+| VT2019 | 603 | 30 | 30 |
+| HT2018 | 1 250 | 35 | 48 |
+| VT2018 | 629 | 30 | 30 |
+| HT2017 | 1 244 | 35 | 48 |
+| VT2017 | 589 | 30 | 29 |
+
+Samlad maskinläsbar rapport: `uka-99-full-collection-2026-11-10.json`.
+Nollbudgetåterstarten kontrollerar samtliga sparade CSV-byten, kvitton,
+JSON-svar, manifest och stagingrader; 20 terminer återspelas med **0 nya
+exporter, 0 nya JSON-anrop och 0 insättningar**, med identiska
+terminskontrollsummor. SQLite `quick_check` ger `ok`.
+
+15 syntetiska indikator-99-tester och totalt 124 lokala UKÄ-tester passerar.
+GitHub-run 42768653140 passerar 124 tester, endast Staging · 99 och
+samlad täckningsrapport; HST-steg och bred JSON-diagnostik hoppas över.
+Indikator-99-testworkflowet 42768652910 passerar också.
+
+Återstartspaket: `UKA_99_Soktryck_VT2017_HT2026_2026-11-10.zip`.
+Det innehåller `collection-99/99-full.sqlite`, metadata, alla CSV-källsvar,
+JSON-kontroller, exportkvitton, kontrollpunkter, filhashar, äldre referenser,
+kod, tester och rapporter. De äldre 1 337 stagingvärdena hålls separat och
+ska inte adderas till de 19 595 nya observationerna. Bara indikator 99:s
+data ingår. Arkiv- och leveranshash redovisas i `uka-99-delivery-2026-11-10.json`.
+
+Efter uppackning från paketets rot:
+
+```bash
+python -m pip install -r requirements.txt
+python scripts/uka_99_verify.py --root .
+```
+
+Själva verifieringen spärrar nätverksanrop och ska ge 20 terminer,
+19 595 observationer, oförändrade staginghashar och återverifierade
+66/66 respektive 1 337/1 337 referensvärden. `checksums.json` kontrollerar
+paketfilerna före återspelningen.
 
 ## Begränsningar och exakt nästa åtgärd
 
-Fortsätt VT2026 och sedan återstående terminer i metadataordning. Stoppa vid
-första blockerande avvikelse och utred innan nästa termin. Avsluta med samlad
-nollbudgetåterstart, SHA-256-inventering och beständigt återstartspaket.
+Alla beställda hämtningar är genomförda. Inga ytterligare källuttag behövs
+för denna beställning. Före en separat produktionsintegration: fastställ
+kraven för oberoende kontroll av varje detaljcell, sekretess och källrevision.
+Återanvänd paketet; ändra inte dess frysta manifest för en ny revision.
 
-CSV-layoutar kan dela källfel. Varje detaljcell jämförs inte mot ett separat
-JSON-blad. Officiellt oföränderligt källversions-ID och sekretesssemantik är
-inte fastställda. Därför förblir `full_source_coverage_verified`,
-`source_release_verified` och `publish_allowed` false även efter full hämtning.
+CSV-layoutar kan dela källfel. De nya JSON-rotsvaren verifierar nationella
+programvärden och lärosätens totalvärden per kön, inte varje programvärde
+inom varje lärosäte. Äldre slutna JSON-grafer verifierar dessutom pilotens
+1 337 värden, men är inte samtidiga nya källsvar. Övriga terminers alla
+detaljceller har inte jämförts mot separata JSON-blad. Officiellt
+oföränderligt källversions-ID och sekretesssemantik är inte fastställda.
+Därför förblir `full_source_coverage_verified`, `source_release_verified`
+och `publish_allowed` false även efter full hämtning. Ingen merge,
+migration eller produktionspublicering har gjorts.

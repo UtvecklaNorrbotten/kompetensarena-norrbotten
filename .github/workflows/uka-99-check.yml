@@ -4,6 +4,7 @@ on:
     paths:
       - scripts/uka_99_full_csv.py
       - scripts/uka_99_values.py
+      - scripts/uka_99_verify.py
       - tests/test_uka_99*.py
       - tests/fixtures/uka-99-pilot-2026-11-10.zip
       - .github/workflows/uka-99-check.yml
