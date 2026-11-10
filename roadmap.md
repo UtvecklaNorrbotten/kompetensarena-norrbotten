@@ -6,5 +6,8 @@
 - [x] Utbildningssidan: Riket laddas via begränsade, behovsstyrda urval
 - [x] Äldre UKÄ-ETL spärrad för indikatorer med verifierad import (99, HST)
 - [x] HST (33): verifierad uppladdare, 231/231 chunkar, aktiverad och kontrollerad
+- [x] UKÄ åtta indikatorer: gemensam manifestbunden import + intern kopiering, rollbacktester
+- [x] UKÄ pilot 13: publicerad via kopiering, återläst (hashar, aggregat, Riket/LTU på sidan)
+- [ ] UKÄ övriga sju (31, 97, 108, 136, 77, 134, 135) — väntar på användarens granskning av pilot 13 och deras frysta manifest
 - [ ] Geografifilter i UI (förval Norrbotten) — väntar på första visualisering
 - [ ] Enkätdata (D) — pausad av användaren
