@@ -31,8 +31,17 @@ def collect_download_search(page, name, school_label, area_keywords):
     page.goto(PAGE_URL, wait_until="networkidle", timeout=120000)
     page.wait_for_timeout(1500)
 
+    # Cookie consent overlays the statistics controls on a fresh browser session.
+    cookie_button = page.get_by_role("button", name="Godkänn nödvändiga kakor")
+    if cookie_button.count() > 0:
+        try:
+            cookie_button.click(timeout=5000)
+            page.wait_for_timeout(500)
+        except Exception:
+            pass
+
     # Choose search type D: all schools/municipalities/providers.
-    page.locator("#IDSokD").check()
+    page.locator("#IDSokD").check(force=True)
     page.wait_for_timeout(2000)
     dump_selects(page, name + "_after_D")
 
