@@ -199,3 +199,15 @@ hela det frysta publiceringsunderlaget. Ingen ny klientflagga får kringgå dess
 
 Det separata pågående arbetet med HST:s publiceringsväg ska samordnas innan samma
 serverfunktioner eller migrationer ändras. Detta arbete har inte ändrat dessa filer.
+
+## Leverans och exakt återstartspunkt
+
+Kodkontrollpunkt `09e1ad47ab255a159892be363e712a2ecc66522d` är verifierad i
+GitHub [42776769942](https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/runs/42776769942).
+Datapaketet `UKA_tackning_8_indikatorer_2026-11-10.zip` är sparat separat:
+2 412 filhashar kontrollerade, 64 455 690 byte. Kvitto och paketets SHA-256 finns i
+`uka-coverage-delivery-2026-11-10.json`. De tidigare HST-/99-paketen bevaras separat.
+
+Återuppta först med nollbudget från detta paket och oförändrat manifest, inte genom
+att starta nya breda källhämtningar. Nästa arbetsuppgift är serverintegrationen som
+beskrivs ovan; inga ytterligare historikuttag behövs för att återskapa denna kontrollpunkt.
