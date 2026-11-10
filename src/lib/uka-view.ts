@@ -13,7 +13,7 @@ export const dimensionLabels: Record<string, string> = {
   amnesdelomrade: "Ämnesdelområde",
   amnesgrupp: "Ämnesgrupp",
 };
-export function dimensions(row: UkaRow): Record<string, string> {
+export function dimensions(row: Pick<UkaRow, "breakdown" | "category">): Record<string, string> {
   const values = row.category.split("|");
   return Object.fromEntries(
     row.breakdown ? row.breakdown.split("|").map((key, i) => [key, values[i] ?? ""]) : [],
@@ -27,32 +27,59 @@ export function periodLabel(period: string): string {
   return period.replace(/^(HT|VT)(\d)/, "$1 $2");
 }
 
-/** Välj källans exakta projektion. Summera aldrig totaler, kön eller hierarkinivåer. */
+/** Indikatorns alla perioder och uppdelningar för ett lärosäte, oberoende av urval. */
+export type UkaCatalogEntry = { periods: string[]; breakdowns: string[] };
+
+export function ukaCatalogEntry(rows: Pick<UkaRow, "period" | "breakdown">[]): UkaCatalogEntry {
+  return {
+    periods: [...new Set(rows.map((r) => r.period))],
+    breakdowns: [...new Set(rows.map((r) => r.breakdown))],
+  };
+}
+
+/**
+ * Vilken uppdelning och vilket urval en figur behöver. Avgörs av katalogen, så att
+ * bara den delmängden behöver hämtas. Samma regler som selectUkaRows.
+ */
+export function ukaTarget(
+  entry: UkaCatalogEntry,
+  filters: UkaFilters,
+  detail = false,
+): { breakdown: string | undefined; selection: Record<string, string>; keys: string[] } {
+  const available = new Set(entry.breakdowns.flatMap((b) => (b ? b.split("|") : [])));
+  const selected = Object.entries(filters.dimensions).filter(([k, v]) => v && available.has(k));
+  const keys = selected.map(([k]) => k);
+  // Åldersgrupper överlappar källans total. Utan åldersval används bara totalraderna.
+  const source = filters.dimensions["aldersgrupp"]
+    ? entry.breakdowns
+    : entry.breakdowns.filter((b) => !(b ? b.split("|") : []).includes("aldersgrupp"));
+  const breakdowns = [...new Set(source)].sort(
+    (a, b) => (a ? a.split("|").length : 0) - (b ? b.split("|").length : 0) || a.localeCompare(b),
+  );
+  const breakdown = breakdowns.find(
+    (b) => keys.every((key) => b.split("|").includes(key)) && (!detail || b !== ""),
+  );
+  return { breakdown, selection: Object.fromEntries(selected), keys };
+}
+
+/**
+ * Välj källans exakta projektion. Summera aldrig totaler, kön eller hierarkinivåer.
+ * `rows` kan vara hela indikatorn eller bara den delmängd som ukaTarget pekar ut;
+ * `entry` beskriver då hela indikatorns perioder och uppdelningar.
+ */
 export function selectUkaRows(
   rows: UkaRow[],
   filters: UkaFilters,
   detail = false,
+  entry: UkaCatalogEntry = ukaCatalogEntry(rows),
 ): { rows: UkaRow[]; breakdown: string; applied: string[]; ambiguous: boolean } {
-  // Åldersgrupper överlappar källans total. Utan åldersval används bara totalraderna.
-  const sourceRows = filters.dimensions["aldersgrupp"]
-    ? rows
-    : rows.filter((row) => !("aldersgrupp" in dimensions(row)));
-  const available = new Set(rows.flatMap((r) => (r.breakdown ? r.breakdown.split("|") : [])));
-  const selected = Object.entries(filters.dimensions).filter(([k, v]) => v && available.has(k));
-  const keys = selected.map(([k]) => k);
-  const breakdowns = [...new Set(sourceRows.map((r) => r.breakdown))].sort(
-    (a, b) => (a ? a.split("|").length : 0) - (b ? b.split("|").length : 0) || a.localeCompare(b),
-  );
-  const target = breakdowns.find(
-    (b) => keys.every((key) => b.split("|").includes(key)) && (!detail || b !== ""),
-  );
+  const { breakdown: target, selection, keys } = ukaTarget(entry, filters, detail);
   if (target === undefined) return { rows: [], breakdown: "", applied: keys, ambiguous: false };
-  const candidate = sourceRows.filter(
+  const selected = Object.entries(selection);
+  const candidate = rows.filter(
     (r) => r.breakdown === target && selected.every(([key, value]) => dimensions(r)[key] === value),
   );
-  const periods = [...new Set(rows.map((r) => r.period))].sort(
-    (a, b) => periodOrder(a) - periodOrder(b),
-  );
+  const periods = [...new Set(entry.periods)].sort((a, b) => periodOrder(a) - periodOrder(b));
   const isSemester = periods.some((period) => /^(HT|VT)/.test(period));
   const recent = new Set(periods.slice(-(filters.years * (isSemester ? 2 : 1))));
   const filtered = candidate.filter((r) => recent.has(r.period));
@@ -70,7 +97,7 @@ export function selectUkaRows(
 }
 
 export function dimensionOptions(
-  rows: UkaRow[],
+  rows: Pick<UkaRow, "breakdown" | "category">[],
   filters: Record<string, string>,
 ): Record<string, string[]> {
   const result: Record<string, Set<string>> = {};
