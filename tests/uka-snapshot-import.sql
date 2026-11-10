@@ -229,10 +229,10 @@ begin
     'publication_basis', 'TEST rollback-only manifest built from the active batch');
   -- C1 change inside a not yet copied chunk -> copy refuses
   r := uka_snapshot_start('uka-136-test-source-change', m); n := (r->>'planned_chunks')::int; nb := (r->>'batch_id')::uuid;
-  select first_id + 7 into victim from uka_snapshot_copy_plan where import_key = 'uka-136-test-source-change' and chunk_index = 3;
+  select first_id + 7 into victim from uka_snapshot_copy_plan where import_key = 'uka-136-test-source-change' and chunk_index = 1;
   begin
     update uka_observations set value = value + 1 where id = victim;
-    perform uka_snapshot_copy_chunk('uka-136-test-source-change', 3);
+    perform uka_snapshot_copy_chunk('uka-136-test-source-change', 1);
     report := report || 'C1 FAIL copied changed source; ';
   exception when sqlstate '55000' then
     report := report || format('C1 PASS changed source chunk refused (%s); ', left(sqlerrm, 50));
@@ -324,7 +324,7 @@ begin
     'publication_basis', 'TEST rollback-only upload manifest built from the active batch');
   r := uka_snapshot_start(k, m); nb := (r->>'batch_id')::uuid;
   for i in reverse cardinality(payloads) .. 1 loop perform uka_snapshot_chunk(k, i - 1, payloads[i]); end loop;
-  r := uka_snapshot_chunk(k, 4, payloads[5]);
+  r := uka_snapshot_chunk(k, 0, payloads[1]);
   report := report || format('D2 chunks=%s duplicate=%s; ', cardinality(payloads), r->>'duplicate');
   r := uka_snapshot_finalize(k);
   report := report || format('D2 finalize status=%s staging_ok=%s active_new=%s prev_rows=%s hashes_equal=%s; ',
