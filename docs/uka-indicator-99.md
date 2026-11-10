@@ -1,5 +1,9 @@
 # UKÄ 99 – Söktryck till yrkesexamensprogram
 
+> Produktionspublicerad 2026-11-10 efter uttryckligt godkännande, med oförändrade
+> granskningsflaggor. Grund, batch-id och verifiering: [uka-99-publication-2026-11-10.md](uka-99-publication-2026-11-10.md).
+> Avsnitten nedan beskriver insamlingen före publiceringen.
+
 ## Kontrollpunkt 2026-11-10
 
 Gren `fix/uka-verified-checkpoint-import`, PR #82 öppen draft, bas för arbetet
