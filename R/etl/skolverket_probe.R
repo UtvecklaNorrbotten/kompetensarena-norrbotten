@@ -167,3 +167,69 @@ summary_lines <- c(
 writeLines(summary_lines, file.path(out_dir, "probe_summary.txt"))
 message(paste(summary_lines, collapse = "\n"))
 message("Probe klar: ", out_dir)
+
+
+message("---- Legacy statistics download discovery ----")
+
+stats_base <- "https://www.skolverket.se/statistik-och-utvarderingar/statistik-om-forskola-och-skola/sok-statistik-om-forskola-skola-och-vuxenutbildning"
+
+legacy_urls <- c(
+  gr9_download = paste0(
+    stats_base,
+    "?sok=SokC&omrade=Betyg%20%C3%A5rskurs%209",
+    "&lasar=2025%2F26&verkform=Grundskola%20och%20sameskola&run=1"
+  ),
+  gy_school = paste0(
+    stats_base,
+    "?exp=88&lasar=2025&niva=S&omrade=gybetyg&run=1&sok=SokD&verkform=21"
+  )
+)
+
+extract_candidate_links <- function(html) {
+  if (is.null(html) || !nzchar(html)) return(character())
+
+  hrefs <- unlist(regmatches(
+    html,
+    gregexpr("href=[\\\"'][^\\\"']+[\\\"']", html, perl = TRUE)
+  ))
+  hrefs <- sub("^href=[\\\"']", "", hrefs)
+  hrefs <- sub("[\\\"']$", "", hrefs)
+
+  unique(hrefs[
+    grepl(
+      "xlsx|xls|csv|download|ladda|fil|file|getFile|document",
+      hrefs,
+      ignore.case = TRUE
+    )
+  ])
+}
+
+legacy_results <- lapply(names(legacy_urls), function(nm) {
+  res <- get_safe(legacy_urls[[nm]])
+  links <- if (isTRUE(res$ok)) extract_candidate_links(res$text) else character()
+
+  if (isTRUE(res$ok)) {
+    writeLines(res$text, file.path(out_dir, paste0("legacy_", nm, ".html")))
+    writeLines(links, file.path(out_dir, paste0("legacy_", nm, "_links.txt")))
+  }
+
+  list(
+    name = nm,
+    url = legacy_urls[[nm]],
+    status = res$status,
+    links_n = length(links),
+    links = links
+  )
+})
+
+write_json_pretty(legacy_results, file.path(out_dir, "legacy_download_discovery.json"))
+
+legacy_summary <- unlist(lapply(legacy_results, function(x) {
+  c(
+    paste0("legacy_", x$name, "_status=", x$status),
+    paste0("legacy_", x$name, "_candidate_links_n=", x$links_n)
+  )
+}))
+
+writeLines(c(summary_lines, legacy_summary), file.path(out_dir, "probe_summary.txt"))
+message(paste(legacy_summary, collapse = "\n"))
