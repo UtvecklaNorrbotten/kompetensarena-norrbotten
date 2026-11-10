@@ -1,0 +1,111 @@
+name: 90 · Diagnostik · UKÄ – verifierad CSV-täckning
+on:
+  pull_request:
+    paths:
+      - scripts/uka_verified_collection.py
+      - scripts/uka_coverage_report.py
+      - scripts/uka_detail_controls.py
+      - tests/test_uka_verified_collection.py
+      - tests/fixtures/uka-13-coverage-2026-11-10.zip
+      - .github/workflows/uka-verified-coverage.yml
+  workflow_dispatch:
+    inputs:
+      indicator:
+        description: En indikator per körning (33 och 99 har egna verifierade insamlare)
+        type: choice
+        options: ['13', '31', '97', '108', '136', '77', '134', '135']
+        default: '108'
+      scope:
+        description: Börja med senaste och äldsta perioden
+        type: choice
+        options: [pilot, all]
+        default: pilot
+      resume_run:
+        description: Tidigare körning med uka-verified-coverage-<id>; tomt skapar ny kampanj
+        type: string
+        default: ''
+      snapshot:
+        description: Kampanj-ID måste vara samma vid återstart, inte ett intyg om källversion
+        type: string
+        default: '2026-11-10-all'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: uka-coverage-${{ github.ref }}-${{ inputs.indicator || 'tests' }}
+  cancel-in-progress: false
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install requests beautifulsoup4
+      - run: python -m unittest discover -s tests -p test_uka_verified_collection.py -v
+  collection:
+    if: github.event_name == 'workflow_dispatch'
+    needs: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install requests beautifulsoup4
+      - uses: actions/download-artifact@v4
+        if: inputs.resume_run != ''
+        with:
+          name: uka-verified-coverage-${{ inputs.indicator }}
+          path: output/coverage
+          run-id: ${{ inputs.resume_run }}
+          github-token: ${{ github.token }}
+      - name: Hämta och kontrollera en indikator
+        env:
+          INDICATOR: ${{ inputs.indicator }}
+          SCOPE: ${{ inputs.scope }}
+          SNAPSHOT: ${{ inputs.snapshot }}
+          RESUME_RUN: ${{ inputs.resume_run }}
+        run: |
+          PYTHONPATH=scripts python -u - <<'PY'
+          import json, os
+          from pathlib import Path
+          from uka_source_audit import Source
+          from uka_verified_collection import Collection
+          from uka_detail_controls import run as details
+          root = Path('output/coverage')
+          indicator = int(os.environ['INDICATOR'])
+          snapshot = os.environ['SNAPSHOT']
+          if os.environ['RESUME_RUN'] and not (root / 'collection.sqlite').exists():
+              raise ValueError('Missing requested restart database')
+          metadata_path = root / 'metadata.json'
+          metadata = json.loads(metadata_path.read_text()) if metadata_path.exists() else Source(root, snapshot).metadata(indicator)
+          if metadata['indicator'] != indicator:
+              raise ValueError('Restart indicator mismatch')
+          with Collection(root, metadata, snapshot, exports=60, requests=240, seconds=420) as c:
+              try:
+                  periods = c.periods if os.environ['SCOPE'] == 'all' else list(dict.fromkeys((c.periods[0], c.periods[-1])))
+                  for period in periods:
+                      result = c.collect(period)
+                      print(json.dumps({k: result[k] for k in ('period', 'observations', 'written_this_run')}), flush=True)
+                      c.report()
+              finally:
+                  c.report()
+          details(root, budget=16)
+          # Separate reopen proves zero-budget restart of all staged periods.
+          with Collection(root, metadata, snapshot) as c:
+              for row in list(c.db.execute('SELECT period FROM periods')):
+                  assert not c.collect(row['period'])['written_this_run']
+              report = c.report()
+              assert report['new_exports'] == report['new_json_requests'] == 0
+          assert details(root, budget=0)['new_requests'] == 0
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: uka-verified-coverage-${{ inputs.indicator }}
+          path: output/coverage
+          if-no-files-found: error
+          retention-days: 30
