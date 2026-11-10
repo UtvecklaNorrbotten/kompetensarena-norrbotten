@@ -2129,6 +2129,10 @@ export type Database = {
         Returns: Json
       }
       uka_finalize_batch: { Args: { p_batch_id: string }; Returns: Json }
+      uka_legacy_publication_block: {
+        Args: { p_indicator_id: string }
+        Returns: string
+      }
       uka_start_batch: {
         Args: {
           p_expected_chunks: number
