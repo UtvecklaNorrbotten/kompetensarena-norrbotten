@@ -1852,6 +1852,41 @@ export type Database = {
           },
         ]
       }
+      uka_snapshot_copy_plan: {
+        Row: {
+          checksum: string
+          chunk_index: number
+          first_id: number
+          import_key: string
+          last_id: number
+          row_count: number
+        }
+        Insert: {
+          checksum: string
+          chunk_index: number
+          first_id: number
+          import_key: string
+          last_id: number
+          row_count: number
+        }
+        Update: {
+          checksum?: string
+          chunk_index?: number
+          first_id?: number
+          import_key?: string
+          last_id?: number
+          row_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "uka_snapshot_copy_plan_import_key_fkey"
+            columns: ["import_key"]
+            isOneToOne: false
+            referencedRelation: "uka_verified_imports"
+            referencedColumns: ["import_key"]
+          },
+        ]
+      }
       uka_verified_imports: {
         Row: {
           batch_id: string
@@ -2152,6 +2187,41 @@ export type Database = {
       uka_legacy_publication_block: {
         Args: { p_indicator_id: string }
         Returns: string
+      }
+      uka_snapshot_chunk: {
+        Args: { p_import_key: string; p_index: number; p_payload: string }
+        Returns: Json
+      }
+      uka_snapshot_copy_chunk: {
+        Args: { p_import_key: string; p_index: number }
+        Returns: Json
+      }
+      uka_snapshot_finalize: { Args: { p_import_key: string }; Returns: Json }
+      uka_snapshot_indicator: { Args: { p_api_id: number }; Returns: string }
+      uka_snapshot_line: {
+        Args: {
+          p_dimensions: Json
+          p_gender: string
+          p_period: string
+          p_university: string
+          p_value: number
+        }
+        Returns: string
+      }
+      uka_snapshot_manifest_error: { Args: { m: Json }; Returns: string }
+      uka_snapshot_period_hashes: {
+        Args: { p_batch_id: string }
+        Returns: Json
+      }
+      uka_snapshot_start: {
+        Args: { p_import_key: string; p_manifest: Json }
+        Returns: Json
+      }
+      uka_snapshot_status: { Args: { p_import_key: string }; Returns: Json }
+      uka_snapshot_value_text: { Args: { p_value: number }; Returns: string }
+      uka_snapshot_verify_batch: {
+        Args: { p_batch_id: string; p_manifest: Json }
+        Returns: Json
       }
       uka_start_batch: {
         Args: {
