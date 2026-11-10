@@ -2,6 +2,12 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
+import {
+  UKA_SLICE_MAX_PAGES,
+  UKA_SLICE_PAGE_ROWS,
+  type UkaEducationCatalog,
+  type UkaSlicePage,
+} from "@/lib/uka-education";
 
 /**
  * Publik läsning av förberäknade aggregat (Riket, alla län, alla kommuner).
@@ -108,35 +114,73 @@ export const getUkaUniversities = createServerFn({ method: "GET" }).handler(asyn
   throw new Error("UKÄ:s lärosäteslista kunde inte läsas fullständigt.");
 });
 
-export const getUkaEducation = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) =>
-    z.object({ university: z.string().trim().min(1).max(200) }).parse(d),
-  )
-  .handler(async ({ data }) => {
+// Utbildningssidan läser aldrig hela lärosätet i ett svar (Riket har >100 000 HST-rader).
+// Katalogen beskriver perioder, uppdelningar och kategorier; värden hämtas per figur,
+// uppdelning och urval i begränsade sidor.
+const university = z.string().trim().min(1).max(200);
+const MAX_CATALOG_COMBOS = 50000;
+
+export const getUkaEducationCatalog = createServerFn({ method: "GET" })
+  .inputValidator((d: unknown) => z.object({ university }).parse(d))
+  .handler(async ({ data }): Promise<UkaEducationCatalog> => {
     const client = publicClient();
-    const result: Database["public"]["Tables"]["agg_uka_university"]["Row"][] = [];
-    for (let offset = 0; offset < 200000; offset += 1000) {
-      const { data: rows, error } = await client
-        .from("agg_uka_university")
-        .select("indicator_id, university, period, gender, breakdown, category, value")
-        .in("indicator_id", [...ukaIds])
-        .eq("university", data.university)
-        .order("indicator_id")
-        .order("period")
-        .order("gender")
-        .order("breakdown")
-        .order("category")
-        .range(offset, offset + 999);
-      if (error) throw new Error("Kunde inte läsa UKÄ-statistiken. Försök igen.");
-      result.push(...(rows ?? []));
-      if ((rows?.length ?? 0) < 1000) {
-        const { data: metadata, error: metadataError } = await client
-          .from("indicator_metadata")
-          .select("indicator_id, tillganglighetsdatum, hamtad_datum")
-          .in("indicator_id", [...ukaIds]);
-        if (metadataError) throw new Error("Kunde inte läsa UKÄ:s metadata. Försök igen.");
-        return { rows: result, metadata: metadata ?? [] };
-      }
+    const [{ data: catalog, error }, { data: metadata, error: metadataError }] = await Promise.all([
+      client.rpc("uka_education_catalog", {
+        p_university: data.university,
+        p_indicator_ids: [...ukaIds],
+      }),
+      client
+        .from("indicator_metadata")
+        .select("indicator_id, tillganglighetsdatum, hamtad_datum")
+        .in("indicator_id", [...ukaIds]),
+    ]);
+    if (error) throw new Error("Kunde inte läsa UKÄ-statistiken. Försök igen.");
+    if (metadataError) throw new Error("Kunde inte läsa UKÄ:s metadata. Försök igen.");
+    const parsed = catalog as {
+      indicators?: UkaEducationCatalog["indicators"];
+      combos?: [string, string][];
+    } | null;
+    const pairs = parsed?.combos ?? [];
+    if (pairs.length > MAX_CATALOG_COMBOS) {
+      throw new Error("UKÄ:s urvalskatalog är för stor för att visas fullständigt.");
     }
-    throw new Error("UKÄ-urvalet är för stort för att visas fullständigt.");
+    const combos: UkaEducationCatalog["combos"] = {};
+    for (const [breakdown, category] of pairs) (combos[breakdown] ??= []).push(category);
+    return { indicators: parsed?.indicators ?? {}, combos, metadata: metadata ?? [] };
+  });
+
+const dimensionKey = z.string().regex(/^[a-z-]{1,40}$/);
+
+export const getUkaEducationSlice = createServerFn({ method: "GET" })
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        university,
+        indicatorId: z.enum(ukaIds),
+        breakdown: z.string().regex(/^([a-z-]{1,40}(\|[a-z-]{1,40}){0,7})?$/),
+        selection: z.record(dimensionKey, z.string().min(1).max(300)).refine(
+          (s) => Object.keys(s).length <= 8,
+        ),
+        offset: z.number().int().min(0).max(UKA_SLICE_PAGE_ROWS * UKA_SLICE_MAX_PAGES),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }): Promise<UkaSlicePage> => {
+    const client = publicClient();
+    const rows: UkaSlicePage["rows"] = [];
+    // Databasen ger högst 1 000 rader per anrop; svaret begränsas till UKA_SLICE_PAGE_ROWS.
+    for (let offset = data.offset; offset < data.offset + UKA_SLICE_PAGE_ROWS; offset += 1000) {
+      const { data: page, error } = await client.rpc("uka_education_slice", {
+        p_university: data.university,
+        p_indicator_id: data.indicatorId,
+        p_breakdown: data.breakdown,
+        p_selection: data.selection,
+        p_offset: offset,
+        p_limit: 1000,
+      });
+      if (error) throw new Error("Kunde inte läsa UKÄ-statistiken. Försök igen.");
+      rows.push(...(page ?? []));
+      if ((page?.length ?? 0) < 1000) return { rows, next: null };
+    }
+    return { rows, next: data.offset + UKA_SLICE_PAGE_ROWS };
   });

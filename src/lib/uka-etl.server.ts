@@ -69,7 +69,8 @@ function statusFor(error: { code?: string; message: string }) {
   if (/timeout|timed out|fetch failed|connection/i.test(error.message)) return 503;
   if (["57014","55P03","40P01","40001"].includes(error.code ?? "")) return 503;
   if (error.code === "02000") return 404;
-  if (["23505","22023"].includes(error.code ?? "")) return 409;
+  // 55000: skyddad indikator (verifierad publicering) eller verifierad batch.
+  if (["23505","22023","55000"].includes(error.code ?? "")) return 409;
   return 422;
 }
 
@@ -83,6 +84,23 @@ export async function handleUkaStart(request: Request) {
 
   const { data: indicator } = await db.from("indicators").select("id").eq("id", p.indicator_id).maybeSingle();
   if (!indicator) return json({ error: "Unknown indicator" }, 404);
+
+  // Stoppa äldre ETL före körlogg och staging när indikatorn skyddas av verifierad import.
+  // Databasen spärrar även chunk och finalisering för redan startade batchar.
+  const { data: blocked, error: blockError } = await (db.rpc as any)(
+    "uka_legacy_publication_block",
+    { p_indicator_id: p.indicator_id },
+  );
+  if (blockError) return json({ error: "UKA guard check failed", message: blockError.message }, 503);
+  if (blocked) {
+    return json(
+      {
+        error: "Indicator protected by verified import",
+        message: `Äldre UKÄ-import stoppad för ${p.indicator_id}: ${blocked}. Publicera via den verifierade importvägen.`,
+      },
+      409,
+    );
+  }
 
   const { data: run, error: runError } = await db.from("data_source_runs").insert({
     source: p.source,

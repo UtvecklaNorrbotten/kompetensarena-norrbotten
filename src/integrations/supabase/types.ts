@@ -2128,7 +2128,31 @@ export type Database = {
         Args: { p_batch_id: string; p_reason?: string }
         Returns: Json
       }
+      uka_education_catalog: {
+        Args: { p_indicator_ids: string[]; p_university: string }
+        Returns: Json
+      }
+      uka_education_slice: {
+        Args: {
+          p_breakdown: string
+          p_indicator_id: string
+          p_limit: number
+          p_offset: number
+          p_selection: Json
+          p_university: string
+        }
+        Returns: {
+          category: string
+          gender: string
+          period: string
+          value: number
+        }[]
+      }
       uka_finalize_batch: { Args: { p_batch_id: string }; Returns: Json }
+      uka_legacy_publication_block: {
+        Args: { p_indicator_id: string }
+        Returns: string
+      }
       uka_start_batch: {
         Args: {
           p_expected_chunks: number

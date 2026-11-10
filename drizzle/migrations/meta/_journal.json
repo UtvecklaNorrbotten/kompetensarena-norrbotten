@@ -309,6 +309,20 @@
       "when": 1794297174034,
       "tag": "0043_uka_99_verified_import",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1794301670849,
+      "tag": "0044_uka_legacy_publication_guard",
+      "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1794301786426,
+      "tag": "0045_uka_education_bounded_reads",
+      "breakpoints": true
     }
   ]
 }
