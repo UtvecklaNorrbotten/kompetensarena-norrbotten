@@ -176,7 +176,7 @@ def build_manifest(rows: list[dict], periods: list[str], archive_sha: str,
     coverage = [{"period": p, "gender": g, "age": a, "rows": counts[(p, g, a)]}
                 for p in sorted(periods) for g in GENDERS for a in AGES if counts[(p, g, a)]]
     manifest = {
-        "indicator": INDICATOR, "version": "1", "policy": POLICY, "archive_sha256": archive_sha,
+        "indicator": INDICATOR, "version": 1, "policy": POLICY, "archive_sha256": archive_sha,
         "snapshot": snapshot, "rows": len(rows), "periods": periods,
         "universities": universities, "genders": GENDERS,
         "dimensions": [json.loads(d) for d in dims], "coverage": coverage, "chunks": chunks,
