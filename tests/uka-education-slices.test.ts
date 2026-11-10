@@ -76,7 +76,16 @@ assert.equal(serverSlice(ukaTarget(entry, cases[0]!)).length, 9);
 assert.equal(ukaTarget(entry, cases[0]!, true).breakdown, "amnesomrade");
 // Saknade värden förblir null och källans nollor förblir 0.
 const sf = selectUkaRows(serverSlice(ukaTarget(entry, cases[3]!, true)), cases[3]!, true, entry);
-assert.equal(sf.breakdown, "amnesomrade|studieform");
+assert.equal(sf.breakdown, "studieform");
+const campusOnly = selectUkaRows(
+  serverSlice(ukaTarget(entry, { ...cases[0]!, dimensions: { studieform: "Campus" } }, true)),
+  { ...cases[0]!, dimensions: { studieform: "Campus" } },
+  true,
+  entry,
+);
+assert.equal(campusOnly.rows.find((r) => r.gender === "Kvinnor")?.value, 0);
+assert.equal(campusOnly.rows.find((r) => r.gender === "Män")?.value, null);
+assert.equal(campusOnly.rows.length, 2);
 const campus = selectUkaRows(
   serverSlice(ukaTarget(entry, { ...cases[0]!, dimensions: {} }, true)),
   cases[0]!,
