@@ -1,0 +1,71 @@
+name: 11 · Data · Skolverket – skolresultat
+
+run-name: >-
+  Skolverket ETL –
+  ${{ github.event_name == 'schedule' && 'schemalagd' || github.event_name == 'push' && 'importändring' || 'manuell' }}
+
+on:
+  push:
+    branches: [main, test-skolverket-data]
+    paths:
+      - "R/etl/skolverket_sync.R"
+      - "R/etl/skolverket_values.R"
+      - "tests/skolverket-values.R"
+      - ".github/workflows/etl-skolverket.yml"
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: "Hämta och validera utan publicering"
+        required: false
+        type: boolean
+        default: true
+  schedule:
+    - cron: "20 5 1 * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: etl-skolverket
+  cancel-in-progress: false
+
+jobs:
+  skolverket:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checka ut repo
+        uses: actions/checkout@v5
+
+      - name: Installera R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Installera beroenden
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::dplyr
+            any::httr2
+            any::jsonlite
+            any::purrr
+            any::readr
+            any::stringr
+            any::tidyr
+            any::tibble
+          install-pandoc: false
+          install-quarto: false
+
+      - name: Testa parser och värden
+        shell: Rscript {0}
+        run: source("tests/skolverket-values.R")
+
+      - name: Hämta och validera Skolverket
+        env:
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+          ETL_TEST_MODE: ${{ github.ref_name == 'test-skolverket-data' && 'true' || github.event_name == 'workflow_dispatch' && inputs.test_mode || 'false' }}
+        shell: Rscript {0}
+        run: source("R/etl/skolverket_sync.R")
