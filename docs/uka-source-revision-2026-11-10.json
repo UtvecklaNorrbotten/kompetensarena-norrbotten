@@ -1,0 +1,960 @@
+{
+  "checks": [
+    {
+      "indicator": 13,
+      "period": "HT2026",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=HT2026",
+      "previous_sha256": "b2921b2004f34180cd1f38ccd7b59bd1973a03192194e95af2028fe3323ae8a5",
+      "checked_at": "2026-11-10T17:01:31.033841+00:00",
+      "current_sha256": "b2921b2004f34180cd1f38ccd7b59bd1973a03192194e95af2028fe3323ae8a5",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "VT2026",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=VT2026",
+      "previous_sha256": "8fb7a5bfcf0d2d46a6aa1b55f57707258f6798c2829888a2e556b7a922650e15",
+      "checked_at": "2026-11-10T17:01:31.034590+00:00",
+      "current_sha256": "8fb7a5bfcf0d2d46a6aa1b55f57707258f6798c2829888a2e556b7a922650e15",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "HT2025",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=HT2025",
+      "previous_sha256": "205e2c6a1ef4ba41ae5e0e8904f1616b551ec9bd12f3d27f04bbc0e9697ed921",
+      "checked_at": "2026-11-10T17:01:39.354389+00:00",
+      "current_sha256": "205e2c6a1ef4ba41ae5e0e8904f1616b551ec9bd12f3d27f04bbc0e9697ed921",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "VT2025",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=VT2025",
+      "previous_sha256": "e34aa2d5ca78d3e0d0c36a44166adb41446cd93fa48210fe9570310adb3745cb",
+      "checked_at": "2026-11-10T17:01:39.362323+00:00",
+      "current_sha256": "e34aa2d5ca78d3e0d0c36a44166adb41446cd93fa48210fe9570310adb3745cb",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "HT2024",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=HT2024",
+      "previous_sha256": "89fae95a673b43309ffaf5be8606dbf98a97e6a1a74e16f3801de419e504b499",
+      "checked_at": "2026-11-10T17:01:45.561022+00:00",
+      "current_sha256": "89fae95a673b43309ffaf5be8606dbf98a97e6a1a74e16f3801de419e504b499",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "VT2024",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=VT2024",
+      "previous_sha256": "9ab76e73a6583b8b9fea9277216b05477e6dc9b16a1e39b72bab60146bbbbe43",
+      "checked_at": "2026-11-10T17:01:45.572037+00:00",
+      "current_sha256": "9ab76e73a6583b8b9fea9277216b05477e6dc9b16a1e39b72bab60146bbbbe43",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "HT2023",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=HT2023",
+      "previous_sha256": "44da3d08ad136e5df00a089dc0b6adb6e9292c51da5175c1d6a5ddb7cca664c7",
+      "checked_at": "2026-11-10T17:01:51.790624+00:00",
+      "current_sha256": "44da3d08ad136e5df00a089dc0b6adb6e9292c51da5175c1d6a5ddb7cca664c7",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "VT2023",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=VT2023",
+      "previous_sha256": "d0babbc2234651f8b550497819aca18a89aefd29e772ad8332501c11c357703a",
+      "checked_at": "2026-11-10T17:01:51.814105+00:00",
+      "current_sha256": "d0babbc2234651f8b550497819aca18a89aefd29e772ad8332501c11c357703a",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "HT2022",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=HT2022",
+      "previous_sha256": "c8413dfe989e5da2318e55bc1d7b8db7c23d1e2644cca88c88422c5e249a5b6d",
+      "checked_at": "2026-11-10T17:01:58.004903+00:00",
+      "current_sha256": "c8413dfe989e5da2318e55bc1d7b8db7c23d1e2644cca88c88422c5e249a5b6d",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "VT2022",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=VT2022",
+      "previous_sha256": "9e5e71462a8818feb3b4466729556336343868a4e9f9dfc5c835aa12f08c276c",
+      "checked_at": "2026-11-10T17:01:58.042724+00:00",
+      "current_sha256": "9e5e71462a8818feb3b4466729556336343868a4e9f9dfc5c835aa12f08c276c",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "HT2021",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=HT2021",
+      "previous_sha256": "55fe4825a8c7d9cd03033e8fcbed3554c3fcfd70a2b2d95616731bf1885ca4f9",
+      "checked_at": "2026-11-10T17:02:04.369894+00:00",
+      "current_sha256": "55fe4825a8c7d9cd03033e8fcbed3554c3fcfd70a2b2d95616731bf1885ca4f9",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "VT2021",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=VT2021",
+      "previous_sha256": "a79fb9b8cd31a34d56817acc7330dc489ff9f74c9e370b28d6ab27ac607bb095",
+      "checked_at": "2026-11-10T17:02:04.373563+00:00",
+      "current_sha256": "a79fb9b8cd31a34d56817acc7330dc489ff9f74c9e370b28d6ab27ac607bb095",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "HT2020",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=HT2020",
+      "previous_sha256": "2aa90cda4baec30f103267155098b48f2521af677b2216970ea7cdce0a3d3e63",
+      "checked_at": "2026-11-10T17:02:10.652690+00:00",
+      "current_sha256": "2aa90cda4baec30f103267155098b48f2521af677b2216970ea7cdce0a3d3e63",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "VT2020",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=VT2020",
+      "previous_sha256": "7121fdae270bb505c29c3130425816efb27bf781152a82cca5b15d2d8b702a88",
+      "checked_at": "2026-11-10T17:02:10.684776+00:00",
+      "current_sha256": "7121fdae270bb505c29c3130425816efb27bf781152a82cca5b15d2d8b702a88",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "HT2019",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=HT2019",
+      "previous_sha256": "f82b07288b43c3b50a51ed48b9e4c8e4038da0202e936f7ca14c0820b4060bfc",
+      "checked_at": "2026-11-10T17:02:16.893901+00:00",
+      "current_sha256": "f82b07288b43c3b50a51ed48b9e4c8e4038da0202e936f7ca14c0820b4060bfc",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "VT2019",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=VT2019",
+      "previous_sha256": "fd239274d277496ae7b5147d86327532b6e769123988f0891f592d9f461a4cf1",
+      "checked_at": "2026-11-10T17:02:16.901623+00:00",
+      "current_sha256": "fd239274d277496ae7b5147d86327532b6e769123988f0891f592d9f461a4cf1",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "HT2018",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=HT2018",
+      "previous_sha256": "9cc9628c4379826fcc7462332c160f7d4fb7743002cdf45a5b928b253fa32915",
+      "checked_at": "2026-11-10T17:02:23.159577+00:00",
+      "current_sha256": "9cc9628c4379826fcc7462332c160f7d4fb7743002cdf45a5b928b253fa32915",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "VT2018",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=VT2018",
+      "previous_sha256": "ee8e348f39c9d63cf6104efe679c872270fb50ddedd554c79cca90497c65559f",
+      "checked_at": "2026-11-10T17:02:23.169930+00:00",
+      "current_sha256": "ee8e348f39c9d63cf6104efe679c872270fb50ddedd554c79cca90497c65559f",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "HT2017",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=HT2017",
+      "previous_sha256": "418e5ff08de856e9aa11fe49f45776990c19278565e69e96dac2612c4653b96e",
+      "checked_at": "2026-11-10T17:02:29.325772+00:00",
+      "current_sha256": "418e5ff08de856e9aa11fe49f45776990c19278565e69e96dac2612c4653b96e",
+      "exact": true
+    },
+    {
+      "indicator": 13,
+      "period": "VT2017",
+      "url": "https://statistik-api.uka.se/api/totals/13?university=1&year=VT2017",
+      "previous_sha256": "9153b5acf5da36b6d8f3df90edc7cea639922fa427f1a1a288529ef1b272c1cf",
+      "checked_at": "2026-11-10T17:02:29.332584+00:00",
+      "current_sha256": "9153b5acf5da36b6d8f3df90edc7cea639922fa427f1a1a288529ef1b272c1cf",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "VT2026",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=VT2026",
+      "previous_sha256": "2d834ef42154dd021a5243fce2a88c74f77c2393dd0a1268be160bd3304c697d",
+      "checked_at": "2026-11-10T17:02:35.529371+00:00",
+      "current_sha256": "2d834ef42154dd021a5243fce2a88c74f77c2393dd0a1268be160bd3304c697d",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "HT2025",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=HT2025",
+      "previous_sha256": "3b960ea02087977be6f89c72eb139dea59859105e980065fa33934fc1e42f733",
+      "checked_at": "2026-11-10T17:02:35.552944+00:00",
+      "current_sha256": "3b960ea02087977be6f89c72eb139dea59859105e980065fa33934fc1e42f733",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "VT2025",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=VT2025",
+      "previous_sha256": "7da93b82e4be98627057ba0c3b10bfe90801d055d4eafce196c028f88b56148f",
+      "checked_at": "2026-11-10T17:02:43.381632+00:00",
+      "current_sha256": "7da93b82e4be98627057ba0c3b10bfe90801d055d4eafce196c028f88b56148f",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "HT2024",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=HT2024",
+      "previous_sha256": "3183d7a624b2a74cbec2cd1b0b5a6870104990735f6b7aeb0966ace639087cdb",
+      "checked_at": "2026-11-10T17:02:43.398062+00:00",
+      "current_sha256": "3183d7a624b2a74cbec2cd1b0b5a6870104990735f6b7aeb0966ace639087cdb",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "VT2024",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=VT2024",
+      "previous_sha256": "ed0a3ea0ee0e6278057fcae6bf0967e55f29b739d5a9f25351f3180883e9c737",
+      "checked_at": "2026-11-10T17:02:49.600870+00:00",
+      "current_sha256": "ed0a3ea0ee0e6278057fcae6bf0967e55f29b739d5a9f25351f3180883e9c737",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "HT2023",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=HT2023",
+      "previous_sha256": "d6643546d83a6b21940bebb435d3bc2f8000c23d440a77d5676990872675d0b6",
+      "checked_at": "2026-11-10T17:02:49.625417+00:00",
+      "current_sha256": "d6643546d83a6b21940bebb435d3bc2f8000c23d440a77d5676990872675d0b6",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "VT2023",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=VT2023",
+      "previous_sha256": "fa4551e1a2e4638d70169361dafde505434d18092cf1517c0384828fe206a21a",
+      "checked_at": "2026-11-10T17:02:55.914764+00:00",
+      "current_sha256": "fa4551e1a2e4638d70169361dafde505434d18092cf1517c0384828fe206a21a",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "HT2022",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=HT2022",
+      "previous_sha256": "6ef7fa173e105d239d6f66ed36a42ba0ccc2e23cedda3dd01b52809b802a79d7",
+      "checked_at": "2026-11-10T17:02:55.927595+00:00",
+      "current_sha256": "6ef7fa173e105d239d6f66ed36a42ba0ccc2e23cedda3dd01b52809b802a79d7",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "VT2022",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=VT2022",
+      "previous_sha256": "bcc2aa9f67872385be97fcaf185b659451b847a06512f753183d4e6ff20d85bb",
+      "checked_at": "2026-11-10T17:02:59.464781+00:00",
+      "current_sha256": "bcc2aa9f67872385be97fcaf185b659451b847a06512f753183d4e6ff20d85bb",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "HT2021",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=HT2021",
+      "previous_sha256": "225815e16136be814d9f72fdc40fcadc29829845ef6747d0d3f5f87d21a3eb7c",
+      "checked_at": "2026-11-10T17:02:59.501977+00:00",
+      "current_sha256": "225815e16136be814d9f72fdc40fcadc29829845ef6747d0d3f5f87d21a3eb7c",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "VT2021",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=VT2021",
+      "previous_sha256": "3fb56ee7c8c4b1aea0af8d0a1b8bd42dc07d67d7a49ac043dc631971ce8fc61b",
+      "checked_at": "2026-11-10T17:03:03.523614+00:00",
+      "current_sha256": "3fb56ee7c8c4b1aea0af8d0a1b8bd42dc07d67d7a49ac043dc631971ce8fc61b",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "HT2020",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=HT2020",
+      "previous_sha256": "37dc16b8e12ad10a2b24eaffa3bf78482612827e989888b340be6e1c1d102886",
+      "checked_at": "2026-11-10T17:03:03.545318+00:00",
+      "current_sha256": "37dc16b8e12ad10a2b24eaffa3bf78482612827e989888b340be6e1c1d102886",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "VT2020",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=VT2020",
+      "previous_sha256": "2f04b1e662e7b68a6cbc95dac9d48d77220517f46e16514fc17fb5e87b14cd90",
+      "checked_at": "2026-11-10T17:03:09.675807+00:00",
+      "current_sha256": "2f04b1e662e7b68a6cbc95dac9d48d77220517f46e16514fc17fb5e87b14cd90",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "HT2019",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=HT2019",
+      "previous_sha256": "31dc6afcb446144739724071bd2139dd3f8af88d6f092a9049a9c07e0bd445d2",
+      "checked_at": "2026-11-10T17:03:09.721707+00:00",
+      "current_sha256": "31dc6afcb446144739724071bd2139dd3f8af88d6f092a9049a9c07e0bd445d2",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "VT2019",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=VT2019",
+      "previous_sha256": "b92fe61ecd68693e6e81bbcf0bafe1a9173aca50555bea6ff039e7b454e62422",
+      "checked_at": "2026-11-10T17:03:15.797539+00:00",
+      "current_sha256": "b92fe61ecd68693e6e81bbcf0bafe1a9173aca50555bea6ff039e7b454e62422",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "HT2018",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=HT2018",
+      "previous_sha256": "1d711cab5f40915f9e7ea3911b37414c4341160b4f0baec662147ed3f840f4a1",
+      "checked_at": "2026-11-10T17:03:15.837968+00:00",
+      "current_sha256": "1d711cab5f40915f9e7ea3911b37414c4341160b4f0baec662147ed3f840f4a1",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "VT2018",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=VT2018",
+      "previous_sha256": "5c91456b9b21649bd12ef2b778a40cf3104e172027b98fbd3cb1c9a156cd53a6",
+      "checked_at": "2026-11-10T17:03:22.175763+00:00",
+      "current_sha256": "5c91456b9b21649bd12ef2b778a40cf3104e172027b98fbd3cb1c9a156cd53a6",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "HT2017",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=HT2017",
+      "previous_sha256": "e3b71376cef7053ef3e11b26e3d4ef97e751be5283db6ac605559c07b0917390",
+      "checked_at": "2026-11-10T17:03:22.178949+00:00",
+      "current_sha256": "e3b71376cef7053ef3e11b26e3d4ef97e751be5283db6ac605559c07b0917390",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "VT2017",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=VT2017",
+      "previous_sha256": "27bf20cffeb0455e59ced9f20b9e76d5fd27bc02ca6eb3ee7886e737a73d38fd",
+      "checked_at": "2026-11-10T17:03:28.378106+00:00",
+      "current_sha256": "27bf20cffeb0455e59ced9f20b9e76d5fd27bc02ca6eb3ee7886e737a73d38fd",
+      "exact": true
+    },
+    {
+      "indicator": 31,
+      "period": "HT2016",
+      "url": "https://statistik-api.uka.se/api/totals/31?university=1&year=HT2016",
+      "previous_sha256": "f59409ac63b9482004f5cdcc114819d608a2408c5756bb6f264215b8e6df0686",
+      "checked_at": "2026-11-10T17:03:28.412379+00:00",
+      "current_sha256": "f59409ac63b9482004f5cdcc114819d608a2408c5756bb6f264215b8e6df0686",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "HT2026",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=HT2026",
+      "previous_sha256": "5b90f0e9760fa933cf228f9828c3847aba9ff33c787268d807170bdb9bd60061",
+      "checked_at": "2026-11-10T17:03:34.826413+00:00",
+      "current_sha256": "5b90f0e9760fa933cf228f9828c3847aba9ff33c787268d807170bdb9bd60061",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "VT2026",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=VT2026",
+      "previous_sha256": "c434d0d87b66bdc0434befc5bca8ed60c1caa74a57839ba2731e39b04bebb52c",
+      "checked_at": "2026-11-10T17:03:34.832080+00:00",
+      "current_sha256": "c434d0d87b66bdc0434befc5bca8ed60c1caa74a57839ba2731e39b04bebb52c",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "HT2025",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=HT2025",
+      "previous_sha256": "f245b0229a9debf95184a0fdeb78ceb1c9edf81e8eba8a20c702caf6db659e8f",
+      "checked_at": "2026-11-10T17:03:41.650717+00:00",
+      "current_sha256": "f245b0229a9debf95184a0fdeb78ceb1c9edf81e8eba8a20c702caf6db659e8f",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "VT2025",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=VT2025",
+      "previous_sha256": "73a2adff796de96eb3621da6397955ccec6bdd3f7b629be73f31744202441cb6",
+      "checked_at": "2026-11-10T17:03:41.676913+00:00",
+      "current_sha256": "73a2adff796de96eb3621da6397955ccec6bdd3f7b629be73f31744202441cb6",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "HT2024",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=HT2024",
+      "previous_sha256": "654180557f8ca64fac52e79cae5e7edcb926f74b625ec0447e35b894add320b9",
+      "checked_at": "2026-11-10T17:03:47.893806+00:00",
+      "current_sha256": "654180557f8ca64fac52e79cae5e7edcb926f74b625ec0447e35b894add320b9",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "VT2024",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=VT2024",
+      "previous_sha256": "211e14d75cad6b614b1700d7b7a22beb9badf51c04aa3311998851df3f6b212b",
+      "checked_at": "2026-11-10T17:03:47.899163+00:00",
+      "current_sha256": "211e14d75cad6b614b1700d7b7a22beb9badf51c04aa3311998851df3f6b212b",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "HT2023",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=HT2023",
+      "previous_sha256": "50fdc903840645b1b6524b692aae6351fc8d48b8318f1a814753c2fedb6718eb",
+      "checked_at": "2026-11-10T17:03:54.176631+00:00",
+      "current_sha256": "50fdc903840645b1b6524b692aae6351fc8d48b8318f1a814753c2fedb6718eb",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "VT2023",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=VT2023",
+      "previous_sha256": "e64d895e541c3745696c8aaf0de7c6bb8d526e961f6b7274d3eb1c670d935387",
+      "checked_at": "2026-11-10T17:03:54.194186+00:00",
+      "current_sha256": "e64d895e541c3745696c8aaf0de7c6bb8d526e961f6b7274d3eb1c670d935387",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "HT2022",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=HT2022",
+      "previous_sha256": "762485f022d444ddb451ed0dfeb2adee4ff31c0ccf1d60302d7ea89cb1622565",
+      "checked_at": "2026-11-10T17:04:00.530848+00:00",
+      "current_sha256": "762485f022d444ddb451ed0dfeb2adee4ff31c0ccf1d60302d7ea89cb1622565",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "VT2022",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=VT2022",
+      "previous_sha256": "3b8ff9f0ad2ea049d86d707a82fd83e1c87718c968379fec2325085fd1eb03a7",
+      "checked_at": "2026-11-10T17:04:00.605426+00:00",
+      "current_sha256": "3b8ff9f0ad2ea049d86d707a82fd83e1c87718c968379fec2325085fd1eb03a7",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "HT2021",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=HT2021",
+      "previous_sha256": "ca607073b24f4066920f1875ed7da58542722ce952f8c053cc09ce4522697576",
+      "checked_at": "2026-11-10T17:04:06.961585+00:00",
+      "current_sha256": "ca607073b24f4066920f1875ed7da58542722ce952f8c053cc09ce4522697576",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "VT2021",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=VT2021",
+      "previous_sha256": "1a92ce5ff4f097c7bbd6050b702bf7b62c24e4aecbfe4cdc41e42f85355e991d",
+      "checked_at": "2026-11-10T17:04:06.970463+00:00",
+      "current_sha256": "1a92ce5ff4f097c7bbd6050b702bf7b62c24e4aecbfe4cdc41e42f85355e991d",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "HT2020",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=HT2020",
+      "previous_sha256": "749cc82901b5c95fde24bb6ae6c17846b2b45bf8496ce09eb9b3c4ff3b1158db",
+      "checked_at": "2026-11-10T17:04:13.079193+00:00",
+      "current_sha256": "749cc82901b5c95fde24bb6ae6c17846b2b45bf8496ce09eb9b3c4ff3b1158db",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "VT2020",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=VT2020",
+      "previous_sha256": "2d6a2cf8433bc87e67ca6d1ee365ba734373f9da0738279e16df7da29bdc3d9d",
+      "checked_at": "2026-11-10T17:04:13.149401+00:00",
+      "current_sha256": "2d6a2cf8433bc87e67ca6d1ee365ba734373f9da0738279e16df7da29bdc3d9d",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "HT2019",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=HT2019",
+      "previous_sha256": "e45d7ad18d18c34d8f1f9f7e0d3ea7c2966749a60688f0523a33cf10a10263fa",
+      "checked_at": "2026-11-10T17:04:19.332728+00:00",
+      "current_sha256": "e45d7ad18d18c34d8f1f9f7e0d3ea7c2966749a60688f0523a33cf10a10263fa",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "VT2019",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=VT2019",
+      "previous_sha256": "95e4c656d9d8b3b148245e67a7fcd79081d83f63bc0a49bdf1b4362245447bc0",
+      "checked_at": "2026-11-10T17:04:19.353183+00:00",
+      "current_sha256": "95e4c656d9d8b3b148245e67a7fcd79081d83f63bc0a49bdf1b4362245447bc0",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "HT2018",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=HT2018",
+      "previous_sha256": "3a743f80d92a6f5f5fced7776a3f7159723fa9eee584a88678f631ca552753ea",
+      "checked_at": "2026-11-10T17:04:25.438092+00:00",
+      "current_sha256": "3a743f80d92a6f5f5fced7776a3f7159723fa9eee584a88678f631ca552753ea",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "VT2018",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=VT2018",
+      "previous_sha256": "79d8411157d1de24893172385eaed84e3a39edbe99ae817b6745850d0c5329ca",
+      "checked_at": "2026-11-10T17:04:25.583190+00:00",
+      "current_sha256": "79d8411157d1de24893172385eaed84e3a39edbe99ae817b6745850d0c5329ca",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "HT2017",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=HT2017",
+      "previous_sha256": "9fda60e521173326abf480b8f2c7a1c8b8dabeabddda415f08e483deb0366ce1",
+      "checked_at": "2026-11-10T17:04:31.604785+00:00",
+      "current_sha256": "9fda60e521173326abf480b8f2c7a1c8b8dabeabddda415f08e483deb0366ce1",
+      "exact": true
+    },
+    {
+      "indicator": 97,
+      "period": "VT2017",
+      "url": "https://statistik-api.uka.se/api/totals/97?university=1&year=VT2017",
+      "previous_sha256": "bb9cdf1bb0e9a2ac501ee90fa751e8639d66ea2e421989f06aa9fdccd4bdfe25",
+      "checked_at": "2026-11-10T17:04:31.685653+00:00",
+      "current_sha256": "bb9cdf1bb0e9a2ac501ee90fa751e8639d66ea2e421989f06aa9fdccd4bdfe25",
+      "exact": true
+    },
+    {
+      "indicator": 108,
+      "period": "2024/25",
+      "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2024%2F25",
+      "previous_sha256": "e37a6f39bfcaf1fee7110deae533ef41a752b2b7614c7b2774c5fe994bb73097",
+      "checked_at": "2026-11-10T17:04:37.854003+00:00",
+      "current_sha256": "e37a6f39bfcaf1fee7110deae533ef41a752b2b7614c7b2774c5fe994bb73097",
+      "exact": true
+    },
+    {
+      "indicator": 108,
+      "period": "2023/24",
+      "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2023%2F24",
+      "previous_sha256": "45145f98ca5bc1e01e17165371aa1c671e63a09e035c0400d394eeac30f4ff1a",
+      "checked_at": "2026-11-10T17:04:37.946040+00:00",
+      "current_sha256": "45145f98ca5bc1e01e17165371aa1c671e63a09e035c0400d394eeac30f4ff1a",
+      "exact": true
+    },
+    {
+      "indicator": 108,
+      "period": "2022/23",
+      "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2022%2F23",
+      "previous_sha256": "638dd052efc7a48cb5228dc43f117cc0f2bc3018a6b6252677b42fe531af450e",
+      "checked_at": "2026-11-10T17:04:46.318553+00:00",
+      "current_sha256": "638dd052efc7a48cb5228dc43f117cc0f2bc3018a6b6252677b42fe531af450e",
+      "exact": true
+    },
+    {
+      "indicator": 108,
+      "period": "2021/22",
+      "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2021%2F22",
+      "previous_sha256": "f9bb692ea5de9e9984ab176e4d0600cfc99d79336f6536f0df8f92256cedacc3",
+      "checked_at": "2026-11-10T17:04:46.323001+00:00",
+      "current_sha256": "f9bb692ea5de9e9984ab176e4d0600cfc99d79336f6536f0df8f92256cedacc3",
+      "exact": true
+    },
+    {
+      "indicator": 108,
+      "period": "2020/21",
+      "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2020%2F21",
+      "previous_sha256": "7b39555365d78d58faf469386169dda818420174bcd09a97983a074eb8d3ee42",
+      "checked_at": "2026-11-10T17:04:52.482548+00:00",
+      "current_sha256": "7b39555365d78d58faf469386169dda818420174bcd09a97983a074eb8d3ee42",
+      "exact": true
+    },
+    {
+      "indicator": 108,
+      "period": "2019/20",
+      "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2019%2F20",
+      "previous_sha256": "f6cc69256e05108a7103576c9e94af2222b9bbd6a5d807eacd3cde99797fc730",
+      "checked_at": "2026-11-10T17:04:52.576190+00:00",
+      "current_sha256": "f6cc69256e05108a7103576c9e94af2222b9bbd6a5d807eacd3cde99797fc730",
+      "exact": true
+    },
+    {
+      "indicator": 108,
+      "period": "2018/19",
+      "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2018%2F19",
+      "previous_sha256": "c9aa0d7d0d0578d154290be3a2053a7c8c1daa7cfec81960bd762d66cfe93501",
+      "checked_at": "2026-11-10T17:04:58.977064+00:00",
+      "current_sha256": "c9aa0d7d0d0578d154290be3a2053a7c8c1daa7cfec81960bd762d66cfe93501",
+      "exact": true
+    },
+    {
+      "indicator": 108,
+      "period": "2017/18",
+      "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2017%2F18",
+      "previous_sha256": "aaa068a86224d3bca827bb1741e905eeb5cbb90e01f47d5df1c71b16a8567984",
+      "checked_at": "2026-11-10T17:04:58.988365+00:00",
+      "current_sha256": "aaa068a86224d3bca827bb1741e905eeb5cbb90e01f47d5df1c71b16a8567984",
+      "exact": true
+    },
+    {
+      "indicator": 108,
+      "period": "2016/17",
+      "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2016%2F17",
+      "previous_sha256": "ba23dd6d6b4ea69ebfbe60257981faefef6e8795ea3678d4c41c99be6f3f2c27",
+      "checked_at": "2026-11-10T17:05:05.395509+00:00",
+      "current_sha256": "ba23dd6d6b4ea69ebfbe60257981faefef6e8795ea3678d4c41c99be6f3f2c27",
+      "exact": true
+    },
+    {
+      "indicator": 108,
+      "period": "2015/16",
+      "url": "https://statistik-api.uka.se/api/totals/108?university=1&year=2015%2F16",
+      "previous_sha256": "cf95522565651501f3e761293f7933b90105a4d12bd9ec585f439433af4b4e9d",
+      "checked_at": "2026-11-10T17:05:05.400648+00:00",
+      "current_sha256": "cf95522565651501f3e761293f7933b90105a4d12bd9ec585f439433af4b4e9d",
+      "exact": true
+    },
+    {
+      "indicator": 136,
+      "period": "2024",
+      "url": "https://statistik-api.uka.se/api/totals/136?university=1&year=2024",
+      "previous_sha256": "6b261c0f49f71655c85a3e4610a3a6136b2784f69b38512e65585da041467374",
+      "checked_at": "2026-11-10T17:05:11.274307+00:00",
+      "current_sha256": "6b261c0f49f71655c85a3e4610a3a6136b2784f69b38512e65585da041467374",
+      "exact": true
+    },
+    {
+      "indicator": 136,
+      "period": "2023",
+      "url": "https://statistik-api.uka.se/api/totals/136?university=1&year=2023",
+      "previous_sha256": "94d4639f444c8576d80ca289d9bdd83961e95ad90cf5f4d0ab3a1bc4ecbb4347",
+      "checked_at": "2026-11-10T17:05:11.285006+00:00",
+      "current_sha256": "94d4639f444c8576d80ca289d9bdd83961e95ad90cf5f4d0ab3a1bc4ecbb4347",
+      "exact": true
+    },
+    {
+      "indicator": 136,
+      "period": "2022",
+      "url": "https://statistik-api.uka.se/api/totals/136?university=1&year=2022",
+      "previous_sha256": "fbe89a9933b96b53903dd42e5f80a0386290d5e4346d6ed34eca446f0b7a0d2a",
+      "checked_at": "2026-11-10T17:05:17.526682+00:00",
+      "current_sha256": "fbe89a9933b96b53903dd42e5f80a0386290d5e4346d6ed34eca446f0b7a0d2a",
+      "exact": true
+    },
+    {
+      "indicator": 136,
+      "period": "2021",
+      "url": "https://statistik-api.uka.se/api/totals/136?university=1&year=2021",
+      "previous_sha256": "ef6083ad40f41ebfe2f7d945bb1ef19488f95247b512e5bcd213ca961333acd0",
+      "checked_at": "2026-11-10T17:05:17.536745+00:00",
+      "current_sha256": "ef6083ad40f41ebfe2f7d945bb1ef19488f95247b512e5bcd213ca961333acd0",
+      "exact": true
+    },
+    {
+      "indicator": 136,
+      "period": "2020",
+      "url": "https://statistik-api.uka.se/api/totals/136?university=1&year=2020",
+      "previous_sha256": "80bae7d5ddc0c629f48131780a5ce819d5d7554a3e0e69b89fbf351532d514ed",
+      "checked_at": "2026-11-10T17:05:23.943694+00:00",
+      "current_sha256": "80bae7d5ddc0c629f48131780a5ce819d5d7554a3e0e69b89fbf351532d514ed",
+      "exact": true
+    },
+    {
+      "indicator": 77,
+      "period": "2024/25",
+      "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2024%2F25",
+      "previous_sha256": "a732f98ba1618e6784d1cdcd2a796d7d62af50103f4caf35df3350b3ade5adf5",
+      "checked_at": "2026-11-10T17:05:23.980993+00:00",
+      "current_sha256": "a732f98ba1618e6784d1cdcd2a796d7d62af50103f4caf35df3350b3ade5adf5",
+      "exact": true
+    },
+    {
+      "indicator": 77,
+      "period": "2023/24",
+      "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2023%2F24",
+      "previous_sha256": "4886b0167471ac9e4f36be0515fffa71d2ead739664ca1eeb3d43e1fbf26a87a",
+      "checked_at": "2026-11-10T17:05:31.078014+00:00",
+      "current_sha256": "4886b0167471ac9e4f36be0515fffa71d2ead739664ca1eeb3d43e1fbf26a87a",
+      "exact": true
+    },
+    {
+      "indicator": 77,
+      "period": "2022/23",
+      "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2022%2F23",
+      "previous_sha256": "244e9c66a8de6f83aa433caf22ef96f638bc1b513356403af0bedfcd7091f229",
+      "checked_at": "2026-11-10T17:05:32.367372+00:00",
+      "current_sha256": "244e9c66a8de6f83aa433caf22ef96f638bc1b513356403af0bedfcd7091f229",
+      "exact": true
+    },
+    {
+      "indicator": 77,
+      "period": "2021/22",
+      "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2021%2F22",
+      "previous_sha256": "49113a3fb8b7d1ff20a4f9ea7db82a258e74b20ec374fb11cfbb6a1b3d116024",
+      "checked_at": "2026-11-10T17:05:37.236924+00:00",
+      "current_sha256": "49113a3fb8b7d1ff20a4f9ea7db82a258e74b20ec374fb11cfbb6a1b3d116024",
+      "exact": true
+    },
+    {
+      "indicator": 77,
+      "period": "2020/21",
+      "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2020%2F21",
+      "previous_sha256": "7da76eb4a0d3fe831a306840f9f00a29133e59e0fec8ebffa81276255e675bca",
+      "checked_at": "2026-11-10T17:05:37.254019+00:00",
+      "current_sha256": "7da76eb4a0d3fe831a306840f9f00a29133e59e0fec8ebffa81276255e675bca",
+      "exact": true
+    },
+    {
+      "indicator": 77,
+      "period": "2019/20",
+      "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2019%2F20",
+      "previous_sha256": "a84a70e1c38c2c3e56e291ad073341fa3ecb5ee086674a28e8ed4183024f4280",
+      "checked_at": "2026-11-10T17:05:43.550340+00:00",
+      "current_sha256": "a84a70e1c38c2c3e56e291ad073341fa3ecb5ee086674a28e8ed4183024f4280",
+      "exact": true
+    },
+    {
+      "indicator": 77,
+      "period": "2018/19",
+      "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2018%2F19",
+      "previous_sha256": "a52f8dfa827a9ea7f83b30af0f766d56463ba12c37d6aa940b551ac0e0455d03",
+      "checked_at": "2026-11-10T17:05:43.667040+00:00",
+      "current_sha256": "a52f8dfa827a9ea7f83b30af0f766d56463ba12c37d6aa940b551ac0e0455d03",
+      "exact": true
+    },
+    {
+      "indicator": 77,
+      "period": "2017/18",
+      "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2017%2F18",
+      "previous_sha256": "91ac1e210b1737dae00c995bda3489c99b31cf5be4529c2058b83bc59600c9fc",
+      "checked_at": "2026-11-10T17:05:49.732943+00:00",
+      "current_sha256": "91ac1e210b1737dae00c995bda3489c99b31cf5be4529c2058b83bc59600c9fc",
+      "exact": true
+    },
+    {
+      "indicator": 77,
+      "period": "2016/17",
+      "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2016%2F17",
+      "previous_sha256": "e2164ad81e5c6af3b012bb94406a6195e9e065a1ccea86bef2224e1146b0414d",
+      "checked_at": "2026-11-10T17:05:49.753146+00:00",
+      "current_sha256": "e2164ad81e5c6af3b012bb94406a6195e9e065a1ccea86bef2224e1146b0414d",
+      "exact": true
+    },
+    {
+      "indicator": 77,
+      "period": "2015/16",
+      "url": "https://statistik-api.uka.se/api/totals/77?university=1&year=2015%2F16",
+      "previous_sha256": "d611f866b0f10dd89b7dcb0e09cc63a018c1b07f3b212bcb3e2b9f450d608b09",
+      "checked_at": "2026-11-10T17:05:55.837261+00:00",
+      "current_sha256": "d611f866b0f10dd89b7dcb0e09cc63a018c1b07f3b212bcb3e2b9f450d608b09",
+      "exact": true
+    },
+    {
+      "indicator": 134,
+      "period": "2023/24",
+      "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2023%2F24",
+      "previous_sha256": "4afe763a2669eaa3744cfde422f86c2d0702dcfa17806c6506161209173b7ebb",
+      "checked_at": "2026-11-10T17:05:55.849637+00:00",
+      "current_sha256": "4afe763a2669eaa3744cfde422f86c2d0702dcfa17806c6506161209173b7ebb",
+      "exact": true
+    },
+    {
+      "indicator": 134,
+      "period": "2022/23",
+      "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2022%2F23",
+      "previous_sha256": "ad3adfdfdef0e467b3ab8b0cdae313771449b32b97bf152beb6fa33bc7e5bbbd",
+      "checked_at": "2026-11-10T17:06:02.116632+00:00",
+      "current_sha256": "ad3adfdfdef0e467b3ab8b0cdae313771449b32b97bf152beb6fa33bc7e5bbbd",
+      "exact": true
+    },
+    {
+      "indicator": 134,
+      "period": "2021/22",
+      "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2021%2F22",
+      "previous_sha256": "96210d24c36b55594d81e115b5f424231def6e5af92e675dfcb8d9384a3f64db",
+      "checked_at": "2026-11-10T17:06:03.208553+00:00",
+      "current_sha256": "96210d24c36b55594d81e115b5f424231def6e5af92e675dfcb8d9384a3f64db",
+      "exact": true
+    },
+    {
+      "indicator": 134,
+      "period": "2020/21",
+      "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2020%2F21",
+      "previous_sha256": "8ac2d662278ae8dbd0db769a0131d8ee31abadc3bd0323fe0ca1226d71bd8f02",
+      "checked_at": "2026-11-10T17:06:08.306620+00:00",
+      "current_sha256": "8ac2d662278ae8dbd0db769a0131d8ee31abadc3bd0323fe0ca1226d71bd8f02",
+      "exact": true
+    },
+    {
+      "indicator": 134,
+      "period": "2019/20",
+      "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2019%2F20",
+      "previous_sha256": "ce26dbe6586cc56f6c43aacd094e994cf376134543625cbc69ab34021cccdfd3",
+      "checked_at": "2026-11-10T17:06:08.385368+00:00",
+      "current_sha256": "ce26dbe6586cc56f6c43aacd094e994cf376134543625cbc69ab34021cccdfd3",
+      "exact": true
+    },
+    {
+      "indicator": 134,
+      "period": "2018/19",
+      "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2018%2F19",
+      "previous_sha256": "cccc12e09710bfe399f7970f46cd225caedbae3bd80b860da9a80eaab53127a6",
+      "checked_at": "2026-11-10T17:06:14.568876+00:00",
+      "current_sha256": "cccc12e09710bfe399f7970f46cd225caedbae3bd80b860da9a80eaab53127a6",
+      "exact": true
+    },
+    {
+      "indicator": 134,
+      "period": "2017/18",
+      "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2017%2F18",
+      "previous_sha256": "633a96ae4a8cd08b1d950154ce111d792b1fb15359b004ce54d542a7a6790915",
+      "checked_at": "2026-11-10T17:06:14.580448+00:00",
+      "current_sha256": "633a96ae4a8cd08b1d950154ce111d792b1fb15359b004ce54d542a7a6790915",
+      "exact": true
+    },
+    {
+      "indicator": 134,
+      "period": "2016/17",
+      "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2016%2F17",
+      "previous_sha256": "109cd7bdf57328a77d0605df4578e8f2a4bf9f03d9432e3e0c9b8370ace963b7",
+      "checked_at": "2026-11-10T17:06:21.069712+00:00",
+      "current_sha256": "109cd7bdf57328a77d0605df4578e8f2a4bf9f03d9432e3e0c9b8370ace963b7",
+      "exact": true
+    },
+    {
+      "indicator": 134,
+      "period": "2015/16",
+      "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2015%2F16",
+      "previous_sha256": "2e6904cd0e442978a6231ab8ee2aba1193aebad9f331d7df7a09d7c613dc5197",
+      "checked_at": "2026-11-10T17:06:21.076528+00:00",
+      "current_sha256": "2e6904cd0e442978a6231ab8ee2aba1193aebad9f331d7df7a09d7c613dc5197",
+      "exact": true
+    },
+    {
+      "indicator": 134,
+      "period": "2014/15",
+      "url": "https://statistik-api.uka.se/api/totals/134?university=1&year=2014%2F15",
+      "previous_sha256": "261973d73a29f11e83e1860403d461b56f04da61ca7a26e002629dd22c9b957a",
+      "checked_at": "2026-11-10T17:06:27.472789+00:00",
+      "current_sha256": "261973d73a29f11e83e1860403d461b56f04da61ca7a26e002629dd22c9b957a",
+      "exact": true
+    },
+    {
+      "indicator": 135,
+      "period": "2021/22",
+      "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2021%2F22",
+      "previous_sha256": "63b7df2df2f134e1a9389e45d169cbd254646bffe6023762b337f05f96cd1693",
+      "checked_at": "2026-11-10T17:06:27.477412+00:00",
+      "current_sha256": "63b7df2df2f134e1a9389e45d169cbd254646bffe6023762b337f05f96cd1693",
+      "exact": true
+    },
+    {
+      "indicator": 135,
+      "period": "2020/21",
+      "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2020%2F21",
+      "previous_sha256": "cda85e2879d2e814687821393151f0b19ac092a1cf0010cb9a910b84864666c1",
+      "checked_at": "2026-11-10T17:06:34.467189+00:00",
+      "current_sha256": "cda85e2879d2e814687821393151f0b19ac092a1cf0010cb9a910b84864666c1",
+      "exact": true
+    },
+    {
+      "indicator": 135,
+      "period": "2019/20",
+      "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2019%2F20",
+      "previous_sha256": "9898e950fa9d55286eb5935c83f9ee5311391fbbcd2be7274aa5ffdbf8a05de1",
+      "checked_at": "2026-11-10T17:06:34.912094+00:00",
+      "current_sha256": "9898e950fa9d55286eb5935c83f9ee5311391fbbcd2be7274aa5ffdbf8a05de1",
+      "exact": true
+    },
+    {
+      "indicator": 135,
+      "period": "2018/19",
+      "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2018%2F19",
+      "previous_sha256": "d432bf531bc427210f9543a5c148ba32038dfb2734620ffca486560055dabe3b",
+      "checked_at": "2026-11-10T17:06:40.508396+00:00",
+      "current_sha256": "d432bf531bc427210f9543a5c148ba32038dfb2734620ffca486560055dabe3b",
+      "exact": true
+    },
+    {
+      "indicator": 135,
+      "period": "2017/18",
+      "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2017%2F18",
+      "previous_sha256": "4da4c235a3774c3670b7fc3d26a77aa060943161db061f73ddfe071b96983997",
+      "checked_at": "2026-11-10T17:06:40.642111+00:00",
+      "current_sha256": "4da4c235a3774c3670b7fc3d26a77aa060943161db061f73ddfe071b96983997",
+      "exact": true
+    },
+    {
+      "indicator": 135,
+      "period": "2016/17",
+      "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2016%2F17",
+      "previous_sha256": "c772aeacbe531b3e740b74b0ebab4d7bf0e10b7dfdc2d8b56ec887bfdd1ec896",
+      "checked_at": "2026-11-10T17:06:47.441760+00:00",
+      "current_sha256": "c772aeacbe531b3e740b74b0ebab4d7bf0e10b7dfdc2d8b56ec887bfdd1ec896",
+      "exact": true
+    },
+    {
+      "indicator": 135,
+      "period": "2015/16",
+      "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2015%2F16",
+      "previous_sha256": "5b53ceec1bd3f9458790e2722bcfb7e6341c2b23334ea905d57f7e50e2de4045",
+      "checked_at": "2026-11-10T17:06:47.448399+00:00",
+      "current_sha256": "5b53ceec1bd3f9458790e2722bcfb7e6341c2b23334ea905d57f7e50e2de4045",
+      "exact": true
+    },
+    {
+      "indicator": 135,
+      "period": "2014/15",
+      "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2014%2F15",
+      "previous_sha256": "3ff2034b2f3a399ccd7dcfc4d2d63076405bb903611e9a0fb9c3e8cc56cef410",
+      "checked_at": "2026-11-10T17:06:54.408831+00:00",
+      "current_sha256": "3ff2034b2f3a399ccd7dcfc4d2d63076405bb903611e9a0fb9c3e8cc56cef410",
+      "exact": true
+    },
+    {
+      "indicator": 135,
+      "period": "2013/14",
+      "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2013%2F14",
+      "previous_sha256": "d9365aabe01cf8e7eee667c9cbfb157ca104c071231e65050b1ec842a52ff108",
+      "checked_at": "2026-11-10T17:06:54.415542+00:00",
+      "current_sha256": "d9365aabe01cf8e7eee667c9cbfb157ca104c071231e65050b1ec842a52ff108",
+      "exact": true
+    },
+    {
+      "indicator": 135,
+      "period": "2012/13",
+      "url": "https://statistik-api.uka.se/api/totals/135?university=1&year=2012%2F13",
+      "previous_sha256": "d7a7f0ced82006c5222605c65b8858e9ddf181500b09ba56e62f82cf99f2b7c1",
+      "checked_at": "2026-11-10T17:07:00.877995+00:00",
+      "current_sha256": "d7a7f0ced82006c5222605c65b8858e9ddf181500b09ba56e62f82cf99f2b7c1",
+      "exact": true
+    }
+  ],
+  "all_exact": true,
+  "scope": "Fresh national Total/Total roots for all 105 periods; not all leaf values or immutable source release",
+  "archive_sha256": "1be12b057d06285fa97b9eaa314d31e0898de57130f7c4d99c3a4093e2eb4170",
+  "matching_original_body_available_in_saved_package": true,
+  "immutable_source_release_verified": false,
+  "full_independent_leaf_revision_verified": false,
+  "active_database_full_row_fingerprint_comparison": {
+    "periods": 105,
+    "rows": 468872,
+    "all_exact": true
+  }
+}

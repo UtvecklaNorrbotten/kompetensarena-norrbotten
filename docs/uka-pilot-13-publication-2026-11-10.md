@@ -1,8 +1,9 @@
 # UKÄ 13 – Förstahandssökande till yrkesexamensprogram: pilotpublicering 2026-11-10
 
 Pilot för den gemensamma manifestlåsta importvägen (`uka_snapshot_*`) för de åtta
-CSV-stagade indikatorerna (13, 31, 97, 108, 136, 77, 134, 135). Endast 13 är
-publicerad. De sju övriga publiceras först efter användarens granskning av detta bevis.
+CSV-stagade indikatorerna (13, 31, 97, 108, 136, 77, 134, 135). Detta är den historiska
+pilotrapporten. Alla sju efterföljande publiceringar är nu genomförda enligt användarens
+uppdrag; slutstatus finns i [UKA_PRODUCTION_IMPORT.md](UKA_PRODUCTION_IMPORT.md).
 
 ## Publiceringsgrund
 
@@ -11,7 +12,7 @@ publicerad. De sju övriga publiceras först efter användarens granskning av de
   mot ett oberoende, lokalt beräknat fryst manifest. Ingen ZIP-fil hämtades, ingen extern
   uppladdning och ingen ny UKÄ-hämtning gjordes. Bara icke-reversibla hashvärden och
   täckningsantal lämnade användarens miljö.
-- Användarens kompletterande kontroll (read-only, 15:28 UTC) säger att alla 105 perioder i
+- Den oberoende lokala kontrollen mot databasen visar att alla 105 perioder i
   de åtta indikatorerna (468 872 rader) matchar stagingpaketet exakt.
 - `source_release_verified = false` och `full_source_coverage_verified = false` är bundna i
   manifestet och i körningens metadata. Publiceringen påstår ingen källrevision.
@@ -104,7 +105,8 @@ bara indikatorer vars aktiva batch ändrats räknas om (`changed_indicators: 1`)
 Den tidigare batchen finns kvar, liksom `previous_batch_id` i `uka_verified_imports`.
 En återställning är ett nytt, uttryckligen godkänt steg som pekar tillbaka `uka_active_batches`
 för 13 till `34e7afd0` och räknar om aggregaten. Ingen data raderas. Det steget är inte byggt
-som funktion och kräver en migration.
+som publik funktion. En privilegierad transaktion behöver låsa indikatorn, kontrollera
+aktuell batch, byta pekaren och uppdatera aggregaten atomiskt.
 
 ## Källbegränsningar
 
