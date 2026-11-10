@@ -36,6 +36,7 @@ jobs:
         run: python scripts/skolverket_browser_probe.py
 
       - name: Ladda upp resultat
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: skolverket-browser-probe
