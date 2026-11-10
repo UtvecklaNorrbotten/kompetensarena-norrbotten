@@ -2,7 +2,10 @@
 -- (migration 0046_uka_snapshot_verified_import). Each block below is run as ONE
 -- statement and ALWAYS ends with an exception, so every write is rolled back;
 -- the exception message is the test report. No data is changed.
--- Indicator 13 (uka-forstahandssokande-yrkesprogram) is used as real data.
+-- Real active data is used: indicator 13 (73 268 rows) for validation, start, sparse
+-- chunks and guards (A, B1); indicator 136 (9 899 rows, technical age Total only) for
+-- the full finalize/upload blocks (B2, C, D) so each block stays within the SQL
+-- runner's request time (a 13 finalize incl. aggregate refresh takes ~3 min).
 -- Test manifests are built from the active batch with the same functions; the
 -- frozen pilot manifest itself is compared by scripts/uka_snapshot_publish_verified.py.
 
@@ -152,15 +155,15 @@ end $$;
 -- ===== BLOCK B2: full copy, finalize, read-back, idempotent publication, immutability =====
 do $$
 declare
-  ind constant text := 'uka-forstahandssokande-yrkesprogram';
-  k constant text := 'uka-13-test-copy-flow';
+  ind constant text := 'uka-etablering';
+  k constant text := 'uka-136-test-copy-flow';
   src uuid; m jsonb; r jsonb; s jsonb; report text := ''; nb uuid; n int; i int; lb uuid; agg_before bigint;
 begin
   select active_batch_id into src from uka_active_batches where indicator_id = ind;
   m := jsonb_build_object('version','1','mode','copy','policy','csv-all-universities-partitions-every-root-v1',
     'snapshot','2026-11-10-all','archive_sha256','1be12b057d06285fa97b9eaa314d31e0898de57130f7c4d99c3a4093e2eb4170',
     'canonicalization','jsonb-array(period,university,gender,dimensions,numeric-text-fixed); bytewise order; newline separator without final newline',
-    'api_id',13,'indicator',ind,'rows',(select count(*) from uka_observations where batch_id = src),
+    'api_id',136,'indicator',ind,'rows',(select count(*) from uka_observations where batch_id = src),
     'periods', uka_snapshot_period_hashes(src),
     'coverage', (select jsonb_agg(jsonb_build_object('period',period,'gender',gender,'age',age,'rows',cnt)
                    order by period collate "C", gender collate "C", age collate "C")
@@ -209,14 +212,14 @@ end $$;
 -- ===== BLOCK C: source batch changes after start (copy and finalize re-check) =====
 do $$
 declare
-  ind constant text := 'uka-forstahandssokande-yrkesprogram';
+  ind constant text := 'uka-etablering';
   src uuid; m jsonb; r jsonb; report text := ''; n int; i int; victim bigint; nb uuid;
 begin
   select active_batch_id into src from uka_active_batches where indicator_id = ind;
   m := jsonb_build_object('version','1','mode','copy','policy','csv-all-universities-partitions-every-root-v1',
     'snapshot','2026-11-10-all','archive_sha256','1be12b057d06285fa97b9eaa314d31e0898de57130f7c4d99c3a4093e2eb4170',
     'canonicalization','jsonb-array(period,university,gender,dimensions,numeric-text-fixed); bytewise order; newline separator without final newline',
-    'api_id',13,'indicator',ind,'rows',(select count(*) from uka_observations where batch_id = src),
+    'api_id',136,'indicator',ind,'rows',(select count(*) from uka_observations where batch_id = src),
     'periods', uka_snapshot_period_hashes(src),
     'coverage', (select jsonb_agg(jsonb_build_object('period',period,'gender',gender,'age',age,'rows',cnt)
                    order by period collate "C", gender collate "C", age collate "C")
@@ -225,20 +228,20 @@ begin
     'source_batch_id', src::text, 'source_release_verified', false, 'full_source_coverage_verified', false,
     'publication_basis', 'TEST rollback-only manifest built from the active batch');
   -- C1 change inside a not yet copied chunk -> copy refuses
-  r := uka_snapshot_start('uka-13-test-source-change', m); n := (r->>'planned_chunks')::int; nb := (r->>'batch_id')::uuid;
-  select first_id + 7 into victim from uka_snapshot_copy_plan where import_key = 'uka-13-test-source-change' and chunk_index = 3;
+  r := uka_snapshot_start('uka-136-test-source-change', m); n := (r->>'planned_chunks')::int; nb := (r->>'batch_id')::uuid;
+  select first_id + 7 into victim from uka_snapshot_copy_plan where import_key = 'uka-136-test-source-change' and chunk_index = 3;
   begin
     update uka_observations set value = value + 1 where id = victim;
-    perform uka_snapshot_copy_chunk('uka-13-test-source-change', 3);
+    perform uka_snapshot_copy_chunk('uka-136-test-source-change', 3);
     report := report || 'C1 FAIL copied changed source; ';
   exception when sqlstate '55000' then
     report := report || format('C1 PASS changed source chunk refused (%s); ', left(sqlerrm, 50));
   end;
   -- C2 copy everything, then change an already copied source row -> finalize refuses, nothing activated
-  for i in 0 .. n - 1 loop perform uka_snapshot_copy_chunk('uka-13-test-source-change', i); end loop;
+  for i in 0 .. n - 1 loop perform uka_snapshot_copy_chunk('uka-136-test-source-change', i); end loop;
   begin
     update uka_observations set value = value + 1 where id = victim;
-    r := uka_snapshot_finalize('uka-13-test-source-change');
+    r := uka_snapshot_finalize('uka-136-test-source-change');
     report := report || 'C2 FAIL finalize after source change; ';
   exception when sqlstate '22000' then
     report := report || format('C2 PASS finalize refused (%s) active_unchanged=%s; ', left(sqlerrm, 50),
@@ -248,7 +251,7 @@ begin
   begin
     update uka_observations set value = value + 1
      where id = (select id from uka_observations where batch_id = nb order by id limit 1 offset 999);
-    r := uka_snapshot_finalize('uka-13-test-source-change');
+    r := uka_snapshot_finalize('uka-136-test-source-change');
     report := report || 'C3 FAIL finalize after staging change; ';
   exception when sqlstate '22000' then
     report := report || format('C3 PASS staging change refused (%s); ', left(sqlerrm, 50));
@@ -256,7 +259,7 @@ begin
   -- C4 active batch changed after start -> finalize refuses
   begin
     update uka_active_batches set active_batch_id = nb where indicator_id = ind;
-    r := uka_snapshot_finalize('uka-13-test-source-change');
+    r := uka_snapshot_finalize('uka-136-test-source-change');
     report := report || 'C4 FAIL; ';
   exception when sqlstate '55000' then report := report || format('C4 PASS active change refused (%s); ', left(sqlerrm, 50));
   end;
@@ -266,8 +269,8 @@ end $$;
 -- ===== BLOCK D: upload mode (canonical lines), invalid lines, full upload + finalize =====
 do $$
 declare
-  ind constant text := 'uka-forstahandssokande-yrkesprogram';
-  k constant text := 'uka-13-test-upload-flow';
+  ind constant text := 'uka-etablering';
+  k constant text := 'uka-136-test-upload-flow';
   src uuid; m jsonb; chunks jsonb; payloads text[]; r jsonb; report text := ''; i int; nb uuid;
   p0 text := '["VT2017", "Testlärosäte", "Total", {}, "5.0"]';
   p1 text := '["VT2017", "Testlärosäte", "Total", {"aldersgrupp": "Total"}, "5"]';
@@ -311,7 +314,7 @@ begin
   m := jsonb_build_object('version','1','mode','upload','policy','csv-all-universities-partitions-every-root-v1',
     'snapshot','2026-11-10-all','archive_sha256','1be12b057d06285fa97b9eaa314d31e0898de57130f7c4d99c3a4093e2eb4170',
     'canonicalization','jsonb-array(period,university,gender,dimensions,numeric-text-fixed); bytewise order; newline separator without final newline',
-    'api_id',13,'indicator',ind,'rows',(select count(*) from uka_observations where batch_id = src),
+    'api_id',136,'indicator',ind,'rows',(select count(*) from uka_observations where batch_id = src),
     'periods', uka_snapshot_period_hashes(src),
     'coverage', (select jsonb_agg(jsonb_build_object('period',period,'gender',gender,'age',age,'rows',cnt)
                    order by period collate "C", gender collate "C", age collate "C")
