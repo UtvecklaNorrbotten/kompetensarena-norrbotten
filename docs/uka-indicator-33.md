@@ -1,5 +1,7 @@
 # UKÄ 33 – Helårsstudenter
 
+Aktuell status 2026-11-10: **publicerad och verifierad**, 1 151 372 rader i aktiv batch `5c6a7d55-8337-4ebc-8e13-5b8b28218e09`. Tidigare batch behålls. Se [publiceringsrapporten](uka-hst-publication-2026-11-10.md). Kontrollpunkterna nedan beskriver den historiska insamlingen; källbegränsningarna kvarstår.
+
 Senaste kontrollpunkt: **4**, alla tre beställda steg genomförda. Hela
 2016/17–2025/26 är hämtad och kontrollerad i separat återstartbar staging:
 **1 151 372 observationer**. Ingen publicering eller merge. Begränsningar och

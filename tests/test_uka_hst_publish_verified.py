@@ -126,6 +126,27 @@ class HstPublishTest(unittest.TestCase):
         self.assertEqual(hst.jsonb_text({"bb": 1, "a": [1, "ä"], "c": {}}),
                          '{"a": [1, "ä"], "c": {}, "bb": 1}')
 
+    def test_resume_after_publication_uses_idempotent_finalizer(self):
+        _, (manifest, payloads) = self.build()
+        calls = []
+
+        def rpc(name, body, timeout=300):
+            calls.append(name)
+            if name == "uka_verified_start":
+                return {"resumed": True, "published": True}
+            if name == "uka_verified_status":
+                return {"received_chunks": len(payloads),
+                        "received_indices": list(range(len(payloads))),
+                        "received_rows": manifest["rows"], "status": "succeeded",
+                        "published_at": "2026-11-10T11:24:24Z"}
+            if name == "uka_verified_finalize":
+                return {"status": "succeeded"}
+            self.fail("Published replay attempted a chunk write")
+
+        self.assertEqual(hst.publish(rpc, manifest, payloads, "k", None), {"status": "succeeded"})
+        self.assertNotIn("uka_verified_chunk", calls)
+
 
 if __name__ == "__main__":
     unittest.main()
+

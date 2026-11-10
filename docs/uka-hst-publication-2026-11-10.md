@@ -7,7 +7,7 @@ Användaren godkände att uppladdningen återupptas och att endast indikator 33 
 - Endast `hst-collection/hst-full.sqlite` lästes. Samtliga 1 446 filer i `README_filer.json` stämmer i storlek och sha256. Inga legacy-reference-/staging-/pilotrader och ingen UKÄ-hämtning.
 
 ## Varför uppladdningen stannade
-Den första uppladdningen (start 06:52 UTC) avbröts när sandlådan startades om. Uppladdaren och den uppackade filen fanns bara i `/tmp`, och skriptet fanns inte i repot. Servern hade då 155 chunkar, 0–153 och 155. Index 154 saknades alltså trots att 155 var mottagen.
+Den första uppladdningen (start 06:52 UTC) stannade efter 155 delar. Den exakta ursprungliga avbrottsorsaken är inte belagd av bevarade processloggar. Vid återstartskontrollen var sandlådan omstartad; uppladdaren och den uppackade filen hade försvunnit från `/tmp`, och skriptet fanns inte i repot. Servern hade då 155 chunkar, 0–153 och 155. Index 154 saknades alltså trots att 155 var mottagen.
 
 ## Återuppbyggd uppladdare
 `scripts/uka_hst_publish_verified.py` gör följande:
@@ -17,7 +17,7 @@ Den första uppladdningen (start 06:52 UTC) avbröts när sandlådan startades o
 - Lärosätena sorteras och dimensionerna läggs i den ordning de först förekommer.
 - Torrkörning offline: alla **231/231** chunkhashar och hela manifestet är lika med servermanifestet. Manifestets jsonb-hash återskapades exakt: `432e33a3e6e80e993143183a5883fa85220b5345293469acdd6ffb4ddfaf8286`.
 - Vid publicering används `uka_verified_start`, som vägrar ett annat manifest och här svarade `resumed:true`. Därefter läser skriptet `received_indices`, skickar bara saknade index och anropar `uka_verified_finalize`.
-- Tester: `python -m unittest tests.test_uka_hst_publish_verified` ger 7 OK. De täcker manifestavvikelse, ändrat värde, glesa mottagna index, återstart som hoppar över mottagna chunkar, vägran vid ny import samt spärr mot referensmaterial och ogiltiga värden.
+- Tester: `python -m unittest tests.test_uka_hst_publish_verified` ger 8 OK. De täcker manifestavvikelse, ändrat värde, glesa mottagna index, återstart som hoppar över mottagna chunkar, vägran vid ny import samt spärr mot referensmaterial och ogiltiga värden.
 
 ## Fullföljande
 - När uppladdaren startade (11:21:51 UTC) hade servern redan 174 chunkar. En annan, samtidig uppladdning med samma manifest hade skickat 154 och 156–173 mellan 11:17 och 11:21. Den skickade också finaliseringen.
@@ -36,3 +36,11 @@ Sätt `uka_active_batches.active_batch_id` för `uka-hst` till `60e861fa-…` oc
 
 ## Källbegränsningar (oförändrade)
 `full_source_coverage_verified=false` och `source_release_verified=false`. Varje detaljcell är inte oberoende jämförd mot ett JSON-blad, och ingen officiell, oföränderlig källversion är fastställd. Godkännandet upphäver inte dessa begränsningar.
+
+## Kompletterande slutkontroll
+
+Samtliga lagrade identiteter och numeriska värden har även jämförts med originalpaketet genom SHA-256 per år. Alla tio år matchar exakt, totalt 1 151 372 rader, utan omappade identiteter. Riket (103 190 aggregatrader) och LTU (43 735) har jämförts rad för rad mot den aktiva råbatchens dimensioner och värden: noll avvikelser. Samtliga 15 övriga aktiva UKÄ-batchar är oförändrade.
+
+Återstart efter redan slutförd publicering accepteras nu av uppladdaren och använder serverns idempotenta finalisering utan nya chunkar. Publicering läser alltid det aktuella servermanifestet, även om en offline-manifestfil anges. Avvikande lokalt återskapad manifesthash ger ett hårt stopp. Åtta tester passerar, inklusive återstart av redan publicerad batch. Ny torrkörning av hela originalpaketet verifierar 1 446 filer, 231 chunkhashar och exakt manifesthash.
+
+Ett aktiveringsanrop gav HTTP 504. Det var inte bevis för rollback: aktiveringen slutfördes senare. Det efterföljande tillfälliga bakgrundsjobbet (jobid 4) avslutade den idempotenta kontrollen och tog bort sig självt; inget sådant jobb är kvar. Vid framtida timeout ska faktisk importstatus alltid läsas före nytt försök.

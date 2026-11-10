@@ -274,7 +274,8 @@ def publish(rpc, manifest: dict, payloads: list[str], import_key: str, logp) -> 
         log(logp, {"chunk": i, "result": res})
     status = rpc("uka_verified_status", {"p_import_key": import_key})
     if (missing_chunks(status, len(payloads)) or status["received_rows"] != manifest["rows"]
-            or status["status"] != "ready"):
+            or not (status["status"] == "ready"
+                    or (status["status"] == "succeeded" and status.get("published_at")))):
         raise RuntimeError(f"Ofullständig uppladdning: { {k: v for k, v in status.items() if k != 'received_indices'} }")
     result = rpc("uka_verified_finalize", {"p_import_key": import_key}, timeout=900)
     log(logp, {"finalize": result})
@@ -306,7 +307,7 @@ def main(argv=None) -> int:
     local_hash = hashlib.sha256(jsonb_text(manifest).encode()).hexdigest()
 
     rpc = None
-    if a.server_manifest:
+    if a.server_manifest and not a.publish:
         server = json.loads(a.server_manifest.read_text(encoding="utf-8"))
         server_hash = a.manifest_hash
     else:
@@ -316,6 +317,8 @@ def main(argv=None) -> int:
     if server_hash != a.manifest_hash:
         raise ManifestMismatch("Serverns manifest_hash avviker från godkänd")
     compare_manifest(manifest, server)
+    if local_hash != a.manifest_hash:
+        raise ManifestMismatch("Lokalt återskapad manifesthash avviker från godkänd")
     log(a.log, {"verified_files": n_files, "rows": len(rows), "chunks": len(payloads),
                 "chunk_hashes_match": len(payloads), "dimensions": len(manifest["dimensions"]),
                 "universities": len(manifest["universities"]),
@@ -330,3 +333,4 @@ def main(argv=None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
