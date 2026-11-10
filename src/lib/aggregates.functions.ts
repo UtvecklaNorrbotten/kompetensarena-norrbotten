@@ -149,7 +149,7 @@ export const getUkaEducationCatalog = createServerFn({ method: "GET" })
     return { indicators: parsed?.indicators ?? {}, combos, metadata: metadata ?? [] };
   });
 
-const dimensionKey = z.string().regex(/^[a-z]{1,40}$/);
+const dimensionKey = z.string().regex(/^[a-z-]{1,40}$/);
 
 export const getUkaEducationSlice = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) =>
@@ -157,7 +157,7 @@ export const getUkaEducationSlice = createServerFn({ method: "GET" })
       .object({
         university,
         indicatorId: z.enum(ukaIds),
-        breakdown: z.string().regex(/^([a-z]{1,40}(\|[a-z]{1,40}){0,7})?$/),
+        breakdown: z.string().regex(/^([a-z-]{1,40}(\|[a-z-]{1,40}){0,7})?$/),
         selection: z.record(dimensionKey, z.string().min(1).max(300)).refine(
           (s) => Object.keys(s).length <= 8,
         ),
