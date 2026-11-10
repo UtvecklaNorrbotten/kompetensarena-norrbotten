@@ -17,8 +17,9 @@ def dump_selects(page, name):
             lines.append(f"OPTION\t{sid}\t{opt.get_attribute('value') or ''}\t{(opt.inner_text() or '').strip()}")
     (OUT / f"{name}_selects.tsv").write_text("\n".join(lines), encoding="utf-8")
 
-def collect_download_search(page, name, school_label, area_keywords):
+def collect_download_search(page, name, school_code, area_keywords):
     network = []
+
     def on_response(resp):
         if "siris.skolverket.se/siris/reports" in resp.url:
             try:
@@ -26,12 +27,11 @@ def collect_download_search(page, name, school_label, area_keywords):
             except Exception:
                 body = ""
             network.append((resp.status, resp.url, body))
+
     page.on("response", on_response)
-
     page.goto(PAGE_URL, wait_until="networkidle", timeout=120000)
-    page.wait_for_timeout(1500)
+    page.wait_for_timeout(1000)
 
-    # Cookie consent overlays the statistics controls on a fresh browser session.
     cookie_button = page.get_by_role("button", name="Godkänn nödvändiga kakor")
     if cookie_button.count() > 0:
         try:
@@ -40,67 +40,58 @@ def collect_download_search(page, name, school_label, area_keywords):
         except Exception:
             pass
 
-    # Choose search type D: all schools/municipalities/providers.
     page.locator("#IDSokD").check(force=True)
-    page.wait_for_timeout(2000)
-    dump_selects(page, name + "_after_D")
 
-    # The D form uses numeric school-form codes. Select by visible label to avoid hard-coding.
-    selects = page.locator("select")
-    school_select = None
-    for sel in selects.all():
-        labels = [(o.inner_text() or "").strip() for o in sel.locator("option").all()]
-        if school_label in labels:
-            school_select = sel
-            break
-    if school_select is None:
-        raise RuntimeError(f"Could not find school-type select for {school_label}")
-    school_select.select_option(label=school_label)
+    # D-läget använder skolformskoder 11=grundskola, 21=gymnasium.
+    page.wait_for_selector("#SOK_D_VERKFORM", timeout=15000)
+    page.locator("#SOK_D_VERKFORM").select_option(value=school_code)
     page.wait_for_timeout(2500)
     dump_selects(page, name + "_after_school")
 
-    # Select the statistics area by matching text.
-    area_select = None
+    area = page.locator("#SOK_D_OMRADE")
+    area.wait_for(timeout=15000)
+
     chosen_area = None
-    for sel in page.locator("select").all():
-        opts = [(o.get_attribute("value") or "", (o.inner_text() or "").strip()) for o in sel.locator("option").all()]
-        for value, label in opts:
-            lo = label.lower()
-            if all(k.lower() in lo for k in area_keywords):
-                area_select = sel
-                chosen_area = (value, label)
-                break
-        if area_select is not None:
+    for opt in area.locator("option").all():
+        value = opt.get_attribute("value") or ""
+        label = (opt.inner_text() or "").strip()
+        lo = label.lower()
+        if all(k.lower() in lo for k in area_keywords):
+            chosen_area = (value, label)
             break
-    if area_select is None:
+
+    if chosen_area is None:
+        # Spara diagnostik men misslyckas så att vi inte råkar godkänna fel område.
+        (OUT / f"{name}_error.txt").write_text(
+            "No matching area. Keywords=" + ",".join(area_keywords),
+            encoding="utf-8",
+        )
         raise RuntimeError(f"Could not find area matching {area_keywords}")
-    area_select.select_option(value=chosen_area[0])
+
+    area.select_option(value=chosen_area[0])
     page.wait_for_timeout(2500)
     dump_selects(page, name + "_after_area")
 
-    # Choose latest available year/period from a select that looks like years.
-    year_select = None
-    year_value = None
-    for sel in page.locator("select").all():
-        opts = [(o.get_attribute("value") or "", (o.inner_text() or "").strip()) for o in sel.locator("option").all()]
-        yearish = [(v,l) for v,l in opts if any(ch.isdigit() for ch in l) and len(l) <= 12]
-        if yearish:
-            # Prefer 2025/26, then 2025, otherwise first populated option.
-            preferred = [x for x in yearish if x[1] in ("2025/26", "2025")]
-            cand = preferred[0] if preferred else yearish[0]
-            year_select = sel
-            year_value = cand[0]
-            break
-    if year_select is not None and year_value:
-        year_select.select_option(value=year_value)
-        page.wait_for_timeout(1000)
+    year = page.locator("#SOK_D_LASAR")
+    year.wait_for(timeout=15000)
+    options = [(o.get_attribute("value") or "", (o.inner_text() or "").strip()) for o in year.locator("option").all()]
 
-    # Submit the visible D form.
+    preferred = [x for x in options if x[1] in ("2025/26", "2025")]
+    usable = [x for x in options if x[0] and any(ch.isdigit() for ch in x[1])]
+    chosen_year = preferred[0] if preferred else (usable[0] if usable else None)
+
+    if chosen_year is None:
+        raise RuntimeError("No year option found")
+
+    year.select_option(value=chosen_year[0])
+    page.wait_for_timeout(500)
+
     page.locator("#statistics-search-submit-button").click()
     page.wait_for_timeout(5000)
 
     (OUT / f"{name}.html").write_text(page.content(), encoding="utf-8")
     (OUT / f"{name}.txt").write_text(page.locator("body").inner_text(), encoding="utf-8")
+    dump_selects(page, name + "_result")
 
     links = []
     for a in page.locator("a").all():
@@ -109,28 +100,29 @@ def collect_download_search(page, name, school_label, area_keywords):
             continue
         label = (a.inner_text() or "").strip().replace("\n", " ")
         full = urljoin(BASE, href)
-        if any(k in (label + " " + full).lower() for k in ["xlsx","xls","csv","xml","ladda","download"]):
+        if any(k in (label + " " + full).lower() for k in ["xlsx", "xls", "csv", "xml", "ladda", "download"]):
             links.append((label, full))
+
     (OUT / f"{name}_links.tsv").write_text(
-        "label\turl\n" + "\n".join(f"{a}\t{b}" for a,b in dict.fromkeys(links)),
-        encoding="utf-8"
+        "label\turl\n" + "\n".join(f"{a}\t{b}" for a, b in dict.fromkeys(links)),
+        encoding="utf-8",
     )
 
     net_lines = ["status\turl\tbody"]
     for status, url, body in network:
-        body_clean = body.replace("\t"," ").replace("\r"," ").replace("\n"," ")
+        body_clean = body.replace("\t", " ").replace("\r", " ").replace("\n", " ")
         net_lines.append(f"{status}\t{url}\t{body_clean}")
     (OUT / f"{name}_network.tsv").write_text("\n".join(net_lines), encoding="utf-8")
 
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=True)
+
     page = browser.new_page(viewport={"width": 1600, "height": 1400})
-
-    collect_download_search(page, "gr9", "Grundskola och sameskola", ["betyg", "9"])
-
-    # New page avoids event-listener overlap and stale form state.
+    collect_download_search(page, "gr9", "11", ["betyg", "9"])
     page.close()
+
     page = browser.new_page(viewport={"width": 1600, "height": 1400})
-    collect_download_search(page, "gy", "Gymnasieskola", ["betyg", "studie"])
+    collect_download_search(page, "gy", "21", ["betyg", "studie"])
+    page.close()
 
     browser.close()
