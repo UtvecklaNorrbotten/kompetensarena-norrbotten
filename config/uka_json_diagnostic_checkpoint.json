@@ -1,0 +1,6 @@
+{
+  "run_id": "42227843941",
+  "snapshot": "2026-11-06",
+  "artifact": "uka-json-probe",
+  "purpose": "Shared immutable source baseline retained 30 days, also used by partitioned staging. No production approval."
+}

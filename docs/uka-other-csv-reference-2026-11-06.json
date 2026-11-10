@@ -1,0 +1,46 @@
+{
+  "comparisons": [
+    {
+      "indicator": 97,
+      "comparison": {
+        "exact": true,
+        "reference_observations": 66,
+        "actual_observations": 66,
+        "only_reference": 0,
+        "only_actual": 0,
+        "different_values": []
+      },
+      "csv_source": "https://statistik-www.uka.se/export//cache/2026-11-06-ff03e694a0b8_97.csv",
+      "csv_sha256": "d016c4e747574167e6d9902809450b6ee48428beb9b38f7e53fc44751393fcbd"
+    },
+    {
+      "indicator": 99,
+      "comparison": {
+        "exact": true,
+        "reference_observations": 66,
+        "actual_observations": 66,
+        "only_reference": 0,
+        "only_actual": 0,
+        "different_values": []
+      },
+      "csv_source": "https://statistik-www.uka.se/export//cache/2026-11-06-fdda3a8e2dd1_99.csv",
+      "csv_sha256": "7ee405b3029cbd5091103e61b4d31f14a75c25421c4ed9a4b0e8b2a128a83ae0"
+    }
+  ],
+  "publish_allowed": false,
+  "not_verified_indicators": [
+    13,
+    31,
+    108,
+    136,
+    77,
+    134,
+    135
+  ],
+  "observed_metadata_error": {
+    "indicator": 13,
+    "status": 503,
+    "endpoint": "/export/filters/academic_term.php"
+  },
+  "note": "Other indicators lack completed metadata/CSV verification from this batch. No empty datasets or individual failure reasons are inferred. Additional control requests were blocked by the local network proxy (tunnel HTTP 403); no UKÄ empty-data inference is made from this."
+}

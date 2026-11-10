@@ -1,0 +1,16 @@
+{
+  "indicator": 33,
+  "previous_snapshot": "2026-11-06",
+  "new_snapshot": "2026-11-09",
+  "period": "2025/26",
+  "gender": "Kvinnor",
+  "age": "-24",
+  "exact": true,
+  "reference_observations": 9731,
+  "actual_observations": 9731,
+  "only_reference": 0,
+  "only_actual": 0,
+  "different_values": [],
+  "meaning": "Historical complete national reference compared offline with fresh full-year CSV; does not certify other contexts or an official source version.",
+  "publish_allowed": false
+}

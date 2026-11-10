@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "indicator": 33,
+  "snapshot": "2026-11-06",
+  "plan_id": "4c4683bf5d379e6d3bbef8020a0d3e6c920ec0b593ad05f8a1843e3f9672badc",
+  "scope": {
+    "period": "2025/26",
+    "universities": [
+      "32"
+    ],
+    "genders": [
+      "Kvinnor"
+    ],
+    "ages": [
+      "-24"
+    ]
+  },
+  "csv_sha256": "4614f48710b9d2e024e7e0e10669d10af44d8d0b4840f31b9498347c4e7570c7",
+  "metadata_projection_hash": "b8920bce1c115af45b3f8b0b6f6f11527824b49758bbbfdaa19c91900b0637db",
+  "metadata_hash": "3d89b9db3b30fa1da6ebba3a36222a15b49488a6ce1b88c7467b47a1b47dbdcc",
+  "subject_metadata_hash": "ceb2cfb567d1de34c2dc192a9b0a7f3b0d8ebc83b5e41e7870a92e2fcf9a5f2c",
+  "expected_observations": 366,
+  "references": [
+    {
+      "file": "national-study-first.sqlite",
+      "sha256": "2e3fa1f50908b2707795130d9c5349a3cfd25c174917a797654a431f47c0aeba",
+      "binding": {
+        "indicator": 33,
+        "root": {
+          "age_group": "8",
+          "gender": "Kvinnor",
+          "university": "1",
+          "year": "2025/26"
+        },
+        "snapshot": "2026-11-06",
+        "strategy": "study-first",
+        "version": 1
+      }
+    }
+  ],
+  "source_release_verified": false,
+  "publish_allowed": false,
+  "export_scope": {
+    "period": "2025/26",
+    "universities": [
+      "32"
+    ],
+    "genders": [
+      "Kvinnor",
+      "Män",
+      "Total"
+    ],
+    "ages": [
+      "-24",
+      "25-34",
+      "35-",
+      "Total"
+    ]
+  },
+  "reference_universities": [
+    "1"
+  ]
+}

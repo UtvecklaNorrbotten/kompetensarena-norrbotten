@@ -1,0 +1,190 @@
+{
+  "snapshot": "2026-11-06",
+  "publish_allowed": false,
+  "full_coverage_verified": false,
+  "exports": [
+    {
+      "case": "riket",
+      "period": "2025/26",
+      "universities": [
+        "1"
+      ],
+      "status": "data",
+      "row_count": 10250,
+      "bytes": 1069871,
+      "sha256": "9fe618cdaf8c97616207c0fa30e71dfd17995fc4c9517e015ceac9fa2bef5404",
+      "file_url": "https://statistik-www.uka.se/export//cache/2026-11-06-fb39391c2013_33.csv"
+    },
+    {
+      "case": "ltu",
+      "period": "2025/26",
+      "universities": [
+        "32"
+      ],
+      "status": "data",
+      "row_count": 4311,
+      "bytes": 538123,
+      "sha256": "4614f48710b9d2e024e7e0e10669d10af44d8d0b4840f31b9498347c4e7570c7",
+      "file_url": "https://statistik-www.uka.se/export//cache/2026-11-06-c09df49041dc_33.csv"
+    },
+    {
+      "case": "small",
+      "period": "2025/26",
+      "universities": [
+        "171"
+      ],
+      "status": "data",
+      "row_count": 144,
+      "bytes": 16557,
+      "sha256": "6c9429e2f34da0b89f4ccc084eb7f5cde2d94086b34a7372b916cada410b1e3e",
+      "file_url": "https://statistik-www.uka.se/export//cache/2026-11-06-e8e8bf3dc726_33.csv"
+    },
+    {
+      "case": "mixed",
+      "period": "2025/26",
+      "universities": [
+        "1",
+        "32",
+        "171"
+      ],
+      "status": "data",
+      "row_count": 14705,
+      "bytes": 1624325,
+      "sha256": "4599787ded629379ec613374086c1f4157440ff24ab584ad254801402e2faff1",
+      "file_url": "https://statistik-www.uka.se/export//cache/2026-11-06-3264e154c247_33.csv"
+    },
+    {
+      "case": "old-riket",
+      "period": "2016/17",
+      "universities": [
+        "1"
+      ],
+      "status": "data",
+      "row_count": 10376,
+      "bytes": 1080617,
+      "sha256": "52f676c8a3ebb2f4d3049c5f58a466224808e89a74a6ef431e7f078d65ea1f5e",
+      "file_url": "https://statistik-www.uka.se/export//cache/2026-11-06-8f41c52be039_33.csv"
+    },
+    {
+      "case": "old-ltu",
+      "period": "2016/17",
+      "universities": [
+        "32"
+      ],
+      "status": "data",
+      "row_count": 4599,
+      "bytes": 579703,
+      "sha256": "e6da0672410daa9a499404f481ed5c242ecb8e43de6c2e621f03a77c35ed3d54",
+      "file_url": "https://statistik-www.uka.se/export//cache/2026-11-06-ee909fdeca9b_33.csv"
+    },
+    {
+      "case": "old-mixed",
+      "period": "2016/17",
+      "universities": [
+        "1",
+        "32",
+        "171"
+      ],
+      "status": "data",
+      "row_count": 14975,
+      "bytes": 1660207,
+      "sha256": "53197f64dd178e2c346f15bc34314db07ebaa9d1cfcf1ad03f3bdd7f6577de73",
+      "file_url": "https://statistik-www.uka.se/export//cache/2026-11-06-3dc051bbc3dc_33.csv"
+    }
+  ],
+  "comparisons": [
+    {
+      "test": "mixed-vs-university-chunks",
+      "exact": true,
+      "reference_observations": 14705,
+      "actual_observations": 14705,
+      "only_reference": 0,
+      "only_actual": 0,
+      "different_values": []
+    },
+    {
+      "test": "old-mixed-vs-university-chunks",
+      "exact": true,
+      "reference_observations": 14975,
+      "actual_observations": 14975,
+      "only_reference": 0,
+      "only_actual": 0,
+      "different_values": []
+    },
+    {
+      "test": "small-all-genders-ages-vs-json",
+      "exact": true,
+      "reference_observations": 144,
+      "actual_observations": 144,
+      "only_reference": 0,
+      "only_actual": 0,
+      "different_values": []
+    },
+    {
+      "test": "riket-women-under25-vs-json",
+      "exact": true,
+      "reference_observations": 857,
+      "actual_observations": 857,
+      "only_reference": 0,
+      "only_actual": 0,
+      "different_values": []
+    },
+    {
+      "test": "ltu-women-under25-vs-json",
+      "exact": true,
+      "reference_observations": 366,
+      "actual_observations": 366,
+      "only_reference": 0,
+      "only_actual": 0,
+      "different_values": []
+    },
+    {
+      "test": "riket-native-grand-total",
+      "exact": true,
+      "reference_observations": 1,
+      "actual_observations": 1,
+      "only_reference": 0,
+      "only_actual": 0,
+      "different_values": []
+    },
+    {
+      "test": "ltu-native-grand-total",
+      "exact": true,
+      "reference_observations": 1,
+      "actual_observations": 1,
+      "only_reference": 0,
+      "only_actual": 0,
+      "different_values": []
+    },
+    {
+      "test": "small-native-grand-total",
+      "exact": true,
+      "reference_observations": 1,
+      "actual_observations": 1,
+      "only_reference": 0,
+      "only_actual": 0,
+      "different_values": []
+    },
+    {
+      "test": "old-riket-native-grand-total",
+      "exact": true,
+      "reference_observations": 1,
+      "actual_observations": 1,
+      "only_reference": 0,
+      "only_actual": 0,
+      "different_values": []
+    }
+  ],
+  "empty_selection_evidence": [
+    {
+      "period": "2016/17",
+      "university": "171",
+      "absent_from_successful_explicit_mixed_csv": true,
+      "absent_from_broader_json_university_list": true,
+      "meaning": "Evidence of no advertised observations in this scope; no zero values generated. Direct empty/500 responses remain technical errors.",
+      "verified_by_broader_positive_references": true
+    }
+  ],
+  "all_comparisons_passed": true,
+  "network_exports": 0
+}

@@ -1,0 +1,104 @@
+{
+  "plan_id": "4c4683bf5d379e6d3bbef8020a0d3e6c920ec0b593ad05f8a1843e3f9672badc",
+  "strategy": "national-linked-json-v1",
+  "snapshot": "2026-11-06",
+  "inventory_hash": "1619040467cc7361cbe806aea064a2d20c03598c999c1311c5d643b94ab41445",
+  "source_release_verified": false,
+  "publish_allowed": false,
+  "network_requests": 0,
+  "completed_discovery_jobs": 0,
+  "root_states": {
+    "not_cached": 1282,
+    "cached_root_validated": 23
+  },
+  "indicators": [
+    {
+      "indicator": 13,
+      "root_jobs": 240,
+      "validated_cached_roots": 2,
+      "group_node_upper_bound": 17760,
+      "university_scope": "Riket plus source university lists for each group and period",
+      "university_filter_options": 82
+    },
+    {
+      "indicator": 31,
+      "root_jobs": 240,
+      "validated_cached_roots": 2,
+      "group_node_upper_bound": 18720,
+      "university_scope": "Riket plus source university lists for each group and period",
+      "university_filter_options": 116
+    },
+    {
+      "indicator": 33,
+      "root_jobs": 120,
+      "validated_cached_roots": 5,
+      "group_node_upper_bound": 138600,
+      "university_scope": "Riket plus source university lists for each group and period",
+      "university_filter_options": 78
+    },
+    {
+      "indicator": 97,
+      "root_jobs": 240,
+      "validated_cached_roots": 2,
+      "group_node_upper_bound": 17760,
+      "university_scope": "Riket plus source university lists for each group and period",
+      "university_filter_options": 82
+    },
+    {
+      "indicator": 99,
+      "root_jobs": 60,
+      "validated_cached_roots": 2,
+      "group_node_upper_bound": 4680,
+      "university_scope": "Riket plus source university lists for each group and period",
+      "university_filter_options": 81
+    },
+    {
+      "indicator": 108,
+      "root_jobs": 120,
+      "validated_cached_roots": 2,
+      "group_node_upper_bound": 20520,
+      "university_scope": "Riket plus source university lists for each group and period",
+      "university_filter_options": 120
+    },
+    {
+      "indicator": 136,
+      "root_jobs": 15,
+      "validated_cached_roots": 2,
+      "group_node_upper_bound": 1050,
+      "university_scope": "Riket plus source university lists for each group and period",
+      "university_filter_options": 52
+    },
+    {
+      "indicator": 77,
+      "root_jobs": 30,
+      "validated_cached_roots": 2,
+      "group_node_upper_bound": 600,
+      "university_scope": "Riket plus source university lists for each group and period",
+      "university_filter_options": 86
+    },
+    {
+      "indicator": 134,
+      "root_jobs": 120,
+      "validated_cached_roots": 2,
+      "group_node_upper_bound": 6720,
+      "university_scope": "Riket plus source university lists for each group and period",
+      "university_filter_options": 66
+    },
+    {
+      "indicator": 135,
+      "root_jobs": 120,
+      "validated_cached_roots": 2,
+      "group_node_upper_bound": 7080,
+      "university_scope": "Riket plus source university lists for each group and period",
+      "university_filter_options": 64
+    }
+  ],
+  "blockers": [
+    "Full period-specific graph and university coverage not verified",
+    "Independent source reference and null/empty semantics unresolved",
+    "Snapshot label is not a verified source release",
+    "Resumable database publication not implemented"
+  ],
+  "root_jobs": 1305,
+  "group_node_upper_bound": 233490
+}

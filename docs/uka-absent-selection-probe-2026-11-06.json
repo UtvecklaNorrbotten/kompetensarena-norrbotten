@@ -1,0 +1,17 @@
+{
+  "checks": [
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&group_slug=12ab49225797148f21812a058af4630b755930ae&gender=Kvinnor&age_group=8",
+      "error_type": "HTTPError",
+      "error": "500 Server Error: Internal Server Error for url: https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&group_slug=12ab49225797148f21812a058af4630b755930ae&gender=Kvinnor&age_group=8"
+    },
+    {
+      "url": "https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&group_slug=fdc158ac61cb17a0bbdbcd363ba99577f4048990&gender=Kvinnor&age_group=8",
+      "error_type": "HTTPError",
+      "error": "500 Server Error: Internal Server Error for url: https://statistik-api.uka.se/api/totals/33?university=32&year=2025%2F26&group_slug=fdc158ac61cb17a0bbdbcd363ba99577f4048990&gender=Kvinnor&age_group=8"
+    }
+  ],
+  "new_requests": 2,
+  "publish_allowed": false,
+  "interpretation": "Both requests returned HTTP 500. No legitimate empty selection or zero value has been established. Requests use a known national group slug with university changed to LTU; they were not advertised by the LTU page."
+}

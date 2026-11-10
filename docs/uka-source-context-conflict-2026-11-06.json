@@ -1,0 +1,91 @@
+{
+  "run_id": 42210008954,
+  "artifact_id": 13497844492,
+  "status": "permanent_source_context_conflict",
+  "publish_allowed": false,
+  "source_context": {
+    "period": "2025/26",
+    "university": "Riket",
+    "gender": "Kvinnor",
+    "age": "-24"
+  },
+  "parent_url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=1806cec79a532daca1ef3c627f5681b8ad995441&gender=Kvinnor&age_group=8",
+  "dimensions": {
+    "Ämnesdelområde": "Övrigt",
+    "Ämnesområde": "Medicin och odontologi"
+  },
+  "metadata_tokens": [
+    {
+      "value": "dynamic:1051_914",
+      "label": "Övrigt"
+    },
+    {
+      "value": "dynamic:1051_915",
+      "label": "Övrigt"
+    }
+  ],
+  "source_study_rows": [
+    {
+      "id": "12ab49225797148f21812a058af4630b755930ae",
+      "name": "Fristående kurser",
+      "value": 38.1,
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=12ab49225797148f21812a058af4630b755930ae&gender=Kvinnor&age_group=8"
+    },
+    {
+      "id": "fdc158ac61cb17a0bbdbcd363ba99577f4048990",
+      "name": "Fristående kurser",
+      "value": 56.2,
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=fdc158ac61cb17a0bbdbcd363ba99577f4048990&gender=Kvinnor&age_group=8"
+    },
+    {
+      "id": "e3b272627bff83909baac02594493a8c634a2162",
+      "name": "Generella program",
+      "value": 70.1,
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=e3b272627bff83909baac02594493a8c634a2162&gender=Kvinnor&age_group=8"
+    },
+    {
+      "id": "14e044f60bcf3d213c183a21d9c5719938468151",
+      "name": "Generella program",
+      "value": 176.4,
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=14e044f60bcf3d213c183a21d9c5719938468151&gender=Kvinnor&age_group=8"
+    },
+    {
+      "id": "c5fa3d561b84b96f3afffdb38ce1bb9b5a1579a5",
+      "name": "Yrkesexamensprogram",
+      "value": 1140.9,
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=c5fa3d561b84b96f3afffdb38ce1bb9b5a1579a5&gender=Kvinnor&age_group=8"
+    },
+    {
+      "id": "77a982955812bc6841b30ea48d50d42fd9e42d1f",
+      "name": "Yrkesexamensprogram",
+      "value": 218.6,
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&group_slug=77a982955812bc6841b30ea48d50d42fd9e42d1f&gender=Kvinnor&age_group=8"
+    }
+  ],
+  "direct_checks": [
+    {
+      "slug": "12ab49225797148f21812a058af4630b755930ae",
+      "value": 38.1,
+      "subject_groups": [
+        "Biomedicinsk laboratorievetenskap",
+        "Medicinska tekniker",
+        "Övrigt inom medicin"
+      ]
+    },
+    {
+      "slug": "fdc158ac61cb17a0bbdbcd363ba99577f4048990",
+      "value": 56.2,
+      "subject_groups": [
+        "Husdjursvetenskap",
+        "Livsmedelsvetenskap",
+        "Övrigt inom naturvetenskap"
+      ]
+    }
+  ],
+  "saved_queue": {
+    "done": 41,
+    "pending": 211,
+    "error": 1,
+    "observations": 1038
+  }
+}

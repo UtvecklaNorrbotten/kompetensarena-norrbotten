@@ -1,0 +1,68 @@
+{
+  "checks": [
+    {
+      "university": "1",
+      "period": "2016/17",
+      "gender": "Kvinnor",
+      "age": "8",
+      "study": "Fristående kurser",
+      "area": "Medicin och odontologi",
+      "subarea": "Övrigt",
+      "value": "33.1",
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17&group_slug=12ab49225797148f21812a058af4630b755930ae&gender=Kvinnor&age_group=8",
+      "subject_groups": [
+        {
+          "name": "Biomedicinsk laboratorievetenskap",
+          "value": 13.8
+        },
+        {
+          "name": "Medicinska tekniker",
+          "value": 7.7
+        },
+        {
+          "name": "Övrigt inom medicin",
+          "value": 11.7
+        }
+      ]
+    },
+    {
+      "university": "1",
+      "period": "2016/17",
+      "gender": "Kvinnor",
+      "age": "8",
+      "study": "Fristående kurser",
+      "area": "Naturvetenskap",
+      "subarea": "Övrigt",
+      "value": "22.1",
+      "url": "https://statistik-api.uka.se/api/totals/33?university=1&year=2016%2F17&group_slug=fdc158ac61cb17a0bbdbcd363ba99577f4048990&gender=Kvinnor&age_group=8",
+      "subject_groups": [
+        {
+          "name": "Husdjursvetenskap",
+          "value": 10.3
+        },
+        {
+          "name": "Livsmedelsvetenskap",
+          "value": 3.3
+        },
+        {
+          "name": "Övrigt inom naturvetenskap",
+          "value": 8.5
+        }
+      ]
+    },
+    {
+      "university": "32",
+      "period": "2025/26",
+      "area": "Medicin och odontologi",
+      "source_offers_other": false
+    },
+    {
+      "university": "32",
+      "period": "2025/26",
+      "area": "Naturvetenskap",
+      "source_offers_other": false
+    }
+  ],
+  "new_requests": 6,
+  "publish_allowed": false
+}

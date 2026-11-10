@@ -1,0 +1,15 @@
+{
+  "period": "2025/26",
+  "university": "1",
+  "gender": "Kvinnor",
+  "age": "-24",
+  "csv_rows": 857,
+  "json_rows": 857,
+  "identical_observation_keys_and_values": true,
+  "only_csv": [],
+  "only_json": [],
+  "different_values": [],
+  "csv_sha256": "9afaaaf8eed4cdc1fd6a4f707cb0248a053d299a29bfcfb471dc7bfb750a1b5c",
+  "reference_source_file": "https://statistik-www.uka.se/export//cache/2026-11-06-b106715bc03b_33.csv",
+  "publish_allowed": false
+}

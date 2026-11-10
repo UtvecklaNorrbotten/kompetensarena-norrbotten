@@ -1,0 +1,124 @@
+{
+  "binding": {
+    "indicator": 33,
+    "root": {
+      "age_group": "8",
+      "gender": "Kvinnor",
+      "university": "1",
+      "year": "2025/26"
+    },
+    "snapshot": "2026-11-06",
+    "strategy": "study-first",
+    "version": 1
+  },
+  "states": {
+    "done": 857
+  },
+  "observations": 9731,
+  "duplicates": 0,
+  "invalid_source_subject_paths": [],
+  "metadata_subject_paths": 230,
+  "represented_subject_paths": 222,
+  "unobserved_subject_paths": [
+    {
+      "Ämnesdelområde": "Beteendevetenskap",
+      "Ämnesgrupp": "Psykoterapi",
+      "Ämnesområde": "Juridik och samhällsvetenskap"
+    },
+    {
+      "Ämnesdelområde": "Idrott och friskvård",
+      "Ämnesgrupp": "Friskvård",
+      "Ämnesområde": "Övrigt område"
+    },
+    {
+      "Ämnesdelområde": "Lant- och skogsbruk",
+      "Ämnesgrupp": "Fiske och vattenbruk",
+      "Ämnesområde": "Naturvetenskap"
+    },
+    {
+      "Ämnesdelområde": "Språkvetenskapliga ämnen",
+      "Ämnesgrupp": "Persiska",
+      "Ämnesområde": "Humaniora och teologi"
+    },
+    {
+      "Ämnesdelområde": "Språkvetenskapliga ämnen",
+      "Ämnesgrupp": "Tibetanska",
+      "Ämnesområde": "Humaniora och teologi"
+    },
+    {
+      "Ämnesdelområde": "Teater, film och dans",
+      "Ämnesgrupp": "Koreografi",
+      "Ämnesområde": "Konstnärligt område"
+    },
+    {
+      "Ämnesdelområde": "Teater, film och dans",
+      "Ämnesgrupp": "Regi",
+      "Ämnesområde": "Konstnärligt område"
+    },
+    {
+      "Ämnesdelområde": "Transport",
+      "Ämnesgrupp": "Luftfart",
+      "Ämnesområde": "Övrigt område"
+    }
+  ],
+  "nodes_by_study": {
+    "Total": 223,
+    "Fristående kurser": 222,
+    "Generella program": 199,
+    "Konstnärliga program": 51,
+    "Yrkesexamensprogram": 162
+  },
+  "observations_by_university": {
+    "1": 857,
+    "3": 108,
+    "4": 305,
+    "9": 38,
+    "10": 467,
+    "11": 68,
+    "16": 256,
+    "17": 256,
+    "18": 247,
+    "19": 278,
+    "21": 169,
+    "22": 220,
+    "23": 264,
+    "25": 352,
+    "26": 153,
+    "27": 42,
+    "28": 18,
+    "29": 50,
+    "30": 318,
+    "31": 434,
+    "32": 366,
+    "33": 563,
+    "35": 300,
+    "38": 21,
+    "39": 296,
+    "41": 363,
+    "42": 173,
+    "43": 202,
+    "46": 466,
+    "47": 540,
+    "56": 289,
+    "58": 21,
+    "59": 69,
+    "60": 392,
+    "62": 321,
+    "63": 15,
+    "64": 46,
+    "66": 38,
+    "67": 255,
+    "70": 24,
+    "72": 8,
+    "73": 8,
+    "74": 15,
+    "75": 12,
+    "120": 8,
+    "130": 8,
+    "171": 12
+  },
+  "graph_closed": true,
+  "full_source_coverage_verified": false,
+  "publish_allowed": false,
+  "coverage_limit": "Unadvertised selections are unresolved, not inferred as zero or legitimate empty. Metadata options can span periods and population groups."
+}

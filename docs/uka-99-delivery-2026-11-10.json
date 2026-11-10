@@ -1,0 +1,33 @@
+{
+  "filename": "UKA_99_Soktryck_VT2017_HT2026_2026-11-10.zip",
+  "bytes": 3845784,
+  "sha256": "3cf8af5c59105cb1b74b5ad485072c6229e2c5e41df833c8f2507003696fe8ba",
+  "zip_crc_verified": true,
+  "archive_files": 532,
+  "verification": {
+    "verified_files": 531,
+    "periods": 20,
+    "observations": 19595,
+    "new_requests": 0,
+    "new_exports": 0,
+    "new_insertions": 0,
+    "staging_checksums_unchanged": true,
+    "reference_66": {
+      "exact": true,
+      "reference_observations": 66,
+      "actual_observations": 66,
+      "only_reference": 0,
+      "only_actual": 0,
+      "different_values": []
+    },
+    "revision_1337": {
+      "exact": true,
+      "reference_observations": 1337,
+      "actual_observations": 1337,
+      "only_reference": 0,
+      "only_actual": 0,
+      "different_values": []
+    },
+    "publish_allowed": false
+  }
+}

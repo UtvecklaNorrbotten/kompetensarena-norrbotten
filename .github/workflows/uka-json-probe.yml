@@ -1,0 +1,226 @@
+name: 90 · Diagnostik · UKÄ – JSON-alternativ
+
+on:
+  pull_request:
+    paths:
+      - scripts/uka_json_probe.py
+      - scripts/uka_hst_complete_probe.py
+      - scripts/uka_json_plan.py
+      - scripts/uka_json_queue.py
+      - scripts/uka_study_first_probe.py
+      - scripts/uka_hst_coverage.py
+      - scripts/uka_csv_bulk_probe.py
+      - tests/test_uka_csv_bulk_probe.py
+      - tests/fixtures/uka-hst-bulk-2026-11-06.zip
+      - scripts/uka_hst_validation.py
+      - scripts/uka_indicator_routes.py
+      - scripts/uka_indicator_validation.py
+      - tests/test_uka_hst_validation.py
+      - tests/test_uka_indicator_routes.py
+      - tests/test_uka_hst_coverage.py
+      - docs/uka-hst-subject-paths-2026-11-06.json
+      - tests/test_uka_json_probe.py
+      - tests/test_uka_hst_complete_probe.py
+      - tests/test_uka_json_plan.py
+      - tests/test_uka_json_queue.py
+      - config/uka_json_diagnostic_checkpoint.json
+      - .github/workflows/uka-json-probe.yml
+  workflow_dispatch:
+    inputs:
+      resume_run:
+        description: "Tidigare JSON-diagnostikkörning med sparade källsvar (valfritt)"
+        type: string
+        default: ""
+      snapshot:
+        description: "Samma snapshot-ID som återstartens körning; tomt = dagens datum"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: uka-json-probe-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  json_probe:
+    # Broad historical diagnostics must not expand a single-indicator PR task.
+    # Offline regression tests run in uka-staging.yml; this job is manual only.
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install requests beautifulsoup4
+      - name: Testa observationsvärden, länkar och återstart
+        run: |
+          python -m unittest discover -s tests -p test_uka_source_audit.py -v
+          python -m unittest discover -s tests -p test_uka_json_probe.py -v
+          python -m unittest discover -s tests -p test_uka_hst_complete_probe.py -v
+          python -m unittest discover -s tests -p test_uka_json_plan.py -v
+          python -m unittest discover -s tests -p test_uka_json_queue.py -v
+          python -m unittest discover -s tests -p test_uka_hst_coverage.py -v
+          python -m unittest discover -s tests -p test_uka_csv_bulk_probe.py -v
+          python -m unittest discover -s tests -p test_uka_hst_validation.py -v
+          python -m unittest discover -s tests -p test_uka_indicator_routes.py -v
+      - name: Välj verifierad återstartspunkt
+        id: checkpoint
+        env:
+          REQUESTED_RUN: ${{ inputs.resume_run }}
+          REQUESTED_SNAPSHOT: ${{ inputs.snapshot }}
+        run: |
+          python - <<'PY'
+          import json, os
+          checkpoint = json.load(open('config/uka_json_diagnostic_checkpoint.json'))
+          requested = os.environ.get('REQUESTED_RUN', '')
+          snapshot = os.environ.get('REQUESTED_SNAPSHOT', '')
+          if requested and not snapshot:
+              raise ValueError('Explicit resume_run requires its original snapshot ID')
+          run = requested or checkpoint['run_id']
+          snapshot = snapshot or checkpoint['snapshot']
+          if not run.isdigit() or any(c not in '0123456789-' for c in snapshot):
+              raise ValueError('Invalid checkpoint input')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
+              out.write(f'run={run}\nsnapshot={snapshot}\n')
+          PY
+      - uses: actions/download-artifact@v4
+        with:
+          name: uka-json-probe
+          path: output/uka-json-probe
+          run-id: ${{ steps.checkpoint.outputs.run }}
+          github-token: ${{ github.token }}
+      - name: Bygg hämtningsplan från återställd cache utan API-anrop
+        env:
+          SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
+        run: python scripts/uka_json_plan.py --snapshot "$SNAPSHOT" --output output/uka-json-probe/plan.json
+      - name: Hämta nationell HST-graf – checkpoint vid budgetgräns
+        env:
+          SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
+        run: |
+          python scripts/uka_study_first_probe.py --cache output/uka-json-probe --snapshot "$SNAPSHOT" --output output/uka-json-probe/study-first-evidence.json --max-new-requests 4
+          python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8' --snapshot "$SNAPSHOT" --strategy study-first --database output/uka-json-probe/national-study-first.sqlite --cache output/uka-json-probe --max-new-requests 1200 --max-nodes 1500 --seconds 720
+      - name: Kontrollera ämnesvägar och observationsnycklar
+        run: python scripts/uka_hst_coverage.py --database output/uka-json-probe/national-study-first.sqlite --metadata docs/uka-hst-subject-paths-2026-11-06.json --output output/uka-json-probe/hst-coverage.json
+      - name: Verifiera begränsade JSON-urval – ingen produktionsimport
+        env:
+          SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
+        run: |
+          args=()
+          if [ -n "$SNAPSHOT" ]; then args+=(--snapshot "$SNAPSHOT"); fi
+          python -u scripts/uka_json_probe.py "${args[@]}"
+          python -u scripts/uka_hst_complete_probe.py "${args[@]}"
+          python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8' --database output/uka-json-probe/resume-demo.sqlite --max-nodes 1 "${args[@]}"
+          python scripts/uka_json_queue.py --root-url 'https://statistik-api.uka.se/api/totals/33?university=171&year=2025%2F26&gender=Kvinnor&age_group=8' --database output/uka-json-probe/resume-demo.sqlite --max-nodes 100 "${args[@]}"
+      - name: Jämför fullständiga smågrafer över två perioder och alla kön och åldrar
+        env:
+          SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
+        run: python -u scripts/uka_hst_validation.py --cache output/uka-json-probe --snapshot "$SNAPSHOT" --max-new-requests 400 --seconds 480
+      - name: Kontrollera dimensionsvägar och lärosätesvärden för övriga nio indikatorer
+        if: ${{ !cancelled() && steps.checkpoint.outcome == 'success' }}
+        env:
+          SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
+        run: python -u scripts/uka_indicator_routes.py --cache output/uka-json-probe --snapshot "$SNAPSHOT" --max-new-requests 80
+      - name: Verifiera nationella grafer för övriga nio indikatorer
+        if: ${{ !cancelled() && steps.checkpoint.outcome == 'success' }}
+        env:
+          SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
+        run: python -u scripts/uka_indicator_validation.py --cache output/uka-json-probe --snapshot "$SNAPSHOT" --max-new-requests 1000 --seconds 600
+      - name: Verifiera fångade CSV-referenser utan nätverksanrop
+        env:
+          SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import zipfile
+          root = Path('output/uka-json-probe/csv-bulk').resolve()
+          root.mkdir(parents=True, exist_ok=True)
+          with zipfile.ZipFile('tests/fixtures/uka-hst-bulk-2026-11-06.zip') as archive:
+              for item in archive.infolist():
+                  if not (root / item.filename).resolve().is_relative_to(root):
+                      raise ValueError('Unsafe reference archive')
+              archive.extractall(root)
+          PY
+          python scripts/uka_csv_bulk_probe.py --root output/uka-json-probe/csv-bulk --metadata output/uka-json-probe/csv-bulk/export-filters.json --json-cache output/uka-json-probe --snapshot "$SNAPSHOT" --max-new-exports 0
+      - name: Kontrollera att det gamla källfelet fortfarande blockeras
+        env:
+          SNAPSHOT: ${{ steps.checkpoint.outputs.snapshot }}
+        run: |
+          PYTHONPATH=scripts python - <<'PY'
+          import json, os
+          from pathlib import Path
+          from uka_json_probe import Probe
+          from uka_json_queue import Queue
+          from uka_source_audit import write_json
+          path = Path('output/uka-json-probe/national-queue.sqlite')
+          root = 'https://statistik-api.uka.se/api/totals/33?university=1&year=2025%2F26&gender=Kvinnor&age_group=8'
+          if not path.exists():
+              raise ValueError('Missing original source-conflict fixture')
+          probe = Probe(path.parent, os.environ['SNAPSHOT'], budget=0)
+          with Queue(path, root, os.environ['SNAPSHOT']) as queue:
+              before = [tuple(row) for row in queue.db.execute('SELECT * FROM nodes ORDER BY id')]
+              result = queue.run(probe)
+              after = [tuple(row) for row in queue.db.execute('SELECT * FROM nodes ORDER BY id')]
+          assert before == after, 'Blocked fixture changed'
+          assert result['stop_reason'] == 'blocked_source_error', result
+          assert result['network_requests_this_run'] == 0 and result['processed_this_run'] == 0, result
+          assert result['states'].get('error') and not result['graph_closed'], result
+          assert any(e['error'] == 'Different source URLs duplicate an observation key' and
+                     e['error_kind'] == 'permanent' for e in result['errors']), result
+          result['expected_source_conflict_verified'] = True
+          write_json(path.with_suffix('.summary.json'), result)
+          print('Expected original source conflict remains blocked; no new requests or changes.')
+          PY
+      - name: Spara kontroller och återstartbara källsvar
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uka-json-probe
+          path: output/uka-json-probe
+          retention-days: 30
+      - name: Redovisa vad ett grönt test faktiskt bevisar
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          path = Path('output/uka-json-probe/summary.json')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
+              out.write('## UKÄ JSON – begränsat källprov\n\n')
+              if path.exists():
+                  r = json.loads(path.read_text())
+                  out.write(f"Indikatorer med periodprov: {len(r['inventory'])}/10.\n\n")
+                  out.write(f"Godkända HST-prov: {sum(c['verified_sample'] for c in r['hst_samples'])}/6.\n\n")
+                  out.write(f"Kön/åldersprov: {len(r.get('gender_age_grid', {}).get('observations', []))}/12.\n\n")
+              for queue in sorted(Path('output/uka-json-probe').glob('*.summary.json')):
+                  q = json.loads(queue.read_text())
+                  out.write(f"### {queue.stem}\n\n")
+                  out.write(f"Strategi: {q.get('strategy', 'all-routes')}. Stopp: {q['stop_reason']}.\n\n")
+                  out.write(f"Noder: {q['states']}. Observationer: {q['observations']}. Nya anrop: {q['network_requests_this_run']}.\n\n")
+                  out.write(f"Graf färdig: {q['graph_closed']}. Publicering tillåten: {q['publish_allowed']}.\n\n")
+              campaign = Path('output/uka-json-probe/hst-validation.json')
+              if campaign.exists():
+                  c = json.loads(campaign.read_text())
+                  out.write(f"HST: {c.get('completed_cases', 0)}/24 fulla smågrafsprov matchar referensen. Nya anrop: {c.get('new_requests', 0)}.\n\n")
+              routes = Path('output/uka-json-probe/indicator-routes.json')
+              if routes.exists():
+                  r = json.loads(routes.read_text())
+                  out.write(f"Övriga indikatorer: {r['verified_period_samples']}/18 periodprov med direkt lärosätesreferens.\n\n")
+              national = Path('output/uka-json-probe/indicator-validation.json')
+              if national.exists():
+                  n = json.loads(national.read_text())
+                  out.write(f"Nationella grafer för övriga indikatorer: {n['completed_indicators']}/9 avslutade. Nya anrop: {n['new_requests']}.\n\n")
+                  for i in n['indicators']:
+                      out.write(f"- {i['indicator']} / {i['period']}: {i['states']}, {i['observations']} observationer.\n")
+                  out.write('\nDetta avser källans Total kön/ålder, inte full tioårstäckning.\n\n')
+              coverage = Path('output/uka-json-probe/hst-coverage.json')
+              if coverage.exists():
+                  c = json.loads(coverage.read_text())
+                  out.write(f"Ämnesvägar i detta urval: {c['represented_subject_paths']}/{c['metadata_subject_paths']}. Dubbletter: {c['duplicates']}. Ogiltiga vägar: {len(c['invalid_source_subject_paths'])}.\n\n")
+                  out.write('Ej annonserade urval är outredda, inte automatiskt nollvärden.\n\n')
+              out.write('Ett godkänt stickprov bevisar inte full datatäckning eller CSV-likvärdighet. Ingen publicering utförs.\n')
+          PY
