@@ -322,3 +322,7 @@ identifieras och publiceras atomiskt. Återanvänd detta paket som underlag;
 Backendens återstartbara uppladdning och serverkontrollerade manifest är
 fortsatt separat arbete. Ingen merge, migration eller publicering har gjorts,
 och nästa indikator har inte startats.
+
+## Publicering 2026-11-10
+
+Indikator 33 är aktiv från verifierat paket (batch `5c6a7d55-8337-4ebc-8e13-5b8b28218e09`, 1 151 372 rader, 231/231 chunkar). Föregående batch `60e861fa-11eb-4db1-8d83-75b4b53e49ad` finns kvar för rollback. Uppladdaren är `scripts/uka_hst_publish_verified.py`. Där finns stopporsak, kontroller och begränsningar i [publiceringsrapporten](uka-hst-publication-2026-11-10.md). Full källtäckning och källrevision är fortfarande inte verifierade.
