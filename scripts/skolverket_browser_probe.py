@@ -17,7 +17,7 @@ def dump_selects(page, name):
             lines.append(f"OPTION\t{sid}\t{opt.get_attribute('value') or ''}\t{(opt.inner_text() or '').strip()}")
     (OUT / f"{name}_selects.tsv").write_text("\n".join(lines), encoding="utf-8")
 
-def collect_download_search(page, name, school_code, area_keywords):
+def collect_download_search(page, name, school_code, area_keywords, export_keywords):
     network = []
 
     def on_response(resp):
@@ -76,14 +76,26 @@ def collect_download_search(page, name, school_code, area_keywords):
     page.wait_for_timeout(2500)
     dump_selects(page, name + "_after_area")
 
+    # SOK_D_EXPORT is the report/dataset selector (not the file format).
     export_sel = page.locator("#SOK_D_EXPORT")
     export_options = [(o.get_attribute("value") or "", (o.inner_text() or "").strip()) for o in export_sel.locator("option").all()]
-    csv_options = [x for x in export_options if "csv" in x[1].lower()]
-    if csv_options:
-        export_sel.select_option(value=csv_options[0][0])
-    elif any(v for v, _ in export_options):
-        export_sel.select_option(value=next(v for v, _ in export_options if v))
-    page.wait_for_timeout(500)
+    chosen_export = None
+    for value, label in export_options:
+        lo = label.lower()
+        if value and all(k.lower() in lo for k in export_keywords):
+            chosen_export = (value, label)
+            break
+
+    if chosen_export is None:
+        (OUT / f"{name}_error.txt").write_text(
+            "No matching export. Keywords=" + ",".join(export_keywords),
+            encoding="utf-8",
+        )
+        raise RuntimeError(f"Could not find export matching {export_keywords}")
+
+    export_sel.select_option(value=chosen_export[0])
+    page.wait_for_timeout(1500)
+    dump_selects(page, name + "_after_export")
 
     year = page.locator("#SOK_D_AR")
     year.wait_for(timeout=15000)
@@ -131,11 +143,11 @@ with sync_playwright() as p:
     browser = p.chromium.launch(headless=True)
 
     page = browser.new_page(viewport={"width": 1600, "height": 1400})
-    collect_download_search(page, "gr9", "11", ["betyg", "9"])
+    collect_download_search(page, "gr9", "11", ["betyg", "9"], ["behörighet", "fr.o.m. 2011"])
     page.close()
 
     page = browser.new_page(viewport={"width": 1600, "height": 1400})
-    collect_download_search(page, "gy", "21", ["betyg", "studie"])
+    collect_download_search(page, "gy", "21", ["betyg"], ["genomström"])
     page.close()
 
     browser.close()
