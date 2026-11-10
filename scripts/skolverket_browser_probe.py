@@ -45,6 +45,10 @@ def collect_download_search(page, name, school_code, area_keywords):
     # D-läget använder skolformskoder 11=grundskola, 21=gymnasium.
     page.wait_for_selector("#SOK_D_VERKFORM", timeout=15000)
     page.locator("#SOK_D_VERKFORM").select_option(value=school_code)
+    page.wait_for_timeout(1500)
+
+    # Level must be chosen before the statistics areas are populated.
+    page.locator("#SOK_D_NIVA").select_option(value="S")
     page.wait_for_timeout(2500)
     dump_selects(page, name + "_after_school")
 
@@ -72,7 +76,16 @@ def collect_download_search(page, name, school_code, area_keywords):
     page.wait_for_timeout(2500)
     dump_selects(page, name + "_after_area")
 
-    year = page.locator("#SOK_D_LASAR")
+    export_sel = page.locator("#SOK_D_EXPORT")
+    export_options = [(o.get_attribute("value") or "", (o.inner_text() or "").strip()) for o in export_sel.locator("option").all()]
+    csv_options = [x for x in export_options if "csv" in x[1].lower()]
+    if csv_options:
+        export_sel.select_option(value=csv_options[0][0])
+    elif any(v for v, _ in export_options):
+        export_sel.select_option(value=next(v for v, _ in export_options if v))
+    page.wait_for_timeout(500)
+
+    year = page.locator("#SOK_D_AR")
     year.wait_for(timeout=15000)
     options = [(o.get_attribute("value") or "", (o.inner_text() or "").strip()) for o in year.locator("option").all()]
 
