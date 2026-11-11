@@ -26,9 +26,13 @@ on:
   schedule:
     # 04:00 UTC = 05:00 svensk vintertid / 06:00 sommartid, efter SCB:s nattliga underhåll.
     - cron: "0 4 * * *"
+    # 08:15 svensk tid. Bara ett av UTC-schemana är aktivt per datum.
+    - cron: "15 6 * * *"
+    - cron: "15 7 * * *"
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: etl-scb-afr
@@ -42,15 +46,29 @@ jobs:
       - name: Checka ut repo
         uses: actions/checkout@v5
 
+      - name: Avgör om reservkontroll behövs
+        id: recovery
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_EVENT_SCHEDULE: ${{ github.event.schedule }}
+        run: python3 scripts/afr_recovery_gate.py
+
+      - name: Testa reservkontrollens tidslogik
+        if: steps.recovery.outputs.should_run == 'true'
+        run: python3 -m unittest discover -s tests -p test_afr_recovery_gate.py
+
       - name: Installera R
+        if: steps.recovery.outputs.should_run == 'true'
         uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
 
       - name: Testa återupptagning av publicering
+        if: steps.recovery.outputs.should_run == 'true'
         run: Rscript tests/test_afr_publication.R
 
       - name: Installera beroenden
+        if: steps.recovery.outputs.should_run == 'true'
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           packages: |
@@ -61,6 +79,7 @@ jobs:
           install-quarto: false
 
       - name: Kör AFR-synk
+        if: steps.recovery.outputs.should_run == 'true'
         env:
           AFR_MODE: ${{ github.event_name != 'workflow_dispatch' && 'daily' || inputs.mode }}
           AFR_CONFIRM_LARGE_REMOVAL: ${{ github.event_name == 'workflow_dispatch' && inputs.confirm_large_removal || 'false' }}
