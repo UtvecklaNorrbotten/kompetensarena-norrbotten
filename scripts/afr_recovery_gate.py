@@ -51,7 +51,8 @@ def should_recover(cron, now, runs, current_id):
 def main():
     cron = os.environ.get("GITHUB_EVENT_SCHEDULE", "")
     now = datetime.now(timezone.utc)
-    enabled = False
+    # Normal cron, manual dispatch and push must always run.
+    enabled = not cron or cron == "0 4 * * *"
     if is_recovery_slot(cron, now.date()):
         try:
             runs = fetch_runs(os.environ["GITHUB_REPOSITORY"], os.environ["GITHUB_TOKEN"])
