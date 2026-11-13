@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 const statusLabel: Record<SourceStatus, string> = {
   ok: "OK",
   running: "Körning pågår",
+  waiting: "Väntar på fortsatt import",
   error: "Fel",
   never: "Aldrig körd",
 };
@@ -16,6 +17,7 @@ const statusClass: Record<SourceStatus, string> = {
   ok: "bg-brand-light text-ink border-brand",
   running: "bg-accent-orange-light text-ink border-accent-orange",
   error: "bg-destructive/10 text-destructive border-destructive",
+  waiting: "bg-accent-orange-light text-ink border-accent-orange",
   never: "bg-neutral-surface text-ink-muted border-border",
 };
 
@@ -39,8 +41,8 @@ const runStatusMap: Record<RunView["status"], { label: string; status: SourceSta
   failed: { label: "Misslyckad", status: "error" },
 };
 
-export function RunStatusBadge({ status }: { status: RunView["status"] }) {
-  const m = runStatusMap[status];
+export function RunStatusBadge({ status, finished = false }: { status: RunView["status"]; finished?: boolean }) {
+  const m = status === "started" && finished ? { label: "Väntar på fortsatt import", status: "waiting" as const } : runStatusMap[status];
   return (
     <span
       className={cn(

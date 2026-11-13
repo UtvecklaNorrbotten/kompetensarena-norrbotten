@@ -114,6 +114,7 @@ def main():
     if not sync:
         raise ValueError('No published AFR source')
     if state['profiles'] and state['profiles']['source_date'] == sync['source_date']:
+        api.log(SOURCE,'no_change',sync['source_date'],{'source_date':sync['source_date'],'profile_release':state['profiles']['sync_id']})
         print('AFR profile source unchanged')
         return
     folder = Path(os.environ.get('AFR_PROFILE_CACHE', '/tmp/afr-profile-pages'))
@@ -166,5 +167,6 @@ if __name__ == '__main__':
     except Exception as exc:
         try:
             api.log(SOURCE,'failed','unknown',{'error_type':type(exc).__name__},'AFR profile enrichment failed; existing history retained')
-        finally:
-            raise
+        except Exception:
+            pass  # Preserve the original failure if status logging is unavailable.
+        raise

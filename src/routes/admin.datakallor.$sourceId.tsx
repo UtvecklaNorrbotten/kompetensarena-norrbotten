@@ -132,7 +132,7 @@ function SourceDetail({ s }: { s: SourceView }) {
                     <td className="px-3 py-2 whitespace-nowrap">{fmtDate(r.startedAt)}</td>
                     <td className="px-3 py-2 whitespace-nowrap">{fmtDate(r.finishedAt)}</td>
                     <td className="px-3 py-2 whitespace-nowrap">{fmtDuration(r.startedAt, r.finishedAt)}</td>
-                    <td className="px-3 py-2"><RunStatusBadge status={r.status} /></td>
+                    <td className="px-3 py-2"><RunStatusBadge status={r.status} finished={r.finishedAt !== null} /></td>
                     <td className="px-3 py-2 font-mono text-xs">{r.indicatorId ?? "–"}</td>
                     <td className="px-3 py-2">{r.sourcePeriod ?? "–"}</td>
                     <td className="px-3 py-2 tabular-nums">{fmtNum(runRows(r))}</td>

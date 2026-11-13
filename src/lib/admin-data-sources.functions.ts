@@ -17,7 +17,7 @@ import type { Database, Json } from "@/integrations/supabase/types";
  */
 
 type RunStatus = Database["public"]["Enums"]["run_status"];
-export type SourceStatus = "ok" | "running" | "error" | "never";
+export type SourceStatus = "ok" | "running" | "error" | "never" | "waiting";
 
 export type RunView = {
   id: string;
@@ -62,7 +62,7 @@ export type SourceView = {
 /** Status härleds ur senaste körning; saknas körning används data_source_state. */
 function deriveStatus(latest: RunView | null, stateStatus: string | null): SourceStatus {
   if (latest) {
-    if (latest.status === "started") return "running";
+    if (latest.status === "started") return latest.finishedAt ? "waiting" : "running";
     if (latest.status === "failed") return "error";
     return "ok";
   }
@@ -73,6 +73,8 @@ function deriveStatus(latest: RunView | null, stateStatus: string | null): Sourc
     case "failed":
     case "error":
       return "error";
+    case "waiting":
+      return "waiting";
     case "started":
     case "running":
       return "running";
