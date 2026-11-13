@@ -111,3 +111,5 @@ Enheterna `AntalAnstallda` och `MedelantaletAnstallda` är båda observerade i v
 
 ### Källvärden som behöver granskning
 Täckningssvarets `source_anomalies` räknar negativa tillgångar, negativ nettoomsättning, negativt medelantal anställda och perioder som inte är exakt tolv kalendermånader. Dessa är granskningsmarkeringar, inte automatiskt fastställda fel. Negativ nettoomsättning och avvikande periodlängd kan ha en förklaring i rapporten. Värdenas tecken och perioder ändras aldrig för att få dem att se rimliga ut. Migration `0052_company_accounts_source_anomalies.sql` är applicerad i projektmiljön.
+
+Bokslut kan hämtas med högst 12 samtidiga företagsjobb (ZIP-katalogisering fortsatt högst 8). Detta utnyttjar väntetid för separata källpaket; per företag gäller fortsatt samma transaktion, lås, fulla svenska nämnare och kontrollsummor. API:ets befintliga gräns 600 anrop/minut och återförsök på 429 behålls. Körningen kan fortsätta efter koduppdatering utan omtolkning av redan godkänd version 3.
