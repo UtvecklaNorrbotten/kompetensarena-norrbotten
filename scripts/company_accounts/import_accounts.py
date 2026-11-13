@@ -173,7 +173,7 @@ def main():
             selected = [row for row in rows if row['org_nr'] in companies and companies[row['org_nr']] == row['je_id']]
             selected = selected[:args.max_companies-imported-quarantined]
             selected.sort(key=lambda row:(row['archive_key'],row['member_name']))
-            with ThreadPoolExecutor(max_workers=max(1,min(8,args.workers))) as executor:
+            with ThreadPoolExecutor(max_workers=max(1,min(12,args.workers))) as executor:
                 jobs = [executor.submit(import_one,row) for row in selected]
                 for job in as_completed(jobs):
                     outcome = job.result()
