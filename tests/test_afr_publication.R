@@ -6,7 +6,7 @@ run_case <- function(states, replies, expected_calls, error = FALSE) {
   reads <- 0L; writes <- 0L
   afr_read_sync <<- function(...) { reads <<- reads + 1L; states[[min(reads, length(states))]] }
   afr_post <<- function(path, body, retry_safe, timeout) {
-    stopifnot(!retry_safe, timeout > 600)
+    stopifnot(!retry_safe, timeout > 600, is.null(body$stats))
     writes <<- writes + 1L
     r <- replies[[writes]]
     if (inherits(r, "condition")) stop(r)

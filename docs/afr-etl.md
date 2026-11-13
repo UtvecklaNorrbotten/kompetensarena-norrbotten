@@ -21,7 +21,7 @@ Daily: api-info → jämför med `data_source_state.latest_successful_period` �
 `sha256` över kanonisk sträng, identisk i `R/etl/afr_normalize.R` och `afr_je_canonical`/`afr_ae_canonical`. SNI sorteras på rangordning + kod (bytevis), endast kod/rangordning/andel – aldrig klartext. Databasen räknar om hashen per post och avvisar avvikelser.
 
 ## Integritet
-`peOrgNr` och `orgNr` endast i `afr_je_ident` (admin/ETL). Övriga tabeller använder `je_id`. Inga adresser, telefon, e-post, namn eller spärrar lagras (strikt validering avvisar sådana fält). Koordinater lagras men exponeras inte. Inget i sökindexet.
+`peOrgNr` och `orgNr` endast i `afr_je_ident` (admin/ETL). Övriga tabeller använder `je_id`. Kärntabellerna avvisar fortfarande namn, adresser och kontaktfält. Namn, adresser, adresskoordinater och export/importmarkering historiseras separat i adminskyddade `afr_profile_versions`; `afr_profile_current` innehåller endast senaste telefon/e-post. Se [profiler och bokslut](company-data/README.md). Koordinater lagras men exponeras inte. Inget i sökindexet.
 
 ## Tabeller
 `afr_syncs` (källdatum, hämtningstid, counts, statistik per körning), `afr_je_*`/`afr_ae_*` current/history/SNI, `afr_code_values` + `afr_code_value_history`, `afr_agkat_group` (fylls manuellt efter granskning av agKat-koder), vy `afr_ae_analysis`.
@@ -51,3 +51,6 @@ Diagnostik finns i `afr_syncs.stats.last_publication_error` (SQLSTATE, SQL-konte
 tidpunkt och tidsåtgång). Ett `busy`-svar ger även process-ID och blockerande
 process-ID utan råa registerdata. API:t är fortsatt skyddat med ETL-nyckeln.
 Migration `0047_afr_publication_recovery.sql` måste appliceras före den nya klienten.
+
+## Namn-, adress- och bokslutskomplettering
+Den tillagda importen beskrivs i [company-data/README.md](company-data/README.md). Befintlig strukturhistorik och kanoniska hash är oförändrade. Profilkomplettering återanvänder kärntraverseringens tillfälligt fångade källsvar och skickar bara ändringar.

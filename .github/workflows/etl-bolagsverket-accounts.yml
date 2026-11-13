@@ -1,0 +1,45 @@
+name: 10 · Data · Bolagsverket – digitala årsredovisningar
+on:
+  workflow_dispatch:
+    inputs:
+      max_archives:
+        description: Maximalt antal ZIP-kataloger att indexera (återupptagbart)
+        type: number
+        default: 2000
+      max_companies:
+        description: Maximalt antal senaste bokslut att importera (återupptagbart)
+        type: number
+        default: 2000
+  push:
+    branches: [main]
+    paths:
+      - scripts/company_accounts/**
+      - .github/workflows/etl-bolagsverket-accounts.yml
+  schedule:
+    # Bounded bootstrap/resume. Completed archives are skipped using ETag and
+    # scope hash. Only new weekly files or changed scope require ZIP reads.
+    - cron: '20 */4 * * *'
+permissions:
+  contents: read
+concurrency:
+  group: etl-bolagsverket-accounts
+  cancel-in-progress: false
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Testa perioder, enheter och fördelningsregler
+        run: python -m unittest discover -s tests -p test_company_accounts.py
+      - name: Importera senaste tillgängliga bokslut
+        env:
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+          PYTHONPATH: scripts
+          MAX_ARCHIVES: ${{ inputs.max_archives || '2000' }}
+          MAX_COMPANIES: ${{ github.event_name == 'push' && '50000' || inputs.max_companies || '2000' }}
+        run: python -m company_accounts.import_accounts --max-archives "$MAX_ARCHIVES" --max-companies "$MAX_COMPANIES" --workers 4

@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [feat/afr-history-annual-accounts]
-    paths: [.github/workflows/validate-company-data.yml, scripts/company_accounts/probe.py]
+    paths: [.github/workflows/validate-company-data.yml, scripts/company_accounts/**, tests/test_company_accounts.py, R/etl/afr_publication.R]
 permissions:
   contents: read
 jobs:
@@ -25,3 +25,9 @@ jobs:
           name: company-data-source-contract
           path: source-contract.json
           retention-days: 30
+
+      - name: Testa bokslut och fördelning
+        run: python -m unittest discover -s tests -p test_company_accounts.py
+      - uses: r-lib/actions/setup-r@v2
+      - name: Testa befintlig AFR-publicering
+        run: Rscript tests/test_afr_publication.R

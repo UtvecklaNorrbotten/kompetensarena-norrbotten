@@ -220,6 +220,12 @@ result <- tryCatch({
     stop("Källdatum ändrades under uttaget – körs om senare")
   }
 
+  profile_cache <- Sys.getenv("AFR_PROFILE_CACHE", "")
+  if (nzchar(profile_cache)) {
+    jsonlite::write_json(list(source_date = source_date, je_observed = je$unique, ae_observed = ae$unique,
+      has_more_false = TRUE), file.path(profile_cache, "manifest.json"), auto_unbox = TRUE)
+  }
+
   base_stats <- list(
     api_name = info$apiNamn, je_pages = je$pages, ae_pages = ae$pages,
     je_count_before = je_count, je_count_after = je_after, ae_count_before = ae_count, ae_count_after = ae_after,

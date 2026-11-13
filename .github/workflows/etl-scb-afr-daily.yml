@@ -81,6 +81,7 @@ jobs:
       - name: Kör AFR-synk
         if: steps.recovery.outputs.should_run == 'true'
         env:
+          AFR_PROFILE_CACHE: /tmp/afr-profile-pages
           AFR_MODE: ${{ github.event_name != 'workflow_dispatch' && 'daily' || inputs.mode }}
           AFR_CONFIRM_LARGE_REMOVAL: ${{ github.event_name == 'workflow_dispatch' && inputs.confirm_large_removal || 'false' }}
           SCB_AFR_API_KEY: ${{ secrets.SCB_AFR_API_KEY }}
@@ -89,3 +90,13 @@ jobs:
         shell: Rscript {0}
         run: |
           source("R/etl/afr_sync.R")
+
+      - name: Komplettera skyddad namn- och adresshistorik
+        if: steps.recovery.outputs.should_run == 'true' && (github.event_name != 'workflow_dispatch' || inputs.mode == 'daily' || inputs.mode == 'initial-load')
+        env:
+          AFR_PROFILE_CACHE: /tmp/afr-profile-pages
+          SCB_AFR_API_KEY: ${{ secrets.SCB_AFR_API_KEY }}
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+          PYTHONPATH: scripts
+        run: python3 -m company_accounts.profiles

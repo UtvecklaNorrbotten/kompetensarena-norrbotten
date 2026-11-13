@@ -1,0 +1,301 @@
+{
+  "juridiskaenheter": {
+    "sample_rows": 5000,
+    "fields": {
+      "peOrgNr": [
+        "str"
+      ],
+      "orgNr": [
+        "str"
+      ],
+      "namn": [
+        "str"
+      ],
+      "postAdress": [
+        "dict"
+      ],
+      "postAdress.gatuAdress": [
+        "str"
+      ],
+      "postAdress.coAdress": [
+        "str"
+      ],
+      "postAdress.postNr": [
+        "str"
+      ],
+      "postAdress.postOrt": [
+        "str"
+      ],
+      "kommunSate": [
+        "str"
+      ],
+      "lanSate": [
+        "str"
+      ],
+      "aeAnt": [
+        "int"
+      ],
+      "anstKl": [
+        "str"
+      ],
+      "ftgStat": [
+        "str"
+      ],
+      "jurform": [
+        "str"
+      ],
+      "reklamSparrTyp": [
+        "int"
+      ],
+      "telefonSparrTyp": [
+        "int"
+      ],
+      "epostSparrTyp": [
+        "int"
+      ],
+      "regDat": [
+        "str"
+      ],
+      "expImp": [
+        "str"
+      ],
+      "tel": [
+        "str"
+      ],
+      "epost": [
+        "str"
+      ],
+      "omsAr": [
+        "int"
+      ],
+      "omsKl": [
+        "str"
+      ],
+      "agKat": [
+        "str"
+      ],
+      "foretagsnamn": [
+        "str"
+      ],
+      "foretagsnamnAnt": [
+        "int"
+      ],
+      "arbGivStat": [
+        "str"
+      ],
+      "momsStat": [
+        "str"
+      ],
+      "fSkattStat": [
+        "str"
+      ],
+      "bolStat": [
+        "str"
+      ],
+      "privPubl": [
+        "str"
+      ],
+      "sektor": [
+        "str"
+      ],
+      "naringsgrenar": [
+        "list"
+      ],
+      "startDat": [
+        "str"
+      ],
+      "slutDat": [
+        "str"
+      ]
+    },
+    "expImp_observed": {
+      "N": 4427,
+      "J": 573
+    }
+  },
+  "arbetsstallen": {
+    "sample_rows": 5000,
+    "fields": {
+      "cfarNr": [
+        "int"
+      ],
+      "peOrgNr": [
+        "str"
+      ],
+      "ben": [
+        "str"
+      ],
+      "postAdress": [
+        "dict"
+      ],
+      "postAdress.gatuAdress": [
+        "str"
+      ],
+      "postAdress.coAdress": [
+        "str"
+      ],
+      "postAdress.postNr": [
+        "str"
+      ],
+      "postAdress.postOrt": [
+        "str"
+      ],
+      "belagenhetsadress": [
+        "dict"
+      ],
+      "belagenhetsadress.lan": [
+        "str"
+      ],
+      "belagenhetsadress.kommun": [
+        "str"
+      ],
+      "belagenhetsadress.bGatuAdress": [
+        "str"
+      ],
+      "belagenhetsadress.bPostNr": [
+        "str"
+      ],
+      "belagenhetsadress.bPostOrt": [
+        "str"
+      ],
+      "aeStat": [
+        "int"
+      ],
+      "anstKl": [
+        "int"
+      ],
+      "hjVerksJE": [
+        "int"
+      ],
+      "reklamSparrTyp": [
+        "int"
+      ],
+      "telefonSparrTyp": [
+        "int"
+      ],
+      "epostSparrTyp": [
+        "int"
+      ],
+      "tel": [
+        "str"
+      ],
+      "epost": [
+        "str"
+      ],
+      "aeTyp": [
+        "int"
+      ],
+      "naringsgrenar": [
+        "list"
+      ],
+      "startDat": [
+        "str"
+      ],
+      "geografiskInformation": [
+        "dict"
+      ],
+      "geografiskInformation.nordKoordinatSW": [
+        "int"
+      ],
+      "geografiskInformation.ostKoordinatSW": [
+        "int"
+      ],
+      "geografiskInformation.nordKoordinatAdressSW": [
+        "int"
+      ],
+      "geografiskInformation.ostKoordinatAdressSW": [
+        "int"
+      ],
+      "geografiskInformation.tatSmaTypKod": [
+        "str"
+      ],
+      "geografiskInformation.tatSmaTypText": [
+        "str"
+      ],
+      "geografiskInformation.tatOrtSmaOrtKod": [
+        "str"
+      ],
+      "geografiskInformation.tatOrtSmaOrtBen": [
+        "str"
+      ],
+      "slutDat": [
+        "str"
+      ]
+    }
+  },
+  "anstklkoder": [
+    {
+      "kod": 0,
+      "klartext": "Uppgift saknas"
+    },
+    {
+      "kod": 1,
+      "klartext": "0 anställda"
+    },
+    {
+      "kod": 2,
+      "klartext": "1-4 anställda"
+    },
+    {
+      "kod": 3,
+      "klartext": "5-9 anställda"
+    },
+    {
+      "kod": 4,
+      "klartext": "10-19 anställda"
+    },
+    {
+      "kod": 5,
+      "klartext": "20-49 anställda"
+    },
+    {
+      "kod": 6,
+      "klartext": "50-99 anställda"
+    },
+    {
+      "kod": 7,
+      "klartext": "100-199 anställda"
+    },
+    {
+      "kod": 8,
+      "klartext": "200-499 anställda"
+    },
+    {
+      "kod": 9,
+      "klartext": "500-999 anställda"
+    },
+    {
+      "kod": 10,
+      "klartext": "1000-1499 anställda"
+    },
+    {
+      "kod": 11,
+      "klartext": "1500-1999 anställda"
+    },
+    {
+      "kod": 12,
+      "klartext": "2000-2999 anställda"
+    },
+    {
+      "kod": 13,
+      "klartext": "3000-3999 anställda"
+    },
+    {
+      "kod": 14,
+      "klartext": "4000-4999 anställda"
+    },
+    {
+      "kod": 15,
+      "klartext": "5000-9999 anställda"
+    },
+    {
+      "kod": 16,
+      "klartext": "10000- anställda"
+    }
+  ],
+  "bolagsverket": {
+    "archives": 1469,
+    "bulk_bytes": 136322763930,
+    "latest_key": "arsredovisningar/2026/45_5.zip"
+  }
+}
