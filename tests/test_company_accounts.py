@@ -59,6 +59,39 @@ class Accounts(unittest.TestCase):
         extra='<ix:nonFraction name="g:Nettoomsattning" contextRef="p" unitRef="sek">1234500</ix:nonFraction>'
         self.assertEqual(Decimal(parse(report(extra),ORG,'2025-04-30')['metrics']['net_sales']),Decimal(1234500))
 
+
+    def test_rounded_duplicates_use_most_accurate_without_addition(self):
+        extra='<ix:nonFraction name="g:Nettoomsattning" contextRef="p" unitRef="sek" decimals="0">1234499</ix:nonFraction>'
+        data=report(extra).replace(b'scale="3"',b'scale="3" decimals="-3"')
+        r=parse(data,ORG,'2025-04-30')
+        self.assertEqual(r['metrics']['net_sales'],'1234499')
+        self.assertIn('net_sales:consistent_rounded_duplicates',r['issues'])
+        self.assertEqual(len(r['provenance']['net_sales']),2)
+
+    def test_exact_duplicate_and_negative_rounding(self):
+        extra='<ix:nonFraction name="g:Nettoomsattning" contextRef="p" unitRef="sek" decimals="INF">-1234499</ix:nonFraction>'
+        data=report(extra,revenue='-1 234,5').replace(b'scale="3"',b'scale="3" decimals="-3"')
+        self.assertEqual(parse(data,ORG,'2025-04-30')['metrics']['net_sales'],'-1234499')
+
+    def test_truly_inconsistent_rounding_keeps_gap_and_provenance(self):
+        extra='<ix:nonFraction name="g:Nettoomsattning" contextRef="p" unitRef="sek" decimals="0">1236000</ix:nonFraction>'
+        data=report(extra).replace(b'scale="3"',b'scale="3" decimals="-3"')
+        r=parse(data,ORG,'2025-04-30')
+        self.assertIsNone(r['metrics']['net_sales'])
+        self.assertEqual(len(r['provenance']['net_sales']),2)
+
+    def test_same_accuracy_different_values_not_resolved(self):
+        extra='<ix:nonFraction name="g:Nettoomsattning" contextRef="p" unitRef="sek" decimals="0">1234501</ix:nonFraction>'
+        data=report(extra).replace(b'scale="3"',b'scale="3" decimals="0"')
+        self.assertIsNone(parse(data,ORG,'2025-04-30')['metrics']['net_sales'])
+
+    def test_employee_unit_alias_is_prefix_independent(self):
+        extra='<x:unit id="employees"><x:measure>g:MedelantaletAnstallda</x:measure></x:unit><ix:nonFraction name="g:MedelantaletAnstallda" contextRef="p" unitRef="employees" decimals="0">3</ix:nonFraction>'
+        r=parse(report(extra),ORG,'2025-04-30')
+        self.assertEqual(r['metrics']['average_employees'],'3')
+        bad=report(extra).replace(b'<x:measure>g:MedelantaletAnstallda</x:measure>',b'<x:measure>iso:SEK</x:measure>')
+        self.assertIsNone(parse(bad,ORG,'2025-04-30')['metrics']['average_employees'])
+
     def test_unknown_extension_does_not_replace_standard_fact(self):
         data=report().replace(b'xmlns:g="http://www.taxonomier.se/se/fr/gen-base/2021-10-31"',b'xmlns:g="https://synthetic.example/extension"')
         with self.assertRaises(ValueError):parse(data,ORG,'2025-04-30')

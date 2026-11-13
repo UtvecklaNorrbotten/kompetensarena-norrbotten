@@ -12,7 +12,7 @@ import xml.etree.ElementTree as ET
 from collections import defaultdict
 from decimal import Decimal, InvalidOperation
 
-VERSION = 'bv-ixbrl-2'
+VERSION = 'bv-ixbrl-3'
 XBRLI = 'http://www.xbrl.org/2003/instance'
 IX = {'http://www.xbrl.org/2013/inlineXBRL', 'http://www.xbrl.org/2008/inlineXBRL'}
 METRICS = {
@@ -73,6 +73,35 @@ def numeric(element):
             raise ValueError('conflicting lexical and attribute signs')
         value = -value
     return value
+
+
+def consistent_duplicate(rows):
+    """Select maximum stated accuracy only when all rounding intervals agree.
+
+    Missing/invalid decimals never authorize a differing value. Equal-accuracy
+    duplicates must have identical values. INF means exact, not decimal zero.
+    """
+    intervals = []
+    by_accuracy = defaultdict(set)
+    for row in rows:
+        if row['value'] is None:
+            continue
+        decimals = row['decimals']
+        if decimals == 'INF':
+            accuracy, radius = float('inf'), Decimal(0)
+        elif decimals is not None and re.fullmatch(r'[+-]?\d+', decimals) and abs(int(decimals)) <= 18:
+            accuracy = int(decimals)
+            radius = Decimal('0.5') * Decimal(10) ** -accuracy
+        else:
+            return None
+        value = Decimal(row['value'])
+        by_accuracy[accuracy].add(value)
+        intervals.append((value-radius, value+radius, accuracy, row))
+    if not intervals or any(len(values) > 1 for values in by_accuracy.values()):
+        return None
+    if max(r[0] for r in intervals) > min(r[1] for r in intervals):
+        return None
+    return max(intervals, key=lambda r:r[2])[3]['value']
 
 
 def parse(data, expected_org, expected_end):
@@ -151,7 +180,7 @@ def parse(data, expected_org, expected_end):
             continue
         measure = measures[0]
         uri, name = expanded(measure.text or '', measure)
-        units[unit.get('id')] = ('currency', name) if uri == 'http://www.xbrl.org/2003/iso4217' else ('other', (measure.text or ''))
+        units[unit.get('id')] = ('currency', name) if uri == 'http://www.xbrl.org/2003/iso4217' else ('other', '{' + uri + '}' + name)
 
     candidates = defaultdict(list)
     issues = []
@@ -172,7 +201,7 @@ def parse(data, expected_org, expected_end):
         if not unit or (metric != 'average_employees' and unit[0] != 'currency'):
             issues.append(metric + ':invalid_unit')
             continue
-        if metric == 'average_employees' and (unit[0] == 'currency' or not ('AntalAnstallda' in unit[1] or unit[1].endswith(':pure'))):
+        if metric == 'average_employees' and (unit[0] == 'currency' or local(unit[1]) not in ('AntalAnstallda', 'MedelantaletAnstallda', 'pure')):
             issues.append(metric + ':invalid_employee_unit')
             continue
         try:
@@ -208,9 +237,15 @@ def parse(data, expected_org, expected_end):
     for metric, _ in METRICS.values():
         rows = [r for r in candidates.get(metric, []) if not r['start'] or r['start'] == period_start]
         values = {(r['value'], r['unit']) for r in rows if r['value'] is not None}
+        nonnil = [r for r in rows if r['value'] is not None]
+        resolved = consistent_duplicate(nonnil) if len(values) > 1 and len({r['unit'] for r in nonnil}) == 1 else None
+        if rows:
+            provenance[metric] = rows
         if len(values) == 1:
             result[metric] = next(iter(values))[0]
-            provenance[metric] = rows
+        elif resolved is not None:
+            result[metric] = resolved
+            issues.append(metric + ':consistent_rounded_duplicates')
         else:
             result[metric] = None
             issues.append(metric + (':conflicting_facts' if len(values) > 1 else ':missing'))
