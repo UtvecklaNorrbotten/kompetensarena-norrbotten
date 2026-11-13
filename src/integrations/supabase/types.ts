@@ -689,6 +689,120 @@ export type Database = {
           },
         ]
       }
+      afr_profile_current: {
+        Row: {
+          contact: Json
+          contact_hash: string
+          entity: string
+          entity_id: string
+          observed_at: string
+          payload_hash: string
+          source_date: string
+          version_id: number
+        }
+        Insert: {
+          contact: Json
+          contact_hash: string
+          entity: string
+          entity_id: string
+          observed_at: string
+          payload_hash: string
+          source_date: string
+          version_id: number
+        }
+        Update: {
+          contact?: Json
+          contact_hash?: string
+          entity?: string
+          entity_id?: string
+          observed_at?: string
+          payload_hash?: string
+          source_date?: string
+          version_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "afr_profile_current_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "afr_profile_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      afr_profile_releases: {
+        Row: {
+          completed_at: string
+          details: Json
+          source_date: string
+          sync_id: string
+        }
+        Insert: {
+          completed_at?: string
+          details: Json
+          source_date: string
+          sync_id: string
+        }
+        Update: {
+          completed_at?: string
+          details?: Json
+          source_date?: string
+          sync_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "afr_profile_releases_sync_id_fkey"
+            columns: ["sync_id"]
+            isOneToOne: true
+            referencedRelation: "afr_syncs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      afr_profile_versions: {
+        Row: {
+          change_types: string[]
+          entity: string
+          entity_id: string
+          id: number
+          observed_at: string
+          payload: Json
+          payload_hash: string
+          source_date: string
+          sync_id: string
+        }
+        Insert: {
+          change_types: string[]
+          entity: string
+          entity_id: string
+          id?: never
+          observed_at: string
+          payload: Json
+          payload_hash: string
+          source_date: string
+          sync_id: string
+        }
+        Update: {
+          change_types?: string[]
+          entity?: string
+          entity_id?: string
+          id?: never
+          observed_at?: string
+          payload?: Json
+          payload_hash?: string
+          source_date?: string
+          sync_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "afr_profile_versions_sync_id_fkey"
+            columns: ["sync_id"]
+            isOneToOne: false
+            referencedRelation: "afr_syncs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       afr_stage_records: {
         Row: {
           entity: string
@@ -1124,6 +1238,346 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "indicators"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_account_allocations: {
+        Row: {
+          account_id: number
+          cfar_nr: number
+          estimated_net_sales: number | null
+          flags: string[]
+          is_estimate: boolean
+          rule_version: string
+          structure_basis: string
+          structure_history_id: number | null
+          structure_sync_id: string
+          weight: number
+        }
+        Insert: {
+          account_id: number
+          cfar_nr: number
+          estimated_net_sales?: number | null
+          flags: string[]
+          is_estimate?: boolean
+          rule_version?: string
+          structure_basis: string
+          structure_history_id?: number | null
+          structure_sync_id: string
+          weight: number
+        }
+        Update: {
+          account_id?: number
+          cfar_nr?: number
+          estimated_net_sales?: number | null
+          flags?: string[]
+          is_estimate?: boolean
+          rule_version?: string
+          structure_basis?: string
+          structure_history_id?: number | null
+          structure_sync_id?: string
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_account_allocations_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "company_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_account_allocations_structure_history_id_fkey"
+            columns: ["structure_history_id"]
+            isOneToOne: false
+            referencedRelation: "afr_ae_history"
+            referencedColumns: ["history_id"]
+          },
+          {
+            foreignKeyName: "company_account_allocations_structure_sync_id_fkey"
+            columns: ["structure_sync_id"]
+            isOneToOne: false
+            referencedRelation: "afr_syncs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_account_archives: {
+        Row: {
+          archive_key: string
+          downloaded_bytes: number
+          etag: string
+          members: number
+          scanned_at: string
+          scope_hash: string
+          selected: number
+          size: number
+          source_modified: string
+        }
+        Insert: {
+          archive_key: string
+          downloaded_bytes: number
+          etag: string
+          members: number
+          scanned_at?: string
+          scope_hash: string
+          selected: number
+          size: number
+          source_modified: string
+        }
+        Update: {
+          archive_key?: string
+          downloaded_bytes?: number
+          etag?: string
+          members?: number
+          scanned_at?: string
+          scope_hash?: string
+          selected?: number
+          size?: number
+          source_modified?: string
+        }
+        Relationships: []
+      }
+      company_account_candidates: {
+        Row: {
+          alternatives: Json
+          archive_etag: string
+          archive_key: string
+          archive_size: number
+          checked_at: string | null
+          checked_parser_version: string | null
+          error_code: string | null
+          je_id: string
+          member_name: string
+          package_sha256: string | null
+          period_end: string
+          source_modified: string
+          status: string
+        }
+        Insert: {
+          alternatives?: Json
+          archive_etag: string
+          archive_key: string
+          archive_size: number
+          checked_at?: string | null
+          checked_parser_version?: string | null
+          error_code?: string | null
+          je_id: string
+          member_name: string
+          package_sha256?: string | null
+          period_end: string
+          source_modified: string
+          status?: string
+        }
+        Update: {
+          alternatives?: Json
+          archive_etag?: string
+          archive_key?: string
+          archive_size?: number
+          checked_at?: string | null
+          checked_parser_version?: string | null
+          error_code?: string | null
+          je_id?: string
+          member_name?: string
+          package_sha256?: string | null
+          period_end?: string
+          source_modified?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_account_candidates_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: true
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
+          },
+        ]
+      }
+      company_account_scope_members: {
+        Row: {
+          je_id: string
+        }
+        Insert: {
+          je_id: string
+        }
+        Update: {
+          je_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_account_scope_members_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: true
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
+          },
+        ]
+      }
+      company_account_scope_state: {
+        Row: {
+          refreshed_at: string
+          singleton: boolean
+          sync_id: string
+        }
+        Insert: {
+          refreshed_at?: string
+          singleton?: boolean
+          sync_id: string
+        }
+        Update: {
+          refreshed_at?: string
+          singleton?: boolean
+          sync_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_account_scope_state_sync_id_fkey"
+            columns: ["sync_id"]
+            isOneToOne: false
+            referencedRelation: "afr_syncs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_accounts: {
+        Row: {
+          allocation_sync_id: string | null
+          archive_key: string
+          average_employees: number | null
+          currency: string
+          document_id: string
+          document_sha256: string
+          equity: number | null
+          equity_ratio: number | null
+          id: number
+          issues: Json
+          je_id: string
+          member_name: string
+          net_sales: number | null
+          observed_at: string
+          operating_margin: number | null
+          operating_profit: number | null
+          package_sha256: string
+          parser_version: string
+          period_end: string
+          period_start: string
+          profit_for_year: number | null
+          provenance: Json
+          report_type: string
+          scope: string
+          source_modified: string
+          source_reference: string
+          storage_path: string
+          total_assets: number | null
+          unit: string
+        }
+        Insert: {
+          allocation_sync_id?: string | null
+          archive_key: string
+          average_employees?: number | null
+          currency: string
+          document_id: string
+          document_sha256: string
+          equity?: number | null
+          equity_ratio?: number | null
+          id?: never
+          issues: Json
+          je_id: string
+          member_name: string
+          net_sales?: number | null
+          observed_at?: string
+          operating_margin?: number | null
+          operating_profit?: number | null
+          package_sha256: string
+          parser_version: string
+          period_end: string
+          period_start: string
+          profit_for_year?: number | null
+          provenance: Json
+          report_type: string
+          scope: string
+          source_modified: string
+          source_reference: string
+          storage_path: string
+          total_assets?: number | null
+          unit: string
+        }
+        Update: {
+          allocation_sync_id?: string | null
+          archive_key?: string
+          average_employees?: number | null
+          currency?: string
+          document_id?: string
+          document_sha256?: string
+          equity?: number | null
+          equity_ratio?: number | null
+          id?: never
+          issues?: Json
+          je_id?: string
+          member_name?: string
+          net_sales?: number | null
+          observed_at?: string
+          operating_margin?: number | null
+          operating_profit?: number | null
+          package_sha256?: string
+          parser_version?: string
+          period_end?: string
+          period_start?: string
+          profit_for_year?: number | null
+          provenance?: Json
+          report_type?: string
+          scope?: string
+          source_modified?: string
+          source_reference?: string
+          storage_path?: string
+          total_assets?: number | null
+          unit?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_accounts_allocation_sync_id_fkey"
+            columns: ["allocation_sync_id"]
+            isOneToOne: false
+            referencedRelation: "afr_syncs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_accounts_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: false
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
+          },
+        ]
+      }
+      company_accounts_latest: {
+        Row: {
+          account_id: number
+          je_id: string
+        }
+        Insert: {
+          account_id: number
+          je_id: string
+        }
+        Update: {
+          account_id?: number
+          je_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_accounts_latest_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "company_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_accounts_latest_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: true
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
           },
         ]
       }
@@ -1976,6 +2430,17 @@ export type Database = {
           },
         ]
       }
+      afr_protected_change_events: {
+        Row: {
+          change_types: string[] | null
+          entity: string | null
+          entity_id: string | null
+          event_id: string | null
+          observed_at: string | null
+          source_date: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       afr_abort_sync: {
@@ -2012,6 +2477,14 @@ export type Database = {
       afr_hash: { Args: { p_text: string }; Returns: string }
       afr_je_canonical: { Args: { p: Json }; Returns: string }
       afr_missing_deferred: { Args: never; Returns: string[] }
+      afr_profile_hashes: {
+        Args: { p_entity: string; p_keys: Json }
+        Returns: Json
+      }
+      afr_profile_store: {
+        Args: { p_entity: string; p_records: Json; p_sync_id: string }
+        Returns: Json
+      }
       afr_rebuild_deferred: { Args: never; Returns: Json }
       afr_reopen_initial_sync: { Args: { p_sync_id: string }; Returns: Json }
       afr_sni_primary: { Args: { snap: Json }; Returns: string }
@@ -2061,6 +2534,32 @@ export type Database = {
       agg_refresh_due: { Args: never; Returns: Json }
       agg_refresh_e3: { Args: never; Returns: Json }
       agg_refresh_uka: { Args: never; Returns: Json }
+      company_account_catalog: {
+        Args: { p_archive: Json; p_candidates: Json }
+        Returns: Json
+      }
+      company_account_store: {
+        Args: {
+          p_allocations: Json
+          p_document: Json
+          p_je_id: string
+          p_structure: Json
+        }
+        Returns: Json
+      }
+      company_account_structure: {
+        Args: { p_je_id: string; p_period_end: string }
+        Returns: Json
+      }
+      company_accounts_prepare: {
+        Args: { p_parser_version: string }
+        Returns: Json
+      }
+      company_data_coverage: { Args: never; Returns: Json }
+      company_data_scope: {
+        Args: { p_after?: string; p_limit?: number }
+        Returns: Json
+      }
       etl_abort_batch: {
         Args: { p_batch_id: string; p_reason?: string }
         Returns: Json
