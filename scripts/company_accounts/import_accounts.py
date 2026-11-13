@@ -13,6 +13,7 @@ import zipfile
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from . import api
+from .archive_pool import POOL
 from .allocation import allocate
 from .ixbrl import parse, VERSION
 from .source import archives, open_archive, ROOT, request
@@ -65,15 +66,11 @@ def read_package(candidate):
             raise ValueError('Stored package checksum mismatch')
         return data
     archive = dict(key=candidate['archive_key'], size=candidate['archive_size'], etag=candidate['archive_etag'])
-    reader, z = open_archive(archive)
-    try:
+    with POOL.acquire(archive) as z:
         matches = [i for i in z.infolist() if i.filename == candidate['member_name']]
         if len(matches) != 1 or matches[0].file_size > 40_000_000:
             raise ValueError('Missing, duplicate or oversized company package')
         return z.read(matches[0])
-    finally:
-        z.close()
-        reader.close()
 
 
 def extract(package, candidate):
@@ -167,7 +164,8 @@ def main():
                 break
             selected = [row for row in rows if row['org_nr'] in companies and companies[row['org_nr']] == row['je_id']]
             selected = selected[:args.max_companies-imported-quarantined]
-            with ThreadPoolExecutor(max_workers=max(1,min(4,args.workers))) as executor:
+            selected.sort(key=lambda row:(row['archive_key'],row['member_name']))
+            with ThreadPoolExecutor(max_workers=max(1,min(8,args.workers))) as executor:
                 jobs = [executor.submit(import_one,row) for row in selected]
                 for job in as_completed(jobs):
                     outcome = job.result()

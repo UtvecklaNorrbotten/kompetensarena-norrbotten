@@ -23,6 +23,8 @@ def allocate(establishments, net_sales):
         interval = INTERVALS.get(code)
         midpoints.append(None if interval is None else Decimal(sum(interval)) / 2)
         flags.append(['missing_class'] if interval is None else ['open_top_10000_14999'] if code == 16 else ['zero_employees'] if code == 1 else [])
+        if row.get('ae_typ') == 3:
+            flags[-1].append('fictitious_establishment')
     positives = [m for m in midpoints if m is not None and m > 0]
     imputed = median(positives) if positives else Decimal(1)
     for i, midpoint in enumerate(midpoints):

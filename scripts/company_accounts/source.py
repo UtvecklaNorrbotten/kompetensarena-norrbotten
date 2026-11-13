@@ -103,7 +103,7 @@ class RangeReader(io.RawIOBase):
         if len(data) != end - start + 1:
             raise ValueError('Incomplete or oversized range response')
         self.bytes_downloaded += len(data)
-        self.cached_start, self.cached = start, data
+        self.cached_start, self.cached = start, data[:131072]
         self.position += size
         return data[:size]
 
