@@ -30,4 +30,6 @@ jobs:
         run: python -m unittest discover -s tests -p test_company_accounts.py
       - uses: r-lib/actions/setup-r@v2
       - name: Testa befintlig AFR-publicering
-        run: Rscript tests/test_afr_publication.R
+        run: |
+          Rscript tests/test_afr_publication.R
+          Rscript -e "invisible(parse(file='R/etl/afr_sync.R')); invisible(parse(file='R/etl/afr_client.R'))"

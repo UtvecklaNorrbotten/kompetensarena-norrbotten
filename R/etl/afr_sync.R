@@ -154,11 +154,15 @@ result <- tryCatch({
         source_date <- open$source_date
         fin <- afr_finalize_recoverable(sync_id)
         message("AFR-synk återupptagen och publicerad: ", toJSON(fin$stats, auto_unbox = TRUE))
-        quit(status = 0)
+        # Continue to api-info: SCB may have advanced while publication was stuck.
+        # A fresh source traversal below can then capture the current profiles.
+        sync_id <- NULL
+        source_date <- NULL
+      } else {
+        # Partial staging cannot have been finalized. Guarded abort refuses to
+        # interfere with an active publisher; then a fresh source traversal is safe.
+        afr_post("/api/public/jobs/afr/abort", list(sync_id = open$id, reason = "Ersätter ofullständig överföring"))
       }
-      # Partial staging cannot have been finalized. Guarded abort refuses to
-      # interfere with an active publisher; then a fresh source traversal is safe.
-      afr_post("/api/public/jobs/afr/abort", list(sync_id = open$id, reason = "Ersätter ofullständig överföring"))
     }
   }
 

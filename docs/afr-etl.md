@@ -38,7 +38,7 @@ Innan SCB kontaktas kontrolleras senaste dagliga synk med status `receiving`.
 Om alla datapaket finns återupptas samma publicering med ursprungligt källdatum.
 En ofullständig överföring avbryts under samma databaslås innan ett nytt uttag börjar.
 Publiceringsfel behåller staging och markeras inte som lyckade; nästa körning försöker igen.
-Om den återupptagna publiceringen gäller ett äldre källdatum hämtas nästa version vid nästa körning.
+Efter återupptagen publicering kontrolleras SCB i samma körning. Om källan har uppdaterats hämtas och publiceras nästa version innan profilkompletteringen startar.
 
 `afr_finalize_sync` tar ett icke-väntande transaktionslås före radlåset och returnerar
 `busy` om en publicering redan pågår. Databasoperationen har 600 s tidsgräns,
