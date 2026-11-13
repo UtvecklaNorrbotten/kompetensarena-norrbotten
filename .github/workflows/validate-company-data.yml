@@ -1,6 +1,11 @@
 name: 90 · Kontroll · AFR och digitala årsredovisningar
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - scripts/company_accounts/**
+      - tests/test_company_accounts.py
+      - .github/workflows/validate-company-data.yml
   push:
     branches: [feat/afr-history-annual-accounts]
     paths: [.github/workflows/validate-company-data.yml, scripts/company_accounts/**, tests/test_company_accounts.py, R/etl/afr_publication.R]
@@ -8,6 +13,7 @@ permissions:
   contents: read
 jobs:
   contract:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -33,3 +39,13 @@ jobs:
         run: |
           Rscript tests/test_afr_publication.R
           Rscript -e "invisible(parse(file='R/etl/afr_sync.R')); invisible(parse(file='R/etl/afr_client.R'))"
+
+  tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m unittest discover -s tests -p test_company_accounts.py

@@ -84,3 +84,8 @@ Alla nya tabeller har RLS med adminläsning och service_role-skrivning. Råa fö
 - `tests/company-data-protected.sql` – transaktionstest med syntetiska profil-/kontaktvärden; idempotens, kontaktöverskrivning utan historik, händelsetyper och åtkomst; alla ändringar rullas tillbaka.
 - Befintliga AFR-tester körs fortsatt. Ett upptäckt fel i återupptagningen rättades: tomma R-listan `stats=list()` blev JSON-arrayen `[]`, som API:t avvisade. `stats` utelämnas nu när listan är tom.
 - `company_data_coverage()` redovisar urval, ett/flera/inga arbetsställen, saknad digital kandidat, import/karantän, faktaluckor, perioder, strukturgrund och reservregler. Full täckning ska alltid hämtas efter avslutad kataloggenomgång; ovanstående 182 paket är bara formatverifiering.
+
+### Prestandakontroll i skarp drift
+Migration `0049_company_data_runtime_indexes.sql` lägger till en kompakt urvalscache med endast interna JE-nycklar. Den räknas om en gång per publicerad AFR-synk, så att paginering inte läser landets strukturtabeller på nytt för varje sida. Den duplicerar inga namn, adresser, identifierare eller strukturegenskaper. Katalog- och importmarkörer behålls vid timeout. En slutkontroll jämför urvalets medlemskap igen; om AFR ändrats under körningen markeras källan `waiting` och ny katalogkontroll krävs.
+
+AFR-finaliseringens frågeplan begränsas i samma migration till hash-join där det finns ett alternativ, med 64 MB arbetsminne. Detta ersätter inte balanskontroller eller historik utan undviker rikstäckande slumpmässig indexläsning för ett avgränsat delta. Upptagna publiceringar pollas separat från budgeten för nya försök. En ofullständig avslutad delkörning visas generellt som ”Väntar på fortsatt import” i admin.

@@ -13,14 +13,15 @@ afr_chunks_complete <- function(state) {
     identical(as.integer(state$received_ae_chunks), as.integer(state$expected_ae_chunks))
 }
 
-afr_finalize_recoverable <- function(sync_id, stats = list(), attempts = 6L, pause = Sys.sleep) {
-  for (attempt in seq_len(attempts)) {
+afr_finalize_recoverable <- function(sync_id, stats = list(), attempts = 6L, pause = Sys.sleep, max_busy_polls = 60L) {
+  attempt <- 0L; busy_polls <- 0L
+  while (attempt < attempts && busy_polls < max_busy_polls) {
     state <- afr_read_sync(sync_id)
     if (is.null(state) || !length(state)) stop("AFR-synken saknas: ", sync_id)
     if (identical(state$status, "succeeded")) return(list(status = "succeeded", stats = state$stats))
     if (!identical(state$status, "receiving")) stop("AFR-synken har status ", state$status)
     if (!afr_chunks_complete(state)) stop("AFR-synken saknar datapaket; publicering stoppad")
-    message(sprintf("AFR publicering %s, försök %d/%d", sync_id, attempt, attempts))
+    message(sprintf("AFR publicering %s, försök %d/%d", sync_id, attempt + 1L, attempts))
     # No automatic HTTP retry. Read committed status before each explicit attempt.
     body <- list(sync_id = sync_id)
     if (length(stats)) body$stats <- stats # list() serializes as [], not a JSON object.
@@ -30,6 +31,15 @@ afr_finalize_recoverable <- function(sync_id, stats = list(), attempts = 6L, pau
         list(status = "unknown")
       })
     if (identical(result$status, "succeeded")) return(result)
+    if (identical(result$status, "busy")) {
+      # A timed-out gateway may leave a 600 s transaction running. Polling that
+      # transaction is not another failed publication attempt.
+      busy_polls <- busy_polls + 1L
+      if (busy_polls < max_busy_polls) pause(15)
+      next
+    }
+    attempt <- attempt + 1L
+    busy_polls <- 0L
     if (identical(result$status, "blocked")) stop("AFR publicering kräver åtgärd: ", result$message)
     message("AFR publiceringsstatus: ", result$status, " ", if (is.null(result$code)) "" else result$code, " ", if (is.null(result$message)) "" else result$message)
     if (!is.null(result$activity)) message("AFR låsdiagnostik: ", jsonlite::toJSON(result$activity, auto_unbox = TRUE))

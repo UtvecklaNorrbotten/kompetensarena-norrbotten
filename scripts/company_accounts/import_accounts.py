@@ -178,7 +178,11 @@ def main():
             after = rows[-1]['je_id']
     coverage = api.call('coverage')
     coverage.update(source_archives=len(listing), archives_remaining=remaining, scope_hash=scope_hash, parser_version=VERSION)
-    status = 'waiting' if remaining or coverage['pending'] else 'succeeded'
+    final_pairs = sorted((r['org_nr'],r['je_id']) for r in scope() if r['org_nr'] and re.fullmatch(r'\d{10}',r['org_nr']))
+    final_scope_hash = hashlib.sha256(json.dumps(final_pairs,separators=(',',':')).encode()).hexdigest()
+    scope_changed = final_scope_hash != scope_hash
+    coverage['scope_changed_during_run'] = scope_changed
+    status = 'waiting' if remaining or coverage['pending'] or scope_changed else 'succeeded'
     api.log(SOURCE, status, period, coverage)
     print(json.dumps(coverage, ensure_ascii=False, indent=2))
 
@@ -189,5 +193,6 @@ if __name__ == '__main__':
     except Exception as exc:
         try:
             api.log(SOURCE, 'failed', 'unknown', {'error_type': type(exc).__name__}, 'Annual accounts import failed; checkpoints retained')
-        finally:
-            raise
+        except Exception:
+            pass  # Preserve the original failure if status logging is unavailable.
+        raise
