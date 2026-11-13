@@ -1,0 +1,21 @@
+name: 90 · Kontroll · Bokslutens avrundning
+on:
+  push:
+    branches: [fix/ixbrl-accuracy]
+    paths: [scripts/company_accounts/probe_ixbrl.py, .github/workflows/probe-ixbrl.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Kontrollera offentlig rapportstruktur utan företagsidentifierare
+        env:
+          PYTHONPATH: scripts
+        run: python -m company_accounts.probe_ixbrl
