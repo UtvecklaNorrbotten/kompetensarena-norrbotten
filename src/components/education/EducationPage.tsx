@@ -105,7 +105,7 @@ export function EducationPage({ initialSection = "" }: { initialSection?: string
           Utforska alla avsnitt <ArrowDown className="size-4" aria-hidden />
         </a>
       </Section>
-      <div className="mx-auto grid max-w-(--container-content) items-start gap-6 px-4 py-8 md:px-8 lg:grid-cols-[230px_minmax(0,1fr)] lg:gap-8">
+      <div className="mx-auto grid max-w-(--container-content) items-start gap-6 px-4 py-8 md:px-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8">
         <div className="lg:sticky lg:top-24">
           <EducationFilters
             universities={universityQuery.data ?? []}
