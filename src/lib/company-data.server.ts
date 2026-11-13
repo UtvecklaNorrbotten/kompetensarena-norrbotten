@@ -1,7 +1,13 @@
 /** Protected ETL API. No public views or direct client access to company data. */
 import { z } from 'zod';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { authorize, createRateLimiter, json } from './etl-auth.server';
+import { authorize, createRateLimiter, json as etlJson } from './etl-auth.server';
+
+function json(body:unknown,status:number):Response {
+  const response=etlJson(body,status);
+  response.headers.set('cache-control','no-store');
+  return response;
+}
 
 const rate = createRateLimiter(600);
 const sha = z.string().regex(/^[0-9a-f]{64}$/);
@@ -42,7 +48,7 @@ function checked<T>(result:{data:T;error:unknown}):T {
 }
 
 export async function handleCompanyData(request:Request):Promise<Response> {
-  const denied=await authorize(request); if(denied) return denied;
+  const denied=await authorize(request); if(denied) { denied.headers.set('cache-control','no-store'); return denied; }
   if(rate()) return json({error:'Too many requests'},429);
   try {
     const client=await db();
