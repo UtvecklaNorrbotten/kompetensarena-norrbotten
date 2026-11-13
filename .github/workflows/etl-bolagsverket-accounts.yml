@@ -23,7 +23,9 @@ permissions:
   contents: read
 concurrency:
   group: etl-bolagsverket-accounts
-  cancel-in-progress: false
+  # Imports are checkpointed per archive/company; updated code can safely resume.
+  # Scheduled checks queue rather than preempting a long bootstrap.
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 jobs:
   import:
     runs-on: ubuntu-latest
@@ -42,4 +44,4 @@ jobs:
           PYTHONPATH: scripts
           MAX_ARCHIVES: ${{ inputs.max_archives || '2000' }}
           MAX_COMPANIES: ${{ github.event_name == 'push' && '50000' || inputs.max_companies || '2000' }}
-        run: python -m company_accounts.import_accounts --max-archives "$MAX_ARCHIVES" --max-companies "$MAX_COMPANIES" --workers 4
+        run: python -m company_accounts.import_accounts --max-archives "$MAX_ARCHIVES" --max-companies "$MAX_COMPANIES" --workers 8

@@ -11,6 +11,8 @@ from company_accounts.ixbrl import parse
 from company_accounts.profiles import profile
 from company_accounts.source import RangeReader
 from unittest.mock import patch
+from concurrent.futures import ThreadPoolExecutor
+from company_accounts.archive_pool import ArchivePool
 
 ORG='0000000000'  # Synthetic identifier, not a real company.
 
@@ -40,6 +42,13 @@ class Accounts(unittest.TestCase):
         self.assertIsNone(r['metrics']['profit_for_year'])
         self.assertEqual(r['period_start'],'2024-05-01')
         self.assertEqual(r['currency'],'SEK')
+
+    def test_framework_and_original_entrypoint_retained(self):
+        uri='http://xbrl.taxonomier.se/se/fr/gaap/k3/risbs/2021-10-31/se-k3-risbs-2021-10-31.xsd'
+        extra='<link:schemaRef xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="'+uri+'"/>'
+        r=parse(report(extra),ORG,'2025-04-30')
+        self.assertTrue(r['report_type'].startswith('K3;'))
+        self.assertEqual(r['provenance']['_report']['entrypoints'],[uri])
 
     def test_conflicting_duplicate_is_missing(self):
         extra='<ix:nonFraction name="g:Nettoomsattning" contextRef="p" unitRef="sek">999</ix:nonFraction>'
@@ -131,6 +140,50 @@ class Ranges(unittest.TestCase):
             headers={}
         with patch('company_accounts.source.request',return_value=Response(b'x'*100)):
             with self.assertRaises(ValueError):RangeReader(dict(key='test',size=100,etag='x')).read(10)
+
+
+class RangeMemory(unittest.TestCase):
+    def test_large_read_keeps_only_bounded_cache(self):
+        data=b'a'*300000
+        class Response(io.BytesIO):
+            status=206
+            headers={'Content-Range':'bytes 0-249999/300000'}
+        reader=RangeReader(dict(key='test',size=len(data),etag='one'))
+        with patch('company_accounts.source.request',return_value=Response(data[:250000])):
+            self.assertEqual(reader.read(250000),data[:250000])
+        self.assertEqual(len(reader.cached),131072)
+        reader.seek(100)
+        self.assertEqual(reader.read(20),data[100:120])
+
+
+class ArchiveReuse(unittest.TestCase):
+    def setUp(self):
+        self.data=io.BytesIO()
+        with zipfile.ZipFile(self.data,'w',zipfile.ZIP_DEFLATED) as z:
+            for i in range(20):z.writestr(str(i),('Synthetic example '+str(i))*100)
+        self.opens=0
+        def opener(archive):
+            self.opens+=1
+            reader=io.BytesIO(self.data.getvalue())
+            return reader,zipfile.ZipFile(reader)
+        self.pool=ArchivePool(capacity=1,opener=opener)
+        self.a=dict(key='a',etag='one',size=len(self.data.getvalue()))
+
+    def test_parallel_members_share_one_directory(self):
+        def read(i):
+            with self.pool.acquire(self.a) as z:return z.read(str(i)).decode()
+        with ThreadPoolExecutor(max_workers=8) as workers:
+            values=list(workers.map(read,range(20)))
+        self.assertEqual(self.opens,1)
+        self.assertTrue(all(v==('Synthetic example '+str(i))*100 for i,v in enumerate(values)))
+
+    def test_etag_change_opens_new_archive_without_closing_active_reader(self):
+        with self.pool.acquire(self.a) as first:
+            with self.pool.acquire({**self.a,'etag':'two'}) as second:
+                self.assertEqual(second.read('1'),first.read('1'))
+            self.assertEqual(first.read('2'),('Synthetic example 2'*100).encode())
+        self.assertEqual(self.opens,2)
+        self.assertEqual(len(self.pool.entries),1)
 
 
 if __name__=='__main__':unittest.main()

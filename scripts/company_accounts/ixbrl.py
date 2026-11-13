@@ -7,11 +7,12 @@ and are normalized to currency units using Decimal.
 """
 import io
 import re
+from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 from decimal import Decimal, InvalidOperation
 
-VERSION = 'bv-ixbrl-1'
+VERSION = 'bv-ixbrl-2'
 XBRLI = 'http://www.xbrl.org/2003/instance'
 IX = {'http://www.xbrl.org/2013/inlineXBRL', 'http://www.xbrl.org/2008/inlineXBRL'}
 METRICS = {
@@ -98,6 +99,19 @@ def parse(data, expected_org, expected_end):
         return scopes[id(element)].get(prefix if sep else '', ''), name if sep else prefix
 
     facts = [e for e in root.iter() if e.tag.startswith('{') and e.tag[1:].split('}')[0] in IX]
+    entrypoints = sorted({e.get('{http://www.w3.org/1999/xlink}href') for e in root.iter()
+                          if local(e.tag) == 'schemaRef' and e.get('{http://www.w3.org/1999/xlink}href')})
+    frameworks = set()
+    for entrypoint in entrypoints:
+        uri = urlparse(entrypoint)
+        if uri.hostname in ('xbrl.taxonomier.se', 'www.taxonomier.se', 'taxonomier.se'):
+            if '/se/fr/gaap/k2/' in uri.path or '/se/fr/gaap/k2-all/' in uri.path:
+                frameworks.add('K2')
+            if '/se/fr/gaap/k3/' in uri.path:
+                frameworks.add('K3')
+    if len(frameworks) > 1:
+        raise ValueError('conflicting accounting frameworks')
+    framework = next(iter(frameworks), 'unresolved_framework')
     report_types = []
     for fact in facts:
         ns, name = expanded(fact.get('name', ''), fact)
@@ -205,7 +219,8 @@ def parse(data, expected_org, expected_end):
         raise ValueError('missing or conflicting reporting currency')
     if all(v is None for v in result.values()):
         raise ValueError('no company-level metrics in supported taxonomy')
+    provenance['_report'] = dict(entrypoints=entrypoints, accounting_framework=framework, scope_declarations=sorted(set(report_types)))
     return dict(period_start=period_start, period_end=expected_end, currency=currencies.pop(),
-                unit='currency_units', report_type=';'.join(sorted(set(report_types))) or 'annual_report',
+                unit='currency_units', report_type=framework + ';' + (';'.join(sorted(set(report_types))) or 'annual_report'),
                 scope='company', metrics=result, provenance=provenance,
                 issues=sorted(set(issues)), parser_version=VERSION)
