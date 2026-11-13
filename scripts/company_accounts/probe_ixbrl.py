@@ -35,4 +35,5 @@ with zipfile.ZipFile(io.BytesIO(data)) as outer:
       except ValueError: continue
       rows.append(dict(value=str(value),scale=fact.get('scale'),decimals=fact.get('decimals'),units=unitmap.get(fact.get('unitRef'))))
     if 'net_sales:conflicting_facts' in result['issues'] and len(examples)<12: examples.append(rows)
+assert reports > 0, 'No supported real reports'
 print(json.dumps(dict(reports=reports,issues=issues,employee_units=units,duplicate_examples=examples),ensure_ascii=False,indent=2))
