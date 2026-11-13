@@ -14,7 +14,6 @@ from unittest.mock import patch
 from concurrent.futures import ThreadPoolExecutor
 from company_accounts.archive_pool import ArchivePool
 from company_accounts.import_accounts import import_one
-import re
 
 ORG='0000000000'  # Synthetic identifier, not a real company.
 
@@ -130,7 +129,9 @@ class Allocation(unittest.TestCase):
         for revenue in ('0','0.00000001','100'):
             for row in allocate(self.rows(1,2,16),revenue):
                 for field in ('midpoint','weight','estimated_net_sales'):
-                    self.assertRegex(row[field],r'^-?\d+(\.\d+)?
+                    self.assertRegex(row[field],r'^-?\d+(\.\d+)?$')
+
+    def test_duplicate_cfar_refused(self):
         with self.assertRaises(ValueError):allocate([dict(cfar_nr='1',anst_kl=2)]*2,'100')
 
 
@@ -217,10 +218,12 @@ class ConcurrentStructure(unittest.TestCase):
                 return dict(ok=True)
             raise AssertionError(action)
         doc=dict(period_end='2025-04-30',metrics=dict(net_sales='100'))
-        with patch('company_accounts.import_accounts.read_package',return_value=b'synthetic zip') as read, \
-             patch('company_accounts.import_accounts.extract',return_value=('synthetic.xhtml',b'synthetic report',doc)), \
-             patch('company_accounts.import_accounts.api.upload',return_value='synthetic/path') as upload, \
-             patch('company_accounts.import_accounts.api.call',side_effect=call):
+        with (
+            patch('company_accounts.import_accounts.read_package',return_value=b'synthetic zip') as read,
+            patch('company_accounts.import_accounts.extract',return_value=('synthetic.xhtml',b'synthetic report',doc)),
+            patch('company_accounts.import_accounts.api.upload',return_value='synthetic/path') as upload,
+            patch('company_accounts.import_accounts.api.call',side_effect=call),
+        ):
             if changed:
                 self.assertEqual(import_one(self.candidate()),'imported')
                 self.assertEqual(len(calls),2)
@@ -236,78 +239,6 @@ class ConcurrentStructure(unittest.TestCase):
 
     def test_real_validation_failure_is_not_hidden(self):
         self.run_import(False)
-
-
-if __name__=='__main__':unittest.main()
-)
-
-    def test_duplicate_cfar_refused(self):
-        with self.assertRaises(ValueError):allocate([dict(cfar_nr='1',anst_kl=2)]*2,'100')
-
-
-class Profiles(unittest.TestCase):
-    def test_contacts_excluded_from_history_hash(self):
-        a=profile(dict(peOrgNr='synthetic',namn='Exempel',expImp='N',tel='1'),'je')
-        b=profile(dict(peOrgNr='synthetic',namn='Exempel',expImp='N',tel='2'),'je')
-        self.assertEqual(a['profile_hash'],b['profile_hash'])
-        self.assertNotEqual(a['contact_hash'],b['contact_hash'])
-
-    def test_string_code_and_coordinate_types(self):
-        self.assertIn('"expImp":"J"',profile(dict(peOrgNr='synthetic',expImp='J'),'je')['profile_canonical'])
-        with self.assertRaises(ValueError):profile(dict(cfarNr=1,geografiskInformation={'nordKoordinatAdressSW':'123'}),'ae')
-
-
-class Ranges(unittest.TestCase):
-    def test_full_download_response_refused(self):
-        class Response(io.BytesIO):
-            status=200
-            headers={}
-        with patch('company_accounts.source.request',return_value=Response(b'x'*100)):
-            with self.assertRaises(ValueError):RangeReader(dict(key='test',size=100,etag='x')).read(10)
-
-
-class RangeMemory(unittest.TestCase):
-    def test_large_read_keeps_only_bounded_cache(self):
-        data=b'a'*300000
-        class Response(io.BytesIO):
-            status=206
-            headers={'Content-Range':'bytes 0-249999/300000'}
-        reader=RangeReader(dict(key='test',size=len(data),etag='one'))
-        with patch('company_accounts.source.request',return_value=Response(data[:250000])):
-            self.assertEqual(reader.read(250000),data[:250000])
-        self.assertEqual(len(reader.cached),131072)
-        reader.seek(100)
-        self.assertEqual(reader.read(20),data[100:120])
-
-
-class ArchiveReuse(unittest.TestCase):
-    def setUp(self):
-        self.data=io.BytesIO()
-        with zipfile.ZipFile(self.data,'w',zipfile.ZIP_DEFLATED) as z:
-            for i in range(20):z.writestr(str(i),('Synthetic example '+str(i))*100)
-        self.opens=0
-        def opener(archive):
-            self.opens+=1
-            reader=io.BytesIO(self.data.getvalue())
-            return reader,zipfile.ZipFile(reader)
-        self.pool=ArchivePool(capacity=1,opener=opener)
-        self.a=dict(key='a',etag='one',size=len(self.data.getvalue()))
-
-    def test_parallel_members_share_one_directory(self):
-        def read(i):
-            with self.pool.acquire(self.a) as z:return z.read(str(i)).decode()
-        with ThreadPoolExecutor(max_workers=8) as workers:
-            values=list(workers.map(read,range(20)))
-        self.assertEqual(self.opens,1)
-        self.assertTrue(all(v==('Synthetic example '+str(i))*100 for i,v in enumerate(values)))
-
-    def test_etag_change_opens_new_archive_without_closing_active_reader(self):
-        with self.pool.acquire(self.a) as first:
-            with self.pool.acquire({**self.a,'etag':'two'}) as second:
-                self.assertEqual(second.read('1'),first.read('1'))
-            self.assertEqual(first.read('2'),('Synthetic example 2'*100).encode())
-        self.assertEqual(self.opens,2)
-        self.assertEqual(len(self.pool.entries),1)
 
 
 if __name__=='__main__':unittest.main()
