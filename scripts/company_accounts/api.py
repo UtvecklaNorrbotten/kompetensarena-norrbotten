@@ -24,7 +24,16 @@ def call(action, body=None, **params):
         except urllib.error.HTTPError as exc:
             if exc.code not in (408, 429, 500, 502, 503, 504) or attempt == 5:
                 # Source payloads, bearer values and storage tokens never appear in errors.
-                raise RuntimeError(f'ETL {action}: HTTP {exc.code}') from None
+                detail = ''
+                if exc.code == 400:
+                    try:
+                        payload = json.load(exc)
+                        paths = ['.'.join(str(p) for p in issue.get('path', [])) for issue in payload.get('issues', [])[:5]]
+                        if paths:
+                            detail = ' (schema paths: ' + ', '.join(paths) + ')'
+                    except (ValueError, OSError, AttributeError):
+                        pass
+                raise RuntimeError(f'ETL {action}: HTTP {exc.code}' + detail) from None
         except (TimeoutError, OSError):
             if attempt == 5:
                 raise RuntimeError(f'ETL {action}: network failure') from None

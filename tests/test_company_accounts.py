@@ -13,6 +13,7 @@ from company_accounts.source import RangeReader
 from unittest.mock import patch
 from concurrent.futures import ThreadPoolExecutor
 from company_accounts.archive_pool import ArchivePool
+from company_accounts.import_accounts import import_one
 
 ORG='0000000000'  # Synthetic identifier, not a real company.
 
@@ -124,6 +125,12 @@ class Allocation(unittest.TestCase):
         self.assertIn('fictitious_establishment',result[1]['flags'])
         self.assertEqual(sum(Decimal(r['weight']) for r in result),1)
 
+    def test_wire_decimals_never_use_scientific_notation(self):
+        for revenue in ('0','0.00000001','100'):
+            for row in allocate(self.rows(1,2,16),revenue):
+                for field in ('midpoint','weight','estimated_net_sales'):
+                    self.assertRegex(row[field],r'^-?\d+(\.\d+)?$')
+
     def test_duplicate_cfar_refused(self):
         with self.assertRaises(ValueError):allocate([dict(cfar_nr='1',anst_kl=2)]*2,'100')
 
@@ -191,6 +198,47 @@ class ArchiveReuse(unittest.TestCase):
             self.assertEqual(first.read('2'),('Synthetic example 2'*100).encode())
         self.assertEqual(self.opens,2)
         self.assertEqual(len(self.pool.entries),1)
+
+
+class ConcurrentStructure(unittest.TestCase):
+    def candidate(self):
+        return dict(je_id='synthetic',org_nr=ORG,period_end='2025-04-30',
+                    archive_key='arsredovisningar/2026/01_1.zip',member_name=ORG+'_2025-04-30.zip',archive_etag='one')
+
+    def run_import(self, changed):
+        calls=[]
+        structures=iter([dict(sync_id='old',establishments=[dict(cfar_nr='1',history_id=1,anst_kl=2)]),
+                         dict(sync_id='new',establishments=[dict(cfar_nr='1',history_id=2,anst_kl=3)])])
+        def call(action,body=None,**params):
+            if action=='structure':return next(structures)
+            if action=='state':return dict(sync=dict(id='new' if changed else 'old'))
+            if action=='account':
+                calls.append(body)
+                if len(calls)==1:raise RuntimeError('ETL account: HTTP 422')
+                return dict(ok=True)
+            raise AssertionError(action)
+        doc=dict(period_end='2025-04-30',metrics=dict(net_sales='100'))
+        with (
+            patch('company_accounts.import_accounts.read_package',return_value=b'synthetic zip') as read,
+            patch('company_accounts.import_accounts.extract',return_value=('synthetic.xhtml',b'synthetic report',doc)),
+            patch('company_accounts.import_accounts.api.upload',return_value='synthetic/path') as upload,
+            patch('company_accounts.import_accounts.api.call',side_effect=call),
+        ):
+            if changed:
+                self.assertEqual(import_one(self.candidate()),'imported')
+                self.assertEqual(len(calls),2)
+                self.assertEqual(calls[1]['structure']['sync_id'],'new')
+            else:
+                with self.assertRaises(RuntimeError):import_one(self.candidate())
+                self.assertEqual(len(calls),1)
+            self.assertEqual(read.call_count,1)
+            self.assertEqual(upload.call_count,1)
+
+    def test_structure_change_retries_without_refetching_document(self):
+        self.run_import(True)
+
+    def test_real_validation_failure_is_not_hidden(self):
+        self.run_import(False)
 
 
 if __name__=='__main__':unittest.main()
