@@ -3,7 +3,7 @@ import { dimensionLabels } from "@/lib/uka-view";
 import { ExplainedTerm } from "@/components/ui/ExplainedTerm";
 
 const selectClass =
-  "mt-2 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-ink";
+  "mt-2 w-full truncate rounded-md border border-border bg-surface py-2 pl-3 pr-8 text-sm text-ink";
 export function EducationFilters({
   universities,
   university,
