@@ -1,0 +1,136 @@
+"""Synthetic examples. Integration smoke test reads real source files separately."""
+import io
+import sys
+import unittest
+import zipfile
+from decimal import Decimal
+from pathlib import Path
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
+from company_accounts.allocation import allocate
+from company_accounts.ixbrl import parse
+from company_accounts.profiles import profile
+from company_accounts.source import RangeReader
+from unittest.mock import patch
+
+ORG='0000000000'  # Synthetic identifier, not a real company.
+
+
+def report(extra='', revenue='1 234,5',scale='3',currency='SEK'):
+    return f'''<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"
+    xmlns:x="http://www.xbrl.org/2003/instance" xmlns:g="http://www.taxonomier.se/se/fr/gen-base/2021-10-31"
+    xmlns:cd="http://www.taxonomier.se/se/fr/cd-base/2021-10-31" xmlns:iso="http://www.xbrl.org/2003/iso4217">
+    <x:context id="p"><x:entity><x:identifier scheme="http://www.bolagsverket.se">{ORG}</x:identifier></x:entity><x:period><x:startDate>2024-05-01</x:startDate><x:endDate>2025-04-30</x:endDate></x:period></x:context>
+    <x:context id="b"><x:entity><x:identifier scheme="http://www.bolagsverket.se">{ORG}</x:identifier></x:entity><x:period><x:instant>2025-04-30</x:instant></x:period></x:context>
+    <x:unit id="sek"><x:measure>iso:{currency}</x:measure></x:unit>
+    <ix:nonNumeric name="g:FinansiellRapportList" contextRef="p">ArsredovisningMember</ix:nonNumeric>
+    <ix:nonNumeric name="cd:RakenskapsarForstaDag" contextRef="p">2024-05-01</ix:nonNumeric>
+    <ix:nonFraction name="g:Nettoomsattning" contextRef="p" unitRef="sek" format="ixt:numspacecomma" scale="{scale}">{revenue}</ix:nonFraction>
+    <ix:nonFraction name="g:Rorelseresultat" contextRef="p" unitRef="sek" format="ixt:numspacecomma" sign="-">10</ix:nonFraction>
+    <ix:nonFraction name="g:EgetKapital" contextRef="b" unitRef="sek" format="ixt:numspacecomma">0</ix:nonFraction>
+    <ix:nonFraction name="g:Tillgangar" contextRef="b" unitRef="sek" format="ixt:numspacecomma">100</ix:nonFraction>
+    {extra}</html>'''.encode()
+
+
+class Accounts(unittest.TestCase):
+    def test_scale_sign_missing_zero_and_period(self):
+        r=parse(report(),ORG,'2025-04-30')
+        self.assertEqual(Decimal(r['metrics']['net_sales']),Decimal('1234500'))
+        self.assertEqual(r['metrics']['operating_profit'],'-10')
+        self.assertEqual(r['metrics']['equity'],'0')
+        self.assertIsNone(r['metrics']['profit_for_year'])
+        self.assertEqual(r['period_start'],'2024-05-01')
+        self.assertEqual(r['currency'],'SEK')
+
+    def test_conflicting_duplicate_is_missing(self):
+        extra='<ix:nonFraction name="g:Nettoomsattning" contextRef="p" unitRef="sek">999</ix:nonFraction>'
+        self.assertIsNone(parse(report(extra),ORG,'2025-04-30')['metrics']['net_sales'])
+
+    def test_equal_duplicate_not_added(self):
+        extra='<ix:nonFraction name="g:Nettoomsattning" contextRef="p" unitRef="sek">1234500</ix:nonFraction>'
+        self.assertEqual(Decimal(parse(report(extra),ORG,'2025-04-30')['metrics']['net_sales']),Decimal(1234500))
+
+    def test_unknown_extension_does_not_replace_standard_fact(self):
+        data=report().replace(b'xmlns:g="http://www.taxonomier.se/se/fr/gen-base/2021-10-31"',b'xmlns:g="https://synthetic.example/extension"')
+        with self.assertRaises(ValueError):parse(data,ORG,'2025-04-30')
+
+    def test_group_declaration_never_used_for_company(self):
+        extra='<ix:nonNumeric name="g:FinansiellRapportList" contextRef="p">KoncernredovisningMember</ix:nonNumeric>'
+        with self.assertRaises(ValueError):parse(report(extra),ORG,'2025-04-30')
+
+    def test_wrong_identity_and_period_refused(self):
+        with self.assertRaises(ValueError):parse(report(),'1111111111','2025-04-30')
+        with self.assertRaises(ValueError):parse(report(),ORG,'2024-04-30')
+
+    def test_unknown_transform_is_gap(self):
+        data=report().replace(b'ixt:numspacecomma" scale',b'ixt:unknown" scale')
+        self.assertIsNone(parse(data,ORG,'2025-04-30')['metrics']['net_sales'])
+
+    def test_excluded_footnote_is_not_a_digit(self):
+        r=parse(report(revenue='1 234,5<ix:exclude>9</ix:exclude>'),ORG,'2025-04-30')
+        self.assertEqual(Decimal(r['metrics']['net_sales']),Decimal('1234500'))
+
+    def test_dtd_refused(self):
+        with self.assertRaises(ValueError):parse(b'<!DOCTYPE html>'+report(),ORG,'2025-04-30')
+
+
+class Allocation(unittest.TestCase):
+    def rows(self,*classes):
+        return [dict(cfar_nr=str(i+1),history_id=i+1,anst_kl=c) for i,c in enumerate(classes)]
+
+    def test_single_even_missing(self):
+        r=allocate(self.rows(None),'10')
+        self.assertEqual(Decimal(r[0]['weight']),1)
+        self.assertEqual(Decimal(r[0]['estimated_net_sales']),10)
+
+    def test_all_swedish_establishments_not_geographic_subset(self):
+        r=allocate(self.rows(2,3),'1900')
+        self.assertEqual(Decimal(r[0]['weight']),Decimal('0.263157894736842105'))
+        self.assertEqual(sum(Decimal(x['estimated_net_sales']) for x in r),1900)
+
+    def test_zero_excluded_when_positive_exists(self):
+        r=allocate(self.rows(1,2),'100')
+        self.assertEqual(Decimal(r[0]['weight']),0)
+        self.assertEqual(Decimal(r[1]['weight']),1)
+
+    def test_all_zero_equal_and_residual(self):
+        r=allocate(self.rows(1,1,1),'100')
+        self.assertEqual(sum(Decimal(x['weight']) for x in r),1)
+        self.assertEqual(sum(Decimal(x['estimated_net_sales']) for x in r),100)
+        self.assertTrue(all('all_zero_equal_weights' in x['flags'] for x in r))
+
+    def test_missing_imputed_median_not_zero(self):
+        r=allocate(self.rows(2,3,None),'100')
+        self.assertEqual(Decimal(r[2]['midpoint']),Decimal('4.75'))
+        self.assertIn('imputed_company_median',r[2]['flags'])
+
+    def test_open_top_and_missing_sales(self):
+        r=allocate(self.rows(16,2),None)
+        self.assertEqual(Decimal(r[0]['midpoint']),Decimal('12499.5'))
+        self.assertIsNone(r[0]['estimated_net_sales'])
+
+    def test_duplicate_cfar_refused(self):
+        with self.assertRaises(ValueError):allocate([dict(cfar_nr='1',anst_kl=2)]*2,'100')
+
+
+class Profiles(unittest.TestCase):
+    def test_contacts_excluded_from_history_hash(self):
+        a=profile(dict(peOrgNr='synthetic',namn='Exempel',expImp='N',tel='1'),'je')
+        b=profile(dict(peOrgNr='synthetic',namn='Exempel',expImp='N',tel='2'),'je')
+        self.assertEqual(a['profile_hash'],b['profile_hash'])
+        self.assertNotEqual(a['contact_hash'],b['contact_hash'])
+
+    def test_string_code_and_coordinate_types(self):
+        self.assertIn('"expImp":"J"',profile(dict(peOrgNr='synthetic',expImp='J'),'je')['profile_canonical'])
+        with self.assertRaises(ValueError):profile(dict(cfarNr=1,geografiskInformation={'nordKoordinatAdressSW':'123'}),'ae')
+
+
+class Ranges(unittest.TestCase):
+    def test_full_download_response_refused(self):
+        class Response(io.BytesIO):
+            status=200
+            headers={}
+        with patch('company_accounts.source.request',return_value=Response(b'x'*100)):
+            with self.assertRaises(ValueError):RangeReader(dict(key='test',size=100,etag='x')).read(10)
+
+
+if __name__=='__main__':unittest.main()

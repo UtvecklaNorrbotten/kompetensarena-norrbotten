@@ -22,7 +22,9 @@ afr_finalize_recoverable <- function(sync_id, stats = list(), attempts = 6L, pau
     if (!afr_chunks_complete(state)) stop("AFR-synken saknar datapaket; publicering stoppad")
     message(sprintf("AFR publicering %s, försök %d/%d", sync_id, attempt, attempts))
     # No automatic HTTP retry. Read committed status before each explicit attempt.
-    result <- tryCatch(afr_post("/api/public/jobs/afr/finalize", list(sync_id = sync_id, stats = stats),
+    body <- list(sync_id = sync_id)
+    if (length(stats)) body$stats <- stats # list() serializes as [], not a JSON object.
+    result <- tryCatch(afr_post("/api/public/jobs/afr/finalize", body,
       retry_safe = FALSE, timeout = 660), error = function(e) {
         message("AFR publiceringssvar osäkert: ", conditionMessage(e))
         list(status = "unknown")

@@ -22,6 +22,7 @@ import { Route as AdminDatakallorSourceIdRouteImport } from './routes/admin.data
 import { Route as OmradenAreaIndexRouteImport } from './routes/omraden.$area.index'
 import { Route as OmradenAreaTopicRouteImport } from './routes/omraden.$area.$topic'
 import { Route as ApiPublicJobsAfRevisionsRouteImport } from './routes/api/public/jobs/af-revisions'
+import { Route as ApiPublicJobsCompanyDataRouteImport } from './routes/api/public/jobs/company-data'
 import { Route as ApiPublicJobsEtlNoChangeRouteImport } from './routes/api/public/jobs/etl-no-change'
 import { Route as ApiPublicJobsEtlStateRouteImport } from './routes/api/public/jobs/etl-state'
 import { Route as ApiPublicJobsPublishIndicatorRouteImport } from './routes/api/public/jobs/publish-indicator'
@@ -111,6 +112,12 @@ const ApiPublicJobsAfRevisionsRoute =
   ApiPublicJobsAfRevisionsRouteImport.update({
     id: '/api/public/jobs/af-revisions',
     path: '/api/public/jobs/af-revisions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicJobsCompanyDataRoute =
+  ApiPublicJobsCompanyDataRouteImport.update({
+    id: '/api/public/jobs/company-data',
+    path: '/api/public/jobs/company-data',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicJobsEtlNoChangeRoute =
@@ -260,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/admin/datakallor/': typeof AdminDatakallorIndexRoute
   '/omraden/$area/': typeof OmradenAreaIndexRoute
   '/api/public/jobs/af-revisions': typeof ApiPublicJobsAfRevisionsRoute
+  '/api/public/jobs/company-data': typeof ApiPublicJobsCompanyDataRoute
   '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
@@ -299,6 +307,7 @@ export interface FileRoutesByTo {
   '/admin/datakallor': typeof AdminDatakallorIndexRoute
   '/omraden/$area': typeof OmradenAreaIndexRoute
   '/api/public/jobs/af-revisions': typeof ApiPublicJobsAfRevisionsRoute
+  '/api/public/jobs/company-data': typeof ApiPublicJobsCompanyDataRoute
   '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
@@ -339,6 +348,7 @@ export interface FileRoutesById {
   '/admin/datakallor/': typeof AdminDatakallorIndexRoute
   '/omraden/$area/': typeof OmradenAreaIndexRoute
   '/api/public/jobs/af-revisions': typeof ApiPublicJobsAfRevisionsRoute
+  '/api/public/jobs/company-data': typeof ApiPublicJobsCompanyDataRoute
   '/api/public/jobs/etl-no-change': typeof ApiPublicJobsEtlNoChangeRoute
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
@@ -380,6 +390,7 @@ export interface FileRouteTypes {
     | '/admin/datakallor/'
     | '/omraden/$area/'
     | '/api/public/jobs/af-revisions'
+    | '/api/public/jobs/company-data'
     | '/api/public/jobs/etl-no-change'
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
@@ -419,6 +430,7 @@ export interface FileRouteTypes {
     | '/admin/datakallor'
     | '/omraden/$area'
     | '/api/public/jobs/af-revisions'
+    | '/api/public/jobs/company-data'
     | '/api/public/jobs/etl-no-change'
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
@@ -458,6 +470,7 @@ export interface FileRouteTypes {
     | '/admin/datakallor/'
     | '/omraden/$area/'
     | '/api/public/jobs/af-revisions'
+    | '/api/public/jobs/company-data'
     | '/api/public/jobs/etl-no-change'
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
@@ -498,6 +511,7 @@ export interface RootRouteChildren {
   AdminDatakallorIndexRoute: typeof AdminDatakallorIndexRoute
   OmradenAreaIndexRoute: typeof OmradenAreaIndexRoute
   ApiPublicJobsAfRevisionsRoute: typeof ApiPublicJobsAfRevisionsRoute
+  ApiPublicJobsCompanyDataRoute: typeof ApiPublicJobsCompanyDataRoute
   ApiPublicJobsEtlNoChangeRoute: typeof ApiPublicJobsEtlNoChangeRoute
   ApiPublicJobsEtlStateRoute: typeof ApiPublicJobsEtlStateRoute
   ApiPublicJobsPublishIndicatorRoute: typeof ApiPublicJobsPublishIndicatorRoute
@@ -615,6 +629,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/jobs/af-revisions'
       fullPath: '/api/public/jobs/af-revisions'
       preLoaderRoute: typeof ApiPublicJobsAfRevisionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/company-data': {
+      id: '/api/public/jobs/company-data'
+      path: '/api/public/jobs/company-data'
+      fullPath: '/api/public/jobs/company-data'
+      preLoaderRoute: typeof ApiPublicJobsCompanyDataRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/jobs/etl-no-change': {
@@ -802,6 +823,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminDatakallorIndexRoute: AdminDatakallorIndexRoute,
   OmradenAreaIndexRoute: OmradenAreaIndexRoute,
   ApiPublicJobsAfRevisionsRoute: ApiPublicJobsAfRevisionsRoute,
+  ApiPublicJobsCompanyDataRoute: ApiPublicJobsCompanyDataRoute,
   ApiPublicJobsEtlNoChangeRoute: ApiPublicJobsEtlNoChangeRoute,
   ApiPublicJobsEtlStateRoute: ApiPublicJobsEtlStateRoute,
   ApiPublicJobsPublishIndicatorRoute: ApiPublicJobsPublishIndicatorRoute,

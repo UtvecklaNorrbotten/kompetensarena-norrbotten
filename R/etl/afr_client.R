@@ -183,6 +183,18 @@ afr_traverse <- function(entity, normalize_page) {
     if (!is.null(cursor)) q$cursorId <- cursor
     body <- afr_get(path, q)
     items <- body[[field]] %||% list()
+    # Filtered enrichment pages are temporary runner files, never artifacts.
+    # Capture during this traversal to avoid downloading AFR twice.
+    profile_cache <- Sys.getenv("AFR_PROFILE_CACHE", "")
+    if (nzchar(profile_cache)) {
+      dir.create(profile_cache, recursive = TRUE, showWarnings = FALSE)
+      allowed <- if (entity == "je") c("peOrgNr", "namn", "foretagsnamn", "postAdress", "expImp", "tel", "epost") else
+        c("cfarNr", "ben", "postAdress", "belagenhetsadress", "geografiskInformation", "tel", "epost")
+      filtered <- lapply(items, function(r) r[intersect(allowed, names(r))])
+      target <- gzfile(file.path(profile_cache, sprintf("%s_%05d.json.gz", entity, length(pages) + 1L)), "wt", encoding = "UTF-8")
+      tryCatch(writeLines(jsonlite::toJSON(filtered, auto_unbox = TRUE, null = "null", na = "null", digits = NA), target),
+        finally = close(target))
+    }
     pages[[length(pages) + 1L]] <- normalize_page(items)
     pg <- body$pagination
     if (is.null(pg) || is.null(pg$hasMore)) stop("AFR-svar saknar pagination.hasMore", call. = FALSE)
