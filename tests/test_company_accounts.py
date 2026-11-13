@@ -117,6 +117,13 @@ class Allocation(unittest.TestCase):
         self.assertEqual(Decimal(r[0]['midpoint']),Decimal('12499.5'))
         self.assertIsNone(r[0]['estimated_net_sales'])
 
+    def test_fictitious_mobile_establishment_is_explicit(self):
+        rows=self.rows(2,3)
+        rows[1]['ae_typ']=3
+        result=allocate(rows,'100')
+        self.assertIn('fictitious_establishment',result[1]['flags'])
+        self.assertEqual(sum(Decimal(r['weight']) for r in result),1)
+
     def test_duplicate_cfar_refused(self):
         with self.assertRaises(ValueError):allocate([dict(cfar_nr='1',anst_kl=2)]*2,'100')
 
