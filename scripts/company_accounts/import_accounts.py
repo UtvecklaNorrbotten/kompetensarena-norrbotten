@@ -106,13 +106,21 @@ def import_one(candidate):
     except (ValueError, zipfile.BadZipFile):
         api.call('quarantine', {'je_id': candidate['je_id'], 'archive_etag': candidate['archive_etag'], 'reason': 'unsupported_or_ambiguous_company_report', 'package_sha256': package_sha, 'parser_version': VERSION})
         return 'quarantined'
-    structure = api.call('structure', je_id=candidate['je_id'], period_end=document['period_end'])
-    allocations = allocate(structure['establishments'], document['metrics']['net_sales'])
-    document.update(document_id=filename, source_reference=ROOT + '/' + candidate['archive_key'],
-        archive_key=candidate['archive_key'], member_name=candidate['member_name'], archive_etag=candidate['archive_etag'],
-        package_sha256=package_sha, document_sha256=hashlib.sha256(data).hexdigest(), storage_path=path)
-    api.call('account', dict(je_id=candidate['je_id'], document=document, allocations=allocations, structure=structure))
-    return 'imported'
+    for attempt in range(3):
+        structure = api.call('structure', je_id=candidate['je_id'], period_end=document['period_end'])
+        allocations = allocate(structure['establishments'], document['metrics']['net_sales'])
+        document.update(document_id=filename, source_reference=ROOT + '/' + candidate['archive_key'],
+            archive_key=candidate['archive_key'], member_name=candidate['member_name'], archive_etag=candidate['archive_etag'],
+            package_sha256=package_sha, document_sha256=hashlib.sha256(data).hexdigest(), storage_path=path)
+        try:
+            api.call('account', dict(je_id=candidate['je_id'], document=document, allocations=allocations, structure=structure))
+            return 'imported'
+        except RuntimeError:
+            # A concurrent AFR publication can invalidate the frozen denominator.
+            # Reuse the already verified source document and refresh only structure.
+            state = api.call('state')
+            if attempt == 2 or not state.get('sync') or state['sync']['id'] == structure['sync_id']:
+                raise
 
 
 def main():

@@ -47,7 +47,7 @@ def allocate(establishments, net_sales):
     if revenue is not None:
         allocated[last] += revenue - sum(allocated)
     return [dict(cfar_nr=str(row['cfar_nr']), structure_history_id=row.get('history_id'),
-                 midpoint=str(midpoints[i]), weight=str(weights[i]),
-                 estimated_net_sales=None if allocated[i] is None else str(allocated[i]),
+                 midpoint=format(midpoints[i], 'f'), weight=format(weights[i], 'f'),
+                 estimated_net_sales=None if allocated[i] is None else format(allocated[i], 'f'),
                  flags=flags[i], is_estimate=True, rule_version=VERSION)
             for i, row in enumerate(rows)]
