@@ -1,0 +1,27 @@
+name: 90 · Kontroll · AFR och digitala årsredovisningar
+on:
+  workflow_dispatch:
+  push:
+    branches: [feat/afr-history-annual-accounts]
+    paths: [.github/workflows/validate-company-data.yml, scripts/company_accounts/probe.py]
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Verifiera verkliga källkontrakt utan personuppgifter
+        env:
+          SCB_AFR_API_KEY: ${{ secrets.SCB_AFR_API_KEY }}
+          PYTHONPATH: scripts
+        run: python -m company_accounts.probe > source-contract.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: company-data-source-contract
+          path: source-contract.json
+          retention-days: 30
