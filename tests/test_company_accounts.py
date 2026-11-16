@@ -14,8 +14,29 @@ from unittest.mock import patch
 from concurrent.futures import ThreadPoolExecutor
 from company_accounts.archive_pool import ArchivePool
 from company_accounts.import_accounts import import_one
+from company_accounts import api
+from urllib.error import HTTPError
 
 ORG='0000000000'  # Synthetic identifier, not a real company.
+
+
+class ApiFailures(unittest.TestCase):
+    def test_sqlstate_is_safe_and_transient_failure_is_retried(self):
+        payload=b'{"error_code":"57014","message":"synthetic-secret-do-not-log"}'
+        failures=[HTTPError('https://synthetic.example',503,'failure',{},io.BytesIO(payload)) for _ in range(6)]
+        with patch.dict('os.environ',ETL_BASE_URL='https://synthetic.example',ETL_PUBLISH_KEY='synthetic-bearer'), \
+             patch('urllib.request.urlopen',side_effect=failures) as request, patch('time.sleep'):
+            with self.assertRaisesRegex(RuntimeError,r'^ETL scope: HTTP 503 \(SQLSTATE: 57014\)$'):
+                api.call('scope')
+        self.assertEqual(request.call_count,6)
+
+    def test_validation_failure_is_not_retried_and_unsafe_code_is_hidden(self):
+        error=HTTPError('https://synthetic.example',422,'failure',{},io.BytesIO(b'{"error_code":"unsafe token","message":"synthetic-secret"}'))
+        with patch.dict('os.environ',ETL_BASE_URL='https://synthetic.example',ETL_PUBLISH_KEY='synthetic-bearer'), \
+             patch('urllib.request.urlopen',side_effect=error) as request, patch('time.sleep'):
+            with self.assertRaisesRegex(RuntimeError,r'^ETL account: HTTP 422$'):
+                api.call('account',{})
+        self.assertEqual(request.call_count,1)
 
 
 def report(extra='', revenue='1 234,5',scale='3',currency='SEK'):
