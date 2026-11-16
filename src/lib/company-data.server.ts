@@ -42,8 +42,16 @@ const postSchema = z.discriminatedUnion('action',[
 async function db():Promise<SupabaseClient> {
   return (await import('@/integrations/supabase/client.server')).supabaseAdmin as unknown as SupabaseClient;
 }
+class CompanyDatabaseError extends Error {
+  readonly code:string;
+  constructor(error:unknown) {
+    super('Database operation failed');
+    const code=typeof error==='object'&&error!==null&&'code' in error?String(error.code):'';
+    this.code=/^[0-9A-Z]{5}$/.test(code)?code:'unknown';
+  }
+}
 function checked<T>(result:{data:T;error:unknown}):T {
-  if(result.error) throw new Error('Database operation failed');
+  if(result.error) throw new CompanyDatabaseError(result.error);
   return result.data;
 }
 
@@ -140,6 +148,11 @@ export async function handleCompanyData(request:Request):Promise<Response> {
     return json({error:'Unknown action'},400);
   } catch(error) {
     // Do not log raw records, contact values, upload tokens, or source documents.
+    if(error instanceof CompanyDatabaseError) {
+      const transient=['57014','55P03','40001','40P01','53300'].includes(error.code)||error.code.startsWith('08');
+      console.error('[company-data] database',error.code);
+      return json({error:'Company data operation failed',error_code:error.code},transient?503:422);
+    }
     console.error('[company-data]',error instanceof Error?error.name:'Error');
     return json({error:'Company data operation failed'},422);
   }

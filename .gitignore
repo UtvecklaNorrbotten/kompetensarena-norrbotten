@@ -30,3 +30,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Python caches are disposable and must not trigger production imports.
+__pycache__/
+*.py[cod]

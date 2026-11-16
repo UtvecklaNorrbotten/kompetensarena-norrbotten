@@ -25,9 +25,13 @@ def call(action, body=None, **params):
             if exc.code not in (408, 429, 500, 502, 503, 504) or attempt == 5:
                 # Source payloads, bearer values and storage tokens never appear in errors.
                 detail = ''
-                if exc.code == 400:
+                if exc.code in (400, 422, 503):
                     try:
                         payload = json.load(exc)
+                        code = payload.get('error_code', '')
+                        # Only SQLSTATE, never database messages, records or URLs.
+                        if isinstance(code, str) and len(code) == 5 and code.isascii() and code.isalnum() and code.upper() == code:
+                            detail = ' (SQLSTATE: ' + code + ')'
                         paths = ['.'.join(str(p) for p in issue.get('path', [])) for issue in payload.get('issues', [])[:5]]
                         if paths:
                             detail = ' (schema paths: ' + ', '.join(paths) + ')'

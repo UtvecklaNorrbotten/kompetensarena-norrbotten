@@ -5,6 +5,9 @@ on:
     paths:
       - scripts/company_accounts/**
       - tests/test_company_accounts.py
+      - tests/company-data-errors.test.cjs
+      - src/lib/company-data.server.ts
+      - drizzle/migrations/0053_company_scope_covering_indexes.sql
       - .github/workflows/validate-company-data.yml
   push:
     branches: [feat/afr-history-annual-accounts]
@@ -49,3 +52,10 @@ jobs:
         with:
           python-version: '3.13'
       - run: python -m unittest discover -s tests -p test_company_accounts.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testa säkra databasfel och återförsök
+        run: |
+          npm install --prefix "$RUNNER_TEMP/company-data-test" --no-package-lock --ignore-scripts typescript@5.8.3 zod@3.25.76
+          NODE_PATH="$RUNNER_TEMP/company-data-test/node_modules" node --test tests/company-data-errors.test.cjs

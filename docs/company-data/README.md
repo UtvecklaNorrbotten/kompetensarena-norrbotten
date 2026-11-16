@@ -1,5 +1,7 @@
 # AFR-profiler och digitala årsredovisningar
 
+Aktuell slutkontrollpunkt: [2026-11-16](checkpoint-2026-11-16.md), med faktisk importstatus, bortfall, källstickprov och återstartskontroll.
+
 Skyddad ETL, utan ny publik analysvy. JobTech, Vinnova, personalkostnader och kompletterande konkurskällor ingår inte.
 
 ## Källkontroll 2026-11-13
