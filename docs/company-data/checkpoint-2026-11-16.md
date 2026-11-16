@@ -61,3 +61,13 @@ Profiler: 1 828 382 JE och 1 923 504 AE, totalt 3 751 886 aktuella profiler och 
 Migration 0053 är manuellt applicerad och ska inte läggas i Drizzle-journalen för automatisk återapplicering. Återuppbyggnad av urvalscachen provades i en transaktion och rullades tillbaka. Den ordinarie återstarten använde bestående arkiv- och företagsmarkörer, upptäckte fyra nya arkiv och kunde slutföras. Schemat för bokslut är fortsatt var fjärde timme; profiler följer lyckad AFR-kärnsynk. En framtida schemakörning är inte testad i förväg, men samma importväg används och status måste fortsätta följas.
 
 Nästa kontroll: läs aktuell `company_data_coverage()`, `data_source_state` och senaste Actions-logg. Noll `pending` måste bedömas tillsammans med full aktuell arkivkatalog och oförändrat urval; det räcker inte ensamt. Karantänfallen behöver framtida taxonomi-/tolkningsarbete om täckningen ska höjas. Inga personalkostnader, konkurskällor, JobTech eller Vinnova har lagts till.
+
+## Slutlig publicering och upprepad körning
+
+PR [#97](https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/pull/97) är mergad till `main`, mergecommit `1ef8d86ca9be37b34cd362970b0bf4aacc07af41`. GitHub-testkörning [43882938464](https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/runs/43882938464) passerade både Python- och Node-testerna.
+
+Den efterföljande importkörningen [43883074999](https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/runs/43883074999) avslutades också med **success** 2026-11-16 15:12:56 svensk tid: samma 10 427 bokslut, 1 473 källarkiv, 0 väntande kandidater, 0 återstående arkiv och oförändrat urval. Detta verifierar den upprepade driftvägen efter fullimporten. Återförsöken har dessutom separata felinjektionstester; framtida externa källavbrott kan inte garanteras bort.
+
+API-publicering startades med deployment `ac175711-09ad-467e-8caa-f0b479eee3b9`. Lovables publiceringspanel kontrollerades efteråt: **Published**, med **Publish changes** inaktiverad och PR #97 som aktuell förhandsversion. Den publicerade webbplatsen svarade HTTP 200. Ingen ny publik företagsvy har skapats.
+
+Slutlig arbetsställeavstämning omfattade även historiska strukturer och gav 0 nämnarskillnader. Kvarvarande kvalitetsbortfall är redovisade ovan; de är inte en väntande importkö. Den ordinarie AFR-körningen 43865929818 pågick ännu vid slutkontrollen och nästa källdatum ska följas via den vanliga schemaläggningen.
