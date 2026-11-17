@@ -136,5 +136,8 @@ if __name__=='__main__':
     except Exception as exc:
         try:api.log(SOURCE,'failed','unknown',{'error_type':type(exc).__name__},'GLEIF import failed; previous snapshots retained')
         except Exception:pass
-        print(json.dumps({'gleif_failed':True,'error_type':type(exc).__name__}),flush=True)
+        # GleifError messages are controlled constants / HTTP codes, never source records.
+        details={'gleif_failed':True,'error_type':type(exc).__name__}
+        if isinstance(exc,GleifError):details['reason']=str(exc)
+        print(json.dumps(details),flush=True)
         raise SystemExit(1)
