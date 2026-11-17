@@ -148,3 +148,16 @@ def newest(documents):
     if len({d['dokumentId'] for d in chosen})!=1:
         raise ApiError('Ambiguous same-time reports')
     return chosen[0]
+
+
+if __name__=='__main__':
+    try:
+        client = Client()
+        # Public AB reference supplied in the user's earlier R integration.
+        # Only counts are printed, never identities, document IDs or payloads.
+        rows = client.documents('5592457187')
+        print(json.dumps({'oauth_verified':True,'document_list_verified':True,
+                          'reference_documents_listed':len(rows),'requests':client.requests}))
+    except Exception as exc:
+        print(json.dumps({'oauth_verified':False,'error':str(exc) if isinstance(exc,ApiError) else type(exc).__name__}))
+        raise SystemExit(1)

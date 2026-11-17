@@ -30,7 +30,9 @@ jobs:
           ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
           ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
           PYTHONPATH: scripts
-        run: python -m company_accounts.compare_api
+        run: |
+          python -m company_accounts.bolagsverket_api
+          python -m company_accounts.compare_api
       - uses: actions/upload-artifact@v4
         with:
           name: company-api-comparison
