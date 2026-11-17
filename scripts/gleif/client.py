@@ -58,7 +58,8 @@ class Client:
                 return self.opener.open(urllib.request.Request(url,headers={'User-Agent':'Kompetensarena-Norrbotten-GLEIF/1.0','Accept':'application/json, application/zip'}),timeout=90)
             except urllib.error.HTTPError as exc:
                 if exc.code not in (408,429,500,502,503,504) or attempt==5:
-                    raise GleifError('GLEIF HTTP '+str(exc.code)) from None
+                    resource='bulk' if u.path.startswith('/storage/golden-copy-files/') else 'manifest' if url==MANIFEST else 'api'
+                    raise GleifError('GLEIF HTTP '+str(exc.code)+' resource='+resource) from None
                 retry=exc.headers.get('Retry-After','');delay=min(120,int(retry)) if retry.isdigit() else min(30,2**attempt)
             except (TimeoutError,OSError):
                 if attempt==5:raise GleifError('GLEIF network failure') from None

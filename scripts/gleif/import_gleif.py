@@ -84,7 +84,9 @@ def reserved_tree(identity,data,parents):
 
 
 def main():
-    client=Client();rows=scope()
+    client=Client()
+    print(json.dumps({'phase':'read_scope'}),flush=True)
+    rows=scope()
     if not rows:raise GleifError('Empty legal-entity scope')
     pending=[r for r in rows if due(r['identity'])]
     for offset in range(0,len(pending),100):
@@ -94,7 +96,8 @@ def main():
             'source_url':'https://api.gleif.org/api/v1/lei-records','matching_rule':'SE-RA000544-exact-org-1','license':'CC0-1.0','afr_sync_id':r['afr_sync_id']}) for r in batch]
         store('identity',records)
         print(json.dumps({'identity_checked_this_run':min(offset+100,len(pending)),'identity_due_at_start':len(pending)}),flush=True)
-    rows=scope()
+    if pending:rows=scope()
+    print(json.dumps({'phase':'read_relationship_sources'}),flush=True)
     pending=[r for r in rows if r['identity'] and (due(r['relations']) or
         r['relations']['source'].get('identity_sha256')!=r['identity']['sha256'])]
     if not pending:
@@ -108,10 +111,12 @@ def main():
     data,source=load(client,needed) if needed else ({'rr':{},'repex':{}},{'license':'CC0-1.0'})
     parent_ids={r['Relationship.EndNode.NodeID'] for rs in data['rr'].values() for r in rs
                 if r.get('Relationship.RelationshipType') in RR.values() and r.get('Relationship.EndNode.NodeIDType')=='LEI'}
+    print(json.dumps({'phase':'read_parent_names','parents_to_check':len(parent_ids)}),flush=True)
     parents={};parent_dates=set()
     for offset in range(0,len(parent_ids),100):
         found,pub=client.parents(set(sorted(parent_ids)[offset:offset+100]));parents.update(found)
         if pub:parent_dates.add(pub)
+    print(json.dumps({'phase':'store_relations','records_to_store':len(pending)}),flush=True)
     counts=Counter()
     for offset in range(0,len(pending),50):
         batch=pending[offset:offset+50];records=[]
@@ -123,6 +128,7 @@ def main():
         if (offset+len(batch))%500==0:print(json.dumps({'relations_stored_this_run':offset+len(batch),'counts':counts}),flush=True)
     coverage=api.call('gleif-coverage')
     # Re-read current scope; a publication during the run must not look complete.
+    print(json.dumps({'phase':'verify_final_scope'}),flush=True)
     final=scope();missing=sum(1 for r in final if due(r['identity']) or due(r['relations']) or
         r['relations']['source'].get('identity_sha256')!=r['identity']['sha256'])
     details={**coverage,'remaining_due':missing,'api_requests':client.requests,'semantic_scope':'accounting_consolidation_not_shareholding',
