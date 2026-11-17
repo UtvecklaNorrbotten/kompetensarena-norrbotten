@@ -71,3 +71,20 @@ test('comparison sample uses AB filter, excludes pending/stale reports and omits
   assert.ok(filters.some(f=>f[0]==='afr_je_current'&&f[1]==='eq'&&f[2]==='jurform'&&f[3]==='49'));
   for(const row of body.samples)assert.deepEqual(Object.keys(row).sort(),['bulk_status','document_sha256','org_nr','package_sha256','period_end']);
 });
+
+test('quarantine inventory validates cursor and refuses non-AB identities',async()=>{
+  const {response}=await responseFor(null,'quarantine-audit&after=invalid');
+  assert.equal(response.status,400);
+  let identitiesRead=false;const filters=[];
+  const client={from:(table)=>{
+    if(table==='afr_je_ident')identitiesRead=true;
+    const data=table==='company_account_candidates'?[{je_id:'a',package_sha256:'hash'}]:[];
+    const chain={then:(resolve)=>Promise.resolve({data,error:null}).then(resolve)};
+    for(const method of ['select','eq','order','limit','in'])chain[method]=(...args)=>{filters.push([table,method,...args]);return chain;};
+    return chain;
+  }};
+  const refused=await responseFor(null,'quarantine-audit',client);
+  assert.equal(refused.response.status,422);
+  assert.equal(identitiesRead,false);
+  assert.ok(filters.some(f=>f[0]==='afr_je_current'&&f[1]==='in'&&f[2]==='jurform'&&JSON.stringify(f[3])==='["41","42","49"]'));
+});

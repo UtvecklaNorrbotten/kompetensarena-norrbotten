@@ -118,6 +118,24 @@ export async function handleCompanyData(request:Request):Promise<Response> {
         const after=url.searchParams.get('after')??'';
         return json(checked(await client.from('company_account_archives').select('archive_key,etag,scope_hash').gt('archive_key',after).order('archive_key').limit(1000)),200);
       }
+      if(action==='quarantine-audit') {
+        // Read-only, ETL-authorized diagnostic inventory. Same private package
+        // access as the importer; no names, contacts or physical-person IDs.
+        const after=url.searchParams.get('after');
+        if(after&&!uuid.safeParse(after).success) return json({error:'Invalid cursor'},400);
+        let query=client.from('company_account_candidates')
+          .select('je_id,period_end,package_sha256,archive_etag').eq('status','quarantined').order('je_id').limit(100);
+        if(after) query=query.gt('je_id',after);
+        const rows=checked(await query)??[];
+        const ids=rows.map(r=>r.je_id);
+        const companies=ids.length?(checked(await client.from('afr_je_current').select('je_id')
+          .in('jurform',['41','42','49']).in('je_id',ids))??[]):[];
+        if(companies.length!==rows.length) return json({error:'Quarantine audit requires AB only'},422);
+        const identities=ids.length?(checked(await client.from('afr_je_ident').select('je_id,org_nr').in('je_id',ids))??[]):[];
+        const orgs=new Map(identities.map(r=>[r.je_id,r.org_nr]));
+        if(rows.some(r=>!orgs.get(r.je_id)||!r.package_sha256)) return json({error:'Incomplete quarantine evidence'},422);
+        return json(rows.map(r=>({...r,org_nr:orgs.get(r.je_id)})),200);
+      }
       if(action==='candidates') {
         const after=url.searchParams.get('after'); if(after&&!uuid.safeParse(after).success) return json({error:'Invalid cursor'},400);
         let query=client.from('company_account_candidates').select('*').eq('status','pending').order('je_id').limit(100);
