@@ -34,8 +34,21 @@ API-svar med okänt schema räknas som fel, aldrig som tomma dokumentlistor. Att
 
 ## Kontrollpunkt 2026-11-17
 
-PR #98 är mergad (`5eb6dc2749b4cbc69d6a71c71ffdde6bbedf6073`). GitHub-körning 44074848618 passerade 46 Python-tester och fyra Node-testfall. OAuth och dokumentlistan verifierades sedan mot produktion i körning 44075465422, med de konfigurerade GitHub-hemligheterna: `oauth_verified=true`, `document_list_verified=true`, en referensrapport i listan och två HTTP-anrop. Varken klientuppgifter, token eller rå API-payload skrevs ut.
+PR [#98](https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/pull/98) är mergad (`5eb6dc2749b4cbc69d6a71c71ffdde6bbedf6073`). GitHub-körning 44074848618 passerade 46 Python-tester och fyra Node-testfall.
 
-Jämförelsen mot databasurvalet är ännu inte verifierad: körningen misslyckades vid ETL-läsoperationen `api-sample`. Den bredare API-täckningen och dokumentformaten får därför inte påstås vara fastställda. Ett separat, redan befintligt bulkjobb gav dessutom `ETL scope: HTTP 422 (SQLSTATE: 21000)`; dess orsak är inte utredd i detta API-uppdrag.
+Produktionsjämförelsen [44075854363](https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/runs/44075854363) avslutades med **success** 2026-11-17 12:39 svensk tid. Befintlig ETL-miljö kunde då läsa det skyddade urvalet. Resultatet är verifierat mot Bolagsverkets produktions-API med GitHub-hemligheterna, inte mot testdata.
 
-Publiceringen av den nya Lovable-versionen blockerades av automatisk godkännandegranskning, som krävde separat publiceringsgodkännande eftersom produktionshostingen påverkas. Ingen kringgång utfördes. Den konkreta versionen finns på main; inga produktionsbokslut har skrivits av jämförelseskriptet. Efter att publiceringen är godkänd och verifierad ska workflowet köras på nytt och det faktiska resultatet dokumenteras här.
+| Grupp | Kontrollerade AB | Med API-dokument | Utan API-dokument |
+|---|---:|---:|---:|
+| Verifierat bokslut i bulkimporten | 5 | 5 | 0 |
+| Ingen kandidat i bulkkatalogen | 5 | 0 | 5 |
+
+De fem importerade företagens dokumentlistor innehöll tillsammans 17 rapporter. Fem senaste paket hämtades: alla hade samma senaste rapportperiod som bulkimporten, alla fem XHTML-dokument kunde tolkas med befintlig företagsparser och samtliga fem XHTML-SHA256 var exakt lika med lagrad dokumenthash. ZIP-paketens SHA256 skilde sig i alla fem fall; identiska använda XHTML-dokument visar varför enbart pakethash inte ska användas som innehållsskillnad mellan leveranssätten. Inga PDF-medlemmar observerades i dessa fem paket. Detta utesluter inte PDF eller andra format i andra API-svar.
+
+Jämförelsen använde 16 API-anrop inklusive token; separat referenskontroll av OAuth/dokumentlista använde två. Endast anonyma summeringar finns i logg och artifact `company-api-comparison.json`. Inga bokslut, kandidater, fördelningar eller källdokument skrevs av jämförelseskriptet. Inga extra rapporter hittades bland de fem bolag som saknades i bulk. Stickprovet är för litet för slutsatser om samtliga saknade företag; ingen större täckningsgrad är därför fastställd.
+
+Publiceringen krävde ett nytt godkännande efter automatiskt granskningsstopp. Användaren godkände uttryckligen publicering i nästa meddelande. Deployment `3b9bab00-e98b-4535-aaa2-c083f28b4f84` för version `f19b0c2e0a49faccf41fd1e91c1e72830c951248` startades därefter och Lovables publiceringspanel kontrollerades: **Published**, med **Publish changes** inaktiverad. Det tidigare publiceringsstoppet är därmed löst.
+
+Ett äldre bulkjobb gav `ETL scope: HTTP 422 (SQLSTATE: 21000)` vid uppdaterat AFR-underlag. Direkt kontroll av urvalsfrågan lyckades därefter och API-jämförelsen passerade; exakt orsak till det äldre felet är inte fastställd. Bulkjobb 44074958116 har återupptagits från sina bestående kontrollpunkter efter godkännandet och pågick vid denna kontroll. Detta ska inte beskrivas som ett verifierat permanent felavhjälpande.
+
+**Driftbeslut:** behåll ordinarie filimport. Den fungerande API-klienten/jämförelsen är tillgänglig för avgränsade kontroller. Automatisk API-import och PDF-tolkning är inte aktiverade; de kräver en separat verifierad importdesign, inte bara lyckad autentisering. En framtida större bortfallsstudie kan använda denna klient, men ska ha en uttrycklig budget för antal företag/anrop.
