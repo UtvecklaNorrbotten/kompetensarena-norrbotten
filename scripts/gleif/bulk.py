@@ -9,9 +9,12 @@ import zipfile
 from collections import defaultdict
 from .client import MANIFEST,GleifError
 
+# DeletedAt exists in delta files but is absent from verified full Golden Copies.
+# If present, it remains in each selected row and is checked by relation().
 FIELDS={'rr':{'Relationship.StartNode.NodeID','Relationship.EndNode.NodeID','Relationship.RelationshipType',
-              'Relationship.RelationshipStatus','Registration.RegistrationStatus','DeletedAt'},
-        'repex':{'LEI','Exception.Category','Exception.Reason.1','DeletedAt'}}
+              'Relationship.RelationshipStatus','Registration.RegistrationStatus',
+              'Relationship.StartNode.NodeIDType','Relationship.EndNode.NodeIDType'},
+        'repex':{'LEI','Exception.Category','Exception.Reason.1'}}
 VERSIONS={'rr':'RR_2.1','repex':'REPEX_2.1'}
 
 

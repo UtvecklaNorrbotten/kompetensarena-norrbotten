@@ -83,6 +83,23 @@ class Gleif(unittest.TestCase):
             with zipfile.ZipFile(p,'w') as z:z.writestr('synthetic.csv','unexpected\nvalue\n')
             with self.assertRaises(GleifError):read_csv(p,'rr',{A},1)
 
+    def test_full_files_without_deleted_at_and_delta_tombstones(self):
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d)/'test.zip'
+            for kind,row,key in [('rr',rr(),A),('repex',{'LEI':A,'Exception.Category':'DIRECT_ACCOUNTING_CONSOLIDATION_PARENT','Exception.Reason.1':'NATURAL_PERSONS'},A)]:
+                row.pop('DeletedAt',None)
+                for deleted in (None,'2026-01-01'):
+                    value=dict(row)
+                    if deleted:value['DeletedAt']=deleted
+                    stream=io.StringIO();writer=csv.DictWriter(stream,fieldnames=sorted(value))
+                    writer.writeheader();writer.writerow(value)
+                    with zipfile.ZipFile(p,'w') as z:z.writestr('synthetic.csv',stream.getvalue())
+                    parsed=read_csv(p,kind,{key},1)[key][0]
+                    if deleted:self.assertEqual(parsed['DeletedAt'],deleted)
+                    else:self.assertNotIn('DeletedAt',parsed)
+                    result=relation(A,'direct',[parsed] if kind=='rr' else [],[parsed] if kind=='repex' else [])
+                    self.assertEqual(result['state'],'unreported' if deleted else 'relation' if kind=='rr' else 'exception')
+
     def test_no_exact_lei_never_asserts_no_group(self):
         r=reserved_tree({'status':'not_found','entities':[]},{},{})
         self.assertEqual(r['status'],'no_exact_lei')
