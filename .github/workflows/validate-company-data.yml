@@ -6,6 +6,7 @@ on:
       - scripts/company_accounts/**
       - tests/test_company_accounts.py
       - tests/test_bolagsverket_api.py
+      - tests/test_company_supplements.py
       - tests/test_quarantine_audit.py
       - tests/company-data-errors.test.cjs
       - src/lib/company-data.server.ts
@@ -55,6 +56,7 @@ jobs:
           python-version: '3.13'
       - run: python -m unittest discover -s tests -p test_company_accounts.py
       - run: python -m unittest discover -s tests -p test_bolagsverket_api.py
+      - run: python -m unittest discover -s tests -p test_company_supplements.py
       - run: python -m unittest discover -s tests -p test_quarantine_audit.py
       - uses: actions/setup-node@v4
         with:

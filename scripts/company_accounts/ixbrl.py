@@ -104,7 +104,7 @@ def consistent_duplicate(rows):
     return max(intervals, key=lambda r:r[2])[3]['value']
 
 
-def parse(data, expected_org, expected_end):
+def parse(data, expected_org, expected_end, *, allow_legacy_k2=False):
     if len(data) > 40_000_000 or b'<!DOCTYPE' in data.upper() or b'<!ENTITY' in data.upper():
         raise ValueError('oversized XML or DTD/entity declaration')
     # Capture the namespace scope at every element; prefixes are arbitrary.
@@ -146,8 +146,26 @@ def parse(data, expected_org, expected_end):
         ns, name = expanded(fact.get('name', ''), fact)
         if name == 'FinansiellRapportList' and TAXONOMY.fullmatch(ns):
             report_types.append(''.join(fact.itertext()).strip())
+    legacy_reservation = False
     if not report_types:
-        raise ValueError('missing report scope declaration')
+        # Explicit opt-in for a SEPARATE reserved-data store; strict imports
+        # still reject these files. Only the observed official 2017 K2 schema.
+        paths = {
+            '/se/fr/gaap/k2/risbs/2017-09-30/se-k2-risbs-2017-09-30.xsd',
+            '/se/fr/gaap/k2/rcoa/2017-09-30/se-k2-rcoa-2017-09-30.xsd',
+            '/se/fr/misc/race/2017-09-30/se-misc-race-2017-09-30.xsd',
+        }
+        uris = [urlparse(u) for u in entrypoints]
+        safe = (allow_legacy_k2 and framework == 'K2' and uris
+                and any('/gaap/k2/risbs/' in u.path for u in uris)
+                and all(u.scheme in ('http', 'https') and u.hostname == 'xbrl.taxonomier.se'
+                        and u.port is None and not u.username and not u.query and not u.fragment
+                        and u.path in paths for u in uris)
+                and not any(local(e.tag) in ('explicitMember', 'typedMember') for e in root.iter())
+)
+        if not safe:
+            raise ValueError('missing report scope declaration')
+        legacy_reservation = True
     has_group_declaration = any('Koncern' in t for t in report_types)
     contexts = {}
     for context in root.iter('{' + XBRLI + '}context'):
@@ -183,7 +201,7 @@ def parse(data, expected_org, expected_end):
         units[unit.get('id')] = ('currency', name) if uri == 'http://www.xbrl.org/2003/iso4217' else ('other', '{' + uri + '}' + name)
 
     candidates = defaultdict(list)
-    issues = []
+    issues = ['legacy_k2_missing_scope_declaration'] if legacy_reservation else []
     for fact in facts:
         if local(fact.tag) != 'nonFraction':
             continue
@@ -254,7 +272,8 @@ def parse(data, expected_org, expected_end):
         raise ValueError('missing or conflicting reporting currency')
     if all(v is None for v in result.values()):
         raise ValueError('no company-level metrics in supported taxonomy')
-    provenance['_report'] = dict(entrypoints=entrypoints, accounting_framework=framework, scope_declarations=sorted(set(report_types)))
+    provenance['_report'] = dict(entrypoints=entrypoints, accounting_framework=framework, scope_declarations=sorted(set(report_types)),
+        scope_basis='inferred_legacy_k2_with_reservation' if legacy_reservation else 'explicit_declaration')
     return dict(period_start=period_start, period_end=expected_end, currency=currencies.pop(),
                 unit='currency_units', report_type=framework + ';' + (';'.join(sorted(set(report_types))) or 'annual_report'),
                 scope='company', metrics=result, provenance=provenance,
