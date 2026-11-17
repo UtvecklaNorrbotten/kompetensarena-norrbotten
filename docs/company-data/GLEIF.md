@@ -112,4 +112,27 @@ kontrollerade identiteter, entydiga matchningar, tvetydiga matchningar, färdiga
 relationskontroller, kända moderrelationer och rapporteringsundantag. Matchningsandel
 är inte andelen kompletta koncernträd.
 
-Produktionsutfall kompletteras efter körning. Inga täckningstal har extrapolerats.
+### Driftfel och åtgärder 2026-11-17
+
+- Första körningen sparade alla 26 269 identitetskontroller: 1 758 entydiga,
+  24 508 utan exakt LEI och 3 tvetydiga. Relationer var ännu inte lagrade.
+- Fullständiga CSV-filer saknar `DeletedAt`; kolumnen förekommer i deltafiler.
+  PR #102 gör fältet valfritt men bevarar borttagningsmarkeringen när den finns.
+  Båda fullfilerna har kontrollerats i sin helhet mot storlek och radantal.
+- GitHub-körningen fick därefter HTTP 403 från bulkfilernas primära domän,
+  medan API och samma filer fungerade från kontrollmiljön. PR #103 lägger till
+  kontrollerade steg och resurstyp i felloggen, utan företagsidentifierare.
+- Vid exakt detta bulk-403 får klienten försöka samma versionsbundna sökväg på
+  GLEIF:s officiella äldre Golden Copy-domän `leidata-preview.gleif.org`.
+  Ingen godtycklig redirect, nyare version eller annan utgivare accepteras.
+  Faktisk nedladdnings-URL, SHA256, storlek och radantal sparas i proveniensen.
+  Se GLEIF:s [tekniska besked om båda domänerna](https://www.gleif.org/ja/newsroom/blog/getting-technical-number1-it-updates-across-the-global-lei-system-golden-copy-file-download-api).
+- Migration `0056_company_gleif_runtime_index.sql` är manuellt applicerad och
+  inte journalförd. Ett partiellt index för juridiska enheter undviker
+  tiotusentals slumpmässiga heap-uppslag i rikstäckande AFR. Täckningsfrågans
+  uppmätta databastid minskade från 13,7 till 1,1 sekunder före relationsimporten.
+- En färsk schemakontroll återanvänder redan läst urval och hämtar inga nya
+  externa filer när inga uppgifter behöver uppdateras. Detta har regressionstest.
+
+Slutligt produktionsutfall kompletteras efter verifierad relationslagring.
+Inga täckningstal extrapoleras och inga tomma relationsfält beskrivs som färdiga.

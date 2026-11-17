@@ -40,7 +40,8 @@ jobs:
                   break
               except RuntimeError as exc:
                   if str(exc)!='ETL gleif-coverage: HTTP 400' or attempt==30:
-                      raise SystemExit('GLEIF route is not ready')
+                      # api.call only exposes action, HTTP status and whitelisted SQLSTATE.
+                      raise SystemExit('GLEIF route is not ready: '+str(exc))
                   time.sleep(10)
           PY
       - name: Hämta och lagra GLEIF-data

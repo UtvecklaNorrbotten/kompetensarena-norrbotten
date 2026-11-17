@@ -49,8 +49,10 @@ class Client:
 
     def response(self,url,limit=12_000_000):
         u=urllib.parse.urlparse(url)
-        if u.scheme!='https' or u.netloc not in ('api.gleif.org','goldencopy.gleif.org'):
+        if u.scheme!='https' or u.netloc not in ('api.gleif.org','goldencopy.gleif.org','leidata-preview.gleif.org'):
             raise GleifError('Untrusted GLEIF source URL')
+        if u.netloc=='leidata-preview.gleif.org' and (not u.path.startswith('/storage/golden-copy-files/') or u.query or u.fragment):
+            raise GleifError('Untrusted GLEIF mirror URL')
         for attempt in range(6):
             time.sleep(max(0,self.next-time.monotonic()));self.next=time.monotonic()+1.3
             self.requests+=1
