@@ -2,6 +2,7 @@
 import hashlib
 import io
 import json
+import re
 import time
 import zipfile
 from collections import Counter
@@ -96,5 +97,6 @@ if __name__=='__main__':
         main()
     except Exception as exc:
         # No traceback: urllib errors can embed org numbers, URLs or tokens.
-        print(json.dumps({'comparison_failed':True,'error':str(exc) if isinstance(exc,ApiError) else type(exc).__name__}))
+        safe_etl = isinstance(exc,RuntimeError) and re.fullmatch(r'ETL api-sample: HTTP \d{3}( \(SQLSTATE: [A-Z0-9]{5}\))?',str(exc))
+        print(json.dumps({'comparison_failed':True,'error':str(exc) if isinstance(exc,ApiError) or safe_etl else type(exc).__name__}))
         raise SystemExit(1)

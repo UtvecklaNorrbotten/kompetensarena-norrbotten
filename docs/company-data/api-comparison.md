@@ -31,3 +31,11 @@ API-svar med okänt schema räknas som fel, aldrig som tomma dokumentlistor. Att
 2. Kontrollera att `api-sample` är publicerad i samma miljö som `ETL_BASE_URL`. Jobbet väntar högst cirka tre minuter om en push hann före API-publiceringen.
 3. Kör jämförelsen och granska endast summeringsfilen/loggen. Ingen fullständig bokslutsimport ska startas för detta test.
 4. Dokumentera faktiskt resultat här före beslut om en automatisk API-import eller utvidgad PDF-hantering.
+
+## Kontrollpunkt 2026-11-17
+
+PR #98 är mergad (`5eb6dc2749b4cbc69d6a71c71ffdde6bbedf6073`). GitHub-körning 44074848618 passerade 46 Python-tester och fyra Node-testfall. OAuth och dokumentlistan verifierades sedan mot produktion i körning 44075465422, med de konfigurerade GitHub-hemligheterna: `oauth_verified=true`, `document_list_verified=true`, en referensrapport i listan och två HTTP-anrop. Varken klientuppgifter, token eller rå API-payload skrevs ut.
+
+Jämförelsen mot databasurvalet är ännu inte verifierad: körningen misslyckades vid ETL-läsoperationen `api-sample`. Den bredare API-täckningen och dokumentformaten får därför inte påstås vara fastställda. Ett separat, redan befintligt bulkjobb gav dessutom `ETL scope: HTTP 422 (SQLSTATE: 21000)`; dess orsak är inte utredd i detta API-uppdrag.
+
+Publiceringen av den nya Lovable-versionen blockerades av automatisk godkännandegranskning, som krävde separat publiceringsgodkännande eftersom produktionshostingen påverkas. Ingen kringgång utfördes. Den konkreta versionen finns på main; inga produktionsbokslut har skrivits av jämförelseskriptet. Efter att publiceringen är godkänd och verifierad ska workflowet köras på nytt och det faktiska resultatet dokumenteras här.
