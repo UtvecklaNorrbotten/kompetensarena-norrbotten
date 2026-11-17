@@ -134,5 +134,53 @@ relationskontroller, kända moderrelationer och rapporteringsundantag. Matchning
 - En färsk schemakontroll återanvänder redan läst urval och hämtar inga nya
   externa filer när inga uppgifter behöver uppdateras. Detta har regressionstest.
 
-Slutligt produktionsutfall kompletteras efter verifierad relationslagring.
-Inga täckningstal extrapoleras och inga tomma relationsfält beskrivs som färdiga.
+Verifierat produktionsutfall följer nedan. Kontrolltäckning och faktisk
+relationstäckning hålls isär.
+
+
+### Verifierad lagring 2026-11-17 cirka 23:31 svensk tid
+
+- 26 269 juridiska enheter i aktuellt urval; samtliga har sparad identitets- och
+  relationskontroll. Detta är kontrolltäckning, inte komplett ägartäckning.
+- 1 758 entydiga LEI-träffar (6,69 procent), 24 508 utan exakt träff med denna
+  registerregel och 3 tvetydiga. Identiteterna från första körningen återanvändes.
+- 203 företag har minst en aktuell konsoliderande moderrelation och 1 566 har
+  minst ett rapporteringsundantag. Grupperna överlappar: ett företag kan ha
+  moderrelation på en nivå och undantag på den andra.
+- 52 538 innehållsversioner finns lagrade, en identitet och en relationspost per
+  urvalsföretag. 0 förfallna kontroller, 0 identitetshashfel, 0 saknade
+  filhashar, 0 konflikter och 0 aktuella moderlänkar med inaktiv/borttagen eller
+  otillåten registreringsstatus. RLS är aktiverat och anonym läsning saknas.
+- Källrelease: 2026-11-17 16:00:00. RR: 493 332 rader, 24 522 193 byte, SHA256
+  `9ef9abcf0a4219ca12b2c0d8d514b7482b9aacd8647c531d645a678a93bb7c91`.
+  REPEX: 6 485 787 rader, 62 845 311 byte, SHA256
+  `a1b82fb0f294fe589377a3b28fe846fc1942029a969661aabf823801def72462`.
+- Produktionskörning [44189777542](https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/runs/44189777542)
+  läste denna gång båda filerna via primärdomänen. Det tidigare 403-felet var
+  inte permanent denna gång. Reservdomänens båda filer har verifierats separat
+  med exakt samma storlekar och SHA256; reservvägen var inte nödvändig i denna
+  produktionskörning. Ett regressionstest kontrollerar dess avgränsning.
+- PR #104 är mergad som `9f3edf1091ecf6489c5d1a9d6012e5a528c99b92`.
+  CI 44189691942 passerade (67 Python- och 7 Node-tester).
+- Det kvarstår 5 218 API-kontroller i den separata bokslutskompletteringen.
+  GLEIF utökar inte bokslutstäckningen och ger inte fullständiga aktieägarträd
+  eller identifierade fysiska ägare. Inga betaltjänster har använts.
+
+### Efterkontroll av fortsatt drift
+
+Produktionskörningen 44189777542 avslutades med **success**, `remaining_due=0`
+och fem externa GLEIF-anrop (manifest, två fullfiler och två moderföretagsbatcher).
+Datakällestatus uppdaterades till `succeeded`.
+
+Därefter återstartades den tidigare misslyckade körningen
+[44188528586, försök 3](https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/runs/44188528586).
+Den passerade också. Slutloggen visade `remaining_due=0` och `api_requests=0`:
+färska kontrollpunkter återanvändes utan ny GLEIF-hämtning. Detta verifierar
+flödet efter första helimporten; kalenderutlösningens nästa faktiska körning
+återstår förstås att observera. Daglig kontroll är konfigurerad 02:10 UTC,
+med förnyelse efter sju dagar per företag.
+
+AFR och profilernas senaste datakällestatus var `no_change`; strikt bokslutsimport
+var `succeeded`. Den separata boksluts-API-kompletteringen fortsätter var fjärde
+timme. Dess 5 218 återstående kontroller och tidigare odiagnostiserade
+SQLSTATE 21000-fel är fortsatt dokumenterade i kompletteringskontrollpunkten.
