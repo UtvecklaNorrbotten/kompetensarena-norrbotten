@@ -1,0 +1,61 @@
+{
+  "mode": "read_only_quarantine_census",
+  "parser_version": "bv-ixbrl-3",
+  "inventory_count": 192,
+  "companies_checked": 192,
+  "requests": 385,
+  "counts": {
+    "stored_packages_verified": 192,
+    "api_documents_listed": 301,
+    "api_with_documents": 191,
+    "api_same_period": 191,
+    "api_downloaded": 190,
+    "different_package_sha256": 190,
+    "identical_xhtml_set": 190,
+    "shared_xhtml_document": 190,
+    "api_no_documents": 1,
+    "api_request_or_diagnostic_failures": 1
+  },
+  "comparison_matrix": {
+    "no_supported_company_report -> no_supported_company_report": 190
+  },
+  "stored_outcomes": {
+    "no_supported_company_report": 192
+  },
+  "stored_document_errors": {
+    "missing_report_scope": 218,
+    "xml_security_limit": 2,
+    "missing_or_ambiguous_period": 2,
+    "missing_or_conflicting_currency": 2
+  },
+  "stored_formats": {
+    "xhtml": 224,
+    "other": 4
+  },
+  "stored_companies_with_document_error": {
+    "missing_report_scope": 188,
+    "xml_security_limit": 2,
+    "missing_or_ambiguous_period": 2,
+    "missing_or_conflicting_currency": 2
+  },
+  "api_outcomes": {
+    "no_supported_company_report": 190
+  },
+  "api_document_errors": {
+    "missing_report_scope": 215,
+    "xml_security_limit": 2,
+    "missing_or_ambiguous_period": 2,
+    "missing_or_conflicting_currency": 2
+  },
+  "api_formats": {
+    "xhtml": 221,
+    "other": 4
+  },
+  "api_companies_with_document_error": {
+    "missing_report_scope": 186,
+    "xml_security_limit": 2,
+    "missing_or_ambiguous_period": 2,
+    "missing_or_conflicting_currency": 2
+  },
+  "complete": false
+}

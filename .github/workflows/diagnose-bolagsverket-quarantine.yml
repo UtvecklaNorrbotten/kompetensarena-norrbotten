@@ -1,0 +1,35 @@
+name: 90 · Kontroll · Bolagsverket – karantänstruktur
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - scripts/diagnose_company_quarantine.py
+      - .github/workflows/diagnose-bolagsverket-quarantine.yml
+permissions:
+  contents: read
+concurrency:
+  group: diagnose-bolagsverket-quarantine
+  cancel-in-progress: false
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Testa diagnoserna
+        run: python -m unittest discover -s tests -p test_quarantine_structure.py
+      - name: Undersök enbart sparade källdokument
+        env:
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+        run: python scripts/diagnose_company_quarantine.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: company-quarantine-structure
+          path: company-quarantine-structure.json
+          retention-days: 30
