@@ -88,3 +88,12 @@ test('quarantine inventory validates cursor and refuses non-AB identities',async
   assert.equal(identitiesRead,false);
   assert.ok(filters.some(f=>f[0]==='afr_je_current'&&f[1]==='in'&&f[2]==='jurform'&&JSON.stringify(f[3])==='["41","42","49"]'));
 });
+
+test('supplement queues reject unknown modes and invalid cursors',async()=>{
+  for(const action of ['supplement-queue&mode=unknown','supplement-queue&mode=api&after=bad']){
+    const {response}=await responseFor(null,action);
+    assert.equal(response.status,400);
+  }
+  const {response}=await responseFor(null,'supplement-queue&mode=bulk');
+  assert.equal(response.status,200);
+});

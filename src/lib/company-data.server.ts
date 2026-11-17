@@ -23,9 +23,17 @@ const document = z.object({document_id:z.string().min(1).max(300),source_referen
   member_name:member,archive_etag:z.string().max(200),package_sha256:sha,document_sha256:sha,storage_path:z.string().regex(/^accounts\/[0-9a-f]{64}\.zip$/),
   parser_version:z.string().max(100),period_start:day,period_end:day,currency:z.string().regex(/^[A-Z]{3}$/),unit:z.literal('currency_units'),
   report_type:z.string().max(2000),scope:z.literal('company'),metrics,provenance:z.record(z.unknown()),issues:z.array(z.string().max(300)).max(100)}).strict();
+const parsedReport = document.pick({period_start:true,period_end:true,currency:true,unit:true,
+  report_type:true,scope:true,metrics:true,provenance:true,issues:true,parser_version:true});
+const supplement = z.object({origin:z.enum(['bulk','api']),package_sha256:sha.nullable(),
+  document_sha256:sha.nullable(),period_end:day.nullable(),document:parsedReport.nullable(),
+  quality_status:z.enum(['with_reservation','source_only']),
+  reason:z.enum(['legacy_k2_missing_scope','unsupported_report','api_report_saved','api_no_documents','api_ambiguous','api_error']),
+  documents_count:z.number().int().nonnegative().max(100000),source:z.record(z.unknown())}).strict();
 const allocation = z.object({cfar_nr:z.string().regex(/^\d+$/),structure_history_id:z.number().int().positive(),midpoint:metric,
   weight:metric,estimated_net_sales:metric,flags:z.array(z.string().max(100)),is_estimate:z.literal(true),rule_version:z.literal('afr-midpoint-1')}).strict();
 const postSchema = z.discriminatedUnion('action',[
+  z.object({action:z.literal('supplement-result'),je_id:uuid,result:supplement}).strict(),
   z.object({action:z.literal('profile-hashes'),entity:z.enum(['je','ae']),keys:z.array(z.string().max(40)).max(1000)}).strict(),
   z.object({action:z.literal('profiles'),sync_id:uuid,entity:z.enum(['je','ae']),records:z.array(z.object({key:z.string().max(40),
     profile_canonical:z.string().max(20000),contact_canonical:z.string().max(5000),profile_hash:sha,contact_hash:sha}).strict()).max(1000)}).strict(),
@@ -156,6 +164,11 @@ export async function handleCompanyData(request:Request):Promise<Response> {
         if(!row?.package_sha256)return json({error:'No package'},404);
         return json(checked(await client.storage.from('company-source-documents').createSignedUrl(`accounts/${row.package_sha256}.zip`,300)),200);
       }
+      if(action==='supplement-queue') {
+        const mode=url.searchParams.get('mode'),after=url.searchParams.get('after');
+        if(!['bulk','api'].includes(mode??'')||(after&&!uuid.safeParse(after).success)) return json({error:'Invalid supplement queue'},400);
+        return json(checked(await client.rpc('company_account_supplement_queue',{p_mode:mode,p_after:after})),200);
+      }
       if(action==='coverage') return json(checked(await client.rpc('company_data_coverage')),200);
       return json({error:'Unknown action'},400);
     }
@@ -188,6 +201,19 @@ export async function handleCompanyData(request:Request):Promise<Response> {
       if(!bytes||bytes.size>40_000_000||createHash('sha256').update(new Uint8Array(await bytes.arrayBuffer())).digest('hex')!==p.document.package_sha256)
         return json({error:'Archived source checksum mismatch'},409);
       return json(checked(await client.rpc('company_account_store',{p_je_id:p.je_id,p_document:p.document,p_allocations:p.allocations,p_structure:p.structure})),200);
+    }
+    if(p.action==='supplement-result') {
+      const r=p.result;
+      if((r.quality_status==='with_reservation')!==(r.document!==null)||
+        (r.document!==null&&(!r.package_sha256||!r.document_sha256||r.document.period_end!==r.period_end)))
+        return json({error:'Invalid reserved result'},400);
+      if(r.package_sha256) {
+        const bytes=checked(await client.storage.from('company-source-documents').download(`accounts/${r.package_sha256}.zip`));
+        const {createHash}=await import('node:crypto');
+        if(!bytes||bytes.size>40_000_000||createHash('sha256').update(new Uint8Array(await bytes.arrayBuffer())).digest('hex')!==r.package_sha256)
+          return json({error:'Archived source checksum mismatch'},409);
+      }
+      return json(checked(await client.rpc('company_account_supplement_store',{p_je_id:p.je_id,p_result:r})),200);
     }
     if(p.action==='prepare') return json(checked(await client.rpc('company_accounts_prepare',{p_parser_version:p.parser_version})),200);
     if(p.action==='quarantine') {
