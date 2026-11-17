@@ -72,6 +72,47 @@ export async function handleCompanyData(request:Request):Promise<Response> {
         const after=url.searchParams.get('after'); if(after&&!uuid.safeParse(after).success) return json({error:'Invalid cursor'},400);
         return json(checked(await client.rpc('company_data_scope',{p_after:after,p_limit:1000})),200);
       }
+      if(action==='api-sample') {
+        // Protected, bounded read-only pilot. Only ordinary Swedish AB; no
+        // physical-person identifiers, contacts, names or address payloads.
+        const sync=checked(await client.from('afr_syncs').select('source_date').eq('status','succeeded')
+          .order('source_date',{ascending:false}).order('created_at',{ascending:false}).limit(1).single());
+        const samples:Array<Record<string,unknown>>=[];
+        const counts={imported:0,absent:0,quarantined:0};
+        let after:string|null=null;
+        for(let page=0;page<10;page++) {
+          const scope=checked(await client.rpc('company_data_scope',{p_after:after,p_limit:100})) as Array<{je_id:string;org_nr:string}>;
+          if(!scope.length) break;
+          after=scope[scope.length-1].je_id;
+          const identities=new Map(scope.map(r=>[r.je_id,r.org_nr]));
+          const companies=checked(await client.from('afr_je_current').select('je_id').eq('jurform','49')
+            .in('je_id',scope.map(r=>r.je_id)))??[];
+          if(!companies.length) continue;
+          const ids=companies.map(r=>r.je_id);
+          const candidates=checked(await client.from('company_account_candidates').select('je_id,status,period_end,package_sha256')
+            .in('je_id',ids))??[];
+          const byId=new Map(candidates.map(r=>[r.je_id,r]));
+          const latest=checked(await client.from('company_accounts_latest').select('je_id,account_id').in('je_id',ids))??[];
+          const accounts=latest.length?(checked(await client.from('company_accounts').select('id,package_sha256,document_sha256')
+            .in('id',latest.map(r=>r.account_id)))??[]):[];
+          const accountById=new Map(accounts.map(r=>[r.id,r]));
+          const latestByCompany=new Map(latest.map(r=>[r.je_id,accountById.get(r.account_id)]));
+          for(const company of [...companies].sort((a,b)=>a.je_id.localeCompare(b.je_id))) {
+            const candidate=byId.get(company.je_id);
+            const status:string=candidate?.status??'absent';
+            if(status!=='imported'&&status!=='absent'&&status!=='quarantined') continue;
+            if(counts[status]>=5) continue;
+            const account=latestByCompany.get(company.je_id);
+            if(status==='imported'&&(!account||account.package_sha256!==candidate?.package_sha256)) continue;
+            counts[status]++;
+            samples.push({org_nr:identities.get(company.je_id),bulk_status:status,
+              period_end:candidate?.period_end??null,package_sha256:candidate?.package_sha256??null,
+              document_sha256:status==='imported'?account?.document_sha256:null});
+          }
+          if(counts.imported===5&&counts.absent===5) break;
+        }
+        return json({source_date:sync.source_date,samples},200);
+      }
       if(action==='archives') {
         // Fewer than 2,000 bulk objects currently; paginate nevertheless.
         const after=url.searchParams.get('after')??'';

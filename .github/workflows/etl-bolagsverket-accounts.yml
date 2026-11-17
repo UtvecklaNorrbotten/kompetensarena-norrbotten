@@ -14,6 +14,8 @@ on:
     branches: [main]
     paths:
       - scripts/company_accounts/**
+      - '!scripts/company_accounts/bolagsverket_api.py'
+      - '!scripts/company_accounts/compare_api.py'
       - .github/workflows/etl-bolagsverket-accounts.yml
   schedule:
     # Bounded bootstrap/resume. Completed archives are skipped using ETag and

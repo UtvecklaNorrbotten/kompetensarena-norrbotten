@@ -6,7 +6,7 @@ const vm=require('node:vm');
 const ts=require('typescript');
 const zod=require('zod');
 
-async function responseFor(error) {
+async function responseFor(error,action='scope',client=null) {
   const logs=[];
   const source=fs.readFileSync('src/lib/company-data.server.ts','utf8')
     .replace("(await import('@/integrations/supabase/client.server')).supabaseAdmin",'globalThis.syntheticClient');
@@ -14,14 +14,14 @@ async function responseFor(error) {
   assert.equal((built.diagnostics??[]).length,0);
   const exports={};
   const context={exports,Response,URL,TextEncoder,console:{error:(...v)=>logs.push(v)},
-    syntheticClient:{rpc:async()=>({data:[],error})},
+    syntheticClient:client??{rpc:async()=>({data:[],error})},
     require:(name)=>{
       if(name==='zod')return zod;
       if(name==='./etl-auth.server')return {authorize:async()=>null,createRateLimiter:()=>()=>false,json:(body,status)=>new Response(JSON.stringify(body),{status})};
       throw new Error('Unexpected synthetic dependency');
     }};
   vm.runInNewContext(built.outputText,context);
-  const response=await exports.handleCompanyData(new Request('https://synthetic.example/api/public/jobs/company-data?action=scope'));
+  const response=await exports.handleCompanyData(new Request('https://synthetic.example/api/public/jobs/company-data?action='+action));
   return {response,body:await response.json(),logs};
 }
 
@@ -48,4 +48,26 @@ test('successful database response is preserved',async()=>{
   const {response,body}=await responseFor(null);
   assert.equal(response.status,200);
   assert.deepEqual(body,[]);
+});
+
+test('comparison sample uses AB filter, excludes pending/stale reports and omits names',async()=>{
+  const rows={afr_syncs:{source_date:'synthetic-source'},afr_je_current:[{je_id:'a'},{je_id:'b'},{je_id:'c'},{je_id:'d'},{je_id:'e'}],
+    company_account_candidates:[{je_id:'a',status:'imported',package_sha256:'same',period_end:'2025-12-31'},
+      {je_id:'c',status:'quarantined'},{je_id:'d',status:'pending'},{je_id:'e',status:'imported',package_sha256:'stale'}],
+    company_accounts_latest:[{je_id:'a',account_id:1},{je_id:'e',account_id:2}],
+    company_accounts:[{id:1,package_sha256:'same',document_sha256:'doc'},{id:2,package_sha256:'old'}]};
+  let pages=0;const filters=[];
+  const client={rpc:async(name,params)=>{
+    assert.equal(name,'company_data_scope');assert.equal(params.p_limit,100);
+    return {data:pages++===0?['a','b','c','d','e'].map(je_id=>({je_id,org_nr:'0000000000'})):[],error:null};
+  },from:(table)=>{
+    const chain={then:(resolve)=>Promise.resolve({data:rows[table],error:null}).then(resolve)};
+    for(const method of ['select','eq','order','limit','single','in'])chain[method]=(...args)=>{filters.push([table,method,...args]);return chain;};
+    return chain;
+  }};
+  const {response,body}=await responseFor(null,'api-sample',client);
+  assert.equal(response.status,200);
+  assert.deepEqual(body.samples.map(r=>r.bulk_status),['imported','absent','quarantined']);
+  assert.ok(filters.some(f=>f[0]==='afr_je_current'&&f[1]==='eq'&&f[2]==='jurform'&&f[3]==='49'));
+  for(const row of body.samples)assert.deepEqual(Object.keys(row).sort(),['bulk_status','document_sha256','org_nr','package_sha256','period_end']);
 });
