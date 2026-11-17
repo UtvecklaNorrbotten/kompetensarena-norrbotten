@@ -106,3 +106,26 @@ Ingen full täckning är utlovad.
 - Underlag för källval för ägar-/koncernuppgifter finns i
   [källundersökningen](ownership-source-research-2026-11-17.md). Ingen ägardataintegration
   eller betaltjänst har startats.
+
+
+## Verifierad uppföljning 2026-11-17 cirka 23:15 svensk tid
+
+- Körning 44139154667 lyckades vid försök 2 efter det tidigare avbrottet.
+  De 100 redan kvitterade API-kontrollerna återanvändes; ytterligare 1 000 sparades.
+- Aktuellt urval: 47 889 företag, varav 16 927 AB. Den strikta importen har
+  10 417 senaste bokslut, 192 i karantän och 0 väntande kandidater.
+  1 473 arkiv är kontrollerade. 6 318 AB saknar bulkkandidat.
+- 1 100 API-kontroller är sparade, samtliga `api_no_documents`.
+  5 218 AB utan bulkkandidat återstår att API-kontrollera; helimporten av detta
+  kompletteringssteg är alltså inte färdig. Schemat behandlar högst 1 000 var fjärde
+  timme och hoppar över färska kvitteringar.
+- De 192 bulkkompletteringarna består fortsatt av 164 med reservation och 28
+  med enbart källa. De ersätter inte verifierade bokslut.
+- Verifierad bokslutstäckning bland AB: 10 417 / 16 927 = 61,54 procent.
+  Reservationsposter ska redovisas separat och inte räknas som verifierade.
+- Täckningskontrollen rapporterar 0 fel i fördelningsvikternas summa.
+- Återstarten visar att kvitteringar fungerar; den tidigare API-köavvikelsens
+  exakta orsak och det separata SQLSTATE 21000-felet är inte permanent lösta.
+- GLEIF har byggts i PR #101 och formaträttats i PR #102. Aktuell status finns i
+  [GLEIF-kontrollpunkten](GLEIF.md); uppgiften ovan om att ingen integration
+  startats beskriver den äldre kontrollpunkten. Inga betaltjänster används.

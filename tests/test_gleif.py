@@ -11,8 +11,9 @@ from pathlib import Path
 from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from gleif.client import Client,GleifError,org_number,canonical,entity
-from gleif.bulk import read_csv,FIELDS
+from gleif.bulk import read_csv,FIELDS,bulk_response
 from gleif.import_gleif import relation,reserved_tree,record
+from gleif import import_gleif
 
 A='12340000000000000000';B='12340000000000000100';C='12340000000000000200'
 
@@ -99,6 +100,34 @@ class Gleif(unittest.TestCase):
                     else:self.assertNotIn('DeletedAt',parsed)
                     result=relation(A,'direct',[parsed] if kind=='rr' else [],[parsed] if kind=='repex' else [])
                     self.assertEqual(result['state'],'unreported' if deleted else 'relation' if kind=='rr' else 'exception')
+
+    def test_fresh_scheduled_run_reuses_scope_without_source_downloads(self):
+        row={'identity':{'sha256':'a','next_check_at':'2999-01-01T00:00:00Z'},
+             'relations':{'next_check_at':'2999-01-01T00:00:00Z','source':{'identity_sha256':'a','release':'2026-01-01'}}}
+        with patch.object(import_gleif,'scope',return_value=[row]) as scope, \
+             patch.object(import_gleif,'load') as load, \
+             patch.object(import_gleif.Client,'identities') as identities, \
+             patch.object(import_gleif.api,'call',return_value={'scope':1,'relations_checked':1}), \
+             patch.object(import_gleif.api,'log') as log,patch('builtins.print'):
+            import_gleif.main()
+        scope.assert_called_once();load.assert_not_called();identities.assert_not_called()
+        self.assertEqual(log.call_args.args[1],'no_change')
+        self.assertEqual(log.call_args.args[3]['remaining_due'],0)
+
+    def test_bulk_403_uses_only_same_pinned_path_on_official_mirror(self):
+        client=Client();url='https://goldencopy.gleif.org/storage/golden-copy-files/2026/01/01/1/synthetic.csv.zip'
+        response=object()
+        with patch.object(client,'response',side_effect=[GleifError('GLEIF HTTP 403 resource=bulk'),response]) as request,patch('builtins.print'):
+            r,used=bulk_response(client,url)
+        self.assertIs(r,response)
+        self.assertEqual(used,url.replace('goldencopy.gleif.org','leidata-preview.gleif.org'))
+        self.assertEqual(request.call_count,2)
+        with patch.object(client,'response',side_effect=GleifError('GLEIF HTTP 500 resource=bulk')) as request,self.assertRaises(GleifError):
+            bulk_response(client,url)
+        self.assertEqual(request.call_count,1)
+        with patch.object(client,'response',side_effect=GleifError('GLEIF HTTP 403 resource=bulk')),self.assertRaises(GleifError):
+            bulk_response(client,'https://synthetic.example/storage/golden-copy-files/test.zip')
+        with self.assertRaises(GleifError):Client().response('https://leidata-preview.gleif.org/arbitrary')
 
     def test_no_exact_lei_never_asserts_no_group(self):
         r=reserved_tree({'status':'not_found','entities':[]},{},{})

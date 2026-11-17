@@ -37,19 +37,36 @@ def read_csv(path,kind,needed,expected_count):
     return dict(selected)
 
 
+
+def bulk_response(client,url):
+    # GLEIF documents leidata-preview as the legacy Golden Copy domain.
+    # Keep the manifest-pinned path; never switch version or follow arbitrary redirects.
+    try:
+        return client.response(url),url
+    except GleifError as exc:
+        if str(exc)!='GLEIF HTTP 403 resource=bulk':raise
+        u=urllib.parse.urlparse(url)
+        if u.scheme!='https' or u.netloc!='goldencopy.gleif.org' or not u.path.startswith('/storage/golden-copy-files/') or u.query or u.fragment:
+            raise GleifError('Untrusted bulk mirror path') from None
+        mirror='https://leidata-preview.gleif.org'+u.path
+        print('{"phase":"bulk_mirror_fallback"}',flush=True)
+        return client.response(mirror),mirror
+
+
 def load(client,needed):
     data=client.json(MANIFEST)['data'];release=data['publish_date'];manifest={};selected={}
     for kind in ('rr','repex'):
         f=data[kind]['full_file']['csv'];u=urllib.parse.urlparse(f['url'])
         if f['cdf_version']!=VERSIONS[kind] or data[kind]['publish_date']!=release or f['format']!='csv':
             raise GleifError('Unknown GLEIF release contract')
-        if u.scheme!='https' or u.netloc!='goldencopy.gleif.org' or not u.path.startswith('/storage/golden-copy-files/'):
+        if u.scheme!='https' or u.netloc!='goldencopy.gleif.org' or not u.path.startswith('/storage/golden-copy-files/') or u.query or u.fragment:
             raise GleifError('Untrusted bulk source')
         if not 0<f['size']<=120_000_000:raise GleifError('GLEIF file size outside bound')
         # The source files are temporary, never uploaded as Actions artifacts.
         with tempfile.TemporaryDirectory(prefix='gleif-') as directory:
             path=os.path.join(directory,kind+'.zip');sha=hashlib.sha256();size=0
-            with client.response(f['url']) as response,open(path,'wb') as out:
+            response,download_url=bulk_response(client,f['url'])
+            with response,open(path,'wb') as out:
                 while True:
                     chunk=response.read(1024*1024)
                     if not chunk:break
@@ -58,6 +75,6 @@ def load(client,needed):
                     sha.update(chunk);out.write(chunk)
             if size!=f['size']:raise GleifError('Incomplete GLEIF download')
             selected[kind]=read_csv(path,kind,needed,f['record_count'])
-            manifest[kind]={'url':f['url'],'sha256':sha.hexdigest(),'size':size,
+            manifest[kind]={'url':f['url'],'download_url':download_url,'sha256':sha.hexdigest(),'size':size,
                 'record_count':f['record_count'],'cdf_version':f['cdf_version']}
     return selected,{'release':release,'files':manifest,'license':'CC0-1.0'}
