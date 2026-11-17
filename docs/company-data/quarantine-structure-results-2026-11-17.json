@@ -1,0 +1,30 @@
+{
+  "mode": "stored_only_structure",
+  "inventory_count": 192,
+  "packages_checked": 192,
+  "failures": 0,
+  "document_properties": {
+    "structure:no_scope_fact": 218,
+    "entrypoint:k2": 184,
+    "metric_names:recognized": 186,
+    "metric_namespace:accepted": 186,
+    "company_contexts:present": 222,
+    "expected_end_contexts:present": 220,
+    "end_context_dimensions:none": 222,
+    "entrypoint:other_or_missing": 36,
+    "metric_names:none_recognized": 36,
+    "metric_namespace:none_accepted": 36,
+    "structure:doctype_blocked": 2,
+    "structure:supported_scope_fact": 4,
+    "expected_end_contexts:missing": 2,
+    "entrypoint:k3": 2
+  },
+  "packages_by_structure": {
+    "structure:no_scope_fact | entrypoint:k2 | metric_names:recognized | metric_namespace:accepted | company_contexts:present | expected_end_contexts:present | end_context_dimensions:none": 182,
+    "structure:no_scope_fact | entrypoint:other_or_missing | metric_names:none_recognized | metric_namespace:none_accepted | company_contexts:present | expected_end_contexts:present | end_context_dimensions:none": 36,
+    "structure:doctype_blocked": 2,
+    "structure:supported_scope_fact | entrypoint:k2 | metric_names:recognized | metric_namespace:accepted | company_contexts:present | expected_end_contexts:missing | end_context_dimensions:none": 2,
+    "structure:supported_scope_fact | entrypoint:k3 | metric_names:recognized | metric_namespace:accepted | company_contexts:present | expected_end_contexts:present | end_context_dimensions:none": 2
+  },
+  "complete": true
+}

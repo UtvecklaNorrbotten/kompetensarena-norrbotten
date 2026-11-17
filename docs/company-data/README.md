@@ -1,5 +1,7 @@
 # AFR-profiler och digitala årsredovisningar
 
+Karantänutredning mot produktions-API: [192 rapporter, 2026-11-17](quarantine-audit.md).
+
 Aktuell slutkontrollpunkt: [2026-11-16](checkpoint-2026-11-16.md), med faktisk importstatus, bortfall, källstickprov och återstartskontroll.
 
 Skyddad ETL, utan ny publik analysvy. JobTech, Vinnova, personalkostnader och kompletterande konkurskällor ingår inte.
