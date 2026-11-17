@@ -97,3 +97,16 @@ test('supplement queues reject unknown modes and invalid cursors',async()=>{
   const {response}=await responseFor(null,'supplement-queue&mode=bulk');
   assert.equal(response.status,200);
 });
+
+test('GLEIF inventory validates cursor and uses protected RPC',async()=>{
+  const invalid=await responseFor(null,'gleif-scope&after=invalid');
+  assert.equal(invalid.response.status,400);
+  const names=[];
+  const client={rpc:async(name)=>{names.push(name);return {data:[],error:null};}};
+  const valid=await responseFor(null,'gleif-scope',client);
+  assert.equal(valid.response.status,200);
+  assert.deepEqual(names,['company_gleif_scope']);
+  const coverage=await responseFor(null,'gleif-coverage',client);
+  assert.equal(coverage.response.status,200);
+  assert.equal(names.at(-1),'company_gleif_coverage');
+});
