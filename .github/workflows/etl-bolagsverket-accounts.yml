@@ -16,6 +16,7 @@ on:
       - scripts/company_accounts/**
       - '!scripts/company_accounts/bolagsverket_api.py'
       - '!scripts/company_accounts/compare_api.py'
+      - '!scripts/company_accounts/audit_quarantine.py'
       - .github/workflows/etl-bolagsverket-accounts.yml
   schedule:
     # Bounded bootstrap/resume. Completed archives are skipped using ETag and
