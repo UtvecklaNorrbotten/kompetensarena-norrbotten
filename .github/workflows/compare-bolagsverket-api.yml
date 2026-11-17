@@ -1,0 +1,38 @@
+name: 90 · Kontroll · Bolagsverket – API mot veckofiler
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - scripts/company_accounts/bolagsverket_api.py
+      - scripts/company_accounts/compare_api.py
+      - .github/workflows/compare-bolagsverket-api.yml
+permissions:
+  contents: read
+concurrency:
+  group: compare-bolagsverket-api
+  cancel-in-progress: false
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Testa autentisering, datumurval och säker loggning
+        run: python -m unittest discover -s tests -p test_bolagsverket_api.py
+      - name: Jämför ett begränsat produktionsurval
+        env:
+          BOLAGSVERKET_CLIENT_ID: ${{ secrets.BOLAGSVERKET_CLIENT_ID }}
+          BOLAGSVERKET_CLIENT_SECRET: ${{ secrets.BOLAGSVERKET_CLIENT_SECRET }}
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+          PYTHONPATH: scripts
+        run: python -m company_accounts.compare_api
+      - uses: actions/upload-artifact@v4
+        with:
+          name: company-api-comparison
+          path: company-api-comparison.json
+          retention-days: 30
