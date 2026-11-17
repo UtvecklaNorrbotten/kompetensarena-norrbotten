@@ -1,5 +1,9 @@
 # AFR-profiler och digitala årsredovisningar
 
+Kompletteringar och reservationer: [kontrollpunkt 2026-11-17](supplement-checkpoint-2026-11-17.md).
+
+Ägar- och koncernkällor: [källundersökning 2026-11-17](ownership-source-research-2026-11-17.md).
+
 Karantänutredning mot produktions-API: [192 rapporter, 2026-11-17](quarantine-audit.md).
 
 Aktuell slutkontrollpunkt: [2026-11-16](checkpoint-2026-11-16.md), med faktisk importstatus, bortfall, källstickprov och återstartskontroll.

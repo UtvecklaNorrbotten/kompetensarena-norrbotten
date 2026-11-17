@@ -67,4 +67,42 @@ signerade URL:er eller API-hemligheter läggs i GitHub-artifacts.
    separat. En tom API-lista bevisar inte att företaget saknar en årsredovisning;
    det kan saknas en digital rapport i just denna tjänst.
 
-Produktionsutfall kompletteras efter faktisk körning. Ingen full täckning är utlovad.
+Produktionskörning: [44139154667](https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/runs/44139154667).
+Kod: PR #100, merge `b3f1b0d2ede79045334ef67498eb11017d50daac`.
+CI-körning 44139051258 passerade; 52 Python- och 6 Node-tester.
+De fem tidigare redovisade verkliga K2-källpaketen kontrollerades med oförändrad
+pakethash och kunde tolkas med reservation.
+
+Aktuellt AB-urval vid start: 16 927 (inklusive bank-/försäkrings-AB), varav
+10 415 strikt importerade, 192 i karantän och 6 320 utan bulkkandidat. API-kontrollen
+är en faktisk kontroll av dessa 6 320, inte en extrapolering av ett stickprov.
+Den är inte färdig bara för att ett första deljobb är klart.
+
+Den strikta bulkimporten fick åter SQLSTATE 21000 vid första scope-anropet efter
+publicering (körning 44139154768). Direkt anrop av `company_data_scope(null,1000)`
+lyckades och den misslyckade körningen återstartades därefter. Grundorsaken är
+fortfarande inte fastställd; detta ska inte beskrivas som en permanent rättning.
+Kompletteringsflödet har separat per-företag-kvittering och ändrar inte verifierade
+bokslut. Slutliga antal och återstående kö kompletteras nedan efter databaskontroll.
+Ingen full täckning är utlovad.
+
+## Verifierat produktionsutfall 2026-11-17 cirka 18:49 svensk tid
+
+- Alla **192** ursprungliga karantänpaket har behandlats och lagrats i supplementtabellen.
+- **164** har tolkade värden med reservation; **28** har enbart sparad källa.
+  Den tidigare strukturgruppens 182 paket var kandidater, inte en garanti för
+  godkänd tolkning. Övriga kontroller och den smala entrypoint-listan gäller fortsatt.
+- Kontroll under lagringen: 0 saknade privata paket och 0 reservationer utan
+  dokumenthash/proveniens/kvalitetsmarkeringar.
+- API-steget har faktiskt startat och sparat privata per-företag-kvitteringar.
+  De första **13** kontrollerna gav `api_no_documents`; det är ingen skattning av
+  bortfallet i hela gruppen. Körning 44139154667 pågår fortfarande.
+- Fullständig kontroll av de **6 320** AB som vid start saknade bulkkandidat är
+  **inte klar**. Högst 1 000 behandlas per körning och återstående hämtas av det
+  schemalagda flödet. Senare antal ska läsas i databasen, inte räknas från denna text.
+- Den strikta importens återstart 44139154768 avslutades med **success** efter
+  kontrollen. Det separata scope-felet är återställt för denna körning, men dess
+  grundorsak är fortfarande öppen.
+- Underlag för källval för ägar-/koncernuppgifter finns i
+  [källundersökningen](ownership-source-research-2026-11-17.md). Ingen ägardataintegration
+  eller betaltjänst har startats.
