@@ -162,7 +162,7 @@ def parse(data, expected_org, expected_end, *, allow_legacy_k2=False):
                         and u.port is None and not u.username and not u.query and not u.fragment
                         and u.path in paths for u in uris)
                 and not any(local(e.tag) in ('explicitMember', 'typedMember') for e in root.iter())
-                and not any('Koncern' in expanded(e.get('name', ''), e)[1] for e in facts))
+)
         if not safe:
             raise ValueError('missing report scope declaration')
         legacy_reservation = True

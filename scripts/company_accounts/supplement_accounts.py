@@ -49,7 +49,10 @@ def as_zip(data):
         with zipfile.ZipFile(stream,'w',zipfile.ZIP_DEFLATED) as z:
             z.writestr('source.xhtml',data)
         return stream.getvalue()
-    raise ApiError('Unsupported document format')
+    stream=io.BytesIO()
+    with zipfile.ZipFile(stream,'w',zipfile.ZIP_DEFLATED) as z:
+        z.writestr('source.bin',data)
+    return stream.getvalue()
 
 
 def queue(mode,after=None):

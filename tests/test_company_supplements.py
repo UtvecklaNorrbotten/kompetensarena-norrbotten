@@ -38,6 +38,11 @@ class Supplements(unittest.TestCase):
             parse(legacy(extra='<x:explicitMember>synthetic</x:explicitMember>'),ORG,'2025-04-30',allow_legacy_k2=True)
         with self.assertRaises(ValueError):parse(legacy(), '1111111111','2025-04-30',allow_legacy_k2=True)
 
+    def test_company_receivables_from_group_do_not_imply_group_accounts(self):
+        extra='<ix:nonFraction name="g:FordringarHosKoncernforetag" contextRef="b" unitRef="sek">100</ix:nonFraction>'
+        r=parse(legacy(extra=extra),ORG,'2025-04-30',allow_legacy_k2=True)
+        self.assertIn('legacy_k2_missing_scope_declaration',r['issues'])
+
     def test_security_and_conflicting_reports_still_blocked(self):
         with self.assertRaises(ValueError):parse(b'<!DOCTYPE html>'+legacy(),ORG,'2025-04-30',allow_legacy_k2=True)
         with self.assertRaises(ValueError):extract_reserved(package(legacy(),legacy().replace(b'1 234,5',b'9')),ORG,'2025-04-30')

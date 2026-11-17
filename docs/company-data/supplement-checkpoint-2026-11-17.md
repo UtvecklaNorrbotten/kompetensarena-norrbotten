@@ -31,7 +31,7 @@ matcha aktuell kandidatkontrollsumma så att en äldre reservation inte visas so
 Den strikta parsern är oförändrat strikt. Separat opt-in accepterar den observerade
 K2-entrypointen `risbs/2017-09-30` tillsammans med endast kända officiella
 2017-K2-/revisions-entrypoints på `xbrl.taxonomier.se`. Okänd värd/version,
-koncernbegrepp och dimensionerade dokument avvisas. Samma kontroller av
+K3-/koncern-entrypoints och dimensionerade dokument avvisas. Samma kontroller av
 organisationsnummer, period, enheter, belopp och avrundning kvarstår. Ingen
 DTD-/entitetstolkning aktiveras. Saknad `FinansiellRapportList` sparas som
 `legacy_k2_missing_scope_declaration`, med `scope_basis=inferred_legacy_k2_with_reservation`.
