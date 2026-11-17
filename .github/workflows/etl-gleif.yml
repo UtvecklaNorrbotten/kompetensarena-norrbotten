@@ -1,0 +1,51 @@
+name: 10 · Data · GLEIF – LEI och koncernrelationer
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - scripts/gleif/**
+      - .github/workflows/etl-gleif.yml
+  schedule:
+    # Frequent resumptions are cheap once the seven-day per-company check is fresh.
+    - cron: '10 2 * * *'
+permissions:
+  contents: read
+concurrency:
+  group: etl-gleif
+  cancel-in-progress: false
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Testa exakt matchning, relationer och källkontroller
+        run: python -m unittest discover -s tests -p test_gleif.py
+      - name: Kontrollera publicerad ETL-route
+        env:
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+          PYTHONPATH: scripts
+        run: |
+          python - <<'PY'
+          import time
+          from company_accounts import api
+          for attempt in range(31):
+              try:
+                  api.call('gleif-coverage')
+                  break
+              except RuntimeError as exc:
+                  if str(exc)!='ETL gleif-coverage: HTTP 400' or attempt==30:
+                      raise SystemExit('GLEIF route is not ready')
+                  time.sleep(10)
+          PY
+      - name: Hämta och lagra GLEIF-data
+        env:
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+          PYTHONPATH: scripts
+        run: python -m gleif.import_gleif

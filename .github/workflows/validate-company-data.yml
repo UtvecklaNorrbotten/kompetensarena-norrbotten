@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - scripts/company_accounts/**
+      - scripts/gleif/**
+      - tests/test_gleif.py
       - tests/test_company_accounts.py
       - tests/test_bolagsverket_api.py
       - tests/test_company_supplements.py
@@ -55,6 +57,7 @@ jobs:
         with:
           python-version: '3.13'
       - run: python -m unittest discover -s tests -p test_company_accounts.py
+      - run: python -m unittest discover -s tests -p test_gleif.py
       - run: python -m unittest discover -s tests -p test_bolagsverket_api.py
       - run: python -m unittest discover -s tests -p test_company_supplements.py
       - run: python -m unittest discover -s tests -p test_quarantine_audit.py

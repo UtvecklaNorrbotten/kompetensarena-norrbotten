@@ -1,5 +1,7 @@
 # AFR-profiler och digitala årsredovisningar
 
+GLEIF-koppling: [LEI och konsoliderande moderföretag](GLEIF.md).
+
 Kompletteringar och reservationer: [kontrollpunkt 2026-11-17](supplement-checkpoint-2026-11-17.md).
 
 Ägar- och koncernkällor: [källundersökning 2026-11-17](ownership-source-research-2026-11-17.md).

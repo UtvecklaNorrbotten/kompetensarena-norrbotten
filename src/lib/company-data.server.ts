@@ -33,6 +33,8 @@ const supplement = z.object({origin:z.enum(['bulk','api']),package_sha256:sha.nu
 const allocation = z.object({cfar_nr:z.string().regex(/^\d+$/),structure_history_id:z.number().int().positive(),midpoint:metric,
   weight:metric,estimated_net_sales:metric,flags:z.array(z.string().max(100)),is_estimate:z.literal(true),rule_version:z.literal('afr-midpoint-1')}).strict();
 const postSchema = z.discriminatedUnion('action',[
+  z.object({action:z.literal('gleif-store'),stage:z.enum(['identity','relations']),records:z.array(z.object({
+    je_id:uuid,canonical_payload:z.string().max(1000000),payload_sha256:sha,source:z.record(z.unknown())}).strict()).max(100)}).strict(),
   z.object({action:z.literal('supplement-result'),je_id:uuid,result:supplement}).strict(),
   z.object({action:z.literal('profile-hashes'),entity:z.enum(['je','ae']),keys:z.array(z.string().max(40)).max(1000)}).strict(),
   z.object({action:z.literal('profiles'),sync_id:uuid,entity:z.enum(['je','ae']),records:z.array(z.object({key:z.string().max(40),
@@ -43,7 +45,7 @@ const postSchema = z.discriminatedUnion('action',[
   z.object({action:z.literal('account'),je_id:uuid,document,allocations:z.array(allocation).max(20000),structure:z.record(z.unknown())}).strict(),
   z.object({action:z.literal('prepare'),parser_version:z.string().max(100)}).strict(),
   z.object({action:z.literal('quarantine'),je_id:uuid,archive_etag:z.string().max(200),reason:z.string().regex(/^[a-z0-9_]+$/).max(100),package_sha256:sha,parser_version:z.string().max(100)}).strict(),
-  z.object({action:z.literal('log'),source_id:z.enum(['scb-afr-profiles','bolagsverket-annual-accounts']),
+  z.object({action:z.literal('log'),source_id:z.enum(['scb-afr-profiles','bolagsverket-annual-accounts','gleif-parent-relations']),
     status:z.enum(['succeeded','failed','no_change','waiting']),period:z.string().max(100),details:z.record(z.unknown()),error:z.string().max(1000).optional()}).strict(),
 ]);
 
@@ -169,6 +171,12 @@ export async function handleCompanyData(request:Request):Promise<Response> {
         if(!['bulk','api'].includes(mode??'')||(after&&!uuid.safeParse(after).success)) return json({error:'Invalid supplement queue'},400);
         return json(checked(await client.rpc('company_account_supplement_queue',{p_mode:mode,p_after:after})),200);
       }
+      if(action==='gleif-scope') {
+        const after=url.searchParams.get('after');
+        if(after&&!uuid.safeParse(after).success) return json({error:'Invalid cursor'},400);
+        return json(checked(await client.rpc('company_gleif_scope',{p_after:after})),200);
+      }
+      if(action==='gleif-coverage') return json(checked(await client.rpc('company_gleif_coverage')),200);
       if(action==='coverage') return json(checked(await client.rpc('company_data_coverage')),200);
       return json({error:'Unknown action'},400);
     }
@@ -215,6 +223,7 @@ export async function handleCompanyData(request:Request):Promise<Response> {
       }
       return json(checked(await client.rpc('company_account_supplement_store',{p_je_id:p.je_id,p_result:r})),200);
     }
+    if(p.action==='gleif-store') return json(checked(await client.rpc('company_gleif_store',{p_stage:p.stage,p_records:p.records})),200);
     if(p.action==='prepare') return json(checked(await client.rpc('company_accounts_prepare',{p_parser_version:p.parser_version})),200);
     if(p.action==='quarantine') {
       checked(await client.from('company_account_candidates').update({status:'quarantined',error_code:p.reason,package_sha256:p.package_sha256,checked_parser_version:p.parser_version,checked_at:new Date().toISOString()})
