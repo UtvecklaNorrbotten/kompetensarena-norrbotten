@@ -23,6 +23,7 @@ on:
       - "R/etl/uka_values.R"
       - "tests/uka-api.R"
       - "tests/uka-hst-live-smoke.R"
+      - "tests/uka-hst-reference-audit.R"
       - "tests/uka-values.R"
       - "scripts/uka_files_sync.py"
       - "tests/test_uka_files.py"
@@ -177,6 +178,12 @@ jobs:
         shell: Rscript {0}
         run: |
           source("tests/uka-hst-live-smoke.R")
+
+      - name: UKÄ HST read-only reference audit
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'investigate/uka-hst-reference-')
+        shell: Rscript {0}
+        run: |
+          source("tests/uka-hst-reference-audit.R")
 
       - name: Välj återstartspunkt
         id: selection
