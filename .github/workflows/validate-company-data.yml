@@ -13,6 +13,8 @@ on:
       - tests/company-data-errors.test.cjs
       - src/lib/company-data.server.ts
       - drizzle/migrations/0053_company_scope_covering_indexes.sql
+      - drizzle/migrations/0057_company_scope_shared_refresh.sql
+      - tests/company-data-scope-recovery.sql
       - .github/workflows/validate-company-data.yml
   push:
     branches: [feat/afr-history-annual-accounts]

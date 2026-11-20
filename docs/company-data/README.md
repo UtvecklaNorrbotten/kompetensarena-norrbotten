@@ -1,5 +1,7 @@
 # AFR-profiler och digitala årsredovisningar
 
+Urvalsdrift: [bekräftad orsak och rättning 2026-11-20](scope-repair-2026-11-20.md).
+
 GLEIF-koppling: [LEI och konsoliderande moderföretag](GLEIF.md).
 
 Kompletteringar och reservationer: [kontrollpunkt 2026-11-17](supplement-checkpoint-2026-11-17.md).
