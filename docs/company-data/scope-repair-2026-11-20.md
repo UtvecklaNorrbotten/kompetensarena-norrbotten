@@ -42,7 +42,21 @@ Den nya hjälpfunktionen är endast tillgänglig för service_role.
   har återstartats och passerat: 26 269 kontroller, 0 återstående och 0 externa
   GLEIF-anrop. 1 758 entydiga LEI, 203 med moderrelation och 1 566 med undantag.
 - Bokslut [44694850967](https://github.com/UtvecklaNorrbotten/kompetensarena-norrbotten/actions/runs/44694850967)
-  återstartas från befintliga arkiv-/företagskontrollpunkter. Slutstatus följs upp.
+  har också passerat efter återstart från befintliga arkiv-/företagskontrollpunkter.
+  Slutkontroll: 47 889 företag, 10 417 verifierade senaste bokslut, 192 strikt
+  karantänmarkerade kandidater, 0 väntande och 0 viktsummefel.
 
 Inga scheman behöver ändras: cacheförnyelsen utförs automatiskt vid nästa
 urvalsläsning efter AFR. Tidigare manuella scope-anrop krävs inte längre.
+
+## Slutkontroll
+
+PR #105 är mergad som `f83cf96a6523cf6f8cd52a5c11787014faef1614`.
+CI 44763732773 passerade: 67 Python- och 7 Node-tester. Båda riktiga
+API-körningarna ovan avslutades med success. Datakällestatus är `succeeded`
+för bokslut och `no_change` för GLEIF. Cachen pekar på senaste publicerade
+AFR-synk. GLEIF-versionerna är fortsatt 52 538; samtliga tidigare bokslut,
+reservationer och källdokument är bevarade.
+
+Rättningen är aktiv i produktionsdatabasen. API-gränssnittet är oförändrat
+och ingen frontendpublicering eller Lovable AI-körning behövdes.
