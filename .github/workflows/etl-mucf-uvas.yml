@@ -58,9 +58,15 @@ jobs:
           import json, os
           from datetime import datetime, timezone, timedelta
           from pathlib import Path
-          p = Path(os.environ['MUCF_ROOT']) / 'state.json'
-          state = json.loads(p.read_text()) if p.exists() else {}
-          due = not state.get('complete') or datetime.now(timezone.utc) - datetime.fromisoformat(state['completed_at']) >= timedelta(days=7)
+          root = Path(os.environ['MUCF_ROOT'])
+          def read(name):
+              p = root / name
+              return json.loads(p.read_text()) if p.exists() else {}
+          state, catalog, published = read('state.json'), read('catalog.json'), read('published.json')
+          pending_publish = any(published.get(year, {}).get(measure) != digest
+                                for year, digest in catalog.get('snapshots', {}).items()
+                                for measure in ('count', 'share'))
+          due = pending_publish or not state.get('complete') or datetime.now(timezone.utc) - datetime.fromisoformat(state['completed_at']) >= timedelta(days=7)
           with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
               out.write('run=' + str(due).lower() + '\n')
           PYTHON
