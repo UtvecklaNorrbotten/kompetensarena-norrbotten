@@ -29,12 +29,13 @@ export const areas = [
   },
   {
     slug: "lan-kommun",
-    title: "Län/Kommun",
+    title: "Län och kommun",
     icon: MapPinned,
-    description: "Jämför länet och kommunerna.",
+    description: "Utforska utbildningsflöden och jämför Norrbottens kommuner.",
     topics: [
-      { slug: "rekryteringsbehov", title: "Rekryteringsbehov" },
-      { slug: "befolkningsutveckling", title: "Befolkningsutveckling" },
+      { slug: "utbildningsfloden", title: "Flöden in och ut" },
+      { slug: "befolkningsutveckling", title: "Utveckling över tid" },
+      { slug: "kommunjamforelse", title: "Jämför kommunerna" },
     ],
   },
   {
