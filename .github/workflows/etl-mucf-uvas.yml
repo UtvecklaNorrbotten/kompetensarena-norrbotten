@@ -1,0 +1,105 @@
+name: 10 · Data · MUCF – unga utan arbete eller studier (UVAS)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - scripts/mucf/**
+      - tests/test_mucf_uvas.py
+      - .github/workflows/etl-mucf-uvas.yml
+  schedule:
+    # New full checks are at least seven days apart. The other slots only resume
+    # an unfinished pass and are a no-op after completion (no source requests).
+    - cron: '15 5 * * 1'
+    - cron: '15 11,17,23 * * *'
+    - cron: '15 5 * * 0,2-6'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: etl-mucf-uvas
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    env:
+      PYTHONPATH: scripts
+      MUCF_ROOT: ${{ github.workspace }}/mucf-store/data/mucf-uvas
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: scripts/mucf/requirements.txt
+      - name: Installera källäsare
+        run: python -m pip install -r scripts/mucf/requirements.txt
+      - name: Testa sekretess, svenska tal och källans urval
+        run: python -m unittest discover -s tests -p test_mucf_uvas.py -v
+      - name: Öppna beständiga kontrollpunkter
+        id: store
+        run: |
+          if git ls-remote --exit-code --heads origin data/mucf-uvas >/dev/null; then
+            git fetch origin data/mucf-uvas
+            git worktree add -B data/mucf-uvas mucf-store FETCH_HEAD
+          else
+            git worktree add -b data/mucf-uvas mucf-store HEAD
+          fi
+      - name: Kontrollera om veckohämtning eller återupptagning behövs
+        id: due
+        run: |
+          python - <<'PYTHON'
+          import json, os
+          from datetime import datetime, timezone, timedelta
+          from pathlib import Path
+          root = Path(os.environ['MUCF_ROOT'])
+          def read(name):
+              p = root / name
+              return json.loads(p.read_text()) if p.exists() else {}
+          state, catalog, published = read('state.json'), read('catalog.json'), read('published.json')
+          pending_publish = any(published.get(year, {}).get(measure) != digest
+                                for year, digest in catalog.get('snapshots', {}).items()
+                                for measure in ('count', 'share'))
+          due = pending_publish or not state.get('complete') or datetime.now(timezone.utc) - datetime.fromisoformat(state['completed_at']) >= timedelta(days=7)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
+              out.write('run=' + str(due).lower() + '\n')
+          PYTHON
+      - name: Hämta eller återuppta alla MUCF-årgångar
+        if: steps.due.outputs.run == 'true'
+        run: python -m mucf.collect --root "$MUCF_ROOT" --budget-minutes 290
+      - name: Publicera verifierade år via befintlig ETL
+        if: ${{ !cancelled() && steps.store.outcome == 'success' && steps.due.outputs.run == 'true' }}
+        env:
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+        run: python -m mucf.publish --root "$MUCF_ROOT"
+      - name: Spara kontrollpunkter och källvärden
+        if: always()
+        run: |
+          if [ -d mucf-store/data/mucf-uvas ]; then
+            cd mucf-store
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add data/mucf-uvas
+            if ! git diff --cached --quiet; then
+              git commit -m 'data: MUCF UVAS – verifierade år och kontrollpunkter'
+              git push origin HEAD:refs/heads/data/mucf-uvas
+            fi
+          fi
+      - name: Spara täckningsrapport
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mucf-uvas-coverage-${{ github.run_number }}
+          path: |
+            mucf-store/data/mucf-uvas/catalog.json
+            mucf-store/data/mucf-uvas/state.json
+            mucf-store/data/mucf-uvas/published.json
+          if-no-files-found: warn
+          retention-days: 90
