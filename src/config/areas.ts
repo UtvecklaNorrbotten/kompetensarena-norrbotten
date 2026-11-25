@@ -8,6 +8,13 @@ const EducationIcon = GraduationCap;
 
 export const areas = [
   {
+    slug: "arbetsmarknad",
+    title: "Arbetsmarknad",
+    icon: BriefcaseBusiness,
+    description: "Följ tiden utan arbete och jämför grupper, kommuner och län.",
+    topics: [{ slug: "langtidsarbetsloshet", title: "Långtidsarbetslöshet" }],
+  },
+  {
     slug: "yrken",
     title: "Yrken",
     icon: BriefcaseBusiness,

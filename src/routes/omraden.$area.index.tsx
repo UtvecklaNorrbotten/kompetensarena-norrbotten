@@ -46,9 +46,7 @@ function AreaOverview() {
         <PageHeader eyebrow="Översikt" title={area.title} intro={area.description} />
       </Section>
       <Section className="py-10">
-        <p className="mb-6 text-ink-muted">
-          Området byggs ut stegvis. Fördjupningarna nedan innehåller ännu inga resultat.
-        </p>
+        <p className="mb-6 text-ink-muted">Området byggs ut stegvis. Välj en fördjupning nedan.</p>
         <ul className="grid gap-4 md:grid-cols-2">
           {area.topics.map((topic) => (
             <li key={topic.slug}>
@@ -57,7 +55,11 @@ function AreaOverview() {
                 className="block rounded-lg border border-border bg-surface p-6 hover:bg-brand-light focus-visible:outline"
               >
                 <h2 className="text-xl">{topic.title}</h2>
-                <p className="mt-2 text-sm text-ink-muted">Platshållare · innehåll kommer senare</p>
+                <p className="mt-2 text-sm text-ink-muted">
+                  {area.slug === "arbetsmarknad"
+                    ? "Tid utan arbete – utveckling, grupper och geografiska jämförelser"
+                    : "Platshållare · innehåll kommer senare"}
+                </p>
               </AppLink>
             </li>
           ))}

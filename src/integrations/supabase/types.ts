@@ -950,6 +950,41 @@ export type Database = {
           },
         ]
       }
+      agg_af_duration: {
+        Row: {
+          geo_code: string;
+          period: string;
+          dimension_type: string;
+          dimension_value: string;
+          total: number | null;
+          over6: number | null;
+          over12: number | null;
+          over24: number | null;
+          lower6: boolean;
+          lower12: boolean;
+          lower24: boolean;
+        };
+        Insert: {
+          geo_code: string;
+          period: string;
+          dimension_type: string;
+          dimension_value: string;
+          total?: number | null;
+          over6?: number | null;
+          over12?: number | null;
+          over24?: number | null;
+          lower6?: boolean;
+          lower12?: boolean;
+          lower24?: boolean;
+        };
+        Update: {
+          total?: number | null;
+          over6?: number | null;
+          over12?: number | null;
+          over24?: number | null;
+        };
+        Relationships: [];
+      };
       agg_af_totals: {
         Row: {
           geo_code: string
