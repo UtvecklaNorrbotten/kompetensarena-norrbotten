@@ -186,3 +186,5 @@ export const getUkaEducationSlice = createServerFn({ method: "GET" })
   });
 
 export { getRmiRows, getRmiComparison } from "./rmi.functions";
+
+export { getAfUnemployment, getAfUnemploymentComparison, getAfUnemploymentGroups } from "./af-unemployment.functions";

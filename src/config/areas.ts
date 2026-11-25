@@ -11,8 +11,11 @@ export const areas = [
     slug: "arbetsmarknad",
     title: "Arbetsmarknad",
     icon: BriefcaseBusiness,
-    description: "Följ tiden utan arbete och jämför grupper, kommuner och län.",
-    topics: [{ slug: "langtidsarbetsloshet", title: "Långtidsarbetslöshet" }],
+    description: "Följ arbetslösheten och jämför arbetsmarknaden i kommuner, län och riket.",
+    topics: [
+      { slug: "arbetsloshet", title: "Arbetslöshet" },
+      { slug: "langtidsarbetsloshet", title: "Långtidsarbetslöshet" },
+    ],
   },
   {
     slug: "yrken",

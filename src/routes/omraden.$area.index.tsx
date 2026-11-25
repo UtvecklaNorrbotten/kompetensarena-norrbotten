@@ -1,3 +1,4 @@
+import { LabourMarketOverview } from "@/components/labour-market/LabourMarketOverview";
 import { GeographyPage } from "@/components/geography/GeographyPage";
 import { geoSearchSchema } from "@/config/geo";
 import { EducationPage } from "@/components/education/EducationPage";
@@ -38,6 +39,7 @@ export const Route = createFileRoute("/omraden/$area/")({
 
 function AreaOverview() {
   const area = Route.useLoaderData();
+  if (area.slug === "arbetsmarknad") return <LabourMarketOverview />;
   if (area.slug === "lan-kommun") return <GeographyPage />;
   if (area.slug === "utbildning") return <EducationPage />;
   return (

@@ -32,8 +32,8 @@ export const mainNavigation: NavGroup[] = [
       },
       {
         label: "Arbetsmarknad",
-        href: "/kommer-senare",
-        description: "Placeholder – innehåll tillkommer.",
+        href: "/omraden/arbetsmarknad",
+        description: "Arbetslöshet och geografiska jämförelser.",
       },
       {
         label: "Utbildning",
