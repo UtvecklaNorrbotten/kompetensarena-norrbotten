@@ -184,3 +184,5 @@ export const getUkaEducationSlice = createServerFn({ method: "GET" })
     }
     return { rows, next: data.offset + UKA_SLICE_PAGE_ROWS };
   });
+
+export { getRmiRows, getRmiComparison } from "./rmi.functions";

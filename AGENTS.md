@@ -26,3 +26,5 @@
 - App icon imports go through `src/components/icons.ts`, which maps semantic names to official Nucleo Essential packages and explicitly lists unsupported fallbacks; this keeps licensing provenance clear and future library changes centralized.
 
 - AFR names/addresses use admin-only `afr_profile_versions` plus latest-only contacts in `afr_profile_current`; canonical core hashes/history remain unchanged. Annual accounts use protected `company_accounts_latest` pointers and private content-addressed ZIP sources, never group facts as company values. See `docs/company-data/README.md`.
+
+- RMI U3 läses som versionshanterade, förberäknade publika SCB-aggregat i `src/data/rmi`, via `aggregates.functions.ts` och `rmi.functions.ts`; ett begränsat svar per geografi/kön. Workflowet `etl-rmi-u3.yml` kontrollerar SCB:s metadata veckovis och hämtar om kvartalsvis. Se `docs/lan-kommun.md`. Inga råobservationer eller personuppgifter ingår.

@@ -1,3 +1,5 @@
+import { GeographyPage } from "@/components/geography/GeographyPage";
+import { geoSearchSchema } from "@/config/geo";
 import { EducationPage } from "@/components/education/EducationPage";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { AppLink } from "@/components/layout/AppLink";
@@ -6,6 +8,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { areaPath, getArea } from "@/config/areas";
 
 export const Route = createFileRoute("/omraden/$area/")({
+  validateSearch: geoSearchSchema,
   loader: ({ params }) => {
     const area = getArea(params.area);
     if (!area) throw notFound();
@@ -35,6 +38,7 @@ export const Route = createFileRoute("/omraden/$area/")({
 
 function AreaOverview() {
   const area = Route.useLoaderData();
+  if (area.slug === "lan-kommun") return <GeographyPage />;
   if (area.slug === "utbildning") return <EducationPage />;
   return (
     <>
