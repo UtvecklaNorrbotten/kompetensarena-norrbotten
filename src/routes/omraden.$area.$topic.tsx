@@ -1,3 +1,4 @@
+import { UnemploymentPage } from "@/components/labour-market/UnemploymentPage";
 import { LongTermUnemploymentPage } from "@/components/labour-market/LongTermUnemploymentPage";
 import { GeographyPage } from "@/components/geography/GeographyPage";
 import { geoSearchSchema } from "@/config/geo";
@@ -46,7 +47,7 @@ export const Route = createFileRoute("/omraden/$area/$topic")({
         name: "description",
         content:
           loaderData?.area.slug === "arbetsmarknad"
-            ? "Tid utan arbete bland inskrivna arbetslösa. Historik, grupper och geografiska jämförelser med Arbetsförmedlingens statistik."
+            ? "Arbetsförmedlingens inskrivna arbetslöshet: utveckling, grupper och geografiska jämförelser."
             : loaderData?.area.slug === "utbildning"
               ? "UKÄ-statistik om sökande, studenter, examina och arbetsmarknad efter examen."
               : loaderData?.area.slug === "lan-kommun"
@@ -61,7 +62,7 @@ export const Route = createFileRoute("/omraden/$area/$topic")({
         property: "og:description",
         content:
           loaderData?.area.slug === "arbetsmarknad"
-            ? "Tid utan arbete bland inskrivna arbetslösa. Historik, grupper och geografiska jämförelser med Arbetsförmedlingens statistik."
+            ? "Arbetsförmedlingens inskrivna arbetslöshet: utveckling, grupper och geografiska jämförelser."
             : loaderData?.area.slug === "utbildning"
               ? "UKÄ-statistik om sökande, studenter, examina och arbetsmarknad efter examen."
               : loaderData?.area.slug === "lan-kommun"
@@ -77,6 +78,7 @@ export const Route = createFileRoute("/omraden/$area/$topic")({
 
 function TopicPage() {
   const { area, topic } = Route.useLoaderData();
+  if (area.slug === "arbetsmarknad" && topic.slug === "arbetsloshet") return <UnemploymentPage />;
   if (area.slug === "arbetsmarknad" && topic.slug === "langtidsarbetsloshet")
     return <LongTermUnemploymentPage />;
   if (area.slug === "lan-kommun") return <GeographyPage initialSection={topic.slug} />;

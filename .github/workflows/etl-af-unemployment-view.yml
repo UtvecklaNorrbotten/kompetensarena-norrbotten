@@ -1,0 +1,45 @@
+name: 10 · Data · AF – arbetslöshetens läsmodell
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Hämta om hela historiken och kontrollera revisioner
+        type: boolean
+        default: false
+  schedule:
+    - cron: "45 6 * * *"
+permissions:
+  contents: write
+concurrency:
+  group: af-unemployment-view
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install requests openpyxl
+      - name: Kontrollera och förbered AF-aggregat
+        env:
+          FORCE: ${{ inputs.force }}
+        run: |
+          if [ "$FORCE" = "true" ]; then
+            python scripts/fetch_af_unemployment.py --force
+          else
+            python scripts/fetch_af_unemployment.py
+          fi
+      - name: Kontrollera läsmodell
+        run: python -m unittest discover -s tests -p test_af_unemployment.py
+      - name: Publicera endast verifierade aggregat
+        run: |
+          if [ -n "$(git status --porcelain src/data/af)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add src/data/af
+            git commit -m 'data: uppdatera AF:s publika arbetslöshetsaggregat'
+            git push
+          fi
