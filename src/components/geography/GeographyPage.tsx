@@ -56,7 +56,13 @@ function Figure({
   );
 }
 function FlowPanel({ row }: { row: RmiRow }) {
-  const max = Math.max(1, ...row.slice(6).filter((v): v is number => typeof v === "number"));
+  const max = Math.max(
+    1,
+    ...row
+      .slice(6)
+      .filter((v): v is number => typeof v === "number")
+      .map(Math.abs),
+  );
   return (
     <div>
       <div className="grid grid-cols-2 gap-4 border-b border-border pb-3 text-base font-semibold">
@@ -74,7 +80,8 @@ function FlowPanel({ row }: { row: RmiRow }) {
                   ["out", pair.outgoing, pair.outLabel],
                 ] as const
               ).map(([direction, index, label]) => {
-                const value = row[index];
+                const rawValue = row[index];
+                const value = typeof rawValue === "number" ? Math.abs(rawValue) : null;
                 return (
                   <div key={direction}>
                     <p className="min-h-12 text-sm text-ink-muted">{label}</p>
@@ -95,7 +102,8 @@ function FlowPanel({ row }: { row: RmiRow }) {
         ))}
       </div>
       <p className="mt-7 text-sm leading-relaxed text-ink-muted">
-        Alla staplar har samma skala. Samma person kan ingå i flera flöden. Summera därför inte
+        Alla staplar har samma skala. Utflöden visas som antal personer; SCB:s minustecken finns
+        kvar i datatabellen och CSV-filen. Samma person kan ingå i flera flöden. Summera därför inte
         staplarna till en nettoförändring. Utflyttade omfattar även avlidna enligt SCB:s definition.
       </p>
     </div>
