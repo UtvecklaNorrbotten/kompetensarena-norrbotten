@@ -157,6 +157,7 @@ export function LongTermUnemploymentPage() {
               Område
               <select
                 className={selectClass}
+                aria-label="Område"
                 value={geo}
                 onChange={(e) => changeGeo(e.target.value)}
               >
@@ -178,6 +179,7 @@ export function LongTermUnemploymentPage() {
               Tid utan arbete
               <select
                 className={selectClass}
+                aria-label="Tid utan arbete"
                 value={measure}
                 onChange={(e) => setMeasure(e.target.value as DurationMeasure)}
               >
@@ -192,6 +194,7 @@ export function LongTermUnemploymentPage() {
               Visa
               <select
                 className={selectClass}
+                aria-label="Visa"
                 value={unit}
                 onChange={(e) => setUnit(e.target.value as DurationUnit)}
               >
@@ -203,6 +206,7 @@ export function LongTermUnemploymentPage() {
               Månad
               <select
                 className={selectClass}
+                aria-label="Månad"
                 value={period}
                 onChange={(e) => setPeriod(e.target.value)}
               >
@@ -217,6 +221,7 @@ export function LongTermUnemploymentPage() {
               Historik
               <select
                 className={selectClass}
+                aria-label="Historik"
                 value={years}
                 onChange={(e) => setYears(e.target.value)}
               >
@@ -296,6 +301,7 @@ export function LongTermUnemploymentPage() {
                   Jämför efter
                   <select
                     className={selectClass}
+                    aria-label="Jämför efter"
                     value={breakdown}
                     onChange={(e) => setBreakdown(e.target.value)}
                   >
@@ -327,6 +333,7 @@ export function LongTermUnemploymentPage() {
                   Geografisk jämförelse
                   <select
                     className={selectClass}
+                    aria-label="Geografisk jämförelse"
                     value={comparisonLevel}
                     onChange={(e) => setComparisonLevel(e.target.value)}
                   >

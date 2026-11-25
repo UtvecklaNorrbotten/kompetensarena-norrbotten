@@ -47,3 +47,20 @@ Migration: `drizzle/migrations/0059_af_duration.sql`. Körs i projektets databas
 - `node --experimental-strip-types tests/af-duration.test.ts`: differenser, andelar, noll, saknade tal, sekretess och inkonsistenta intervall; syntetiska exempel.
 - SQL-funktionen testad i lokal PostgreSQL (PGlite) med syntetiska observationer: gruppnämnare, UA/KUA, flaggor, oförändrad markör, revision inom samma batch och anonym läsbehörighet utan skrivrätt eller omräkningsrätt.
 - Originalfilens rikstal för oktober 2026: INSAL 338 643, UA06 205 691, UA12 146 076, UA24 82 940. Dessa används endast som verifieringsvärden, aldrig som frontenddata.
+
+
+### Produktionskontroll 2026-11-25
+
+Migrationen är applicerad. Första omräkningen publicerade 972 853 aggregatrader, januari 2006–oktober 2026, med 312 geografier. Alla grupper har matchande nämnare. Omräkningen tog cirka 215 sekunder och behöver därför en explicit sessionsgräns på tio minuter i cron-kommandot; funktionens SET räcker inte för att ändra en redan startad statement-timer. Engångsjobbet avregistrerades efter lyckad körning. En omedelbar kontroll gav `no_change`.
+
+Kontroll mot originalfilerna för oktober 2026:
+
+| Område | Inskrivna arbetslösa | >6 månader | >12 månader | >24 månader |
+| --- | ---: | ---: | ---: | ---: |
+| Riket | 338 643 | 205 691 | 146 076 | 82 940 |
+| Norrbotten | 4 222 | 2 267 | 1 515 | minst 784 |
+| Arjeplog | 54 | 26 | 12 | sekretessmarkerat |
+
+Originalfilerna har SHA-256 `7ad18b1d315821e94345f115e4ff999fc67eb6061bbda4a133c1dd5ca4b89f07` (riket) och `a6756c5635214fbf342eab9074deff20dbefe1705d16c9baa68223e9d76ded37` (län/kommun).
+
+Anonym HTTP-läsning gav 200 med 250 månader för Norrbotten. Besökare har uttryckligen endast SELECT; databasens standardbehörigheter för nya tabeller återkallas innan läsning beviljas. Omräkningsfunktionen kan inte anropas anonymt. Gränssnittets förhandsvisning har kontrollerats med verkliga data: antal/andel, kommunjämförelse, utbildningsnivå, byte till Riket samt tabellen för hela historiken.

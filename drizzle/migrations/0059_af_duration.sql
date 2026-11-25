@@ -15,6 +15,7 @@ create table public.agg_af_duration (
 );
 alter table public.agg_af_duration enable row level security;
 create policy "Public AF duration aggregates" on public.agg_af_duration for select to anon, authenticated using (true);
+revoke all on table public.agg_af_duration from public, anon, authenticated;
 grant select on public.agg_af_duration to anon, authenticated;
 grant all on public.agg_af_duration to service_role;
 create index agg_af_duration_comparison on public.agg_af_duration(period, dimension_type, dimension_value);
