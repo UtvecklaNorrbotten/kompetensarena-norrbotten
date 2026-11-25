@@ -93,7 +93,7 @@ export async function handleCompanyData(request:Request):Promise<Response> {
         for(let page=0;page<10;page++) {
           const scope=checked(await client.rpc('company_data_scope',{p_after:after,p_limit:100})) as Array<{je_id:string;org_nr:string}>;
           if(!scope.length) break;
-          after=scope[scope.length-1].je_id;
+          after=scope[scope.length-1]!.je_id;
           const identities=new Map(scope.map(r=>[r.je_id,r.org_nr]));
           const companies=checked(await client.from('afr_je_current').select('je_id').eq('jurform','49')
             .in('je_id',scope.map(r=>r.je_id)))??[];
@@ -121,7 +121,7 @@ export async function handleCompanyData(request:Request):Promise<Response> {
           }
           if(counts.imported===5&&counts.absent===5) break;
         }
-        return json({source_date:sync.source_date,samples},200);
+        return json({source_date:sync?.source_date??null,samples},200);
       }
       if(action==='archives') {
         // Fewer than 2,000 bulk objects currently; paginate nevertheless.
