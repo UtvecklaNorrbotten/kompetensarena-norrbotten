@@ -1,3 +1,4 @@
+import { LongTermUnemploymentPage } from "@/components/labour-market/LongTermUnemploymentPage";
 import { GeographyPage } from "@/components/geography/GeographyPage";
 import { geoSearchSchema } from "@/config/geo";
 import { EducationPage } from "@/components/education/EducationPage";
@@ -44,11 +45,13 @@ export const Route = createFileRoute("/omraden/$area/$topic")({
       {
         name: "description",
         content:
-          loaderData?.area.slug === "utbildning"
-            ? "UKÄ-statistik om sökande, studenter, examina och arbetsmarknad efter examen."
-            : loaderData?.area.slug === "lan-kommun"
-              ? "Utbildningsflöden och kommunjämförelser i Norrbotten med SCB:s regionala matchningsindikatorer."
-              : "Platshållare för en kommande fördjupning i Kompetensarena Norrbotten.",
+          loaderData?.area.slug === "arbetsmarknad"
+            ? "Tid utan arbete bland inskrivna arbetslösa. Historik, grupper och geografiska jämförelser med Arbetsförmedlingens statistik."
+            : loaderData?.area.slug === "utbildning"
+              ? "UKÄ-statistik om sökande, studenter, examina och arbetsmarknad efter examen."
+              : loaderData?.area.slug === "lan-kommun"
+                ? "Utbildningsflöden och kommunjämförelser i Norrbotten med SCB:s regionala matchningsindikatorer."
+                : "Platshållare för en kommande fördjupning i Kompetensarena Norrbotten.",
       },
       {
         property: "og:title",
@@ -57,11 +60,13 @@ export const Route = createFileRoute("/omraden/$area/$topic")({
       {
         property: "og:description",
         content:
-          loaderData?.area.slug === "utbildning"
-            ? "UKÄ-statistik om sökande, studenter, examina och arbetsmarknad efter examen."
-            : loaderData?.area.slug === "lan-kommun"
-              ? "Utbildningsflöden och kommunjämförelser i Norrbotten med SCB:s regionala matchningsindikatorer."
-              : "Platshållare för en kommande fördjupning i Kompetensarena Norrbotten.",
+          loaderData?.area.slug === "arbetsmarknad"
+            ? "Tid utan arbete bland inskrivna arbetslösa. Historik, grupper och geografiska jämförelser med Arbetsförmedlingens statistik."
+            : loaderData?.area.slug === "utbildning"
+              ? "UKÄ-statistik om sökande, studenter, examina och arbetsmarknad efter examen."
+              : loaderData?.area.slug === "lan-kommun"
+                ? "Utbildningsflöden och kommunjämförelser i Norrbotten med SCB:s regionala matchningsindikatorer."
+                : "Platshållare för en kommande fördjupning i Kompetensarena Norrbotten.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -72,6 +77,8 @@ export const Route = createFileRoute("/omraden/$area/$topic")({
 
 function TopicPage() {
   const { area, topic } = Route.useLoaderData();
+  if (area.slug === "arbetsmarknad" && topic.slug === "langtidsarbetsloshet")
+    return <LongTermUnemploymentPage />;
   if (area.slug === "lan-kommun") return <GeographyPage initialSection={topic.slug} />;
   if (area.slug === "utbildning") return <EducationPage initialSection={topic.slug} />;
   return (

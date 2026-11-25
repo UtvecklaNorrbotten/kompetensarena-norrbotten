@@ -15,7 +15,7 @@ import {
  * Läs aldrig råa observationer härifrån.
  */
 
-function publicClient() {
+export function publicClient() {
   const url = process.env["SUPABASE_URL"]!;
   const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
   return createClient<Database>(url, key, {
