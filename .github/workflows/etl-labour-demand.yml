@@ -1,0 +1,50 @@
+name: 10 · Data · AF och SCB – efterfrågan på arbetskraft
+on:
+  push:
+    branches: [feature/arbetskraftsefterfragan]
+    paths:
+      - scripts/fetch_labour_demand.py
+      - .github/workflows/etl-labour-demand.yml
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Hämta om hela historiken för revisionskontroll
+        type: boolean
+        default: false
+  schedule:
+    - cron: "15 7 * * *"
+permissions:
+  contents: write
+concurrency:
+  group: labour-demand
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install requests openpyxl
+      - name: Kontrollera metadata och bygg verifierade aggregat
+        env:
+          FORCE: ${{ inputs.force }}
+        run: |
+          if [ "$FORCE" = "true" ]; then
+            python scripts/fetch_labour_demand.py --force
+          else
+            python scripts/fetch_labour_demand.py
+          fi
+      - name: Verifiera källor och läsmodell
+        run: python -m unittest discover -s tests -p test_labour_demand.py
+      - name: Publicera atomiskt via Git
+        run: |
+          if [ -n "$(git status --porcelain src/data/demand public/data/demand)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add src/data/demand public/data/demand
+            git commit -m 'data: uppdatera verifierad efterfrågan från AF och SCB'
+            git push
+          fi

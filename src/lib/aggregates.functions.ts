@@ -158,10 +158,14 @@ export const getUkaEducationSlice = createServerFn({ method: "GET" })
         university,
         indicatorId: z.enum(ukaIds),
         breakdown: z.string().regex(/^([a-z-]{1,40}(\|[a-z-]{1,40}){0,7})?$/),
-        selection: z.record(dimensionKey, z.string().min(1).max(300)).refine(
-          (s) => Object.keys(s).length <= 8,
-        ),
-        offset: z.number().int().min(0).max(UKA_SLICE_PAGE_ROWS * UKA_SLICE_MAX_PAGES),
+        selection: z
+          .record(dimensionKey, z.string().min(1).max(300))
+          .refine((s) => Object.keys(s).length <= 8),
+        offset: z
+          .number()
+          .int()
+          .min(0)
+          .max(UKA_SLICE_PAGE_ROWS * UKA_SLICE_MAX_PAGES),
       })
       .parse(d),
   )
@@ -187,4 +191,10 @@ export const getUkaEducationSlice = createServerFn({ method: "GET" })
 
 export { getRmiRows, getRmiComparison } from "./rmi.functions";
 
-export { getAfUnemployment, getAfUnemploymentComparison, getAfUnemploymentGroups } from "./af-unemployment.functions";
+export {
+  getAfUnemployment,
+  getAfUnemploymentComparison,
+  getAfUnemploymentGroups,
+} from "./af-unemployment.functions";
+
+export { getDemandSlice, getDemandComparison, getDemandLor } from "./labour-demand.functions";

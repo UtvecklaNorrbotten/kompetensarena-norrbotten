@@ -15,6 +15,7 @@ export const areas = [
     topics: [
       { slug: "arbetsloshet", title: "Arbetslöshet" },
       { slug: "langtidsarbetsloshet", title: "Långtidsarbetslöshet" },
+      { slug: "efterfragan-pa-arbetskraft", title: "Efterfrågan på arbetskraft" },
     ],
   },
   {
