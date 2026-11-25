@@ -91,7 +91,7 @@ export function EducationTimeline({
                     padding={{ left: 12, right: 12 }}
                   />
                   <YAxis
-                    domain={[0, axis.maximum]}
+                    domain={[axis.minimum, axis.maximum]}
                     ticks={axis.ticks}
                     interval={0}
                     width={100}

@@ -1,3 +1,5 @@
+import { countAxis } from "@/lib/education-axis";
+import { GeographyFlow } from "./GeographyFlow";
 import { useEffect, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
@@ -6,6 +8,7 @@ import {
   Line,
   LineChart,
   ResponsiveContainer,
+  ReferenceLine,
   Tooltip,
   XAxis,
   YAxis,
@@ -15,7 +18,7 @@ import { Section } from "@/components/layout/Section";
 import { DEFAULT_GEO_CODE } from "@/config/geo";
 import catalog from "@/data/rmi/catalog.json";
 import { getRmiRows, getRmiComparison } from "@/lib/aggregates.functions";
-import { flowPairs, rmiNumber, selectRmi, type RmiRow } from "@/lib/rmi";
+import { rmiNumber, selectRmi, type RmiRow } from "@/lib/rmi";
 import { MunicipalityMap } from "./MunicipalityMap";
 
 const selectClass =
@@ -53,60 +56,6 @@ function Figure({
         . Uppdaterad {catalog.updated.slice(0, 10)}. Antal personer, 18–69 år.
       </p>
     </section>
-  );
-}
-function FlowPanel({ row }: { row: RmiRow }) {
-  const max = Math.max(
-    1,
-    ...row
-      .slice(6)
-      .filter((v): v is number => typeof v === "number")
-      .map(Math.abs),
-  );
-  return (
-    <div>
-      <div className="grid grid-cols-2 gap-4 border-b border-border pb-3 text-base font-semibold">
-        <span className="text-brand-dark">Till utbildningsgruppen</span>
-        <span className="text-[#825600]">Från utbildningsgruppen</span>
-      </div>
-      <div className="mt-5 space-y-7">
-        {flowPairs.map((pair) => (
-          <div key={pair.label}>
-            <h3 className="mb-3 text-base font-semibold">{pair.label}</h3>
-            <div className="grid grid-cols-2 gap-4 md:gap-8">
-              {(
-                [
-                  ["in", pair.incoming, pair.inLabel],
-                  ["out", pair.outgoing, pair.outLabel],
-                ] as const
-              ).map(([direction, index, label]) => {
-                const rawValue = row[index];
-                const value = typeof rawValue === "number" ? Math.abs(rawValue) : null;
-                return (
-                  <div key={direction}>
-                    <p className="min-h-12 text-sm text-ink-muted">{label}</p>
-                    <p className="mt-1 text-xl tabular-nums">{rmiNumber(value)}</p>
-                    <div className="mt-2 h-3 rounded-sm bg-neutral-surface" aria-hidden="true">
-                      {typeof value === "number" && (
-                        <div
-                          className={`h-full rounded-sm ${direction === "in" ? "bg-[#487629]" : "bg-[#F5C55C]"}`}
-                          style={{ width: `${(Math.max(0, value) / max) * 100}%` }}
-                        />
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
-      <p className="mt-7 text-sm leading-relaxed text-ink-muted">
-        Alla staplar har samma skala. Utflöden visas som antal personer; SCB:s minustecken finns
-        kvar i datatabellen och CSV-filen. Samma person kan ingå i flera flöden. Summera därför inte
-        staplarna till en nettoförändring. Utflyttade omfattar även avlidna enligt SCB:s definition.
-      </p>
-    </div>
   );
 }
 function download(rows: RmiRow[], name: string) {
@@ -163,6 +112,9 @@ export function GeographyPage({ initialSection = "" }: { initialSection?: string
     staleTime: 60 * 60 * 1000,
   });
   const history = selectRmi(query.data ?? [], group, sex);
+  const axis = countAxis(
+    history.map((r) => r[series === "population" ? 4 : 5]).filter((v): v is number => v !== null),
+  );
   const row = history.find((r) => r[2] === period);
   const changeGeo = (value: string) =>
     void navigate({
@@ -313,18 +265,6 @@ export function GeographyPage({ initialSection = "" }: { initialSection?: string
                   <p>Inga publicerade värden finns för urvalet.</p>
                 ) : (
                   <>
-                    <dl className="mb-8 grid gap-5 border-b border-border pb-6 sm:grid-cols-3">
-                      {[
-                        [`Personer ${period.slice(0, 4)}`, row[3]],
-                        [`Personer ${period.slice(-4)}`, row[4]],
-                        ["SCB:s nettoförändring", row[5]],
-                      ].map(([label, value]) => (
-                        <div key={String(label)}>
-                          <dt className="text-sm text-ink-muted">{label}</dt>
-                          <dd className="mt-2 text-2xl tabular-nums">{rmiNumber(value)}</dd>
-                        </div>
-                      ))}
-                    </dl>
                     {period === "2023-2024" && (
                       <p className="mb-7 rounded-lg bg-brand-light p-4 text-base leading-relaxed">
                         För 2023–2024 saknas vissa uppgifter om nya utbildningar. SCB har ändrat hur
@@ -332,7 +272,7 @@ export function GeographyPage({ initialSection = "" }: { initialSection?: string
                         Välj ett tidigare årsintervall för att se fler utbildningsflöden.
                       </p>
                     )}
-                    <FlowPanel row={row} />
+                    <GeographyFlow row={row} />
                   </>
                 )}
               </Figure>
@@ -377,16 +317,15 @@ export function GeographyPage({ initialSection = "" }: { initialSection?: string
                       <CartesianGrid vertical={false} stroke="#e3e7df" />
                       <XAxis dataKey="period" tick={{ fontSize: 14 }} interval="preserveStartEnd" />
                       <YAxis
-                        domain={
-                          series === "population"
-                            ? [0, "auto"]
-                            : [(min: number) => Math.min(0, min), (max: number) => Math.max(0, max)]
-                        }
+                        domain={[axis.minimum, axis.maximum]}
+                        ticks={axis.ticks}
+                        interval={0}
                         tick={{ fontSize: 14 }}
                         tickFormatter={(v) => rmiNumber(v)}
                         width={75}
                         allowDecimals={false}
                       />
+                      <ReferenceLine y={0} stroke="#667260" strokeWidth={1.5} />
                       <Tooltip
                         formatter={(v) => [
                           rmiNumber(v),

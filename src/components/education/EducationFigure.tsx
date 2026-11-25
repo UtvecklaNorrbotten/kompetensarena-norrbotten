@@ -1,3 +1,4 @@
+import { educationAxis } from "@/lib/education-axis";
 import { EducationTimeline } from "./EducationTimeline";
 import { EducationLegend } from "./EducationLegend";
 import { EducationHistoryPreview } from "./EducationHistoryPreview";
@@ -258,7 +259,14 @@ export function EducationFigure({
       .filter(Boolean)
       .join(" / ") || "Grupp"
   }`;
-  const domain: [number, number | "auto"] = indicator.unit === "%" ? [0, 100] : [0, "auto"];
+  const axis = educationAxis(
+    detailSelection.rows
+      .filter((r) => visibleGroups.has(r.category) && series.includes(r.gender))
+      .map((r) => r.value)
+      .filter((v): v is number => v !== null),
+    indicator.unit,
+  );
+  const domain: [number, number] = [axis.minimum, axis.maximum];
 
   const tableRows = detail
     ? detailSelection.rows
@@ -513,6 +521,8 @@ export function EducationFigure({
                           fontSize: 14,
                         }}
                         domain={domain}
+                        ticks={axis.ticks}
+                        interval={0}
                         tick={{ fill: "var(--ink)", fontSize: 14 }}
                       />
                       <YAxis
