@@ -1,3 +1,4 @@
+import { educationAxis } from "@/lib/education-axis";
 import { Root, Anchor, Content, Portal, Close } from "@radix-ui/react-popover";
 import { X } from "@/components/icons";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -22,6 +23,10 @@ export function EducationHistoryPreview({
 }) {
   const genders = ukaGenderSeries(rows);
   const data = ukaGenderTimeline(rows, genders);
+  const axis = educationAxis(
+    rows.map((r) => r.value).filter((v): v is number => v !== null),
+    unit,
+  );
   return (
     <Root
       open
@@ -57,7 +62,7 @@ export function EducationHistoryPreview({
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data} margin={{ top: 8, right: 6, bottom: 8, left: 6 }}>
                 <XAxis dataKey="period" hide />
-                <YAxis hide domain={unit === "%" ? [0, 100] : [0, "auto"]} />
+                <YAxis hide domain={[axis.minimum, axis.maximum]} />
                 <Tooltip
                   isAnimationActive={false}
                   formatter={(value: number, name: string) => [formatUkaValue(value, unit), name]}

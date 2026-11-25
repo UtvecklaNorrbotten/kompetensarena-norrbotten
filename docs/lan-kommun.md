@@ -12,7 +12,7 @@ U3 (TAB6928) hämtas direkt från SCB:s API v2 med explicita värdemängder för
 
 ## Tolkning
 
-Delflödena överlappar. Därför används sex separata staplar med gemensam skala, inte ett Sankeydiagram som antyder att samma individer kan följas mellan kategorier. Netto är ett separat källvärde. Det räknas aldrig fram genom att subtrahera eller summera komponenter. SCB:s definition av utflyttade inkluderar avlidna. Åldersutträden är inte pensionsavgångar. Särskild metodnot visas för 2023–2024 där utbildningsklassificering påverkar publiceringen. Null visas som ”Uppgift saknas”, aldrig noll.
+Delflödena överlappar. Därför visas tre separata flödesband in och tre ut, utan summerade in-/utflöden eller antagande om balanserade bandbredder. Gruppen och SCB:s netto visas i mitten. På små skärmar staplas inflöden, grupp och utflöden vertikalt. Saknade värden saknar band, och noll har ingen bandbredd. Netto är ett separat källvärde. Det räknas aldrig fram genom att subtrahera eller summera komponenter. SCB:s definition av utflyttade inkluderar avlidna. Åldersutträden är inte pensionsavgångar. Särskild metodnot visas för 2023–2024 där utbildningsklassificering påverkar publiceringen. Null visas som ”Uppgift saknas”, aldrig noll.
 
 Kartan visar urval, inte en färgskala för statistik. Samtliga kommunpolygoner och innerringar bevaras vid projektion till SVG. Geometri: [okfse/sweden-geojson](https://github.com/okfse/sweden-geojson/blob/master/swedish_municipalities.geojson), hämtad 2026-11-25. Kartan är orienterande; källans generaliserade gränser är inte avsedda för fastighets- eller gränsbestämning.
 
@@ -21,3 +21,7 @@ Kartan visar urval, inte en färgskala för statistik. Samtliga kommunpolygoner 
 - `python -m unittest discover -s tests -p 'test_rmi_snapshot.py'`
 - `npx tsc --noEmit`
 - `npm run build`
+
+## Axelsteg
+
+Den gemensamma heltalsskalan i `education-axis.ts` används för RMI-historik och utbildningssidans figurer. Stegen avrundas till 1, 2 eller 5 gånger en tiopotens, noll visas alltid och minst ett helt steg lämnas ovanför högsta värdet. Negativa netton får motsvarande nedre marginal. Procentfigurer behåller skalan 0–100. Kontroll: `node --experimental-strip-types tests/chart-axis.test.ts`.
