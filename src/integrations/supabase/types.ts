@@ -1302,6 +1302,38 @@ export type Database = {
           },
         ]
       }
+      company_account_api_checks: {
+        Row: {
+          checked_at: string
+          documents_count: number
+          je_id: string
+          outcome: string
+          retry_after: string
+        }
+        Insert: {
+          checked_at?: string
+          documents_count: number
+          je_id: string
+          outcome: string
+          retry_after: string
+        }
+        Update: {
+          checked_at?: string
+          documents_count?: number
+          je_id?: string
+          outcome?: string
+          retry_after?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_account_api_checks_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: true
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
+          },
+        ]
+      }
       company_account_archives: {
         Row: {
           archive_key: string
@@ -1437,6 +1469,56 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "afr_syncs"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_account_supplements: {
+        Row: {
+          created_at: string
+          document: Json | null
+          document_sha256: string | null
+          je_id: string
+          origin: string
+          package_sha256: string
+          parser_version: string
+          period_end: string | null
+          quality_status: string
+          reason: string
+          source: Json
+        }
+        Insert: {
+          created_at?: string
+          document?: Json | null
+          document_sha256?: string | null
+          je_id: string
+          origin: string
+          package_sha256: string
+          parser_version: string
+          period_end?: string | null
+          quality_status: string
+          reason: string
+          source: Json
+        }
+        Update: {
+          created_at?: string
+          document?: Json | null
+          document_sha256?: string | null
+          je_id?: string
+          origin?: string
+          package_sha256?: string
+          parser_version?: string
+          period_end?: string | null
+          quality_status?: string
+          reason?: string
+          source?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_account_supplements_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: false
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
           },
         ]
       }
@@ -1576,6 +1658,76 @@ export type Database = {
             foreignKeyName: "company_accounts_latest_je_id_fkey"
             columns: ["je_id"]
             isOneToOne: true
+            referencedRelation: "afr_je_ident"
+            referencedColumns: ["je_id"]
+          },
+        ]
+      }
+      company_gleif_current: {
+        Row: {
+          checked_at: string
+          je_id: string
+          next_check_at: string
+          payload_sha256: string
+          source: Json
+          stage: string
+        }
+        Insert: {
+          checked_at?: string
+          je_id: string
+          next_check_at: string
+          payload_sha256: string
+          source: Json
+          stage: string
+        }
+        Update: {
+          checked_at?: string
+          je_id?: string
+          next_check_at?: string
+          payload_sha256?: string
+          source?: Json
+          stage?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_gleif_current_je_id_stage_payload_sha256_fkey"
+            columns: ["je_id", "stage", "payload_sha256"]
+            isOneToOne: false
+            referencedRelation: "company_gleif_versions"
+            referencedColumns: ["je_id", "stage", "payload_sha256"]
+          },
+        ]
+      }
+      company_gleif_versions: {
+        Row: {
+          first_observed_at: string
+          first_source: Json
+          je_id: string
+          payload: Json
+          payload_sha256: string
+          stage: string
+        }
+        Insert: {
+          first_observed_at?: string
+          first_source: Json
+          je_id: string
+          payload: Json
+          payload_sha256: string
+          stage: string
+        }
+        Update: {
+          first_observed_at?: string
+          first_source?: Json
+          je_id?: string
+          payload?: Json
+          payload_sha256?: string
+          stage?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_gleif_versions_je_id_fkey"
+            columns: ["je_id"]
+            isOneToOne: false
             referencedRelation: "afr_je_ident"
             referencedColumns: ["je_id"]
           },
@@ -2551,13 +2703,28 @@ export type Database = {
         Args: { p_je_id: string; p_period_end: string }
         Returns: Json
       }
+      company_account_supplement_queue: {
+        Args: { p_after?: string; p_mode: string }
+        Returns: Json
+      }
+      company_account_supplement_store: {
+        Args: { p_je_id: string; p_result: Json }
+        Returns: Json
+      }
       company_accounts_prepare: {
         Args: { p_parser_version: string }
         Returns: Json
       }
       company_data_coverage: { Args: never; Returns: Json }
+      company_data_refresh_scope: { Args: never; Returns: undefined }
       company_data_scope: {
         Args: { p_after?: string; p_limit?: number }
+        Returns: Json
+      }
+      company_gleif_coverage: { Args: never; Returns: Json }
+      company_gleif_scope: { Args: { p_after?: string }; Returns: Json }
+      company_gleif_store: {
+        Args: { p_records: Json; p_stage: string }
         Returns: Json
       }
       etl_abort_batch: {
