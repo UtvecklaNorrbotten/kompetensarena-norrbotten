@@ -147,3 +147,19 @@ class Publication(unittest.TestCase):
             self.assertIn('etl-batch/abort', client.calls)
             self.assertNotIn('etl-batch/finalize', client.calls)
             self.assertFalse((root / 'published.json').exists())
+
+class GeographyHeadings(unittest.TestCase):
+    def test_real_overkalix_heading_and_suppression(self):
+        import unicodedata
+        page = soup((FIXTURE.parent / 'overkalix-crossed.html').read_text())
+        for label in ['Överkalix', unicodedata.normalize('NFD', 'Överkalix')]:
+            rows = parse_table(page, '2024', '2513', label, 'Master', 'Alla', True, True)
+            self.assertEqual(len(rows), 12)
+            self.assertEqual(rows[1][5:8], [None, 'suppressed', '***'])
+        for label in ['Övertorneå', 'Overkalix', 'Överkalix kommun']:
+            with self.assertRaises(ValueError):
+                parse_table(page, '2024', '2513', label, 'Master', 'Alla', True, True)
+        with self.assertRaises(ValueError):
+            parse_table(page, '2023', '2513', 'Överkalix', 'Master', 'Alla', True, True)
+        with self.assertRaises(ValueError):
+            parse_table(page, '2024', '2513', 'Överkalix', 'Okänd', 'Okänd aktivitet', True, True)

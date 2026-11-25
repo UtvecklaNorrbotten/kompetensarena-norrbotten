@@ -4,6 +4,7 @@ import json
 import re
 import threading
 import time
+import unicodedata
 from decimal import Decimal, InvalidOperation
 
 import requests
@@ -64,7 +65,12 @@ def parse_table(page, year, geo, geo_label, category, category_label, gender, or
     headers = table.select('thead tr')
     title = headers[0].get_text(' ', strip=True)
     expected_prefix = f'{year}, ' + ('' if geo == '00' else f'{geo_label}, ')
-    if not title.startswith(expected_prefix) or title.split(', ')[-1] != category_label:
+    # MUCF uses inconsistent capitalization for names beginning with Å/Ä/Ö
+    # between the select options and result headings. Preserve diacritics and
+    # compare the full year/geography prefix; category validation stays exact.
+    normalized_title = unicodedata.normalize('NFC', title).casefold()
+    normalized_prefix = unicodedata.normalize('NFC', expected_prefix).casefold()
+    if not normalized_title.startswith(normalized_prefix) or title.split(', ')[-1] != category_label:
         raise ValueError(f'MUCF returnerade fel urval: {title}')
     ages = [x.get_text(strip=True) for x in headers[1].select('em')]
     if ages != AGES:
