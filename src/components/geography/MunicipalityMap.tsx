@@ -3,10 +3,12 @@ export function MunicipalityMap({
   geo,
   onGeo,
   values,
+  valueDescription = "andel",
 }: {
   geo: string;
   onGeo: (geo: string) => void;
   values?: Record<string, { value: number | null; label: string }>;
+  valueDescription?: string;
 }) {
   const maximum = Math.max(1, ...shapes.map((s) => values?.[s.code]?.value ?? 0));
   const fill = (code: string) =>
@@ -86,7 +88,7 @@ export function MunicipalityMap({
       <p className="mt-3 text-xs text-ink-muted">
         Kommungränser: okfse/sweden-geojson.{" "}
         {values
-          ? "Mörkare grönt visar högre andel. Skalan anpassas till urvalet. Streckat = uppgift saknas eller sekretess. Exakta värden finns i tabellen."
+          ? `Mörkare grönt visar högre ${valueDescription}. Skalan anpassas till urvalet. Streckat = uppgift saknas eller sekretess. Exakta värden finns vid varje kommun och i jämförelsen.`
           : "Kartan visar lägen och urval, inte statistikvärden."}
       </p>
     </div>

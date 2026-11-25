@@ -30,3 +30,5 @@
 - RMI U3 läses som versionshanterade, förberäknade publika SCB-aggregat i `src/data/rmi`, via `aggregates.functions.ts` och `rmi.functions.ts`; ett begränsat svar per geografi/kön. Workflowet `etl-rmi-u3.yml` kontrollerar SCB:s metadata veckovis och hämtar om kvartalsvis. Se `docs/lan-kommun.md`. Inga råobservationer eller personuppgifter ingår.
 
 - Arbetslöshetens publika läsmodell i `src/data/af` förberäknas från samma AF-arbetsböcker som månads-ETL:n. Läs den via `aggregates.functions.ts` med en geografi/kön eller månad/grupp per svar. BAS-filens egna SOK/AK-par används för andelar; rikstäljaren inkluderar restkategorin utan geografi. Se `docs/arbetsloshet.md`.
+
+- Efterfrågan på arbetskraft läser förberäknade AF-aggregat via `labour-demand.functions.ts`, exporterat genom `aggregates.functions.ts`. Komprimerade geografifiler ligger i `public/data/demand` och läses via ASSETS-bindningen för att hålla Worker-koden liten; katalog och LoR-källsvar ligger i `src/data/demand`. Yrkesfilens KVAR hålls skilt från den långa platsserien. Se `docs/efterfragan-pa-arbetskraft.md`.
