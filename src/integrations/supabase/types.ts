@@ -2805,6 +2805,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_active_obs_batch: {
+        Args: { p_batch_id: string; p_indicator_id: string }
+        Returns: boolean
+      }
+      is_active_uka_batch: {
+        Args: { p_batch_id: string; p_indicator_id: string }
+        Returns: boolean
+      }
       publish_indicator: {
         Args: {
           p_indicator_id: string
