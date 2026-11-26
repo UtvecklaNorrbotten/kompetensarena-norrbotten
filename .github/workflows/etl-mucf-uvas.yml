@@ -70,6 +70,12 @@ jobs:
           with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
               out.write('run=' + str(due).lower() + '\n')
           PYTHON
+      - name: Publicera redan färdiga år före fortsatt insamling
+        if: steps.due.outputs.run == 'true'
+        env:
+          ETL_BASE_URL: ${{ secrets.ETL_BASE_URL }}
+          ETL_PUBLISH_KEY: ${{ secrets.ETL_PUBLISH_KEY }}
+        run: python -m mucf.publish --root "$MUCF_ROOT" --before-collection
       - name: Hämta eller återuppta alla MUCF-årgångar
         if: steps.due.outputs.run == 'true'
         run: python -m mucf.collect --root "$MUCF_ROOT" --budget-minutes 290

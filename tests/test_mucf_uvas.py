@@ -163,3 +163,39 @@ class GeographyHeadings(unittest.TestCase):
             parse_table(page, '2023', '2513', 'Överkalix', 'Master', 'Alla', True, True)
         with self.assertRaises(ValueError):
             parse_table(page, '2024', '2513', 'Överkalix', 'Okänd', 'Okänd aktivitet', True, True)
+
+class InitialPublication(Publication):
+    def test_first_publication_creates_base_then_replaces_periods(self):
+        self.check_modes(False, ['full', 'full', 'replace_period', 'replace_period'])
+
+    def test_missing_local_checkpoint_does_not_replace_remote_history(self):
+        self.check_modes(True, ['replace_period'] * 4)
+
+    def check_modes(self, existing, expected):
+        from mucf.publish import publish
+        from mucf.collect import encode
+        import hashlib
+        class Client:
+            def __init__(self): self.starts = []
+            def etl(self, path, body=None, **kwargs):
+                if path.startswith('etl-state?'):
+                    return {'last_successful_at': '2026-11-26T00:00:00Z' if existing else None}
+                if path == 'etl-batch/start':
+                    self.starts.append(body)
+                    return {'batch_id': 'batch'}
+                return {}
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            s = self.snapshot()
+            hashes = {}
+            for year in ['2024', '2023']:
+                s['year'] = year
+                hashes[year] = s['data_sha256']
+                write_json(root / f'snapshots/{year}.json.gz', s)
+            write_json(root / 'catalog.json', {'snapshots': hashes})
+            write_json(root / 'state.json', {'years': list(hashes), 'complete': True})
+            client = Client()
+            publish(root, client)
+            self.assertEqual([s['mode'] for s in client.starts], expected)
+            for body in client.starts:
+                self.assertEqual('replace_period' in body, body['mode'] == 'replace_period')

@@ -38,7 +38,7 @@ def verified_snapshot(path, expected_year):
     return snapshot
 
 
-def publish(root, client=None):
+def publish(root, client=None, before_collection=False):
     client = client or Client()
     # This verifies that the registration is deployed; never silently skip DB errors.
     client.etl('source-state?source_id=' + SOURCE)
@@ -48,6 +48,7 @@ def publish(root, client=None):
     details = {'collection_complete': state.get('complete', False), 'collection_progress': state.get('progress'),
                'available_years': state.get('years', []), 'published_years': sorted(registry),
                'data_branch': 'data/mucf-uvas', 'source_updated_at': None}
+    initialized = {}
     try:
         for year in sorted(catalog.get('snapshots', {}), reverse=True):
             snapshot = verified_snapshot(root / 'snapshots' / f'{year}.json.gz', year)
@@ -61,9 +62,15 @@ def publish(root, client=None):
                 chunks = math.ceil(len(rows) / 5000)
                 if not chunks:
                     raise ValueError('Tom MUCF-årgång')
+                if indicator not in initialized:
+                    remote = client.etl('etl-state?indicator_id=' + indicator)
+                    initialized[indicator] = bool(remote.get('last_successful_at') or remote.get('hamtad_datum'))
+                # A period batch requires an active base. Only the first ever
+                # publication uses full; never infer this from a local checkpoint.
+                mode = 'replace_period' if initialized[indicator] else 'full'
                 batch = client.etl('etl-batch/start', {
-                    'indicator_id': indicator, 'source': 'MUCF', 'mode': 'replace_period',
-                    'replace_period': year, 'expected_rows': len(rows), 'expected_chunks': chunks,
+                    'indicator_id': indicator, 'source': 'MUCF', 'mode': mode,
+                    **({'replace_period': year} if mode == 'replace_period' else {}), 'expected_rows': len(rows), 'expected_chunks': chunks,
                 }, retry_safe=False)
                 batch_id = batch['batch_id']
                 try:
@@ -72,6 +79,7 @@ def publish(root, client=None):
                                    'chunk_index': index, 'observations': rows[index * 5000:(index + 1) * 5000]})
                     client.etl('etl-batch/finalize', {'batch_id': batch_id})
                     batch_id = None
+                    initialized[indicator] = True
                     year_state[measure] = snapshot['data_sha256']
                     write_json(root / 'published.json', registry)
                     print(f'MUCF: {indicator}, {year}, {len(rows)} rader publicerade', flush=True)
@@ -80,7 +88,7 @@ def publish(root, client=None):
                         client.etl('etl-batch/abort', {'batch_id': batch_id, 'reason': 'MUCF-publicering avbruten'})
         details['published_years'] = sorted(y for y, values in registry.items()
                                             if len(values) == len(INDICATORS))
-        if state.get('error'):
+        if state.get('error') and not before_collection:
             raise ValueError('Källhämtningen är ofullständig: ' + state['error'])
         complete = state.get('complete', False) and set(details['published_years']) == set(state.get('years', []))
         client.etl('source-state', {'source_id': SOURCE, 'status': 'succeeded' if complete else 'ready',
@@ -96,8 +104,9 @@ def publish(root, client=None):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--root', type=Path, required=True)
+    parser.add_argument('--before-collection', action='store_true')
     args = parser.parse_args()
-    publish(args.root)
+    publish(args.root, before_collection=args.before_collection)
 
 
 if __name__ == '__main__':

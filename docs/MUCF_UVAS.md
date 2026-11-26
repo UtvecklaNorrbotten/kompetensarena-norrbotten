@@ -43,7 +43,7 @@ En årgång ersätter sin tidigare snapshot först när alla förväntade uttag,
 - `mucf-uvas-andel` – procent.
 - Datakälla: `mucf-uvas`, kontrollfrekvens `weekly`.
 
-`scripts/mucf/publish.py` använder befintlig `etl-batch/start` → `chunk` → `finalize` med `replace_period`. Varje år och indikator publiceras atomiskt. Antal och andel är två separata batchar; de har inte en gemensam transaktion. Slutstatus sätts till lyckad först när båda måtten och samtliga år är färdiga. Innehållshash hindrar onödiga ompubliceringar. Ofärdiga år ändrar inte tidigare publicerade observationer. Källans uppdateringsdatum lämnas tomt; hämtningstid får inte skickas som publiceringsdatum.
+`scripts/mucf/publish.py` använder befintlig `etl-batch/start` → `chunk` → `finalize` med `replace_period`. Vid första publiceringen skapas indikatorns historik med en full batch, eftersom en periodbatch kräver en aktiv bas. Därefter används periodbatchar. Befintlig historik avgörs via serverns ETL-status, inte av en lokal kontrollpunkt. Redan färdiga år publiceras före fortsatt insamling. Varje år och indikator publiceras atomiskt. Antal och andel är två separata batchar; de har inte en gemensam transaktion. Slutstatus sätts till lyckad först när båda måtten och samtliga år är färdiga. Innehållshash hindrar onödiga ompubliceringar. Ofärdiga år ändrar inte tidigare publicerade observationer. Källans uppdateringsdatum lämnas tomt; hämtningstid får inte skickas som publiceringsdatum.
 
 Källstatus visas via `data_source_state` och `data_source_runs` enligt projektets befintliga kontrakt. Någon ny användarsida eller generell aggregering av överlappande kategorier ingår inte. Framtida visualiseringar ska läsa förberedda aggregat, med explicit val av nämnare och kategori.
 
