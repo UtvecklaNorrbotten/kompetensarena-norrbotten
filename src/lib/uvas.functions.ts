@@ -2,7 +2,18 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import catalog from "@/data/uvas/catalog.json";
 import type { UvasRow } from "./uvas";
-const files = import.meta.glob<{ default: UvasRow[] }>("../data/uvas/[0-9]*.json");
+// Published aggregate files stay outside the dynamic Worker's code size limit.
+async function loadYear(year: string): Promise<UvasRow[]> {
+  const { getRequest } = await import("@tanstack/react-start/server");
+  const request = getRequest() as Request & {
+    runtime?: { cloudflare?: { env?: { ASSETS?: { fetch: (r: Request) => Promise<Response> } } } };
+  };
+  const url = new URL(`/data/uvas/${year}.json`, request.url);
+  const assets = request.runtime?.cloudflare?.env?.ASSETS;
+  const response = assets ? await assets.fetch(new Request(url)) : await fetch(url);
+  if (!response.ok) throw new Error("Publicerad UVAS-årgång kunde inte läsas.");
+  return response.json();
+}
 export const getUvasView = createServerFn({ method: "GET" })
   .inputValidator((v: unknown) =>
     z
@@ -19,9 +30,7 @@ export const getUvasView = createServerFn({ method: "GET" })
     const history: { year: string; row: UvasRow }[] = [];
     let comparison: UvasRow[] = [];
     for (const year of catalog.years as string[]) {
-      const loader = files[`../data/uvas/${year}.json`];
-      if (!loader) throw new Error("Publicerad UVAS-årgång saknas.");
-      const rows = (await loader()).default.filter(
+      const rows = (await loadYear(year)).filter(
         (r) => r[1] === data.age && r[2] === data.sex && r[3] === data.origin && r[4] === "Master",
       );
       for (const row of rows)
