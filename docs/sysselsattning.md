@@ -65,3 +65,7 @@ npm run build
 - [RAMS och förändringar 2011/2019](https://www.scb.se/AM0207)
 - [RMI R3a metadata och fotnoter](https://statistikdatabasen.scb.se/api/v2/tables/TAB5458/metadata?lang=sv)
 - Katalogens `source` länkar respektive tabells metadata; alla urvalskoder och perioder finns i samma katalog.
+
+## Slutkontroll efter återupptaget arbete
+
+2026-11-26: den avbrutna grenen återupptogs efter att bootstrapkörning 45813455783 hade hämtat och verifierat samtliga underlag. Senaste main integrerades utan konflikt. Python-testerna kontrollerade samtliga 4 181 datafilers hash samt geografisk täckning och urval. TypeScript-tester för mått och metodbrott, typkontroll, riktad ESLint och produktionsbygge passerade. Figurens branschrubrik följer nu valt mått och datatabellens jämförelsekolumn visas bara när jämförelse finns.

@@ -340,7 +340,9 @@ export function EmploymentPage() {
                   id="branscher"
                   title={
                     info.dimension === "SNI2007"
-                      ? "Vilka branscher växer eller minskar?"
+                      ? metric === "change" || metric === "percent"
+                        ? "Vilka branscher växer eller minskar?"
+                        : "Inom vilka branscher arbetar befolkningen?"
                       : "Hur skiljer sig sysselsättningen mellan grupper?"
                   }
                   intro={`${reference}. ${metricNames[metric]}. Byt mått för att jämföra storlek, andel eller förändring.`}

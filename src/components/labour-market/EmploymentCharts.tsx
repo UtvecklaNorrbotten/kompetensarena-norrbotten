@@ -212,7 +212,7 @@ export function EmploymentChart({
               <tr>
                 <th className="p-2 text-left">{rank ? "Kategori" : "Period"}</th>
                 <th className="p-2 text-right">{name}</th>
-                {!rank && <th className="p-2 text-right">{other}</th>}
+                {hasOther && <th className="p-2 text-right">{other}</th>}
               </tr>
             </thead>
             <tbody>
