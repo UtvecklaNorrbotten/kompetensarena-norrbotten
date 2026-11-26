@@ -169,18 +169,18 @@ def fetch_lor(old,force):
     return result
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--force',action='store_true')
+    parser=argparse.ArgumentParser();parser.add_argument('--force',action='store_true');parser.add_argument('--source',choices=['af','lor','all'],default='all')
     parser.add_argument('--places',type=Path);parser.add_argument('--occupations',type=Path)
-    args=parser.parse_args(); sources=discover()
+    args=parser.parse_args(); sources=discover() if args.source != 'lor' else None
     old=json.loads((OUT/'catalog.json').read_text()) if (OUT/'catalog.json').exists() else {}
     prior_lor=json.loads((OUT/'lor.json').read_text()) if (OUT/'lor.json').exists() else {}
     quarterly=datetime.now(timezone.utc).month in (1,4,7,10) and datetime.now(timezone.utc).day==16
     force=args.force or quarterly
-    if old.get('latest','')>sources['places']['period']: raise ValueError('AF period moved backwards')
-    lor=fetch_lor(prior_lor,force)
+    if sources and old.get('latest','')>sources['places']['period']: raise ValueError('AF period moved backwards')
+    lor=fetch_lor(prior_lor,force) if args.source != 'af' else None
     with tempfile.TemporaryDirectory() as tmp:
         staging=Path(tmp)/'output';staging.mkdir(); paths={}
-        if force or old.get('latest')!=sources['places']['period']:
+        if sources and (force or old.get('latest')!=sources['places']['period']):
             for key in PREFIXES:
                 path=getattr(args,key) or Path(tmp)/f'{key}.xlsx'
                 if not getattr(args,key):
@@ -190,7 +190,7 @@ def main():
             catalog=build_af(paths,sources,staging)
             catalog['retrieved']=datetime.now(timezone.utc).isoformat()
             (staging/'catalog.json').write_text(json.dumps(catalog,ensure_ascii=False,separators=(',',':'))+'\n')
-        (staging/'lor.json').write_text(json.dumps(lor,ensure_ascii=False,separators=(',',':'))+'\n')
+        if lor is not None: (staging/'lor.json').write_text(json.dumps(lor,ensure_ascii=False,separators=(',',':'))+'\n')
         OUT.mkdir(exist_ok=True)
         for path in staging.iterdir():
             destination=(ROOT/'public/data/demand') if path.name.startswith('geo-') else OUT

@@ -36,6 +36,8 @@ class DemandTests(unittest.TestCase):
                 measures=1 if dataset=='groups' else 4
                 for row in rows:
                     for v in row[-measures:]:self.assertTrue(v is None or v=='<5' or isinstance(v,(int,float)) and v>=0,(geo,dataset,row))
+    def test_lor_snapshot(self):
+        folder=ROOT/'src/data/demand'
         lor=json.loads((folder/'lor.json').read_text())
         for source in lor.values():
             d=source['data'];self.assertEqual(len(d['value']),__import__('math').prod(d['size']))
