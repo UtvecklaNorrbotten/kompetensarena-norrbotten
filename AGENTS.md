@@ -32,3 +32,5 @@
 - Arbetslöshetens publika läsmodell i `src/data/af` förberäknas från samma AF-arbetsböcker som månads-ETL:n. Läs den via `aggregates.functions.ts` med en geografi/kön eller månad/grupp per svar. BAS-filens egna SOK/AK-par används för andelar; rikstäljaren inkluderar restkategorin utan geografi. Se `docs/arbetsloshet.md`.
 
 - Efterfrågan på arbetskraft läser förberäknade AF-aggregat via `labour-demand.functions.ts`, exporterat genom `aggregates.functions.ts`. Komprimerade geografifiler ligger i `public/data/demand` och läses via ASSETS-bindningen för att hålla Worker-koden liten; katalog och LoR-källsvar ligger i `src/data/demand`. Yrkesfilens KVAR hålls skilt från den långa platsserien. Se `docs/efterfragan-pa-arbetskraft.md`.
+
+- Sysselsättning läser versionshanterade offentliga SCB-aggregat via `employment.functions.ts`, exporterat genom `aggregates.functions.ts`; hashade komprimerade geografi-/periodfiler i `public/data/employment` läses via ASSETS. BAS månadsdata, BAS årligt register och RAMS före/efter 2019 är separata serier. Se `docs/sysselsattning.md`; ingen läsning av råa observationer och ingen länkning över metodbrott.

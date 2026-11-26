@@ -10,7 +10,7 @@ export function LabourMarketOverview() {
         <PageHeader
           eyebrow="Arbetsmarknad"
           title="Hur utvecklas arbetsmarknaden?"
-          intro="Följ arbetslösheten och efterfrågan på arbetskraft. Jämför kommuner, län och riket."
+          intro="Följ sysselsättningen, arbetslösheten och efterfrågan på arbetskraft. Jämför kommuner, län och riket."
         />
       </Section>
       <Section className="py-10">
@@ -23,11 +23,13 @@ export function LabourMarketOverview() {
             >
               <h2 className="text-2xl">{t.title}</h2>
               <p className="mt-3 text-ink-muted">
-                {t.slug === "efterfragan-pa-arbetskraft"
-                  ? "Vilka yrken efterfrågas och var finns de anmälda platserna?"
-                  : t.slug === "langtidsarbetsloshet"
-                    ? "Hur länge är människor utan arbete och vilka grupper berörs mest?"
-                    : "Hur har arbetslösheten förändrats och vilka grupper berörs mest?"}
+                {t.slug === "sysselsattning"
+                  ? "Hur många arbetar, inom vilka branscher och hur förändras sysselsättningen?"
+                  : t.slug === "efterfragan-pa-arbetskraft"
+                    ? "Vilka yrken efterfrågas och var finns de anmälda platserna?"
+                    : t.slug === "langtidsarbetsloshet"
+                      ? "Hur länge är människor utan arbete och vilka grupper berörs mest?"
+                      : "Hur har arbetslösheten förändrats och vilka grupper berörs mest?"}
               </p>
               <span className="mt-6 inline-block text-brand-dark underline underline-offset-4">
                 Utforska statistiken
