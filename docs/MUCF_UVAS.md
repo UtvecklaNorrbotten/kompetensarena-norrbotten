@@ -56,3 +56,9 @@ PYTHONPATH=scripts python -m mucf.collect --root /tmp/mucf-check --sample --budg
 ```
 
 Provläget kontrollerar den senaste årgångens geografikatalog och hämtar högst åtta riktiga urval; det får aldrig markera en hel årgång eller historiken som färdig. Full insamling görs utan `--sample`. Tester använder även en verklig källtabell för Norrbotten, 2024, hämtad 2026-11-25.
+
+## UVAS på arbetslöshetssidan
+
+UVAS-avsnittet använder MUCF:s egen definition, årsdata och publicerade totalandelar av befolkningen (`Master`). Ålder, kön och födelseland väljs separat från AF-filtren. Övriga aktivitetskategorier finns kvar i importen men blandas inte med befolkningsandelar i denna vy. Årsserier och geografisk tabell använder originalandelar; inget tolvmånadersmedel eller geografiskt medelvärde beräknas.
+
+`prepare-mucf-uvas-view.yml` kontrollerar den beständiga datagrenen efter importkörningar och varje timme, utan nya MUCF-anrop. Endast år vars snapshots och katalog har rätt SHA-256 och där både count och share är publicerade enligt published.json förs till src/data/uvas. Sidan läser begränsade svar via aggregates.functions.ts. Före första publicerade årgången visas en uttrycklig väntestatus, inga exempelvärden. Prickade uppgifter och noll hålls isär. År som saknas ger avbrott i linjerna. CKM 2023 och gränspendling 2015 förklaras vid figuren.
