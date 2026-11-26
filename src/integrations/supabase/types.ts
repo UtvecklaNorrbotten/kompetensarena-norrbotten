@@ -952,39 +952,54 @@ export type Database = {
       }
       agg_af_duration: {
         Row: {
-          geo_code: string;
-          period: string;
-          dimension_type: string;
-          dimension_value: string;
-          total: number | null;
-          over6: number | null;
-          over12: number | null;
-          over24: number | null;
-          lower6: boolean;
-          lower12: boolean;
-          lower24: boolean;
-        };
+          dimension_type: string
+          dimension_value: string
+          geo_code: string
+          lower12: boolean
+          lower24: boolean
+          lower6: boolean
+          over12: number | null
+          over24: number | null
+          over6: number | null
+          period: string
+          total: number | null
+        }
         Insert: {
-          geo_code: string;
-          period: string;
-          dimension_type: string;
-          dimension_value: string;
-          total?: number | null;
-          over6?: number | null;
-          over12?: number | null;
-          over24?: number | null;
-          lower6?: boolean;
-          lower12?: boolean;
-          lower24?: boolean;
-        };
+          dimension_type: string
+          dimension_value: string
+          geo_code: string
+          lower12?: boolean
+          lower24?: boolean
+          lower6?: boolean
+          over12?: number | null
+          over24?: number | null
+          over6?: number | null
+          period: string
+          total?: number | null
+        }
         Update: {
-          total?: number | null;
-          over6?: number | null;
-          over12?: number | null;
-          over24?: number | null;
-        };
-        Relationships: [];
-      };
+          dimension_type?: string
+          dimension_value?: string
+          geo_code?: string
+          lower12?: boolean
+          lower24?: boolean
+          lower6?: boolean
+          over12?: number | null
+          over24?: number | null
+          over6?: number | null
+          period?: string
+          total?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agg_af_duration_geo_code_fkey"
+            columns: ["geo_code"]
+            isOneToOne: false
+            referencedRelation: "geographies"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
       agg_af_totals: {
         Row: {
           geo_code: string
@@ -2717,6 +2732,7 @@ export type Database = {
         Returns: undefined
       }
       agg_refresh_af: { Args: { p_indicator_id: string }; Returns: Json }
+      agg_refresh_af_duration: { Args: never; Returns: Json }
       agg_refresh_afr: { Args: never; Returns: Json }
       agg_refresh_due: { Args: never; Returns: Json }
       agg_refresh_e3: { Args: never; Returns: Json }
