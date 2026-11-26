@@ -34,3 +34,5 @@
 - Efterfrågan på arbetskraft läser förberäknade AF-aggregat via `labour-demand.functions.ts`, exporterat genom `aggregates.functions.ts`. Komprimerade geografifiler ligger i `public/data/demand` och läses via ASSETS-bindningen för att hålla Worker-koden liten; katalog och LoR-källsvar ligger i `src/data/demand`. Yrkesfilens KVAR hålls skilt från den långa platsserien. Se `docs/efterfragan-pa-arbetskraft.md`.
 
 - Sysselsättning läser versionshanterade offentliga SCB-aggregat via `employment.functions.ts`, exporterat genom `aggregates.functions.ts`; hashade komprimerade geografi-/periodfiler i `public/data/employment` läses via ASSETS. BAS månadsdata, BAS årligt register och RAMS före/efter 2019 är separata serier. Se `docs/sysselsattning.md`; ingen läsning av råa observationer och ingen länkning över metodbrott.
+
+- Matchning läser offentliga E3-aggregat via `matching.functions.ts` och `aggregates.functions.ts`, med hashade komprimerade filer i `public/data/matching` via ASSETS. Använd SCB:s publicerade andelar; räkna inte om dem från CKM-justerade antal. Utbildningsgrupp, nivå och inriktning har skilda totaler. Se `docs/matchning.md`.

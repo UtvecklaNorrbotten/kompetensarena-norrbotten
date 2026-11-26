@@ -200,3 +200,5 @@ export {
 export { getDemandSlice, getDemandComparison, getDemandLor } from "./labour-demand.functions";
 export { getUvasView } from './uvas.functions';
 export { getEmploymentSlice, getEmploymentComparison } from './employment.functions';
+
+export { getMatchingSlice, getMatchingComparison } from "./matching.functions";

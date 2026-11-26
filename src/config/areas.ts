@@ -18,6 +18,7 @@ export const areas = [
       { slug: "arbetsloshet", title: "Arbetslöshet" },
       { slug: "langtidsarbetsloshet", title: "Långtidsarbetslöshet" },
       { slug: "efterfragan-pa-arbetskraft", title: "Efterfrågan på arbetskraft" },
+      { slug: "matchning", title: "Matchning" },
     ],
   },
   {

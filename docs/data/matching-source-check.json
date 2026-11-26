@@ -1,0 +1,441 @@
+{
+  "checked_at": "2026-11-26T16:23:55.823345+00:00",
+  "table": "TAB6929",
+  "checked_cells": 48,
+  "matched_cells": 48,
+  "source_sha256": "a219016a8908e78f00bea0ff590234a9649e62416d111fe5ce4be43b2d3a112f",
+  "cells": [
+    {
+      "geo": "00",
+      "education": "00S",
+      "sex": "totalt",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 75.7,
+      "snapshot": 75.7
+    },
+    {
+      "geo": "00",
+      "education": "00S",
+      "sex": "totalt",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 49.2,
+      "snapshot": 49.2
+    },
+    {
+      "geo": "00",
+      "education": "00S",
+      "sex": "1",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 75.9,
+      "snapshot": 75.9
+    },
+    {
+      "geo": "00",
+      "education": "00S",
+      "sex": "1",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 47.1,
+      "snapshot": 47.1
+    },
+    {
+      "geo": "00",
+      "education": "00S",
+      "sex": "2",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 75.5,
+      "snapshot": 75.5
+    },
+    {
+      "geo": "00",
+      "education": "00S",
+      "sex": "2",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 51.3,
+      "snapshot": 51.3
+    },
+    {
+      "geo": "00",
+      "education": "15B",
+      "sex": "totalt",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 83.2,
+      "snapshot": 83.2
+    },
+    {
+      "geo": "00",
+      "education": "15B",
+      "sex": "totalt",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 72.6,
+      "snapshot": 72.6
+    },
+    {
+      "geo": "00",
+      "education": "15B",
+      "sex": "1",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 81.7,
+      "snapshot": 81.7
+    },
+    {
+      "geo": "00",
+      "education": "15B",
+      "sex": "1",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 62,
+      "snapshot": 62
+    },
+    {
+      "geo": "00",
+      "education": "15B",
+      "sex": "2",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 83.2,
+      "snapshot": 83.2
+    },
+    {
+      "geo": "00",
+      "education": "15B",
+      "sex": "2",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 73.1,
+      "snapshot": 73.1
+    },
+    {
+      "geo": "25",
+      "education": "00S",
+      "sex": "totalt",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 78.5,
+      "snapshot": 78.5
+    },
+    {
+      "geo": "25",
+      "education": "00S",
+      "sex": "totalt",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 49.1,
+      "snapshot": 49.1
+    },
+    {
+      "geo": "25",
+      "education": "00S",
+      "sex": "1",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 78.5,
+      "snapshot": 78.5
+    },
+    {
+      "geo": "25",
+      "education": "00S",
+      "sex": "1",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 47.5,
+      "snapshot": 47.5
+    },
+    {
+      "geo": "25",
+      "education": "00S",
+      "sex": "2",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 78.5,
+      "snapshot": 78.5
+    },
+    {
+      "geo": "25",
+      "education": "00S",
+      "sex": "2",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 50.8,
+      "snapshot": 50.8
+    },
+    {
+      "geo": "25",
+      "education": "15B",
+      "sex": "totalt",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 82.1,
+      "snapshot": 82.1
+    },
+    {
+      "geo": "25",
+      "education": "15B",
+      "sex": "totalt",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 69.1,
+      "snapshot": 69.1
+    },
+    {
+      "geo": "25",
+      "education": "15B",
+      "sex": "1",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 85.4,
+      "snapshot": 85.4
+    },
+    {
+      "geo": "25",
+      "education": "15B",
+      "sex": "1",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 58.4,
+      "snapshot": 58.4
+    },
+    {
+      "geo": "25",
+      "education": "15B",
+      "sex": "2",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 82,
+      "snapshot": 82
+    },
+    {
+      "geo": "25",
+      "education": "15B",
+      "sex": "2",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 69.6,
+      "snapshot": 69.6
+    },
+    {
+      "geo": "2580",
+      "education": "00S",
+      "sex": "totalt",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 80.4,
+      "snapshot": 80.4
+    },
+    {
+      "geo": "2580",
+      "education": "00S",
+      "sex": "totalt",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 53.5,
+      "snapshot": 53.5
+    },
+    {
+      "geo": "2580",
+      "education": "00S",
+      "sex": "1",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 80.3,
+      "snapshot": 80.3
+    },
+    {
+      "geo": "2580",
+      "education": "00S",
+      "sex": "1",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 51.5,
+      "snapshot": 51.5
+    },
+    {
+      "geo": "2580",
+      "education": "00S",
+      "sex": "2",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 80.5,
+      "snapshot": 80.5
+    },
+    {
+      "geo": "2580",
+      "education": "00S",
+      "sex": "2",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 55.6,
+      "snapshot": 55.6
+    },
+    {
+      "geo": "2580",
+      "education": "15B",
+      "sex": "totalt",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 79.3,
+      "snapshot": 79.3
+    },
+    {
+      "geo": "2580",
+      "education": "15B",
+      "sex": "totalt",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 68.2,
+      "snapshot": 68.2
+    },
+    {
+      "geo": "2580",
+      "education": "15B",
+      "sex": "1",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 91.4,
+      "snapshot": 91.4
+    },
+    {
+      "geo": "2580",
+      "education": "15B",
+      "sex": "1",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 68.6,
+      "snapshot": 68.6
+    },
+    {
+      "geo": "2580",
+      "education": "15B",
+      "sex": "2",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 78.7,
+      "snapshot": 78.7
+    },
+    {
+      "geo": "2580",
+      "education": "15B",
+      "sex": "2",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 68.2,
+      "snapshot": 68.2
+    },
+    {
+      "geo": "0180",
+      "education": "00S",
+      "sex": "totalt",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 74.8,
+      "snapshot": 74.8
+    },
+    {
+      "geo": "0180",
+      "education": "00S",
+      "sex": "totalt",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 50.6,
+      "snapshot": 50.6
+    },
+    {
+      "geo": "0180",
+      "education": "00S",
+      "sex": "1",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 74.1,
+      "snapshot": 74.1
+    },
+    {
+      "geo": "0180",
+      "education": "00S",
+      "sex": "1",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 48.3,
+      "snapshot": 48.3
+    },
+    {
+      "geo": "0180",
+      "education": "00S",
+      "sex": "2",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 75.5,
+      "snapshot": 75.5
+    },
+    {
+      "geo": "0180",
+      "education": "00S",
+      "sex": "2",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 52.8,
+      "snapshot": 52.8
+    },
+    {
+      "geo": "0180",
+      "education": "15B",
+      "sex": "totalt",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 77.2,
+      "snapshot": 77.2
+    },
+    {
+      "geo": "0180",
+      "education": "15B",
+      "sex": "totalt",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 65.8,
+      "snapshot": 65.8
+    },
+    {
+      "geo": "0180",
+      "education": "15B",
+      "sex": "1",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 77.6,
+      "snapshot": 77.6
+    },
+    {
+      "geo": "0180",
+      "education": "15B",
+      "sex": "1",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 62.2,
+      "snapshot": 62.2
+    },
+    {
+      "geo": "0180",
+      "education": "15B",
+      "sex": "2",
+      "year": "2024",
+      "measure": "000008QU",
+      "source": 77.2,
+      "snapshot": 77.2
+    },
+    {
+      "geo": "0180",
+      "education": "15B",
+      "sex": "2",
+      "year": "2024",
+      "measure": "000008QV",
+      "source": 66,
+      "snapshot": 66
+    }
+  ]
+}
