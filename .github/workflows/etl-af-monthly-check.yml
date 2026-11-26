@@ -453,3 +453,38 @@ jobs:
         shell: Rscript {0}
         run: |
           source("R/etl/mark_af_publication_success.R")
+
+  demand-read-model:
+    permissions:
+      contents: write
+    concurrency:
+      group: af-demand-publication
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install requests openpyxl
+      - name: Kontrollera metadata och bygg verifierade aggregat
+        env:
+          FORCE: ${{ inputs.mode == 'publish-history' }}
+        run: |
+          if [ "$FORCE" = "true" ]; then
+            python scripts/fetch_labour_demand.py --source af --force
+          else
+            python scripts/fetch_labour_demand.py --source af
+          fi
+      - name: Verifiera källor och läsmodell
+        run: PYTHONPATH=tests python -m unittest test_labour_demand.DemandTests.test_snapshot test_labour_demand.DemandTests.test_suppression_and_missing
+      - name: Publicera atomiskt via Git
+        run: |
+          if [ -n "$(git status --porcelain src/data/demand/catalog.json public/data/demand)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add src/data/demand/catalog.json public/data/demand
+            git commit -m 'data: uppdatera verifierad efterfrågan från AF'
+            git push
+          fi

@@ -1,10 +1,5 @@
-name: 10 · Data · AF och SCB – efterfrågan på arbetskraft
+name: 10 · Data · SCB LoR – lediga jobb och rekryteringsbehov
 on:
-  push:
-    branches: [feature/arbetskraftsefterfragan]
-    paths:
-      - scripts/fetch_labour_demand.py
-      - .github/workflows/etl-labour-demand.yml
   workflow_dispatch:
     inputs:
       force:
@@ -16,7 +11,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: labour-demand
+  group: scb-lor
   cancel-in-progress: false
 jobs:
   update:
@@ -33,18 +28,18 @@ jobs:
           FORCE: ${{ inputs.force }}
         run: |
           if [ "$FORCE" = "true" ]; then
-            python scripts/fetch_labour_demand.py --force
+            python scripts/fetch_labour_demand.py --source lor --force
           else
-            python scripts/fetch_labour_demand.py
+            python scripts/fetch_labour_demand.py --source lor
           fi
       - name: Verifiera källor och läsmodell
-        run: python -m unittest discover -s tests -p test_labour_demand.py
+        run: PYTHONPATH=tests python -m unittest test_labour_demand.DemandTests.test_lor_snapshot
       - name: Publicera atomiskt via Git
         run: |
-          if [ -n "$(git status --porcelain src/data/demand public/data/demand)" ]; then
+          if [ -n "$(git status --porcelain src/data/demand/lor.json)" ]; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add src/data/demand public/data/demand
-            git commit -m 'data: uppdatera verifierad efterfrågan från AF och SCB'
+            git add src/data/demand/lor.json
+            git commit -m 'data: uppdatera verifierad SCB LoR'
             git push
           fi

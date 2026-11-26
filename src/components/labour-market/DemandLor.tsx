@@ -4,6 +4,7 @@ import { demandNumber, type DemandRank } from "@/lib/labour-demand";
 import { DemandRanking, DemandTimeChart } from "./DemandCharts";
 import { useState } from "react";
 export function DemandLor({ geo, name }: { geo: string; name: string }) {
+  const [grouping, setGrouping] = useState("grouped");
   const [kind, setKind] = useState("LJtot");
   const query = useQuery({
     queryKey: ["demand-lor", geo],
@@ -31,7 +32,11 @@ export function DemandLor({ geo, name }: { geo: string; name: string }) {
   const year = [...new Set(shortage?.records.map((r) => String(r["Tid"])) ?? [])].sort().at(-1);
   const occupations = shortage?.labels["Yrke"] as Record<string, string> | undefined;
   const ranks: DemandRank[] = Object.entries(occupations ?? {})
-    .filter(([code]) => /^[1-9]$/.test(code))
+    .filter(([code]) =>
+      grouping === "grouped"
+        ? ["gr1", "gr2-3", "gr4-8", "gr9"].includes(code)
+        : /^[1-9]$/.test(code),
+    )
     .map(([code, label]) => ({
       code,
       label,
@@ -95,7 +100,24 @@ export function DemandLor({ geo, name }: { geo: string; name: string }) {
             anställa. Avser arbetsställen med minst fem anställda. Detta är ett annat mått än lediga
             jobb.
           </p>
-          <DemandRanking rows={ranks} unit="personer" allowChange={false} />
+          <label className="my-5 block text-sm">
+            Yrkesindelning
+            <select
+              className="mt-2 block w-full rounded-md border border-border bg-surface p-3"
+              value={grouping}
+              onChange={(e) => setGrouping(e.target.value)}
+            >
+              <option value="grouped">Fyra grupper efter vanlig kompetensnivå</option>
+              <option value="detailed">Nio yrkesområden (SSYK 2012)</option>
+            </select>
+          </label>
+          <p className="my-4 text-sm text-ink-muted">
+            Grövre grupper kan ge fler redovisade skattningar. Uppgift saknas när SCB inte redovisar
+            ett värde; det betyder inte noll. Gruppernas värden och marginaler hämtas direkt från
+            SCB och summeras inte från de nio yrkesområdena. Andelar publiceras ännu inte av SCB i
+            TAB6989.
+          </p>
+          <DemandRanking key={grouping} rows={ranks} unit="personer" allowChange={false} />
           <details className="mt-5 text-sm">
             <summary className="cursor-pointer text-brand-dark">
               Skattningar och osäkerhetsmarginaler

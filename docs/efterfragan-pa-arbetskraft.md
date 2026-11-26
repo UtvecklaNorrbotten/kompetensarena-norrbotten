@@ -46,7 +46,7 @@ Alla mått, kompetenskrav, sommarjobbsdimension och SNI-avdelning sparas i `publ
 
 Serverfunktioner exporteras genom `aggregates.functions.ts`. Endast valt urval, en rad per kategori eller en geografisk jämförelse lämnas till klienten. Inga råa `observations`, externa API-anrop vid sidladdning eller databasnycklar behövs.
 
-Workflow: `10 · Data · AF och SCB – efterfrågan på arbetskraft`. Källmetadata kontrolleras dagligen 07:15 UTC (08:15 vintertid, 09:15 sommartid). AF-arbetsböcker hämtas bara vid ny gemensam period, manuell `force` eller den 16 januari/april/juli/oktober för revisionskontroll. SCB hämtas vid ändrad `updated` eller samma revisionskontroll. Fulla kontroller körs innan en enda git-commit publicerar hela ändringen. Push är fast-forward; samtidiga ändringar skrivs inte över.
+Workflow: AF:s platsstatistik ingår i `10 · Data · AF – arbetsmarknadsstatistik`. SCB har `10 · Data · SCB LoR – lediga jobb och rekryteringsbehov`, med metadatakontroll dagligen 07:15 UTC (08:15 vintertid, 09:15 sommartid). AF-arbetsböcker hämtas bara vid ny gemensam period, manuell `force` eller den 16 januari/april/juli/oktober för revisionskontroll. SCB hämtas vid ändrad `updated` eller samma revisionskontroll. Fulla kontroller körs innan en enda git-commit publicerar hela ändringen. Push är fast-forward; samtidiga ändringar skrivs inte över.
 
 ## Verifiering
 
@@ -71,3 +71,9 @@ En fullständig annonsserie kräver sammanfogning av Historical Ads och aktiva J
 - https://data.jobtechdev.se/annonser/historiska/
 - https://www.scb.se/am0702
 - https://www.scb.se/hitta-statistik/statistik-efter-amne/arbetsmarknad/efterfragan-pa-arbetskraft/lediga-jobb-och-rekryteringsbehov/produktrelaterat/fordjupad-information/lediga-jobb-och-vakanser/
+
+## Samordning 2026-11-26
+
+AF:s två platsfiler bearbetas nu i ett oberoende jobb i det befintliga workflowet `etl-af-monthly-check.yml`. Samma AF-källsida och geografihjälpare återanvänds. Jobbet läser båda filernas publiceringsperiod och gör kvartalsvis revisionshämtning; `publish-history` tvingar omhämtning. Övrig AF-databasimport använder fortsatt sina befintliga importer och indikatorer. Fel i ett jobb stoppar inte de övriga jobben. Den tidigare kombinerade workflowfilen `etl-labour-demand.yml` behålls med enbart SCB LoR och eget schema, validering och publicering. `--source af` respektive `--source lor` håller källanrop och skrivningar åtskilda.
+
+LoR:s fyra grupper är förval; nio yrkesområden kan väljas. Alla grupper och båda indelningarnas direktpublicerade skattningar och marginaler sparas. I Norrbotten 2024 saknas antal och marginal för 1/9 respektive 0/4 grupper; 2025 är motsvarande 2/9 respektive 1/4. Grövre indelning löser alltså inte allt bortfall. Andelarna i TAB6989 finns som struktur men publiceras ännu inte av SCB och erbjuds inte i gränssnittet.
