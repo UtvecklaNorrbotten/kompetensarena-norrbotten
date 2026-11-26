@@ -1,3 +1,4 @@
+import { afSsykFour, afSsykNine } from "./af-ssyk";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import catalog from "@/data/demand/catalog.json";
@@ -16,7 +17,9 @@ const geo = z.string().refine((v) => v in catalog.geographies);
 const selection = z
   .object({
     field: z.string().refine((v) => !v || catalog.fields.includes(v)),
-    group: z.string().refine((v) => !v || v in catalog.groups),
+    group: z
+      .string()
+      .refine((v) => !v || v in catalog.groups || v in afSsykFour || v in afSsykNine),
     metric: z.enum(["new", "remaining"]),
     duration: z.enum(["all", "10", "source"]),
   })
@@ -69,6 +72,22 @@ export const getDemandSlice = createServerFn({ method: "GET" })
           field: f,
           group: "",
           duration: data.selection.duration === "source" ? "all" : data.selection.duration,
+        }),
+      ),
+      four: Object.entries(afSsykFour).map(([code, label]) =>
+        rank(code, label, {
+          ...data.selection,
+          group: code,
+          metric: "remaining",
+          duration: "source",
+        }),
+      ),
+      nine: Object.entries(afSsykNine).map(([code, label]) =>
+        rank(code, label, {
+          ...data.selection,
+          group: code,
+          metric: "remaining",
+          duration: "source",
         }),
       ),
       groups: Object.entries(catalog.groups).map(([code, label]) =>
