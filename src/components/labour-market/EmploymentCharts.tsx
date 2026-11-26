@@ -14,7 +14,14 @@ import {
 } from "recharts";
 import { countAxis } from "@/lib/education-axis";
 import { employmentNumber } from "@/lib/employment";
-type Row = { label: string; value: number | null; other?: number | null; status?: string };
+type Row = {
+  label: string;
+  value: number | null;
+  other?: number | null;
+  status?: string;
+  otherStatus?: string;
+  segment?: string;
+};
 export function EmploymentChart({
   rows,
   unit,

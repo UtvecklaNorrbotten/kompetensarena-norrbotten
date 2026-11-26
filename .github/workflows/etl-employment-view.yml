@@ -17,7 +17,7 @@ permissions:
   contents: write
 concurrency:
   group: employment-snapshot
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 jobs:
   update:
     runs-on: ubuntu-latest
