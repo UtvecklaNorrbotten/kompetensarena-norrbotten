@@ -1,0 +1,62 @@
+name: 10 · Data · SCB sysselsättning – BAS och RAMS
+on:
+  push:
+    branches: [feature/sysselsattning-20261126]
+    paths:
+      - scripts/fetch_employment.py
+      - .github/workflows/etl-employment-view.yml
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Hämta om även oförändrade källversioner
+        type: boolean
+        default: false
+  schedule:
+    - cron: "20 9 * * *"
+permissions:
+  contents: write
+concurrency:
+  group: employment-snapshot
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Hämta och verifiera offentliga SCB-aggregat
+        env:
+          FORCE: ${{ inputs.force }}
+        run: |
+          if [ "$FORCE" = 'true' ]; then
+            python scripts/fetch_employment.py --force
+          else
+            python scripts/fetch_employment.py
+          fi
+      - name: Verifiera läsmodellen
+        run: python -m unittest discover -s tests -p 'test_employment.py' -v
+      - uses: actions/setup-node@v5
+        if: github.event_name == 'push'
+        with:
+          node-version: "24"
+      - name: Kontrollera gränssnittet inför första publicering
+        if: github.event_name == 'push'
+        run: |
+          npm install --no-audit --no-fund --package-lock=false
+          node --experimental-strip-types tests/employment.test.ts
+          npx tsc --noEmit
+          npm run build
+      - name: Publicera verifierad version
+        run: |
+          if [ -n "$(git status --porcelain src/data/employment public/data/employment)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add src/data/employment public/data/employment
+            git commit -m 'data: uppdatera SCB sysselsättning'
+            git fetch origin "$GITHUB_REF_NAME"
+            git merge --no-edit "origin/$GITHUB_REF_NAME"
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          fi

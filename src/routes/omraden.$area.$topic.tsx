@@ -1,3 +1,4 @@
+import { EmploymentPage } from "@/components/labour-market/EmploymentPage";
 import { UnemploymentPage } from "@/components/labour-market/UnemploymentPage";
 import { LabourDemandPage } from "@/components/labour-market/LabourDemandPage";
 import { LongTermUnemploymentPage } from "@/components/labour-market/LongTermUnemploymentPage";
@@ -48,9 +49,11 @@ export const Route = createFileRoute("/omraden/$area/$topic")({
         name: "description",
         content:
           loaderData?.area.slug === "arbetsmarknad"
-            ? loaderData?.topic.slug === "efterfragan-pa-arbetskraft"
-              ? "Efterfrågan på arbetskraft: anmälda platser, yrken, geografiska jämförelser och SCB:s LoR."
-              : "Arbetsförmedlingens inskrivna arbetslöshet: utveckling, grupper och geografiska jämförelser."
+            ? loaderData?.topic.slug === "sysselsattning"
+              ? "Sysselsättning: BAS och RAMS, branscher, grupper och geografiska jämförelser."
+              : loaderData?.topic.slug === "efterfragan-pa-arbetskraft"
+                ? "Efterfrågan på arbetskraft: anmälda platser, yrken, geografiska jämförelser och SCB:s LoR."
+                : "Arbetsförmedlingens inskrivna arbetslöshet: utveckling, grupper och geografiska jämförelser."
             : loaderData?.area.slug === "utbildning"
               ? "UKÄ-statistik om sökande, studenter, examina och arbetsmarknad efter examen."
               : loaderData?.area.slug === "lan-kommun"
@@ -65,9 +68,11 @@ export const Route = createFileRoute("/omraden/$area/$topic")({
         property: "og:description",
         content:
           loaderData?.area.slug === "arbetsmarknad"
-            ? loaderData?.topic.slug === "efterfragan-pa-arbetskraft"
-              ? "Efterfrågan på arbetskraft: anmälda platser, yrken, geografiska jämförelser och SCB:s LoR."
-              : "Arbetsförmedlingens inskrivna arbetslöshet: utveckling, grupper och geografiska jämförelser."
+            ? loaderData?.topic.slug === "sysselsattning"
+              ? "Sysselsättning: BAS och RAMS, branscher, grupper och geografiska jämförelser."
+              : loaderData?.topic.slug === "efterfragan-pa-arbetskraft"
+                ? "Efterfrågan på arbetskraft: anmälda platser, yrken, geografiska jämförelser och SCB:s LoR."
+                : "Arbetsförmedlingens inskrivna arbetslöshet: utveckling, grupper och geografiska jämförelser."
             : loaderData?.area.slug === "utbildning"
               ? "UKÄ-statistik om sökande, studenter, examina och arbetsmarknad efter examen."
               : loaderData?.area.slug === "lan-kommun"
@@ -83,6 +88,7 @@ export const Route = createFileRoute("/omraden/$area/$topic")({
 
 function TopicPage() {
   const { area, topic } = Route.useLoaderData();
+  if (area.slug === "arbetsmarknad" && topic.slug === "sysselsattning") return <EmploymentPage />;
   if (area.slug === "arbetsmarknad" && topic.slug === "efterfragan-pa-arbetskraft")
     return <LabourDemandPage />;
   if (area.slug === "arbetsmarknad" && topic.slug === "arbetsloshet") return <UnemploymentPage />;

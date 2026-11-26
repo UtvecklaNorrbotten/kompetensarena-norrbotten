@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-11-26T11:38:04.701506+00:00",
+  "table": "TAB2597",
+  "updated": "2026-10-27T07:00:00Z",
+  "bulk_sha256": "c087e45d8f51d4404c61d4ab6456859fa01630d5934c387b45ad7aabb6a4d550",
+  "comparison": "Full published sector CSV selection vs independent API query",
+  "periods": [
+    "2020M01",
+    "2026M08"
+  ],
+  "geographies": [
+    "00",
+    "25",
+    "2580"
+  ],
+  "matched_cells": 288,
+  "result": "all_equal"
+}

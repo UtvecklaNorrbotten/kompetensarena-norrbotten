@@ -11,8 +11,10 @@ export const areas = [
     slug: "arbetsmarknad",
     title: "Arbetsmarknad",
     icon: BriefcaseBusiness,
-    description: "Följ arbetslösheten och jämför arbetsmarknaden i kommuner, län och riket.",
+    description:
+      "Följ sysselsättning, arbetslöshet och efterfrågan på arbetskraft i kommuner, län och riket.",
     topics: [
+      { slug: "sysselsattning", title: "Sysselsättning" },
       { slug: "arbetsloshet", title: "Arbetslöshet" },
       { slug: "langtidsarbetsloshet", title: "Långtidsarbetslöshet" },
       { slug: "efterfragan-pa-arbetskraft", title: "Efterfrågan på arbetskraft" },
