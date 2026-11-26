@@ -69,3 +69,5 @@ npm run build
 ## Slutkontroll efter återupptaget arbete
 
 2026-11-26: den avbrutna grenen återupptogs efter att bootstrapkörning 45813455783 hade hämtat och verifierat samtliga underlag. Senaste main integrerades utan konflikt. Python-testerna kontrollerade samtliga 4 181 datafilers hash samt geografisk täckning och urval. TypeScript-tester för mått och metodbrott, typkontroll, riktad ESLint och produktionsbygge passerade. Figurens branschrubrik följer nu valt mått och datatabellens jämförelsekolumn visas bara när jämförelse finns.
+
+Slutligt SCB-stickprov passerade för samtliga tolv underlag. Granskning i webbläsare verifierade Norrbottens tidsserie, riksvärden och sysselsättningsgrad efter utbildning. Mobilgranskningen ledde till begränsad tooltipbredd. Produktionskontrollen upptäckte att hela serverpaketet var 72 798 982 byte mot driftmiljöns gräns 67 108 864 byte. UVAS-årgångarna flyttades därför oförändrade från kodimport till publika ASSETS-filer; katalog, värden och UI behölls. Produktionsbygget får nu en storlekskontroll med 60 MiB-budget innan publicering.
