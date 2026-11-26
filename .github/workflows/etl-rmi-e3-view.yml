@@ -1,0 +1,45 @@
+name: 10 · Data · SCB RMI – matchning (E3)
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Hämta även om källans uppdateringstid är oförändrad
+        type: boolean
+        default: false
+  schedule:
+    - cron: "15 6 * * 3"
+    - cron: "15 7 3 1,4,7,10 *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rmi-e3-view
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Kontrollera SCB-metadata och hämta färdiga aggregat
+        env:
+          FORCE_REFRESH: ${{ inputs.force || github.event.schedule == '15 7 3 1,4,7,10 *' }}
+        run: python scripts/fetch_rmi_matching.py
+      - name: Verifiera hela läsmodellen
+        run: python -m unittest discover -s tests -p 'test_matching_snapshot.py'
+      - name: Spara verifierad version
+        run: |
+          if [ -n "$(git status --porcelain src/data/matching public/data/matching)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add src/data/matching public/data/matching
+            git commit -m 'data: uppdatera SCB E3 matchningsmodell'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
