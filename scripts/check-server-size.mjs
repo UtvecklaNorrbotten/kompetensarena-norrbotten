@@ -12,7 +12,12 @@ async function codeSize(directory) {
   }
   return bytes;
 }
-const bytes = await codeSize(".output/server");
+const serverDir =
+  process.argv[2] ??
+  (process.env.LOVABLE_SANDBOX === "1" || process.env.DEV_SERVER__PROJECT_PATH
+    ? "dist/server"
+    : ".output/server");
+const bytes = await codeSize(serverDir);
 console.log(
   `Server code: ${(bytes / 1024 / 1024).toFixed(1)} MiB / ${budget / 1024 / 1024} MiB budget`,
 );
