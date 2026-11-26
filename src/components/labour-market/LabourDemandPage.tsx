@@ -1,3 +1,4 @@
+import { afSsykFour, afSsykNine } from "@/lib/af-ssyk";
 import { useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
@@ -69,6 +70,8 @@ export function LabourDemandPage() {
   const county = geos[geo]!.level === "kommun" ? geos[geo]!.parent! : geo === "00" ? "25" : geo;
   const [field, setField] = useState("");
   const [group, setGroup] = useState("");
+  const [ssykLevel, setSsykLevel] = useState("four");
+  const [roleSearch, setRoleSearch] = useState("");
   const [metric, setMetric] = useState<"new" | "remaining">("new");
   const [duration, setDuration] = useState<"all" | "10">("all");
   const [period, setPeriod] = useState(catalog.latest);
@@ -136,7 +139,9 @@ export function LabourDemandPage() {
         !field || catalog.occupationRelations.some((r) => r[0] === field && r[1] === code),
     );
   const unit = rolling && metric === "remaining" ? "platser i månadsgenomsnitt" : "platser";
-  const description = group ? `SSYK ${group}` : field || "Samtliga yrken";
+  const description = group
+    ? (afSsykFour[group] ?? afSsykNine[group] ?? `SSYK ${group}`)
+    : field || "Samtliga yrken";
   const metricName = metric === "new" ? "Nyanmälda platser" : "Kvarstående platser";
   const metricDefinition =
     metric === "new"
@@ -211,6 +216,20 @@ export function LabourDemandPage() {
                   className={control}
                 >
                   <option value="">Samtliga yrkesgrupper</option>
+                  <optgroup label="Fyra grupper">
+                    {Object.entries(afSsykFour).map(([c, label]) => (
+                      <option key={c} value={c}>
+                        {label}
+                      </option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Nio yrkesområden">
+                    {Object.entries(afSsykNine).map(([c, label]) => (
+                      <option key={c} value={c}>
+                        {label}
+                      </option>
+                    ))}
+                  </optgroup>
                   {groups.map(([c, label]) => (
                     <option value={c} key={c}>
                       {c} {label}
@@ -371,10 +390,83 @@ export function LabourDemandPage() {
                 <Figure
                   id="yrkesgrupper"
                   title="Vilka yrkesgrupper har flest kvarstående platser?"
-                  intro={`${name} · ${field || "Samtliga yrkesområden"}. SSYK 2012, fyrsiffrig kod. Endast kvarstående platser ur den särskilda yrkesfilen, oavsett valt mått ovanför.`}
+                  intro={`${name} · ${field || "Samtliga yrkesområden"}. SSYK 2012, valbar indelning. Endast kvarstående platser ur den särskilda yrkesfilen, oavsett valt mått ovanför.`}
                   period={`${period}; yrkeshistorik från ${catalog.dimensions.groups.start}`}
                 >
-                  <DemandRanking rows={query.data?.groups ?? []} onSelect={chooseGroup} />
+                  <label className="mb-5 block text-sm">
+                    Yrkesindelning
+                    <select
+                      className={control}
+                      value={ssykLevel}
+                      onChange={(e) => setSsykLevel(e.target.value)}
+                    >
+                      <option value="four">Fyra grupper efter vanlig kompetensnivå</option>
+                      <option value="nine">Nio yrkesområden (SSYK 2012)</option>
+                      <option value="detail">Alla fyrsiffriga yrkesgrupper</option>
+                    </select>
+                  </label>
+                  {ssykLevel === "detail" && (
+                    <label className="mb-5 block text-sm">
+                      Sök yrkesroll eller SSYK-kod
+                      <input
+                        className={control}
+                        value={roleSearch}
+                        onChange={(e) => setRoleSearch(e.target.value)}
+                        placeholder="Skriv yrke eller kod"
+                      />
+                    </label>
+                  )}
+                  <DemandRanking
+                    key={ssykLevel + roleSearch}
+                    rows={
+                      ssykLevel === "four"
+                        ? (query.data?.four ?? [])
+                        : ssykLevel === "nine"
+                          ? (query.data?.nine ?? [])
+                          : (query.data?.groups ?? []).filter(
+                              (r) =>
+                                !roleSearch ||
+                                (
+                                  r.label +
+                                  " " +
+                                  catalog.occupationRelations
+                                    .filter((v) => v[1] === r.code)
+                                    .map((v) => v[2])
+                                    .join(" ")
+                                )
+                                  .toLocaleLowerCase("sv")
+                                  .includes(roleSearch.toLocaleLowerCase("sv")),
+                            )
+                    }
+                    onSelect={chooseGroup}
+                  />
+                  <p className="mt-4 text-sm text-ink-muted">
+                    Klicka på en grupp för dess tidsserie och geografiska fördelning. Alla
+                    fyrsiffriga yrkesgrupper finns kvar i listan ovanför. Militära och okända yrken
+                    redovisas separat, utöver de fyra eller nio grupperna. Kompetensnivå avser
+                    yrkets vanliga krav, inte den sökandes utbildning.
+                  </p>
+                  {group in catalog.groups && (
+                    <details className="mt-4 text-sm">
+                      <summary className="cursor-pointer text-brand-dark">
+                        Yrkesbenämningar inom vald SSYK-grupp
+                      </summary>
+                      <p className="my-3 text-ink-muted">
+                        Antalet gäller hela SSYK-gruppen, inte varje benämning separat.
+                      </p>
+                      <ul>
+                        {[
+                          ...new Set(
+                            catalog.occupationRelations
+                              .filter((r) => r[1] === group && (!field || r[0] === field))
+                              .map((r) => r[2]),
+                          ),
+                        ].map((title) => (
+                          <li key={title}>{title}</li>
+                        ))}
+                      </ul>
+                    </details>
+                  )}
                   <p className="mt-4 text-sm text-ink-muted">
                     Yrkesfilens totalsumma avviker från den långa platsserien. Summera inte de två
                     underlagen. Om en SSYK-grupp finns i flera AF-yrkesområden behålls kopplingarna

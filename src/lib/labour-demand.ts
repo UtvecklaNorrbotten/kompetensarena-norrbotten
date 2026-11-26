@@ -1,3 +1,4 @@
+import { afSsykMatches } from "./af-ssyk.ts";
 import { monthOffset, type AfValue } from "./af-unemployment.ts";
 
 export type DemandSelection = {
@@ -42,7 +43,7 @@ export function demandSeries(
   if (group) {
     if (metric !== "remaining" || duration !== "source") return [];
     for (const [p, f, g, , v] of model.groups ?? [])
-      if ((!field || f === field) && g === group) push(p, v);
+      if ((!field || f === field) && afSsykMatches(g, group)) push(p, v);
   } else {
     const index = (duration === "10" ? 2 : 0) + (metric === "remaining" ? 1 : 0);
     if (field) {
