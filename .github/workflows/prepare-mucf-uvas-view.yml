@@ -1,0 +1,38 @@
+name: 10 · Data · MUCF – UVAS läsmodell
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ['10 · Data · MUCF – unga utan arbete eller studier (UVAS)']
+    types: [completed]
+  schedule:
+    - cron: '45 * * * *'
+permissions:
+  contents: write
+concurrency:
+  group: mucf-uvas-view
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: actions/checkout@v5
+        with:
+          ref: data/mucf-uvas
+          path: mucf-input
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - run: python scripts/mucf/prepare_view.py --root mucf-input/data/mucf-uvas
+      - run: python -m unittest discover -s tests -p test_mucf_view.py
+      - name: Publicera läsmodellen
+        run: |
+          if [ -n "$(git status --porcelain src/data/uvas)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add src/data/uvas
+            git commit -m 'data: uppdatera publicerad MUCF UVAS-läsmodell'
+            git push origin HEAD:main
+          fi

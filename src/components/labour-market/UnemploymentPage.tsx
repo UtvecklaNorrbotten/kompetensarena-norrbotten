@@ -1,3 +1,4 @@
+import { UvasSection } from "./UvasSection";
 import { countAxis } from "@/lib/education-axis";
 import { useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -192,6 +193,7 @@ export function UnemploymentPage() {
             ["antal", "Antal"],
             ["geografi", "Jämför geografier"],
             ["grupper", "Jämför grupper"],
+            ["uvas", "Unga utan arbete eller studier"],
           ].map(([id, label]) => (
             <a key={id} href={`#${id}`} className="underline underline-offset-4">
               {label}
@@ -626,6 +628,7 @@ export function UnemploymentPage() {
                 </p>
               </Figure>
             )}
+            <UvasSection />
             <section
               id="definitioner"
               className="scroll-mt-28 rounded-xl bg-brand-light p-6 md:p-8"
@@ -663,8 +666,8 @@ export function UnemploymentPage() {
                   bara när samtliga 12 månader är tillgängliga. Det är inte en säsongrensad serie.
                 </p>
                 <p>
-                  Unga som varken arbetar eller studerar (NEET/UVAS) är ett separat mått. Det
-                  avsnittet tillkommer när MUCF-data har hämtats.
+                  MUCF:s årsstatistik om unga som varken arbetar eller studerar finns i
+                  UVAS-avsnittet ovan.
                 </p>
                 <p>
                   <a

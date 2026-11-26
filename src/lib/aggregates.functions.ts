@@ -198,3 +198,4 @@ export {
 } from "./af-unemployment.functions";
 
 export { getDemandSlice, getDemandComparison, getDemandLor } from "./labour-demand.functions";
+export { getUvasView } from './uvas.functions';
