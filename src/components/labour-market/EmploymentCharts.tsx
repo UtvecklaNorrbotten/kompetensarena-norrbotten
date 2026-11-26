@@ -104,6 +104,8 @@ export function EmploymentChart({
                   tickFormatter={(v) => (String(v).length > 23 ? String(v).slice(0, 22) + "…" : v)}
                 />
                 <Tooltip
+                  wrapperStyle={{ maxWidth: "min(280px, 80vw)", whiteSpace: "normal" }}
+                  contentStyle={{ overflowWrap: "anywhere", whiteSpace: "normal" }}
                   formatter={(v: number) => [`${employmentNumber(v, "", decimals)} ${unit}`, name]}
                 />
                 <Bar dataKey="value" isAnimationActive={false}>
@@ -130,6 +132,8 @@ export function EmploymentChart({
                   tickFormatter={(v) => employmentNumber(v, "", decimals)}
                 />
                 <Tooltip
+                  wrapperStyle={{ maxWidth: "min(280px, 80vw)", whiteSpace: "normal" }}
+                  contentStyle={{ overflowWrap: "anywhere", whiteSpace: "normal" }}
                   formatter={(v: number, label: string) => [
                     `${employmentNumber(v, "", decimals)} ${unit}`,
                     label,
