@@ -27,7 +27,7 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
         with:
           path: .cache/workforce
           key: workforce-${{ hashFiles('scripts/fetch_workforce.py') }}-${{ github.run_id }}
@@ -43,7 +43,9 @@ jobs:
             python scripts/fetch_workforce.py
           fi
       - name: Verifiera läsmodell, täckning och kontrollsummor
-        run: python -m unittest discover -s tests -p 'test_workforce.py' -v
+        run: |
+          python -m unittest discover -s tests -p 'test_workforce.py' -v
+          python scripts/verify_workforce.py
       - uses: actions/setup-node@v5
         if: github.event_name == 'push'
         with:
@@ -66,3 +68,8 @@ jobs:
             git merge --no-edit "origin/$GITHUB_REF_NAME"
             git push origin "HEAD:$GITHUB_REF_NAME"
           fi
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: .cache/workforce
+          key: workforce-${{ hashFiles('scripts/fetch_workforce.py') }}-${{ github.run_id }}

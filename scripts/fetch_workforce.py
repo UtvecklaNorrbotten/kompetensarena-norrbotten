@@ -47,8 +47,20 @@ def collect(key, cache, sample=False):
     # Modest requests also avoid SCB server errors on large monthly selections.
     width = max(1, 35000 // math.prod(len(v) for k, v in selected.items() if k != "Tid"))
 
-    def fetch(start):
+    # The age table has more than 150k cells per month/year across 312 regions.
+    # Split geography too; splitting time alone cannot respect SCB's cell limit.
+    region_sets = [selected.get("Region")]
+    if "Region" in selected:
+        per_region = math.prod(len(v) for k, v in selected.items() if k not in ("Tid", "Region"))
+        geo_width = max(1, 120000 // (per_region * width))
+        region_sets = [selected["Region"][i:i + geo_width] for i in range(0, len(selected["Region"]), geo_width)]
+    tasks = [(start, geos) for start in range(0, len(periods), width) for geos in region_sets]
+
+    def fetch(task):
+        start, geos = task
         selection = {**selected, "Tid": periods[start:start + width]}
+        if geos is not None:
+            selection["Region"] = geos
         query = {"selection": [{"variableCode": k, "valueCodes": v} for k, v in selection.items()]}
         fingerprint = hashlib.sha256(encode([table, meta["updated"], query])).hexdigest()
         path = cache / (fingerprint + ".json")
@@ -66,7 +78,7 @@ def collect(key, cache, sample=False):
 
     rows = defaultdict(list)
     with ThreadPoolExecutor(max_workers=2) as pool:
-        for selection, d in pool.map(fetch, range(0, len(periods), width)):
+        for selection, d in pool.map(fetch, tasks):
             for f, value, flag in decode(d, selection):
                 # Period, sex, category, age, measure, value, source status.
                 rows[f.get("Region", "00")].append([f["Tid"], f["Kon"], f[group], f.get("Alder", ""),

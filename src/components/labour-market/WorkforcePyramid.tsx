@@ -143,14 +143,14 @@ export function WorkforcePyramid({ geo }: { geo: string }) {
                   dataKey="men"
                   name="Män"
                   stackId="age"
-                  fill="#F5C55C"
+                  fill="var(--chart-3)"
                   isAnimationActive={false}
                 />
                 <Bar
                   dataKey="women"
                   name="Kvinnor"
                   stackId="age"
-                  fill="#487629"
+                  fill="var(--chart-1)"
                   isAnimationActive={false}
                 />
               </BarChart>
