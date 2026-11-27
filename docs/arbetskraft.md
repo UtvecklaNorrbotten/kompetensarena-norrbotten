@@ -51,3 +51,5 @@ node --experimental-strip-types tests/workforce.test.ts
 npx tsc --noEmit
 npm run build
 ```
+
+GitHub Actions gör även ett oberoende SCB-stickprov för första/sista period och valda kategorier i varje underlag. Webbläsarkontrollen använder den riktiga sidan och serverfunktionerna: kommunval i URL, BAS-grupper, publicerat deltagande efter utbildning, uttryckligt läns-/riksbyte när kommundata saknas, ålderspyramid, datatabell, CSV och mobilbredd.
