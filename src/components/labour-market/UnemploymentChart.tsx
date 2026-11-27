@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
+import { Visualization } from "@/components/charts/Visualization";
+import { observation, periodRange, type VisualizationExport } from "@/lib/visualization-export";
 import {
   CartesianGrid,
   Line,
@@ -23,8 +25,14 @@ export function UnemploymentChart({
   name,
   unit,
   comparisonName = "Riket",
+  exportMetadata,
+  fullscreenFilters,
+  geoCode,
 }: {
   comparisonName?: string;
+  exportMetadata?: Omit<VisualizationExport, "legend" | "rows" | "columns" | "period" | "unit">;
+  fullscreenFilters?: ReactNode;
+  geoCode?: string;
   rows: UnemploymentChartPoint[];
   title: string;
   name: string;
@@ -57,13 +65,15 @@ export function UnemploymentChart({
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
-  return (
+  const chart = (
     <>
       {!values.length ? (
         <p className="py-12 text-ink-muted">Det finns inga jämförbara uppgifter för urvalet.</p>
       ) : (
         <div
           className="h-80 w-full min-w-0"
+          data-visualization-export
+          data-visualization-grow
           role="img"
           aria-label={`${title}. ${name} jämförs med ${comparisonName}. Enhet: ${unit}. Värden finns i tabellen nedanför.`}
         >
@@ -185,5 +195,36 @@ export function UnemploymentChart({
         </div>
       )}
     </>
+  );
+  if (!exportMetadata) return chart;
+
+  const compare = showComparison && hasComparison;
+  const exportData: VisualizationExport = {
+    ...exportMetadata,
+    unit,
+    period: periodRange(rows.map((r) => r.period)),
+    filters: { ...exportMetadata.filters, Jämförelse: compare ? comparisonName : "Ingen" },
+    legend: [
+      { label: name, color: "var(--chart-1)" },
+      ...(compare ? [{ label: comparisonName, color: "var(--chart-3)" }] : []),
+    ],
+    columns: ["Månad", "Geografikod", "Geografi", "Värde", "Status"],
+    rows: rows.flatMap((r) => [
+      [r.period, geoCode ?? "", name, ...observation(r.selected, r.selectedSuppressed)],
+      ...(compare
+        ? [[r.period, "00", comparisonName, ...observation(r.country, r.countrySuppressed)]]
+        : []),
+    ]),
+  };
+  return (
+    <Visualization
+      className="pt-10 [dialog[open]_&]:px-5"
+      data={exportData}
+      exportReady={values.length > 0}
+      fullscreenFilters={fullscreenFilters}
+      fullscreenHeading
+    >
+      {chart}
+    </Visualization>
   );
 }

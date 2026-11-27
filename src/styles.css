@@ -179,3 +179,37 @@
     border-radius: var(--radius);
   }
 }
+
+@layer components {
+  .visualization-dialog:not([open]) {
+    display: contents;
+  }
+
+  .visualization-dialog[open] {
+    position: fixed;
+    inset: 0;
+    margin: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    overflow: auto;
+    overscroll-behavior: contain;
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  .visualization-dialog[open] > .visualization-content {
+    width: 100%;
+    max-width: 100rem;
+    margin-inline: auto;
+  }
+
+  .visualization-dialog[open] [data-visualization-grow] {
+    height: max(20rem, 55dvh);
+  }
+
+  .visualization-dialog[open] svg[data-visualization-grow] {
+    max-height: none;
+  }
+}

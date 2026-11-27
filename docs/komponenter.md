@@ -136,3 +136,33 @@ Standardmönstret för hur en indikator presenteras: rubrik, beskrivning, "Exemp
 - `indicator: Indicator`
 
 **Används på:** `/statistik`.
+
+## Diagrammeny och export
+
+`src/components/charts/Visualization.tsx` visar diagrammenyn och hanterar helskärm.
+Komponenten flyttar inte diagrammet när helskärmen öppnas. Därmed behålls tillståndet
+för diagram, filter och förklaringar. Använd `fullscreenFilters` för de sidfilter
+som påverkar figuren och låt dem skriva till samma tillstånd som sidans filter.
+Märk responsiva figurer med `data-visualization-grow` om de ska använda mer av höjden i helskärm.
+
+1. Bygg ett `VisualizationExport` av samma redan lästa, behörighetskontrollerade urval
+   som figuren visar. Ta hänsyn till dolda serier, toppurval och vald period. Exporten har
+   inget eget dataanrop. Anslut endast visualiseringar vars data får laddas ned.
+2. Ange indikator, producent, produkt, källänk och källans uttagsdatum där de finns.
+   `anchor` kan peka på diagrammets avsnitt på sidan. Lägg urval och metodinformation
+   i `filters` och `notes`.
+3. Ange svenska `columns` och motsvarande `rows`. Skicka statistikvärden som tal,
+   koder som text och använd `observation(värde, sekretess)` så att status och värde kan
+   redovisas separat. Markera sekretess enbart när källan anger det. Tomma källvärden
+   utan statuskod exporteras som saknade. Publicera aldrig ett underliggande tal till
+   en cell som källan sekretessmarkerat.
+4. Sätt `data-visualization-export` på figurens renderade diagramyta. Märk en yta per
+   figur eller delpanel utan att nästla märkta ytor. Håll knappar och kontroller
+   utanför ytan eller märk dem med `data-export-ignore`. Skicka synliga seriers
+   teckenförklaring genom `legend`.
+5. Prova export med aktuella filter, synliga serier och tomma värden. Kontrollera
+   att axlar, kartans symboler och samtliga synliga delar ryms i PNG-filen både
+   på mobil och desktop. Kontrollera Excel-bladen Statistik och Metadata.
+
+PNG- och Excel-koden laddas när besökaren väljer respektive menyval.
+Den befintliga CSV-exporten finns kvar där den redan erbjuds.

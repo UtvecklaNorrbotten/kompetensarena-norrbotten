@@ -28,10 +28,7 @@ export function EducationPage({ initialSection = "" }: { initialSection?: string
     queryFn: () => getUkaEducationCatalog({ data: { university } }),
     staleTime: 5 * 60 * 1000,
   });
-  const comboRows = useMemo(
-    () => catalogComboRows(dataQuery.data?.combos ?? {}),
-    [dataQuery.data],
-  );
+  const comboRows = useMemo(() => catalogComboRows(dataQuery.data?.combos ?? {}), [dataQuery.data]);
   const options = useMemo(
     () => dimensionOptions(comboRows, filters.dimensions),
     [comboRows, filters.dimensions],
@@ -86,6 +83,24 @@ export function EducationPage({ initialSection = "" }: { initialSection?: string
     };
   }, []);
 
+  function renderFilters(compact = false) {
+    return (
+      <EducationFilters
+        compact={compact}
+        universities={universityQuery.data ?? []}
+        university={university}
+        onUniversity={(value) => {
+          setUniversity(value);
+          setFilters((previous) => ({ ...previous, dimensions: {} }));
+        }}
+        filters={filters}
+        onFilters={setFilters}
+        options={options}
+        loading={dataQuery.isFetching}
+      />
+    );
+  }
+
   return (
     <div className="font-normal">
       <Section tone="light" className="py-9 md:py-12">
@@ -107,18 +122,7 @@ export function EducationPage({ initialSection = "" }: { initialSection?: string
       </Section>
       <div className="mx-auto grid max-w-(--container-content) items-start gap-6 px-4 py-8 md:px-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8">
         <div className="lg:sticky lg:top-24">
-          <EducationFilters
-            universities={universityQuery.data ?? []}
-            university={university}
-            onUniversity={(value) => {
-              setUniversity(value);
-              setFilters((previous) => ({ ...previous, dimensions: {} }));
-            }}
-            filters={filters}
-            onFilters={setFilters}
-            options={options}
-            loading={dataQuery.isFetching}
-          />
+          {renderFilters()}
           {universityQuery.isError && (
             <div role="alert" className="mt-3 text-sm">
               Lärosäteslistan kunde inte läsas.{" "}
@@ -186,33 +190,23 @@ export function EducationPage({ initialSection = "" }: { initialSection?: string
               <div className="space-y-6">
                 {educationIndicators
                   .filter((i) => i.section === section.slug)
-                  .map((indicator) =>
-                    dataQuery.isPending ? (
-                      <div
-                        key={indicator.id}
-                        className="min-h-[450px] animate-pulse rounded-xl border border-border bg-surface p-6"
-                        role="status"
-                      >
-                        <h3 className="text-xl">{indicator.title}</h3>
-                        <p className="mt-4 text-sm text-ink-muted">Hämtar UKÄ-data…</p>
-                        <div className="mt-8 h-56 rounded bg-neutral-surface" />
-                      </div>
-                    ) : dataQuery.isSuccess ? (
-                      <EducationFigure
-                        key={indicator.id}
-                        indicator={indicator}
-                        catalog={
-                          dataQuery.data.indicators[indicator.id] ?? { periods: [], breakdowns: [] }
-                        }
-                        university={university}
-                        filters={filters}
-                        fetched={
-                          dataQuery.data.metadata.find((m) => m.indicator_id === indicator.id)
-                            ?.hamtad_datum ?? null
-                        }
-                      />
-                    ) : null,
-                  )}
+                  .map((indicator) => (
+                    <EducationFigure
+                      key={indicator.id}
+                      indicator={indicator}
+                      catalog={
+                        dataQuery.data?.indicators[indicator.id] ?? { periods: [], breakdowns: [] }
+                      }
+                      university={university}
+                      filters={filters}
+                      catalogLoading={dataQuery.isPending}
+                      fullscreenFilters={renderFilters(true)}
+                      fetched={
+                        dataQuery.data?.metadata.find((m) => m.indicator_id === indicator.id)
+                          ?.hamtad_datum ?? null
+                      }
+                    />
+                  ))}
               </div>
             </section>
           ))}

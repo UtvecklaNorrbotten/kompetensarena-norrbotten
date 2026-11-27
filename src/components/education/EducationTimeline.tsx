@@ -2,7 +2,7 @@ import { educationAxis } from "@/lib/education-axis";
 import { educationGenderColor } from "@/lib/education-colors";
 import { useLegendClick } from "@/lib/legend-click";
 import { EducationLegend } from "./EducationLegend";
-import { useId, useState } from "react";
+import { useId, useState, type Dispatch, type SetStateAction } from "react";
 import {
   CartesianGrid,
   Line,
@@ -20,14 +20,17 @@ export function EducationTimeline({
   unit,
   valueAxisLabel,
   programs = [],
+  visibility,
 }: {
   rows: UkaRow[];
   unit: string;
   valueAxisLabel: string;
   programs?: string[];
+  visibility?: { hidden: string[]; setHidden: Dispatch<SetStateAction<string[]>> };
 }) {
   const id = useId();
-  const [hidden, setHidden] = useState<string[]>([]);
+  const [localHidden, setLocalHidden] = useState<string[]>([]);
+  const { hidden, setHidden } = visibility ?? { hidden: localHidden, setHidden: setLocalHidden };
   const data = ukaComparisonTimeline(rows, programs);
   const clickLegend = useLegendClick(
     data.series.map((s) => s.key),
@@ -60,13 +63,14 @@ export function EducationTimeline({
         onClick={clickLegend}
       />
       <div
+        data-visualization-export
         className="grid gap-6 lg:grid-cols-2"
         style={!data.semester ? { gridTemplateColumns: "minmax(0, 1fr)" } : undefined}
       >
         {data.panels.map((panel) => (
           <section key={panel.name} aria-label={panel.name}>
             {data.semester && <h4 className="mb-2 text-base font-semibold">{panel.name}</h4>}
-            <div className="h-80 w-full" data-export-title={data.semester ? panel.name : undefined}>
+            <div className="h-80 w-full" data-visualization-grow>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={panel.rows}

@@ -18,8 +18,15 @@ import { Section } from "@/components/layout/Section";
 import { DEFAULT_GEO_CODE } from "@/config/geo";
 import catalog from "@/data/rmi/catalog.json";
 import { getRmiRows, getRmiComparison } from "@/lib/aggregates.functions";
-import { rmiNumber, selectRmi, type RmiRow } from "@/lib/rmi";
+import { flowPairs, rmiNumber, selectRmi, type RmiRow } from "@/lib/rmi";
 import { MunicipalityMap } from "./MunicipalityMap";
+import { Visualization } from "@/components/charts/Visualization";
+import {
+  exportFilename,
+  observation,
+  periodRange,
+  type VisualizationExport,
+} from "@/lib/visualization-export";
 
 const selectClass =
   "mt-2 w-full rounded-md border border-border bg-surface py-2 pl-3 pr-8 text-base";
@@ -32,19 +39,27 @@ function Figure({
   title,
   intro,
   children,
+  exportData,
+  fullscreenFilters,
+  exportReady,
 }: {
   id: string;
   title: string;
   intro: string;
   children: ReactNode;
+  exportData: VisualizationExport;
+  fullscreenFilters: ReactNode;
+  exportReady: boolean;
 }) {
   return (
-    <section
+    <Visualization
       id={id}
-      aria-labelledby={`${id}-title`}
+      data={exportData}
+      exportReady={exportReady}
+      fullscreenFilters={fullscreenFilters}
       className="scroll-mt-28 rounded-xl border border-border bg-surface p-5 md:p-7"
     >
-      <h2 id={`${id}-title`} className="text-2xl">
+      <h2 id={`${id}-title`} className="pr-12 text-2xl">
         {title}
       </h2>
       <p className="mt-3 max-w-3xl text-base leading-relaxed text-ink-muted">{intro}</p>
@@ -55,7 +70,7 @@ function Figure({
         </a>
         . Uppdaterad {catalog.updated.slice(0, 10)}. Antal personer, 18–69 år.
       </p>
-    </section>
+    </Visualization>
   );
 }
 function download(rows: RmiRow[], name: string) {
@@ -136,6 +151,186 @@ export function GeographyPage({ initialSection = "" }: { initialSection?: string
   const compareMax = Math.max(1, ...municipalityRows.map((r) => r.row?.[4] ?? 0));
   const chosenName = regions[geo];
   const groupName = groups[group];
+
+  const sexName = sex === "totalt" ? "Totalt" : sex === "2" ? "Kvinnor" : "Män";
+  const flowTitle = "Vad fyller på och vad minskar utbildningsgruppen?";
+  const historyTitle = "Hur har utbildningsgruppen förändrats?";
+  const historyMeasure =
+    series === "population" ? "Antal personer vid intervallets slut" : "SCB:s nettoförändring";
+  const common = {
+    source: {
+      producer: "Statistiska centralbyrån (SCB)",
+      product: "Regionala matchningsindikatorer",
+      identifier: `U3 · ${catalog.table}`,
+      url: source,
+      retrieved: catalog.fetched,
+    },
+    unit: "personer",
+    filters: { Geografi: chosenName!, Utbildningsgrupp: groupName!, Kön: sexName },
+  };
+  const dimensions = (r: RmiRow) => [geo, chosenName!, r[0], groupName!, r[1], sexName, r[2]];
+  const dimensionColumns = [
+    "Geografikod",
+    "Geografi",
+    "Utbildningsgruppskod",
+    "Utbildningsgrupp",
+    "Könskod",
+    "Kön",
+    "Årsintervall",
+  ];
+  const flowValues: [string, number | null][] = row
+    ? [
+        ["Personer vid intervallets början", row[3]],
+        ["Personer vid intervallets slut", row[4]],
+        ["SCB:s nettoförändring", row[5]],
+        ...flowPairs.flatMap<[string, number | null]>((pair) => [
+          [pair.inLabel, row[pair.incoming]],
+          [pair.outLabel, row[pair.outgoing]],
+        ]),
+      ]
+    : [];
+  const flowData: VisualizationExport = {
+    ...common,
+    title: flowTitle,
+    subtitle: "Jämför olika vägar in i och ut ur gruppen mellan två år.",
+    indicator: "Utbildningsflöden",
+    filename: exportFilename(
+      "utbildningsfloden",
+      `${chosenName}-${groupName}-${sexName}-${period}`,
+    ),
+    definition:
+      "Förändring av antalet invånare 18–69 år i en utbildningsgrupp mellan två år, efter flyttningar, åldersförändring och ny utbildning.",
+    period,
+    anchor: "utbildningsfloden",
+    notes: [
+      "Flödena överlappar. SCB publicerar nettoförändringen som ett separat mått. Utflyttade omfattar även avlidna. Figuren visar utflöden som positiva tal. SCB redovisar dem med minustecken.",
+      "SCB skyddar uppgifterna med Cell Key Method (CKM). De publicerade delarna behöver därför inte summera till totalen.",
+      ...(period === "2023-2024"
+        ? [
+            "För 2023–2024 saknas vissa utbildningsflöden efter att SCB ändrat klassificeringen av utbildning.",
+          ]
+        : []),
+    ],
+    columns: [...dimensionColumns, "Mått", "Värde", "Status"],
+    rows: row
+      ? flowValues.map(([measure, value]) => [...dimensions(row), measure, ...observation(value)])
+      : [],
+  };
+  const historyData: VisualizationExport = {
+    ...common,
+    title: historyTitle,
+    indicator: historyMeasure,
+    filename: exportFilename(historyMeasure, `${chosenName}-${groupName}-${sexName}`),
+    filters: { ...common.filters, Mått: historyMeasure },
+    definition:
+      "Uppgifter för invånare 18–69 år i den valda utbildningsgruppen. Nettoförändringen publiceras separat av SCB.",
+    period: periodRange(history.map((r) => r[2])),
+    anchor: "befolkningsutveckling",
+    notes: [
+      "Antal personer avser årsintervallets sista år. SCB skyddar uppgifterna med Cell Key Method (CKM).",
+    ],
+    columns: [...dimensionColumns, "Värde", "Status"],
+    rows: history.map((r) => [
+      ...dimensions(r),
+      ...observation(r[series === "population" ? 4 : 5]),
+    ]),
+  };
+  const rankingTitle = "Var finns de utbildade?";
+  const rankingData: VisualizationExport = {
+    ...common,
+    title: rankingTitle,
+    subtitle: "Antal personer i utbildningsgruppen vid årsintervallets slut.",
+    indicator: "Befolkning efter utbildningsgrupp",
+    filename: exportFilename("utbildade-norrbottens-kommuner", `${groupName}-${sexName}-${period}`),
+    period,
+    anchor: "kommunjamforelse",
+    definition: "Antal invånare 18–69 år med en registrerad utbildning i vald utbildningsgrupp.",
+    filters: {
+      ...common.filters,
+      Geografi: "Norrbottens kommuner",
+      Visning: showAll ? "Alla 14 kommuner" : "Topp 5 kommuner",
+    },
+    notes: [
+      "Större kommuner har ofta fler personer. SCB skyddar uppgifterna med Cell Key Method (CKM).",
+    ],
+    columns: [...dimensionColumns, "Värde", "Status"],
+    rows: visibleRows.map(({ geo: code, row: item }) => [
+      code,
+      regions[code]!,
+      group,
+      groupName!,
+      sex,
+      sexName,
+      period,
+      ...observation(item?.[4]),
+    ]),
+  };
+  function renderFilters(withMap = false, withPeriod = false) {
+    return (
+      <>
+        <label className="mt-5 block text-sm font-medium">
+          Län eller kommun
+          <select className={selectClass} value={geo} onChange={(e) => changeGeo(e.target.value)}>
+            {Object.entries(regions).map(([code, name]) => (
+              <option value={code} key={code}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </label>
+        {withMap && <MunicipalityMap geo={geo} onGeo={changeGeo} />}
+        <label className="mt-6 block text-sm font-medium">
+          Utbildningsgrupp
+          <select className={selectClass} value={group} onChange={(e) => setGroup(e.target.value)}>
+            {Object.entries(groups).map(([code, name]) => (
+              <option key={code} value={code}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="mt-5 block text-sm font-medium">
+          Kön
+          <select
+            className={selectClass}
+            value={sex}
+            onChange={(e) => setSex(e.target.value as typeof sex)}
+          >
+            <option value="totalt">Totalt</option>
+            <option value="2">Kvinnor</option>
+            <option value="1">Män</option>
+          </select>
+        </label>
+        {withPeriod && (
+          <label className="mt-5 block text-sm font-medium">
+            Årsintervall
+            <select
+              className={selectClass}
+              value={period}
+              onChange={(e) => setPeriod(e.target.value)}
+            >
+              {[...catalog.periods].reverse().map((p) => (
+                <option key={p}>{p}</option>
+              ))}
+            </select>
+          </label>
+        )}
+      </>
+    );
+  }
+  const queryStatus = query.isError ? (
+    <div role="alert" className="rounded-xl border border-border p-6">
+      Statistiken kunde inte hämtas.{" "}
+      <button type="button" className="underline" onClick={() => query.refetch()}>
+        Försök igen
+      </button>
+    </div>
+  ) : query.isPending ? (
+    <div role="status" className="min-h-96 animate-pulse rounded-xl bg-neutral-surface p-6">
+      Hämtar SCB-statistik…
+    </div>
+  ) : null;
+
   return (
     <div className="font-normal">
       <Section tone="light" className="py-9 md:py-12">
@@ -168,55 +363,7 @@ export function GeographyPage({ initialSection = "" }: { initialSection?: string
           <p className="mt-2 text-sm leading-relaxed text-ink-muted">
             Dina val gäller alla figurer. Kommunjämförelsen visar alltid länets 14 kommuner.
           </p>
-          <label className="mt-5 block text-sm font-medium">
-            Län eller kommun
-            <select className={selectClass} value={geo} onChange={(e) => changeGeo(e.target.value)}>
-              {Object.entries(regions).map(([code, name]) => (
-                <option value={code} key={code}>
-                  {name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <MunicipalityMap geo={geo} onGeo={changeGeo} />
-          <label className="mt-6 block text-sm font-medium">
-            Utbildningsgrupp
-            <select
-              className={selectClass}
-              value={group}
-              onChange={(e) => setGroup(e.target.value)}
-            >
-              {Object.entries(groups).map(([code, name]) => (
-                <option key={code} value={code}>
-                  {name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="mt-5 block text-sm font-medium">
-            Kön
-            <select
-              className={selectClass}
-              value={sex}
-              onChange={(e) => setSex(e.target.value as typeof sex)}
-            >
-              <option value="totalt">Totalt</option>
-              <option value="2">Kvinnor</option>
-              <option value="1">Män</option>
-            </select>
-          </label>
-          <label className="mt-5 block text-sm font-medium">
-            Årsintervall
-            <select
-              className={selectClass}
-              value={period}
-              onChange={(e) => setPeriod(e.target.value)}
-            >
-              {[...catalog.periods].reverse().map((p) => (
-                <option key={p}>{p}</option>
-              ))}
-            </select>
-          </label>
+          {renderFilters(true, true)}
           <button
             type="button"
             className="mt-6 text-sm text-brand-dark underline underline-offset-4"
@@ -243,44 +390,48 @@ export function GeographyPage({ initialSection = "" }: { initialSection?: string
               utbildning de går just nu.
             </p>
           </div>
-          {query.isError ? (
-            <div role="alert" className="rounded-xl border border-border p-6">
-              Statistiken kunde inte hämtas.{" "}
-              <button type="button" className="underline" onClick={() => query.refetch()}>
-                Försök igen
-              </button>
-            </div>
-          ) : query.isPending ? (
-            <div role="status" className="min-h-96 animate-pulse rounded-xl bg-neutral-surface p-6">
-              Hämtar SCB-statistik…
-            </div>
-          ) : (
-            <>
-              <Figure
-                id="utbildningsfloden"
-                title="Vad fyller på och vad minskar utbildningsgruppen?"
-                intro="Jämför olika vägar in i och ut ur gruppen. Figurerna visar förändringar mellan två år, inte övergångar mellan enskilda utbildningsprogram."
-              >
-                {!row ? (
-                  <p>Inga publicerade värden finns för urvalet.</p>
-                ) : (
-                  <>
-                    {period === "2023-2024" && (
-                      <p className="mb-7 rounded-lg bg-brand-light p-4 text-base leading-relaxed">
-                        För 2023–2024 saknas vissa uppgifter om nya utbildningar. SCB har ändrat hur
-                        utbildning klassificeras. Saknade värden betyder inte att flödet är noll.
-                        Välj ett tidigare årsintervall för att se fler utbildningsflöden.
-                      </p>
-                    )}
-                    <GeographyFlow row={row} />
-                  </>
-                )}
-              </Figure>
-              <Figure
-                id="befolkningsutveckling"
-                title="Hur har utbildningsgruppen förändrats?"
-                intro="Följ antalet personer eller SCB:s nettoförändring mellan år. Historiken visar alla tillgängliga årsintervall för ditt urval."
-              >
+          <Figure
+            id="utbildningsfloden"
+            title={flowTitle}
+            exportData={flowData}
+            exportReady={!queryStatus && !!row}
+            fullscreenFilters={
+              <div className="grid gap-x-4 sm:grid-cols-2 lg:grid-cols-4">
+                {renderFilters(false, true)}
+              </div>
+            }
+            intro="Jämför olika vägar in i och ut ur gruppen. Figurerna visar förändringar mellan två år, inte övergångar mellan enskilda utbildningsprogram."
+          >
+            {queryStatus ??
+              (!row ? (
+                <p>Inga publicerade värden finns för urvalet.</p>
+              ) : (
+                <>
+                  {period === "2023-2024" && (
+                    <p className="mb-7 rounded-lg bg-brand-light p-4 text-base leading-relaxed">
+                      För 2023–2024 saknas vissa uppgifter om nya utbildningar. SCB har ändrat hur
+                      utbildning klassificeras. Saknade värden betyder inte att flödet är noll. Välj
+                      ett tidigare årsintervall för att se fler utbildningsflöden.
+                    </p>
+                  )}
+                  <GeographyFlow row={row} />
+                </>
+              ))}
+          </Figure>
+          <Figure
+            id="befolkningsutveckling"
+            title={historyTitle}
+            exportData={historyData}
+            exportReady={
+              !queryStatus && history.some((r) => r[series === "population" ? 4 : 5] !== null)
+            }
+            fullscreenFilters={
+              <div className="grid gap-x-4 sm:grid-cols-2 lg:grid-cols-3">{renderFilters()}</div>
+            }
+            intro="Följ antalet personer eller SCB:s nettoförändring mellan år. Historiken visar alla tillgängliga årsintervall för ditt urval."
+          >
+            {queryStatus ?? (
+              <>
                 <div
                   className="mb-5 flex flex-wrap gap-2"
                   role="group"
@@ -303,6 +454,8 @@ export function GeographyPage({ initialSection = "" }: { initialSection?: string
                 </div>
                 <div
                   className="h-80"
+                  data-visualization-export
+                  data-visualization-grow
                   role="img"
                   aria-label={`${series === "population" ? "Antal personer" : "Nettoförändring"} över tid i ${chosenName}. Värden finns också i datatabellen.`}
                 >
@@ -350,12 +503,19 @@ export function GeographyPage({ initialSection = "" }: { initialSection?: string
                   Antal personer avser årsintervallets sista år. Netto visas som SCB publicerar det
                   och räknas inte fram från de avrundade delflödena.
                 </p>
-              </Figure>
-            </>
-          )}
+              </>
+            )}
+          </Figure>
           <Figure
             id="kommunjamforelse"
-            title="Var finns de utbildade?"
+            title={rankingTitle}
+            exportData={rankingData}
+            exportReady={comparison.isSuccess && visibleRows.length > 0}
+            fullscreenFilters={
+              <div className="grid gap-x-4 sm:grid-cols-2 lg:grid-cols-4">
+                {renderFilters(false, true)}
+              </div>
+            }
             intro="Jämför antalet personer i samma utbildningsgrupp och årsintervall. Större kommuner har ofta fler personer – jämförelsen visar antal, inte andelar eller kompetensbrist."
           >
             {comparison.isPending ? (
@@ -372,15 +532,20 @@ export function GeographyPage({ initialSection = "" }: { initialSection?: string
                 <h3 className="mb-5 text-lg">
                   {showAll ? "Alla 14 kommuner" : "Topp 5 kommuner"} · {period.slice(-4)}
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-4" data-visualization-export>
                   {visibleRows.map((item) => (
-                    <button
-                      type="button"
+                    <div
                       key={item.geo}
-                      onClick={() => changeGeo(item.geo)}
-                      aria-pressed={geo === item.geo}
-                      className={`block w-full rounded-lg p-3 text-left hover:bg-brand-light focus-visible:outline ${geo === item.geo ? "bg-brand-light ring-1 ring-brand" : ""}`}
+                      className={`relative rounded-lg p-3 hover:bg-brand-light ${geo === item.geo ? "bg-brand-light ring-1 ring-brand" : ""}`}
                     >
+                      <button
+                        type="button"
+                        onClick={() => changeGeo(item.geo)}
+                        aria-pressed={geo === item.geo}
+                        aria-label={`Välj ${regions[item.geo]}, ${rmiNumber(item.row?.[4])}`}
+                        className="absolute inset-0 w-full rounded-lg focus-visible:outline"
+                        data-export-ignore
+                      />
                       <span className="flex justify-between gap-4 text-base">
                         <span>{regions[item.geo]}</span>
                         <span className="tabular-nums">{rmiNumber(item.row?.[4])}</span>
@@ -396,7 +561,7 @@ export function GeographyPage({ initialSection = "" }: { initialSection?: string
                           }}
                         />
                       </span>
-                    </button>
+                    </div>
                   ))}
                 </div>
                 <div className="mt-6 flex items-center gap-4">
