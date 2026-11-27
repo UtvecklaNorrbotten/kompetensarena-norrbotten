@@ -6,6 +6,7 @@ on:
       - scripts/fetch_workforce.py
       - scripts/check_workforce_browser.cjs
       - src/components/labour-market/Workforce*.tsx
+      - src/components/geography/MunicipalityMap.tsx
       - .github/workflows/etl-workforce-view.yml
   workflow_dispatch:
     inputs:
@@ -76,6 +77,13 @@ jobs:
             sleep 2
           done
           node scripts/check_workforce_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always() && github.event_name == 'push'
+        with:
+          name: workforce-browser
+          path: /tmp/workforce-*.png
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Publicera verifierad version
         run: |
           if [ -n "$(git status --porcelain src/data/workforce public/data/workforce)" ]; then

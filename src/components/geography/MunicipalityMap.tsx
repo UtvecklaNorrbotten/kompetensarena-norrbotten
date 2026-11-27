@@ -54,10 +54,7 @@ export function MunicipalityMap({
                 }
               }}
             >
-              <title>
-                {shape.name}
-                {values ? `: ${values[shape.code]?.label ?? "Uppgift saknas"}` : ""}
-              </title>
+              <title>{`${shape.name}${values ? `: ${values[shape.code]?.label ?? "Uppgift saknas"}` : ""}`}</title>
             </path>
             {geo === shape.code && (
               <text
