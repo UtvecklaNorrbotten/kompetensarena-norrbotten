@@ -352,11 +352,15 @@ export function WorkforcePage() {
                   id="grupper"
                   title={
                     dataset === "occupation-year"
-                      ? "Vilka yrken har flest äldre anställda?"
+                      ? "Vilka yrken har flest anställda i vald åldersgrupp?"
                       : dataset === "industry-age"
-                        ? "Vilka branscher har flest äldre sysselsatta i riket?"
+                        ? "Vilka branscher har flest sysselsatta i vald åldersgrupp i riket?"
                         : dataset === "retirement-education"
-                          ? "Vilka utbildningsgrupper har många sysselsatta nära pensionsåldern?"
+                          ? unit === "%"
+                            ? "Vilka utbildningsgrupper har högst andel sysselsatta 60–64 år?"
+                            : info.measures[measure]!.startsWith("Samtliga")
+                              ? "Vilka utbildningsgrupper har flest sysselsatta 20–64 år?"
+                              : "Vilka utbildningsgrupper har flest sysselsatta 60–64 år?"
                           : "Hur skiljer sig arbetskraften mellan grupper?"
                   }
                   intro={`${name} · ${sexName} · ${info.measures[measure]}. ${info.group !== "Alder" && age ? info.ages[age] : "Åldersgrupper kan överlappa och ska inte summeras."}`}
