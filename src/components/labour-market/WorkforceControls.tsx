@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 export function Select({
   label,
   value,
@@ -10,17 +10,21 @@ export function Select({
   onChange: (s: string) => void;
   children: ReactNode;
 }) {
+  const id = useId();
   return (
-    <label className="mt-5 block text-sm font-semibold">
-      {label}
+    <div className="mt-5 min-w-0">
+      <label htmlFor={id} className="block text-sm font-semibold">
+        {label}
+      </label>
       <select
-        className="mt-2 w-full rounded-md border border-border bg-surface p-2 text-base font-normal"
+        id={id}
+        className="mt-2 w-full min-w-0 rounded-md border border-border bg-surface p-2 text-base font-normal"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       >
         {children}
       </select>
-    </label>
+    </div>
   );
 }
 export function Figure({

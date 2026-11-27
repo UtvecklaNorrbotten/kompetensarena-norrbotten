@@ -4,6 +4,8 @@ on:
     branches: [feature/arbetsmarknad-arbetskraft]
     paths:
       - scripts/fetch_workforce.py
+      - scripts/check_workforce_browser.cjs
+      - src/components/labour-market/Workforce*.tsx
       - .github/workflows/etl-workforce-view.yml
   workflow_dispatch:
     inputs:

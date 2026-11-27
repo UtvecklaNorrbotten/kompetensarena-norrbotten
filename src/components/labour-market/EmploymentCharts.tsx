@@ -176,18 +176,19 @@ export function EmploymentChart({
                       isAnimationActive={false}
                     />
                   ))}
-                {segments.length > 1 &&
-                  ["2022", "2024"]
-                    .filter((y) => rows.some((r) => r.label === y))
-                    .map((y) => (
-                      <ReferenceLine
-                        key={y}
-                        x={y}
-                        stroke="var(--ink-muted)"
-                        strokeDasharray="4 4"
-                        label={{ value: `Metod ${y}`, position: "insideTop", fontSize: 12 }}
-                      />
-                    ))}
+                {rows
+                  .filter(
+                    (r, i) => i > 0 && (r.segment ?? "all") !== (rows[i - 1]!.segment ?? "all"),
+                  )
+                  .map(({ label }) => (
+                    <ReferenceLine
+                      key={label}
+                      x={label}
+                      stroke="var(--ink-muted)"
+                      strokeDasharray="4 4"
+                      label={{ value: `Metod ${label}`, position: "insideTop", fontSize: 12 }}
+                    />
+                  ))}
               </LineChart>
             )}
           </ResponsiveContainer>
