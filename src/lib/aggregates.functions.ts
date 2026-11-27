@@ -202,3 +202,5 @@ export { getUvasView } from './uvas.functions';
 export { getEmploymentSlice, getEmploymentComparison } from './employment.functions';
 
 export { getMatchingSlice, getMatchingComparison } from "./matching.functions";
+
+export { getWorkforceSlice, getWorkforceComparison } from "./workforce.functions";

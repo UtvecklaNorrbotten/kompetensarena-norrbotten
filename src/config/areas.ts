@@ -14,6 +14,7 @@ export const areas = [
     description:
       "Följ sysselsättning, arbetslöshet och efterfrågan på arbetskraft i kommuner, län och riket.",
     topics: [
+      { slug: "arbetskraft", title: "Arbetskraft" },
       { slug: "sysselsattning", title: "Sysselsättning" },
       { slug: "arbetsloshet", title: "Arbetslöshet" },
       { slug: "langtidsarbetsloshet", title: "Långtidsarbetslöshet" },

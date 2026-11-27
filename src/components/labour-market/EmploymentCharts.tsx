@@ -28,12 +28,16 @@ export function EmploymentChart({
   rank = false,
   name,
   other = "Riket",
+  filename = "sysselsattning",
+  source = "",
 }: {
   rows: Row[];
   unit: string;
   rank?: boolean;
   name: string;
   other?: string;
+  filename?: string;
+  source?: string;
 }) {
   const [table, setTable] = useState(false);
   const hasOther = !rank && rows.some((r) => r.other != null);
@@ -54,13 +58,14 @@ export function EmploymentChart({
   }));
   const download = () => {
     const csv = [
-      [rank ? "Kategori" : "Period", name, other, "Enhet", "SCB-status"],
+      [rank ? "Kategori" : "Period", name, other, "Enhet", "SCB-status", "Källa och urval"],
       ...rows.map((r) => [
         r.label,
         r.value == null ? "Uppgift saknas" : employmentNumber(r.value, "", decimals),
         r.other == null ? "Uppgift saknas" : employmentNumber(r.other, r.otherStatus, decimals),
         unit,
         r.status ?? "",
+        source,
       ]),
     ]
       .map((r) => r.map((v) => `"${String(v).replaceAll('"', '""')}"`).join(";"))
@@ -68,7 +73,7 @@ export function EmploymentChart({
     const url = URL.createObjectURL(new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" }));
     const a = document.createElement("a");
     a.href = url;
-    a.download = "sysselsattning.csv";
+    a.download = `${filename}.csv`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
