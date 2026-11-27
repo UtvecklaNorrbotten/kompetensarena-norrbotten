@@ -5,14 +5,10 @@ import { EducationHistoryPreview } from "./EducationHistoryPreview";
 import { educationGenderColor } from "@/lib/education-colors";
 import { useLegendClick } from "@/lib/legend-click";
 import { Download } from "@/components/icons";
-import {
-  educationCsv,
-  downloadBlob,
-  exportFilename,
-  saveEducationPng,
-  wrapChartLabel,
-} from "@/lib/education-export";
-import { useId, useMemo, useRef, useState } from "react";
+import { educationCsv, downloadBlob, exportFilename, wrapChartLabel } from "@/lib/education-export";
+import { useId, useMemo, useState, type ReactNode } from "react";
+import { Visualization } from "@/components/charts/Visualization";
+import { observation, periodRange, type VisualizationExport } from "@/lib/visualization-export";
 import { useQuery } from "@tanstack/react-query";
 import { getUkaEducationSlice } from "@/lib/aggregates.functions";
 import { readAllUkaPages, toUkaRows } from "@/lib/uka-education";
@@ -32,6 +28,7 @@ import { Switch } from "@/components/ui/switch";
 import type { EducationIndicator } from "@/config/education";
 import {
   dimensionLabels,
+  dimensions,
   formatUkaValue as format,
   periodLabel,
   periodOrder,
@@ -151,12 +148,16 @@ export function EducationFigure({
   filters,
   university,
   fetched,
+  fullscreenFilters,
+  catalogLoading,
 }: {
   indicator: EducationIndicator;
   catalog: UkaCatalogEntry;
   filters: UkaFilters;
   university: string;
   fetched: string | null;
+  fullscreenFilters?: ReactNode;
+  catalogLoading?: boolean;
 }) {
   const [detail, setDetail] = useState(false);
   const [hiddenGenders, setHiddenGenders] = useState<string[]>([]);
@@ -170,15 +171,14 @@ export function EducationFigure({
     y: number;
   } | null>(null);
   const switchId = useId();
-  const chartRef = useRef<HTMLDivElement>(null);
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState("");
+  const [hiddenOverview, setHiddenOverview] = useState<string[]>([]);
   const overviewTarget = useMemo(() => ukaTarget(catalog, filters), [catalog, filters]);
   const detailTarget = useMemo(() => ukaTarget(catalog, filters, true), [catalog, filters]);
   const overviewQuery = useUkaSlice(university, indicator.id, overviewTarget);
   const detailQuery = useUkaSlice(university, indicator.id, detailTarget, detail);
   const activeQuery = detail ? detailQuery : overviewQuery;
   const sliceLoading =
+    catalogLoading ||
     (overviewQuery.isPending && overviewQuery.fetchStatus !== "idle") ||
     (detail && detailQuery.isPending && detailQuery.fetchStatus !== "idle");
   const sliceError = overviewQuery.isError || (detail && detailQuery.isError);
@@ -279,51 +279,94 @@ export function EducationFigure({
     : selected.rows;
   const filename =
     exportFilename(indicator.id, university) + (detail ? "-fordjupning" : "-oversikt");
-  const contextText = `${university} · ${useGenders ? (series.includes("Total") ? "Kvinnor, män och total" : "Kvinnor och män") : "Samtliga"}${selectedFilters
-    .filter(([key]) => selected.applied.includes(key))
-    .map(([key, value]) => ` · ${dimensionLabels[key] ?? key}: ${value}`)
-    .join("")}`;
   const rowHeight = Math.max(
     useGenders ? 90 : 48,
     ...bars.map((r) => wrapChartLabel(String(r["category"]), 26).length * 18 + 20),
   );
-  async function saveFigure() {
-    const svg = Array.from(
-      chartRef.current?.querySelectorAll<SVGSVGElement>("svg.recharts-surface") ?? [],
-    );
-    if (!svg.length) {
-      setSaveError("Figuren har inte laddats färdigt. Försök igen.");
-      return;
-    }
-    setSaving(true);
-    setSaveError("");
-    try {
-      await saveEducationPng(svg, filename, indicator.title, [
-        contextText,
-        indicator.explanation,
-        ...(useGenders
-          ? [
-              `Grön: Kvinnor. Gul/orange: Män (streckad linje i översikt).${series.includes("Total") ? " Ljusgrå: Samtliga." : ""}`,
-            ]
-          : []),
-        `Enhet: ${indicator.unit}. ${detail ? `Period: ${periodText}. ${!showAll && groupNames.length > 5 ? "Topp 5 visas." : "Alla grupper visas."}` : "Samtliga tillgängliga perioder visas."}`,
-        ...(ignored.length
-          ? [
-              `Urval utan motsvarighet i måttet: ${ignored.map(([key]) => dimensionLabels[key] ?? key).join(", ")}.`,
-            ]
-          : []),
-        `Källa: UKÄ, Högskolan i siffror${fetched ? `. Senast hämtad: ${fetched.slice(0, 10)}` : ""}`,
-      ]);
-    } catch (error) {
-      setSaveError(error instanceof Error ? error.message : "Figuren kunde inte sparas.");
-    } finally {
-      setSaving(false);
-    }
-  }
+  const hidden = detail ? hiddenGenders : hiddenOverview;
+  const legend = series
+    .filter((gender) => !hidden.includes(detail ? gender : `s0-${gender}`))
+    .map((gender) => ({
+      label: gender === "Total" ? "Samtliga" : gender,
+      color: educationGenderColor(gender),
+      dashed: !detail && gender === "Män",
+      gender,
+    }));
+  const exportRows = tableRows.filter((r) => legend.some((item) => item.gender === r.gender));
+  const dimensionKeys = selected.breakdown ? selected.breakdown.split("|") : [];
+  const periods = [...new Set(exportRows.map((r) => r.period))]
+    .sort((a, b) => periodOrder(a) - periodOrder(b))
+    .map(periodLabel);
+  const sourceUrl = `https://statistik-www.uka.se/export/?indicator=${indicator.ukaId}`;
+  const exportData: VisualizationExport = {
+    title: indicator.title,
+    subtitle: indicator.explanation,
+    filename: detail
+      ? `${filename}-${detailSelection.year}${detailSelection.semester ? `-${detailTerm.toLowerCase()}` : ""}`
+      : filename,
+    definition: indicator.definition,
+    source: {
+      producer: "Universitetskanslersämbetet (UKÄ)",
+      product: "Högskolan i siffror",
+      identifier: String(indicator.ukaId),
+      url: sourceUrl,
+      retrieved: fetched,
+    },
+    period: periodRange(periods),
+    unit: indicator.unit,
+    anchor: indicator.id,
+    filters: {
+      Lärosäte: university,
+      Kön: legend.map(({ label }) => label).join(", ") || "Alla serier dolda",
+      ...Object.fromEntries(
+        selectedFilters
+          .filter(([key]) => selected.applied.includes(key))
+          .map(([key, value]) => [dimensionLabels[key] ?? key, value]),
+      ),
+      Visning: detail
+        ? !showAll && groupNames.length > 5
+          ? "Fördjupning, topp 5"
+          : "Fördjupning, alla grupper"
+        : "Översikt",
+    },
+    notes: [
+      ...(!useGenders ? ["UKÄ saknar könsuppdelning i detta urval."] : []),
+      ...(ignored.length
+        ? [
+            `Uppdelning saknas för: ${ignored.map(([key]) => dimensionLabels[key] ?? key).join(", ")}.`,
+          ]
+        : []),
+      "Tomma källvärden redovisas som Uppgift saknas när källuttaget saknar särskild statuskod.",
+    ],
+    legend,
+    columns: [
+      "Lärosäte",
+      "Period",
+      "Kön",
+      ...dimensionKeys.map((key) => dimensionLabels[key] ?? key),
+      "Värde",
+      "Status",
+    ],
+    rows: [...exportRows]
+      .sort((a, b) => (detail ? 0 : periodOrder(a.period) - periodOrder(b.period)))
+      .map((r) => [
+        r.university,
+        periodLabel(r.period),
+        r.gender === "Total" ? "Samtliga" : r.gender,
+        ...dimensionKeys.map((key) => dimensions(r)[key] || "Samtliga"),
+        ...observation(r.value),
+      ]),
+  };
 
   return (
-    <article className="rounded-xl border border-border bg-surface p-5 md:p-7">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <Visualization
+      id={indicator.id}
+      data={exportData}
+      exportReady={!sliceLoading && !sliceError && hasValues && legend.length > 0}
+      fullscreenFilters={fullscreenFilters}
+      className="rounded-xl border border-border bg-surface p-5 md:p-7"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-4 pr-12">
         <div className="min-w-0 flex-1 basis-60">
           <h3 className="text-xl md:text-2xl">
             <ExplainedTerm term={indicator.title} explanation={indicator.definition} />
@@ -333,16 +376,6 @@ export function EducationFigure({
           </p>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-4">
-          <button
-            type="button"
-            onClick={saveFigure}
-            disabled={!hasValues || saving}
-            className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 text-sm font-medium text-brand-dark hover:bg-brand-light disabled:opacity-50"
-            aria-label={`Spara figur: ${indicator.title}`}
-          >
-            <Download className="size-4" aria-hidden />
-            {saving ? "Sparar…" : "Spara figur"}
-          </button>
           <div className="flex shrink-0 items-center gap-2 text-sm">
             <span className={!detail ? "font-semibold text-brand-dark" : "text-ink-muted"}>
               Översikt
@@ -350,7 +383,10 @@ export function EducationFigure({
             <Switch
               id={switchId}
               checked={detail}
-              onCheckedChange={setDetail}
+              onCheckedChange={(value) => {
+                setHiddenOverview([]);
+                setDetail(value);
+              }}
               aria-label={`Visa fördjupning för ${indicator.title}`}
             />
             <label
@@ -362,11 +398,6 @@ export function EducationFigure({
           </div>
         </div>
       </div>
-      {saveError && (
-        <p role="alert" className="mt-3 text-sm text-destructive">
-          {saveError}
-        </p>
-      )}
       {latestOverview && !detail && (
         <div className="mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <strong className="text-3xl text-brand-dark">
@@ -489,7 +520,7 @@ export function EducationFigure({
               />
               <div className="overflow-x-auto">
                 <div
-                  ref={chartRef}
+                  data-visualization-export
                   className="min-w-[620px]"
                   style={{ height: Math.max(260, bars.length * rowHeight + 80) }}
                 >
@@ -605,11 +636,12 @@ export function EducationFigure({
               )}
             </>
           ) : (
-            <div ref={chartRef}>
+            <div>
               <EducationTimeline
                 rows={selected.rows}
                 unit={indicator.unit}
                 valueAxisLabel={valueAxisLabel}
+                visibility={{ hidden: hiddenOverview, setHidden: setHiddenOverview }}
               />
             </div>
           )}
@@ -690,16 +722,11 @@ export function EducationFigure({
         />
       )}
       <div className="mt-5 flex flex-wrap justify-between gap-2 border-t border-border pt-3 text-sm text-ink-muted">
-        <a
-          href={`https://statistik-www.uka.se/export/?indicator=${indicator.ukaId}`}
-          target="_blank"
-          rel="noreferrer"
-          className="text-brand-dark underline"
-        >
+        <a href={sourceUrl} target="_blank" rel="noreferrer" className="text-brand-dark underline">
           Källa: UKÄ · Högskolan i siffror
         </a>
         {fetched && <span>Senast hämtad: {fetched.slice(0, 10)}</span>}
       </div>
-    </article>
+    </Visualization>
   );
 }

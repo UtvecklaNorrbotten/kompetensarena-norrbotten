@@ -30,7 +30,7 @@ export {
 } from "nucleo-core-essential-outline-24";
 
 // The free outline sets have no matching panel, grip, plain circle or ellipsis.
-// Keep these existing symbols rather than substitute misleading Nucleo artwork.
+// Keep recognizable Lucide symbols where the free sets have no matching icon.
 export {
   PanelLeft,
   PanelLeftClose,
@@ -38,5 +38,8 @@ export {
   Circle,
   GripVertical,
   MoreHorizontal,
+  Clipboard,
+  FileSpreadsheet,
+  Maximize,
   createLucideIcon,
 } from "lucide-react";

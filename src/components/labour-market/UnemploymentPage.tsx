@@ -1,3 +1,5 @@
+import shapes from "@/data/norrbotten-map.json";
+import { exportFilename, observation, type VisualizationExport } from "@/lib/visualization-export";
 import { UvasSection } from "./UvasSection";
 import { countAxis } from "@/lib/education-axis";
 import { useState, type ReactNode } from "react";
@@ -152,15 +154,63 @@ export function UnemploymentPage() {
         ? r.row[3]
         : null;
   comparisonRows.sort((a, b) => (value(b) ?? -Infinity) - (value(a) ?? -Infinity));
+  const comparisonByGeo = new Map(comparison.data?.map(({ geo, row }) => [geo, row]));
+  const mapRows = shapes.map(({ code, name }) => {
+    const row = comparisonByGeo.get(code);
+    const value = afRate(row?.[3], row?.[4]);
+    const suppressed = row?.[3] === "<5" || row?.[4] === "<5";
+    return { code, name, value, suppressed };
+  });
   const mapData = Object.fromEntries(
-    (comparison.data ?? []).map((r) => [
-      r.geo,
+    mapRows.map(({ code, value, suppressed }) => [
+      code,
       {
-        value: afRate(r.row[3], r.row[4]),
-        label: `${afNumber(afRate(r.row[3], r.row[4]), 1)}${afRate(r.row[3], r.row[4]) !== null ? " %" : ""}`,
+        value,
+        label: suppressed ? "Sekretess" : `${afNumber(value, 1)}${value !== null ? " %" : ""}`,
       },
     ]),
   );
+  const mapExport: VisualizationExport = {
+    title: "Arbetslöshet i Norrbottens kommuner",
+    subtitle: "Andel inskrivna arbetslösa av arbetskraften.",
+    filename: exportFilename(
+      "arbetsloshetskarta-norrbotten",
+      `${afGroups[group]}-${sexNames[sex]}-${period}`,
+    ),
+    indicator: "Andel inskrivna arbetslösa",
+    definition:
+      "Antal inskrivna arbetslösa vid månadens slut delat med Arbetsförmedlingens BAS-arbetskraft för samma grupp, kön, månad och geografi.",
+    unit: "%",
+    period,
+    anchor: "geografi",
+    source: {
+      producer: "Arbetsförmedlingen",
+      product: "Inskrivna arbetslösa som andel av BAS-arbetskraften",
+      url: catalog.sources.bas.url,
+      retrieved: catalog.retrieved,
+    },
+    filters: {
+      Område: "Norrbottens 14 kommuner",
+      Grupp: afGroups[group]!,
+      Kön: sexNames[sex]!,
+      Markerad: name,
+    },
+    notes: [
+      "Mörkare grönt visar högre andel. Skalan anpassas till urvalet. Streckat visar saknade eller sekretessmarkerade uppgifter.",
+      "Arbetskraftens storlek bygger på SCB:s BAS och avser ett eftersläpande tolvmånadersgenomsnitt.",
+      "Kommungränser: okfse/sweden-geojson.",
+    ],
+    columns: ["Kommunkod", "Kommun", "Månad", "Gruppkod", "Grupp", "Kön", "Andel (%)", "Status"],
+    rows: mapRows.map(({ code, name, value, suppressed }) => [
+      code,
+      name,
+      period,
+      group,
+      afGroups[group]!,
+      sexNames[sex]!,
+      ...observation(value, suppressed),
+    ]),
+  };
   const groupQuery = useQuery({
     queryKey: ["af-groups", geo, period],
     queryFn: () => getAfUnemploymentGroups({ data: { geo, period } }),
@@ -176,6 +226,143 @@ export function UnemploymentPage() {
   const signed = (v: number | null) => `${v !== null && v > 0 ? "+" : ""}${afNumber(v, 1)}`;
   const old = new Map((previous.data ?? []).map((r) => [r.geo, r.row]));
   const hasError = query.isError || national.isError;
+  function seriesMetadata(rate: boolean) {
+    const indicator = rate ? "Andel inskrivna arbetslösa" : "Antal inskrivna arbetslösa";
+    return {
+      title: rate
+        ? "Hur har andelen arbetslösa utvecklats?"
+        : "Hur har antalet arbetslösa förändrats?",
+      indicator,
+      filename: exportFilename(indicator, `${name}-${afGroups[group]}-${sexNames[sex]}-${period}`),
+      subtitle: mean
+        ? "Rullande medelvärde över 12 månader."
+        : "Månadsuppgifter vid månadens slut.",
+      definition: rate
+        ? mapExport.definition!
+        : "Antal inskrivna arbetslösa vid månadens slut, inklusive öppet arbetslösa och arbetslösa i program.",
+      source: rate
+        ? mapExport.source
+        : {
+            ...mapExport.source,
+            product: "Tidigare statistik – tidsserier",
+            url: catalog.source,
+          },
+      filters: {
+        Geografi: name,
+        Grupp: afGroups[group]!,
+        Kön: sexNames[sex]!,
+        Referensmånad: period,
+        Visning: mean ? "Rullande 12-månadersmedel" : "Månadsdata",
+      },
+      anchor: rate ? "utveckling" : "antal",
+      notes: rate
+        ? [
+            "BAS-andelar finns från 2023 och uppdelning efter utbildningsnivå från april 2024. Arbetskraftens storlek avser ett eftersläpande tolvmånadersgenomsnitt.",
+          ]
+        : [
+            "Antal för samtliga finns från " +
+              catalog.historyStart +
+              ". Gruppserierna i denna vy börjar 2023.",
+          ],
+    };
+  }
+
+  function renderFilters(withHistory = false) {
+    return (
+      <>
+        <label className="mt-5 block text-sm font-semibold">
+          Geografi
+          <select className={selectClass} value={geo} onChange={(e) => changeGeo(e.target.value)}>
+            <option value="00">Riket</option>
+            <optgroup label="Län">
+              {Object.entries(geographies)
+                .filter(([, g]) => g.level === "län")
+                .sort((a, b) => a[1].name.localeCompare(b[1].name, "sv"))
+                .map(([c, g]) => (
+                  <option key={c} value={c}>
+                    {g.name}
+                  </option>
+                ))}
+            </optgroup>
+            <optgroup label="Kommuner">
+              {Object.entries(geographies)
+                .filter(([, g]) => g.level === "kommun")
+                .sort((a, b) => a[1].name.localeCompare(b[1].name, "sv"))
+                .map(([c, g]) => (
+                  <option key={c} value={c}>
+                    {g.name}
+                  </option>
+                ))}
+            </optgroup>
+          </select>
+        </label>
+        <label className="mt-4 block text-sm font-semibold">
+          Kön
+          <select
+            className={selectClass}
+            value={sex}
+            onChange={(e) => setSex(e.target.value as typeof sex)}
+          >
+            {Object.entries(sexNames).map(([s, n]) => (
+              <option key={s} value={s}>
+                {n}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="mt-4 block text-sm font-semibold">
+          Grupp
+          <select className={selectClass} value={group} onChange={(e) => setGroup(e.target.value)}>
+            {Object.entries(afGroups).map(([g, n]) => (
+              <option key={g} value={g}>
+                {n}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="mt-4 block text-sm font-semibold">
+          Referensmånad
+          <select
+            className={selectClass}
+            value={period}
+            onChange={(e) => setPeriod(e.target.value)}
+          >
+            {[...catalog.periods].reverse().map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+        </label>
+        {withHistory && (
+          <>
+            <label className="mt-4 block text-sm font-semibold">
+              Historik
+              <select
+                className={selectClass}
+                value={years}
+                onChange={(e) => setYears(e.target.value)}
+              >
+                <option value="5">Senaste 5 åren</option>
+                <option value="10">Senaste 10 åren</option>
+                <option value="all">All tillgänglig historik</option>
+              </select>
+            </label>
+            <label className="mt-4 flex items-start gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={mean}
+                onChange={(e) => setMean(e.target.checked)}
+                className="mt-1"
+              />
+              Visa rullande 12-månadersmedel i linjediagrammen
+            </label>
+          </>
+        )}
+      </>
+    );
+  }
+
   return (
     <div className="font-normal">
       <Section tone="light" className="py-9 md:py-12">
@@ -213,99 +400,7 @@ export function UnemploymentPage() {
             aria-label="Statistikens urval"
           >
             <h2 className="text-xl">Välj vad du vill jämföra</h2>
-            <label className="mt-5 block text-sm font-semibold">
-              Geografi
-              <select
-                className={selectClass}
-                value={geo}
-                onChange={(e) => changeGeo(e.target.value)}
-              >
-                <option value="00">Riket</option>
-                <optgroup label="Län">
-                  {Object.entries(geographies)
-                    .filter(([, g]) => g.level === "län")
-                    .sort((a, b) => a[1].name.localeCompare(b[1].name, "sv"))
-                    .map(([c, g]) => (
-                      <option key={c} value={c}>
-                        {g.name}
-                      </option>
-                    ))}
-                </optgroup>
-                <optgroup label="Kommuner">
-                  {Object.entries(geographies)
-                    .filter(([, g]) => g.level === "kommun")
-                    .sort((a, b) => a[1].name.localeCompare(b[1].name, "sv"))
-                    .map(([c, g]) => (
-                      <option key={c} value={c}>
-                        {g.name}
-                      </option>
-                    ))}
-                </optgroup>
-              </select>
-            </label>
-            <label className="mt-4 block text-sm font-semibold">
-              Kön
-              <select
-                className={selectClass}
-                value={sex}
-                onChange={(e) => setSex(e.target.value as typeof sex)}
-              >
-                {Object.entries(sexNames).map(([s, n]) => (
-                  <option key={s} value={s}>
-                    {n}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="mt-4 block text-sm font-semibold">
-              Grupp
-              <select
-                className={selectClass}
-                value={group}
-                onChange={(e) => setGroup(e.target.value)}
-              >
-                {Object.entries(afGroups).map(([g, n]) => (
-                  <option key={g} value={g}>
-                    {n}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="mt-4 block text-sm font-semibold">
-              Referensmånad
-              <select
-                className={selectClass}
-                value={period}
-                onChange={(e) => setPeriod(e.target.value)}
-              >
-                {[...catalog.periods].reverse().map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="mt-4 block text-sm font-semibold">
-              Historik
-              <select
-                className={selectClass}
-                value={years}
-                onChange={(e) => setYears(e.target.value)}
-              >
-                <option value="5">Senaste 5 åren</option>
-                <option value="10">Senaste 10 åren</option>
-                <option value="all">All tillgänglig historik</option>
-              </select>
-            </label>
-            <label className="mt-4 flex items-start gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={mean}
-                onChange={(e) => setMean(e.target.checked)}
-                className="mt-1"
-              />
-              Visa rullande 12-månadersmedel i linjediagrammen
-            </label>
+            {renderFilters(true)}
             <p className="mt-3 text-xs text-ink-muted">
               Nyckeltal och geografiska jämförelser visar alltid vald månad.
             </p>
@@ -394,6 +489,13 @@ export function UnemploymentPage() {
                   country: geo === "00" ? null : (country.get(p.period)?.rate ?? null),
                 }))}
                 title="Andel inskrivna arbetslösa"
+                exportMetadata={seriesMetadata(true)}
+                geoCode={geo}
+                fullscreenFilters={
+                  <div className="grid gap-x-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {renderFilters(true)}
+                  </div>
+                }
                 name={name}
                 unit="%"
               />
@@ -417,6 +519,13 @@ export function UnemploymentPage() {
                   country: geo === "00" ? null : (country.get(p.period)?.count ?? null),
                 }))}
                 title="Antal inskrivna arbetslösa"
+                exportMetadata={seriesMetadata(false)}
+                geoCode={geo}
+                fullscreenFilters={
+                  <div className="grid gap-x-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {renderFilters(true)}
+                  </div>
+                }
                 name={name}
                 unit="personer"
               />
@@ -464,13 +573,24 @@ export function UnemploymentPage() {
                   </button>
                 </p>
               )}
-              {comparison.isPending ? (
+              {comparison.isPending && (
                 <p role="status" className="py-8">
                   Hämtar jämförelse…
                 </p>
-              ) : (
-                <div className="mt-5 grid items-start gap-6 lg:grid-cols-[minmax(180px,0.75fr)_minmax(0,1.5fr)]">
-                  <MunicipalityMap geo={geo} onGeo={changeGeo} values={mapData} />
+              )}
+              <div className="mt-5 grid items-start gap-6 lg:grid-cols-[minmax(180px,0.75fr)_minmax(0,1.5fr)]">
+                <MunicipalityMap
+                  geo={geo}
+                  onGeo={changeGeo}
+                  values={comparison.isSuccess ? mapData : {}}
+                  exportData={mapExport}
+                  fullscreenFilters={
+                    <div className="grid gap-x-4 sm:grid-cols-2 lg:grid-cols-4">
+                      {renderFilters()}
+                    </div>
+                  }
+                />
+                {!comparison.isPending && (
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <caption className="py-3 text-left font-semibold">
@@ -533,8 +653,8 @@ export function UnemploymentPage() {
                       förändring.
                     </p>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </Figure>
             <Figure
               id="grupper"

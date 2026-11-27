@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type { UkaFilters } from "@/lib/uka-view";
 import { dimensionLabels } from "@/lib/uka-view";
 import { ExplainedTerm } from "@/components/ui/ExplainedTerm";
@@ -12,6 +13,7 @@ export function EducationFilters({
   onFilters,
   options,
   loading,
+  compact = false,
 }: {
   universities: string[];
   university: string;
@@ -20,11 +22,17 @@ export function EducationFilters({
   onFilters: (filters: UkaFilters) => void;
   options: Record<string, string[]>;
   loading: boolean;
+  compact?: boolean;
 }) {
+  const id = useId();
   return (
     <aside
       aria-label="Filter för Utbildning"
-      className="rounded-xl border border-border bg-surface p-5 lg:sticky lg:top-24 lg:max-h-[calc(100vh-112px)] lg:overflow-y-auto"
+      className={
+        compact
+          ? "max-w-2xl p-3"
+          : "rounded-xl border border-border bg-surface p-5 lg:sticky lg:top-24 lg:max-h-[calc(100vh-112px)] lg:overflow-y-auto"
+      }
     >
       <h2 className="text-lg">Filtrera sidan</h2>
       <p className="mt-2 text-sm leading-relaxed text-ink-muted">
@@ -49,7 +57,7 @@ export function EducationFilters({
         </summary>
         {Object.entries(options).map(([key, values]) => (
           <div key={key} className="mt-4">
-            <label htmlFor={`education-filter-${key}`} className="text-sm font-medium">
+            <label htmlFor={`${id}-education-filter-${key}`} className="text-sm font-medium">
               {key === "examenskategori" ? (
                 <ExplainedTerm
                   term="Examenskategori"
@@ -60,7 +68,7 @@ export function EducationFilters({
               )}
             </label>
             <select
-              id={`education-filter-${key}`}
+              id={`${id}-education-filter-${key}`}
               className={selectClass}
               disabled={loading}
               value={filters.dimensions[key] ?? ""}

@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { VisualizationPortal } from "@/components/charts/visualization-context";
 import { educationAxis } from "@/lib/education-axis";
 import { Root, Anchor, Content, Portal, Close } from "@radix-ui/react-popover";
 import { X } from "@/components/icons";
@@ -21,6 +23,7 @@ export function EducationHistoryPreview({
   y: number;
   onClose: () => void;
 }) {
+  const portal = useContext(VisualizationPortal);
   const genders = ukaGenderSeries(rows);
   const data = ukaGenderTimeline(rows, genders);
   const axis = educationAxis(
@@ -35,7 +38,7 @@ export function EducationHistoryPreview({
       }}
     >
       <Anchor style={{ position: "fixed", left: x, top: y, width: 0, height: 0 }} />
-      <Portal>
+      <Portal container={portal ?? undefined}>
         <Content
           side="right"
           align="start"
