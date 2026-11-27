@@ -24,6 +24,9 @@ jobs:
     timeout-minutes: 100
     steps:
       - uses: actions/checkout@v5
+        with:
+          # A queued bootstrap must include a prior run's data commit.
+          ref: ${{ github.ref_name }}
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
@@ -33,6 +36,7 @@ jobs:
           key: workforce-${{ hashFiles('scripts/fetch_workforce.py') }}-${{ github.run_id }}
           restore-keys: |
             workforce-${{ hashFiles('scripts/fetch_workforce.py') }}-
+            workforce-
       - name: Hämta och verifiera offentliga SCB-aggregat
         env:
           FORCE: ${{ inputs.force }}
@@ -57,6 +61,19 @@ jobs:
           node --experimental-strip-types tests/workforce.test.ts
           npx tsc --noEmit
           npm run build
+      - name: Kontrollera filter, diagram, mobilvy och export i webbläsare
+        if: github.event_name == 'push'
+        env:
+          PLAYWRIGHT_MODULE: ${{ github.workspace }}/.cache/browser/node_modules/playwright
+        run: |
+          npm install --prefix .cache/browser --no-audit --no-fund --package-lock=false playwright@1.62.1
+          node .cache/browser/node_modules/playwright/cli.js install --with-deps chromium
+          npm run dev -- --host 127.0.0.1 --port 8080 > /tmp/workforce-dev.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:8080/omraden/arbetsmarknad/arbetskraft > /dev/null; then break; fi
+            sleep 2
+          done
+          node scripts/check_workforce_browser.cjs
       - name: Publicera verifierad version
         run: |
           if [ -n "$(git status --porcelain src/data/workforce public/data/workforce)" ]; then

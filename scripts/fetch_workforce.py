@@ -23,6 +23,7 @@ SPECS = {
                         {"Alder": ["20-64"], "Fodelseregion": ["tot"]}),
     "occupation-year": ("TAB4435", "Yrkesregistret · ålder bland anställda · arbetsplatsens län", "Yrke2012", {}),
     "retirement-education": ("TAB6371", "RMI U4 · sysselsatta 60–64 år efter utbildning · arbetsplatsens län", "Utbildning", {}),
+    "rmi-education": ("TAB6368", "RMI U1b · arbetskraft efter utbildning · bostadens län", "Utbildngrupp", {}),
     "industry-age": ("TAB5543", "BAS · äldre sysselsatta efter bransch · endast riket", "SNI2007",
                      {"Yrkesstallning": ["TOT"], "Fodelseregion": ["tot"],
                       "Alder": ["15-74", "55-64", "65-74"], "ContentsCode": ["0000071U"]}),
@@ -95,7 +96,7 @@ def collect(key, cache, sample=False):
             "sexes": selected["Kon"], "selection": selected, "notes": meta.get("note", []),
             "source": f"https://statistikdatabasen.scb.se/api/v2/tables/{table}/metadata?lang=sv",
             "cells": sum(map(len, rows.values()))}
-    if group == "Utbildning":
+    if group in ("Utbildning", "Utbildngrupp"):
         info["groups"] = {}
         for item in meta["dimension"][group]["extension"]["codelists"]:
             values = request("../codeLists/" + quote(item["id"], safe="") + "?lang=sv")["values"]
@@ -137,13 +138,14 @@ def main():
     catalog = {"fetched": datetime.now(timezone.utc).isoformat(), "datasets": {}, "geographies": {}, "files": {}}
     pending = {}
     for key, spec in SPECS.items():
+        spec_hash = hashlib.sha256(encode(spec)).hexdigest()
         meta = request(spec[0] + "/metadata?lang=sv")
         previous = old["datasets"].get(key)
         complete = previous and previous.get("cells", 0) > 0 and all(
             name in old.get("files", {}) and (dest / old["files"][name]["path"]).is_file()
             for name in [*[f"{key}/geo-{g}.json" for g in previous["selection"].get("Region", ["00"])],
                          *[f"{key}/period-{p}.json" for p in previous["periods"]]])
-        if complete and previous["updated"] == meta["updated"] and not args.force and not args.sample:
+        if complete and previous.get("spec_sha256") == spec_hash and previous["updated"] == meta["updated"] and not args.force and not args.sample:
             catalog["datasets"][key] = previous
             catalog["geographies"].update(old["geographies"])
             catalog["files"].update({k:v for k,v in old["files"].items() if k.startswith(key + "/")})
@@ -154,7 +156,8 @@ def main():
         else:
             info, rows, geos = collect(key, cache, args.sample)
             if not args.sample:
-                checkpoint.write_bytes(gzip.compress(encode([info, rows, geos]), mtime=0))
+                checkpoint.write_bytes(gzip.compress(encode([info, rows, geos]), compresslevel=1, mtime=0))
+        info["spec_sha256"] = spec_hash
         catalog["datasets"][key] = info
         catalog["geographies"].update(geos)
         periodrows = defaultdict(list)

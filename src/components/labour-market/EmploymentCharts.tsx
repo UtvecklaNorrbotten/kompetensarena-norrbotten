@@ -58,14 +58,21 @@ export function EmploymentChart({
   }));
   const download = () => {
     const csv = [
-      [rank ? "Kategori" : "Period", name, other, "Enhet", "SCB-status", "Källa och urval"],
+      [
+        rank ? "Kategori" : "Period",
+        name,
+        other,
+        "Enhet",
+        "SCB-status",
+        ...(source ? ["Källa och urval"] : []),
+      ],
       ...rows.map((r) => [
         r.label,
         r.value == null ? "Uppgift saknas" : employmentNumber(r.value, "", decimals),
         r.other == null ? "Uppgift saknas" : employmentNumber(r.other, r.otherStatus, decimals),
         unit,
         r.status ?? "",
-        source,
+        ...(source ? [source] : []),
       ]),
     ]
       .map((r) => r.map((v) => `"${String(v).replaceAll('"', '""')}"`).join(";"))

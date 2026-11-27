@@ -27,7 +27,11 @@ export function WorkforcePage() {
   const [dataset, setDataset] = useState("status-month");
   const info = catalog.datasets[dataset]!;
   const [selectedSex, setSex] = useState("1+2");
-  const sex = info.sexes.includes(selectedSex) ? selectedSex : info.sexes[0]!;
+  const sex = info.sexes.includes(selectedSex)
+    ? selectedSex
+    : info.sexes.includes("totalt")
+      ? "totalt"
+      : info.sexes[0]!;
   const [educationFamily, setEducationFamily] = useState("grupp");
   const visibleCategories = Object.entries(info.categories).filter(
     ([c]) => !info.groups || info.groups[educationFamily]?.includes(c),
@@ -136,7 +140,7 @@ export function WorkforcePage() {
         : r.code.length === 4 && r.code.startsWith(county),
     )
     .sort((a, b) => (b.value ?? -Infinity) - (a.value ?? -Infinity));
-  const reference = `${name} · ${sexName}${age ? ` · ${info.ages[age]}` : ""} · ${info.categories[category]} · ${info.measures[measure]}`;
+  const reference = `${name} · ${sexName}${info.table === "TAB6368" ? " · 20–64 år" : ""}${age ? ` · ${info.ages[age]}` : ""} · ${info.categories[category]} · ${info.measures[measure]}`;
   const source = `Källa: SCB, ${info.table}. ${info.label}. Referensperiod ${period.replace("M", "-")}. Uppdaterad ${info.updated.slice(0, 10)}. ${reference}.`;
   const chartProps = { unit, filename: "arbetskraft", source };
   return (
@@ -155,7 +159,7 @@ export function WorkforcePage() {
             ["utveckling", "Utveckling"],
             ["grupper", "Grupper"],
             ["alder", "Åldersstruktur"],
-            ["utbildning", "Utbildningsbakgrund"],
+            ["utbildning", "Arbetskraft efter utbildning"],
             ["geografi", "Jämför geografier"],
             ["definitioner", "Källor och definitioner"],
           ].map(([id, label]) => (
@@ -476,9 +480,11 @@ export function WorkforcePage() {
                   Andelar hämtas som publicerade mått från SCB.
                 </p>
                 <p>
-                  BAS-månader och årsmedelvärden beskriver boende i området. Yrkesregistret och RMI
-                  U4 beskriver personer med arbetsplats i länet. Branschernas åldersuppgifter i
-                  detta underlag finns endast för riket. Dessa populationer ska inte blandas.
+                  BAS-månader och årsmedelvärden beskriver boende i området. RMI U1b kombinerar
+                  förvärvsarbetande och inskrivna arbetslösa hos Arbetsförmedlingen och har därför
+                  en annan definition än BAS. Yrkesregistret och RMI U4 beskriver personer med
+                  arbetsplats i länet. Branschernas åldersuppgifter i detta underlag finns endast
+                  för riket. Dessa populationer ska inte blandas.
                 </p>
                 <p>
                   BAS börjar 2020. Det finns ännu inte tio års jämförbar BAS-historik. RMI U4 har
@@ -493,8 +499,9 @@ export function WorkforcePage() {
                   summeras.
                 </p>
                 <p>
-                  Ålderspyramiden och utbildningsbakgrunden har egna, uttryckligen angivna
-                  referensperioder. De följer geografin men använder egna grupper och kön.
+                  Ålderspyramiden och arbetskraften efter utbildningsinriktning har egna,
+                  uttryckligen angivna referensperioder. De följer geografin men använder egna
+                  grupper och kön.
                 </p>
               </div>
               <details className="mt-6">
