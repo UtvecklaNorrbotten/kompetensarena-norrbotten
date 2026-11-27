@@ -24,6 +24,9 @@ jobs:
     timeout-minutes: 100
     steps:
       - uses: actions/checkout@v5
+        with:
+          # A queued bootstrap must include a prior run's data commit.
+          ref: ${{ github.ref_name }}
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
