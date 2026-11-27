@@ -53,3 +53,10 @@ npm run build
 ```
 
 GitHub Actions gör även ett oberoende SCB-stickprov för första/sista period och valda kategorier i varje underlag. Webbläsarkontrollen använder den riktiga sidan och serverfunktionerna: kommunval i URL, BAS-grupper, publicerat deltagande efter utbildning, uttryckligt läns-/riksbyte när kommundata saknas, ålderspyramid, datatabell, CSV och mobilbredd.
+
+
+## Slutkontroll 2026-11-27
+
+GitHub Actions-körning 45978385070 passerade hela kedjan: åtta underlag, 9 587 225 dataceller, 312 geografier för BAS, källornas läns-/rikstäckning för övriga underlag, kontrollsummor, unika celler och täljare/nämnare. 1 874 celler verifierades mot nya oberoende SCB-uttag. Typkontroll, beräkningstester och produktionsbygge passerade; serverpaketet är 58,2 MiB mot budgeten 60 MiB. Oförändrade källversioner verifierades behålla befintliga filer.
+
+Webbläsaren verifierade verkliga serverfunktioner, kommunval i URL, byte av underlag, utbildningsdeltagande, tydliga läns-/riksbyten när kommundata saknas, ålderspyramid, datatabell, CSV och mobilbredd 390 px. Inga webbläsarfel återstod. Den gemensamma kartans SVG-titlar rättades till en textsträng för att undvika fel vid första sidladdningen. Filteretiketter kopplas entydigt till sina listor, och metodmarkeringar följer faktiska seriegränser.
