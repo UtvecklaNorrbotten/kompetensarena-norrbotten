@@ -4,7 +4,7 @@ Sida: `/omraden/arbetsmarknad/arbetskraft`. Norrbotten är förval och geografin
 
 ## Återupptaget arbete
 
-Det avbrutna arbetet hade ingen sparad arbetskraftsgren eller PR. Den 27 november 2026 återupptogs uppdraget från aktuella main. Befintliga komponenter och läsmodeller för sysselsättning, matchning och kommungeografi återanvänds. BAS-databasimporten och de andra arbetsmarknadssidorna behålls.
+Det avbrutna arbetet hade ingen sparad arbetskraftsgren eller PR. Den 27 november 2026 återupptogs uppdraget från aktuella main. Befintliga komponenter och läsmodeller för sysselsättning, kommungeografi återanvänds. BAS-databasimporten och de andra arbetsmarknadssidorna behålls.
 
 ## Källor och avgränsningar
 
@@ -16,9 +16,9 @@ Det avbrutna arbetet hade ingen sparad arbetskraftsgren eller PR. Den 27 novembe
 | Yrkesregistret TAB4435 | Antal anställda efter treställig SSYK, ålder och kön. Egna företagare ingår inte. | Arbetsplatsens län och riket, 2020–2024. Kommunuppgifter finns inte i denna tabell. |
 | RMI U4 TAB6371 | Antal och publicerad andel förvärvsarbetande 60–64 år, samt samtliga 20–64 år, efter utbildning och kön. Separata utbildningsindelningar. | Arbetsplatsens län och riket, 2019–2024. FA-regioner ingår inte i sidans urval. |
 | BAS TAB5543 | Sysselsatta efter bransch, kön, 15–74, 55–64 och 65–74 år. Yrkesställning/födelseregion totalt. | Endast riket, arbetsställets belägenhet, årligt register 2020–2024. Får inte visas som regional data. |
-| Befintlig RMI E3 TAB6929 | Justerat antal personer (E) efter utbildningsgrupp/nivå/inriktning, kön och år; 20–69 år. Återanvänder matchningssidans verifierade läsmodell. | Bostadens kommun/län/riket, 2019–2024. Detta är befolkningens utbildningsbakgrund, inte arbetskraftens utbildningsinriktning. |
+| RMI U1b TAB6368 | I arbetskraften, inte i arbetskraften och totalt antal personer, efter utbildningsgrupp/nivå/inriktning och kön; 20–64 år. | Bostadens län och riket, 2019–2024. Eget arbetskraftsmått som kombinerar förvärvsarbetande med inskrivna arbetslösa hos AF. |
 
-BAS arbetskraft = sysselsatta och arbetslösa. Arbetskraftsdeltagande använder SCB:s publicerade kvot med befolkningen i samma grupp som nämnare. AF:s inskrivna arbetslösa ersätter inte BAS arbetslösa. Studerande, pensionärer, sjuka och övriga utanför arbetskraften visas var för sig. Personer utanför arbetskraften är inte automatiskt tillgängliga för arbete.
+BAS arbetskraft = sysselsatta och arbetslösa. RMI U1b använder förvärvsarbetande och inskrivna arbetslösa hos AF, med egen avgränsning, och är därför separat från BAS. RMI U1b har enbart publicerade antal i tabellen; inga härledda deltagandeandelar konstrueras. Arbetskraftsdeltagande använder SCB:s publicerade kvot med befolkningen i samma grupp som nämnare. AF:s inskrivna arbetslösa ersätter inte BAS arbetslösa. Studerande, pensionärer, sjuka och övriga utanför arbetskraften visas var för sig. Personer utanför arbetskraften är inte automatiskt tillgängliga för arbete.
 
 Ålderspyramiden visar årsmedelvärdet av arbetskraften, män och kvinnor, i tolv icke överlappande femårsgrupper från 15–19 till 70–74. Den följer sidans geografi och har eget referensår. Breda och överlappande åldersgrupper visas aldrig som pyramidstaplar.
 
@@ -30,8 +30,8 @@ U4:s namn och fotnot talar om förväntade åldersavgångar. Här beskrivs det s
 
 - BAS börjar 2020; tio jämförbara BAS-år finns ännu inte. Äldre RAMS eller AKU fogas inte in som om de hade samma definition.
 - Månader är preliminära och inte säsongrensade. TAB5655 är medelvärden av månader, inte december eller november.
-- U4 har RAMS/BAS-brott 2022. Yrkesregistret har modellimputerade yrken och utökad åldersgräns 2023, samt förändrad företagaravgränsning 2024. BAS årsregister TAB5543 har förändrad företagaravgränsning 2024. Linjer delas och förändringar över respektive gräns spärras.
-- Registerperspektiv, årsmedelvärden, utbildningsbakgrund och arbetskraft är separata underlag. RMI:s nivå, inriktning och utbildningsgrupp har olika totaler och visas separat.
+- U1b och U4 har RAMS/BAS-brott 2022. Yrkesregistret har modellimputerade yrken och utökad åldersgräns 2023, samt förändrad företagaravgränsning 2024. BAS årsregister TAB5543 har förändrad företagaravgränsning 2024. Linjer delas och förändringar över respektive gräns spärras.
+- Registerperspektiv, årsmedelvärden, RMI:s och BAS arbetskraft är separata underlag. RMI:s nivå, inriktning och utbildningsgrupp har olika totaler och visas separat.
 - Saknade värden och källstatus bevaras. Tal med status används inte i diagram eller beräkningar. Nollvärden bevaras. Publicerade totaler/andelar ersätts inte av summerade skyddade delceller.
 
 ## Import och drift

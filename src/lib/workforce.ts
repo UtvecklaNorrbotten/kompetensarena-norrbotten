@@ -49,7 +49,7 @@ export function workforceChange(
 ) {
   // U4 switches from RAMS to BAS in 2022. YREG adds imputed occupations and 65–69 in 2023.
   if (
-    (info.table === "TAB6371" && period === "2022") ||
+    (["TAB6371", "TAB6368"].includes(info.table) && period === "2022") ||
     (info.table === "TAB4435" && ["2023", "2024"].includes(period)) ||
     (info.table === "TAB5543" && period === "2024")
   )
@@ -60,7 +60,7 @@ export function workforceChange(
   return value == null || old == null ? null : value - old;
 }
 export function workforceSegment(table: string, period: string) {
-  if (table === "TAB6371") return period < "2022" ? "rams" : "bas";
+  if (["TAB6371", "TAB6368"].includes(table)) return period < "2022" ? "rams" : "bas";
   if (table === "TAB4435")
     return period < "2023" ? "before2023" : period < "2024" ? "2023" : "2024";
   if (table === "TAB5543") return period < "2024" ? "before2024" : "2024";

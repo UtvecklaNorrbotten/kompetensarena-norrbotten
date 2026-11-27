@@ -29,6 +29,7 @@ assert.equal(
 );
 for (const [table, period] of [
   ["TAB6371", "2022"],
+  ["TAB6368", "2022"],
   ["TAB4435", "2023"],
   ["TAB4435", "2024"],
   ["TAB5543", "2024"],

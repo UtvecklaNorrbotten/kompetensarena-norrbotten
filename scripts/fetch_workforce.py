@@ -23,6 +23,7 @@ SPECS = {
                         {"Alder": ["20-64"], "Fodelseregion": ["tot"]}),
     "occupation-year": ("TAB4435", "Yrkesregistret · ålder bland anställda · arbetsplatsens län", "Yrke2012", {}),
     "retirement-education": ("TAB6371", "RMI U4 · sysselsatta 60–64 år efter utbildning · arbetsplatsens län", "Utbildning", {}),
+    "rmi-education": ("TAB6368", "RMI U1b · arbetskraft efter utbildning · bostadens län", "Utbildngrupp", {}),
     "industry-age": ("TAB5543", "BAS · äldre sysselsatta efter bransch · endast riket", "SNI2007",
                      {"Yrkesstallning": ["TOT"], "Fodelseregion": ["tot"],
                       "Alder": ["15-74", "55-64", "65-74"], "ContentsCode": ["0000071U"]}),
@@ -95,7 +96,7 @@ def collect(key, cache, sample=False):
             "sexes": selected["Kon"], "selection": selected, "notes": meta.get("note", []),
             "source": f"https://statistikdatabasen.scb.se/api/v2/tables/{table}/metadata?lang=sv",
             "cells": sum(map(len, rows.values()))}
-    if group == "Utbildning":
+    if group in ("Utbildning", "Utbildngrupp"):
         info["groups"] = {}
         for item in meta["dimension"][group]["extension"]["codelists"]:
             values = request("../codeLists/" + quote(item["id"], safe="") + "?lang=sv")["values"]

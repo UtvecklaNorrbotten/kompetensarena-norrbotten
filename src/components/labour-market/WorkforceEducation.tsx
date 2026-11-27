@@ -1,63 +1,64 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import matching from "@/data/matching/catalog.json";
-import { getMatchingSlice } from "@/lib/aggregates.functions";
+import { getWorkforceSlice } from "@/lib/aggregates.functions";
 import { Select, Figure } from "./WorkforceControls";
 import { EmploymentChart } from "./EmploymentCharts";
 import snapshot from "@/data/workforce/catalog.json";
-import type { WorkforceCatalog } from "@/lib/workforce";
+import { workforcePoint, workforceValue, type WorkforceCatalog } from "@/lib/workforce";
 const catalog = snapshot as WorkforceCatalog;
 export function EducationBackground({ geo }: { geo: string }) {
-  const [group, setGroup] = useState<"inriktning" | "niva" | "grupp">("inriktning");
-  const [sex, setSex] = useState<"totalt" | "1" | "2">("totalt");
-  const [period, setPeriod] = useState(matching.periods.at(-1)!);
+  const info = catalog.datasets["rmi-education"]!;
+  const [group, setGroup] = useState("inriktning");
+  const [sex, setSex] = useState("totalt");
+  const [period, setPeriod] = useState(info.periods.at(-1)!);
   const [all, setAll] = useState(false);
+  const effectiveGeo = info.selection["Region"]!.includes(geo) ? geo : geo.slice(0, 2);
   const query = useQuery({
-    queryKey: ["workforce-education", geo, sex, period],
-    queryFn: () => getMatchingSlice({ data: { geo, sex, period, education: "00I" } }),
+    queryKey: ["workforce", "rmi-education", effectiveGeo],
+    queryFn: () => getWorkforceSlice({ data: { dataset: "rmi-education", geo: effectiveGeo } }),
     staleTime: 3600000,
   });
-  const codes: string[] = matching.groups[group];
-  const education: Record<string, string> = matching.education;
-  const rows = (query.data?.ranking ?? [])
-    .filter((r) => codes.includes(r[0]) && !["00I", "00N", "00S"].includes(r[0]))
-    .map((r) => ({ label: education[r[0]]!, value: r[7] }))
+  const codes = info.groups?.[group] ?? [];
+  const measure = Object.entries(info.measures).find(([, l]) => l === "I arbetskraften")![0];
+  const rows = codes
+    .filter((c) => c in info.categories && !["00I", "00N", "00S"].includes(c))
+    .map((c) => {
+      const r = workforcePoint(query.data ?? [], period, sex, c, "", measure);
+      return { label: info.categories[c]!, value: workforceValue(r), status: r?.[6] ?? "" };
+    })
     .sort((a, b) => (b.value ?? -Infinity) - (a.value ?? -Infinity));
-  const source = `Källa: SCB, RMI E3, TAB6929. ${period}. ${catalog.geographies[geo]}. Befolkning 20–69 år, justerat antal personer (E). Uppdaterad ${matching.updated.slice(0, 10)}.`;
+  const source = `Källa: SCB, RMI U1b, TAB6368. ${period}. ${catalog.geographies[effectiveGeo]}. Arbetskraft 20–64 år enligt RMI. Källa uppdaterad ${info.updated.slice(0, 10)}.`;
   return (
     <Figure
       id="utbildning"
-      title="Vilken utbildningsbakgrund har befolkningen?"
-      intro={`${catalog.geographies[geo]} · 20–69 år. Detta avsnitt beskriver befolkningens utbildning, inklusive personer utanför arbetskraften.`}
+      title="Hur är arbetskraften fördelad efter utbildning?"
+      intro={`${catalog.geographies[effectiveGeo]} · 20–64 år. RMI kombinerar förvärvsarbetande och inskrivna arbetslösa hos Arbetsförmedlingen.`}
       source={source}
     >
+      {geo !== effectiveGeo && (
+        <p className="mb-5 text-sm text-ink-muted">
+          Detta underlag saknar kommunuppgifter. Här visas {catalog.geographies[effectiveGeo]}.
+        </p>
+      )}
       <div className="mb-6 grid gap-x-5 sm:grid-cols-3">
-        <Select
-          label="Utbildningsindelning"
-          value={group}
-          onChange={(v) => setGroup(v as typeof group)}
-        >
+        <Select label="Utbildningsindelning" value={group} onChange={setGroup}>
           <option value="inriktning">Inriktning</option>
           <option value="niva">Nivå</option>
           <option value="grupp">Utbildningsgrupp</option>
         </Select>
-        <Select
-          label="Kön i utbildningsjämförelsen"
-          value={sex}
-          onChange={(v) => setSex(v as typeof sex)}
-        >
+        <Select label="Kön i utbildningsjämförelsen" value={sex} onChange={setSex}>
           <option value="totalt">Samtliga</option>
           <option value="2">Kvinnor</option>
           <option value="1">Män</option>
         </Select>
         <Select label="Utbildningens referensår" value={period} onChange={setPeriod}>
-          {[...matching.periods].reverse().map((p) => (
+          {[...info.periods].reverse().map((p) => (
             <option key={p}>{p}</option>
           ))}
         </Select>
       </div>
       {query.isPending ? (
-        <p role="status">Hämtar utbildningsbakgrund…</p>
+        <p role="status">Hämtar arbetskraft efter utbildning…</p>
       ) : query.isError ? (
         <p role="alert">
           Utbildningsuppgifterna kunde inte läsas.{" "}
@@ -70,8 +71,8 @@ export function EducationBackground({ geo }: { geo: string }) {
           rows={all ? rows : rows.slice(0, 15)}
           rank
           unit="personer"
-          name="Personer med utbildningen"
-          filename="arbetskraft-utbildningsbakgrund"
+          name="Personer i arbetskraften enligt RMI"
+          filename="arbetskraft-utbildning"
           source={source}
         />
       )}
@@ -81,9 +82,10 @@ export function EducationBackground({ geo }: { geo: string }) {
         </button>
       )}
       <p className="mt-5 text-sm text-ink-muted">
-        E3:s justerade befolkningstal är ett annat mått än BAS arbetskraft. Utbildningsgrupp, nivå
-        och inriktning har olika avgränsningar. Använd BAS utbildningsnivå ovan för att jämföra
-        arbetskraftens antal och deltagande.
+        RMI:s arbetskraftsmått har en annan arbetslöshetsdefinition än BAS. Uppgifterna beskriver
+        boende i området; U4 beskriver i stället arbetsplatsens län. Utbildningsgrupp, nivå och
+        inriktning visas separat. Serien har källbyte 2022. Välj RMI U1b i underlagsfiltret för att
+        se historiken.
       </p>
     </Figure>
   );

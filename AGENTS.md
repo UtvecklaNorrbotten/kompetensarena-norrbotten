@@ -37,4 +37,4 @@
 
 - Matchning läser offentliga E3-aggregat via `matching.functions.ts` och `aggregates.functions.ts`, med hashade komprimerade filer i `public/data/matching` via ASSETS. Använd SCB:s publicerade andelar; räkna inte om dem från CKM-justerade antal. Utbildningsgrupp, nivå och inriktning har skilda totaler. Se `docs/matchning.md`.
 
-- Arbetskraft läser versionshanterade publika SCB-aggregat via `workforce.functions.ts` och `aggregates.functions.ts`, med hashade geografi-/periodfiler i `public/data/workforce` via ASSETS. BAS arbetskraft, RMI-utbildningsbakgrund, U4 och anställda i yrkesregistret är olika populationer. Regionalt saknade bransch-/åldersuppgifter får inte ersättas tyst av riksvärden. Se `docs/arbetskraft.md`.
+- Arbetskraft läser versionshanterade publika SCB-aggregat via `workforce.functions.ts` och `aggregates.functions.ts`, med hashade geografi-/periodfiler i `public/data/workforce` via ASSETS. BAS arbetskraft, RMI U1b, U4 och anställda i yrkesregistret är olika populationer. Regionalt saknade bransch-/åldersuppgifter får inte ersättas tyst av riksvärden. Se `docs/arbetskraft.md`.
