@@ -25,8 +25,9 @@ class Values(unittest.TestCase):
     def test_swedish_numbers_and_invalid_values(self):
         self.assertEqual(parse_value('67\u00a0303')[0], 67303)
         self.assertEqual(parse_value('6,2 %', percent=True)[0], 6.2)
+        self.assertEqual(parse_value('101 %', percent=True), [None, 'invalid_source', '101 %'])
         for raw, percent in [('1,2', False), ('-1', False), ('NaN', False),
-                             ('101 %', True), ('6,2', True), ('saknas', False)]:
+                             ('6,2', True), ('saknas', False)]:
             with self.assertRaises(ValueError):
                 parse_value(raw, percent)
 

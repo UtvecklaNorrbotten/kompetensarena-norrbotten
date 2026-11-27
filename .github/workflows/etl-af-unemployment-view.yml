@@ -36,10 +36,10 @@ jobs:
         run: python -m unittest discover -s tests -p test_af_unemployment.py
       - name: Publicera endast verifierade aggregat
         run: |
-          if [ -n "$(git status --porcelain src/data/af)" ]; then
+          if [ -n "$(git status --porcelain src/data/af public/data/af)" ]; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add src/data/af
+            git add src/data/af public/data/af
             git commit -m 'data: uppdatera AF:s publika arbetslöshetsaggregat'
             git push
           fi

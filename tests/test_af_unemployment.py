@@ -1,4 +1,5 @@
 import importlib.util
+import base64, gzip
 import json
 from pathlib import Path
 import tempfile
@@ -7,6 +8,10 @@ import zipfile
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('af',ROOT/'scripts/fetch_af_unemployment.py')
 af=importlib.util.module_from_spec(spec);spec.loader.exec_module(af)
+def af_asset(name):
+    return json.loads(gzip.decompress(base64.b64decode(json.loads((af.ASSET_OUT/name).read_text())['gzip'])))
+
+
 class AfUnemploymentTests(unittest.TestCase):
     def test_missing_and_suppression(self):
         self.assertEqual(af.numeric('0'),0)
@@ -31,13 +36,13 @@ class AfUnemploymentTests(unittest.TestCase):
         self.assertGreater(catalog['validation']['publishedNationalRateChecks'],100)
         self.assertLessEqual(catalog['historyStart'],'2016-01')
         for code in catalog['geographies']:
-            data=json.loads((af.OUT/f'geo-{code}.json').read_text())
+            data=af_asset(f'geo-{code}.json')
             keys=[tuple(r[:3]) for r in data['pairs']]
             self.assertEqual(len(keys),len(set(keys)))
             for p,g,s,n,d in data['pairs']:
                 if g in ('pre','upper','post') and p<'2024-04': self.assertEqual([n,d],[None,None])
             self.assertTrue(any(r[0]==catalog['latest'] and r[1]=='total' and r[2]=='' for r in data['pairs']))
-        national=json.loads((af.OUT/'geo-00.json').read_text())
+        national=af_asset('geo-00.json')
         h={(p,s):n for p,s,n,o,pr in national['history']}
         for p,g,s,n,d in national['pairs']:
             if g=='total':self.assertEqual(n,h[p,s])

@@ -13,6 +13,8 @@ import math
 from pathlib import Path
 import re
 import tempfile
+import base64
+import gzip
 from urllib.parse import urljoin
 import xml.etree.ElementTree as ET
 import zipfile
@@ -21,6 +23,8 @@ import openpyxl
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'src/data/af'
+# Large per-geography/month files are served as static assets (gzip+base64) to keep the Worker small.
+ASSET_OUT = ROOT / 'public/data/af'
 SOURCE = 'https://arbetsformedlingen.se/statistik/sok-statistik/tidigare-statistik-tidsserier'
 NS = '{http://schemas.openxmlformats.org/spreadsheetml/2006/main}'
 # Exact source field pairs. Older age labels are not assumed to have a fixed upper bound.
@@ -199,8 +203,14 @@ def build(bas_path, sok_path, sources):
     for period in periods:
         payloads[f'compare-{period}.json'] = [[c,g,s,n,d] for c,rows in paired.items() for p,g,s,n,d in rows if p==period]
     payloads['catalog.json']=catalog
+    ASSET_OUT.mkdir(parents=True, exist_ok=True)
     for name,value in payloads.items():
-        (OUT/name).write_text(json.dumps(value,ensure_ascii=False,separators=(',',':'),allow_nan=False)+'\n')
+        text=json.dumps(value,ensure_ascii=False,separators=(',',':'),allow_nan=False)+'\n'
+        if name=='catalog.json':
+            (OUT/name).write_text(text)
+        else:
+            packed=base64.b64encode(gzip.compress(text.encode(),9,mtime=0)).decode()
+            (ASSET_OUT/name).write_text(json.dumps({'gzip':packed},separators=(',',':')))
     print(json.dumps({'latest':expected,'geographies':len(geos),'checks':checks,'files':len(payloads)}))
 
 if __name__=='__main__':

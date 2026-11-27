@@ -51,7 +51,9 @@ def parse_value(raw, percent=False):
         raise ValueError('Ogiltigt MUCF-tal') from None
     if percent:
         if not 0 <= number <= 100:
-            raise ValueError('Andel utanför 0–100')
+            # MUCF publishes a few impossible shares (>100 %) for small older groups.
+            # Keep the source token, publish no value and flag it instead of aborting the whole run.
+            return [None, 'invalid_source', raw]
         return [float(number), 'observed', raw]
     if number != number.to_integral_value():
         raise ValueError('Antal är inte heltal')

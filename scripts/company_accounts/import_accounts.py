@@ -9,6 +9,7 @@ import hashlib
 import io
 import json
 import re
+import urllib.error
 import zipfile
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -151,11 +152,19 @@ def main():
     # Newest publication weeks first, with stable ordering of ZIP parts.
     pending.sort(key=lambda a: a['key'], reverse=True)
     period = max(a['key'].split('_')[0].replace('arsredovisningar/', '') for a in listing)
-    scanned = 0
+    scanned = skipped = 0
     with ThreadPoolExecutor(max_workers=max(1, min(8, args.workers))) as executor:
         jobs = [executor.submit(scan, a, companies, scope_hash) for a in pending[:args.max_archives]]
         for job in as_completed(jobs):
-            job.result()
+            try:
+                job.result()
+            except urllib.error.HTTPError as exc:
+                # The archive was replaced (412 If-Match) or removed (404/416) after listing.
+                # Leave it pending for the next run instead of failing the whole import.
+                if exc.code not in (404, 412, 416):
+                    raise
+                skipped += 1
+                continue
             scanned += 1
             if scanned % 20 == 0:
                 print(json.dumps({'archives_scanned_this_run': scanned, 'remaining_at_start': len(pending)}), flush=True)
@@ -183,7 +192,7 @@ def main():
                         print(json.dumps({'imported_this_run': imported, 'quarantined_this_run': quarantined}), flush=True)
             after = rows[-1]['je_id']
     coverage = api.call('coverage')
-    coverage.update(source_archives=len(listing), archives_remaining=remaining, scope_hash=scope_hash, parser_version=VERSION)
+    coverage.update(source_archives=len(listing), archives_remaining=remaining, archives_skipped_changed=skipped, scope_hash=scope_hash, parser_version=VERSION)
     final_pairs = sorted((r['org_nr'],r['je_id']) for r in scope() if r['org_nr'] and re.fullmatch(r'\d{10}',r['org_nr']))
     final_scope_hash = hashlib.sha256(json.dumps(final_pairs,separators=(',',':')).encode()).hexdigest()
     scope_changed = final_scope_hash != scope_hash
@@ -198,7 +207,7 @@ if __name__ == '__main__':
         main()
     except Exception as exc:
         try:
-            api.log(SOURCE, 'failed', 'unknown', {'error_type': type(exc).__name__}, 'Annual accounts import failed; checkpoints retained')
+            api.log(SOURCE, 'failed', 'unknown', {'error_type': type(exc).__name__, 'http_status': getattr(exc, 'code', None)}, 'Annual accounts import failed; checkpoints retained')
         except Exception:
             pass  # Preserve the original failure if status logging is unavailable.
         raise
