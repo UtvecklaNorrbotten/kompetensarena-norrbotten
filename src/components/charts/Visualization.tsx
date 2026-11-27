@@ -123,12 +123,12 @@ export function Visualization({
                             "[data-visualization-export]",
                           ) ?? []),
                         ];
-                        const selection = dialog.current?.dataset.exportSelection;
+                        const selection = dialog.current?.getAttribute("data-export-selection");
                         void run(
                           async () => {
                             const { saveVisualizationImage } =
                               await import("@/lib/visualization-image");
-                            if (selection !== dialog.current?.dataset.exportSelection)
+                            if (selection !== dialog.current?.getAttribute("data-export-selection"))
                               throw new Error("Urvalet ändrades.");
                             await saveVisualizationImage(parts, data);
                           },
