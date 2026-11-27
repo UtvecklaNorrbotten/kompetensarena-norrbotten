@@ -63,3 +63,24 @@ Kontroller:
 Snapshotkontrollerna verifierar varje filhash, full täckning av geografi,
 utbildning, kön och år, saknade värden, måttens intervall och att periodfilerna
 är identiska med respektive geografis värden.
+
+## Fördjupningskälla: SCB:s matchningskarta
+
+Under ”Vad visar statistiken?” finns en valbar fördjupning om SCB:s bedömning
+av vilka utbildningar och yrken som matchar. Den är tillgänglig även om
+statistiken inte kan läsas och länkar till:
+
+- [SCB:s matchningskarta (Excel)](https://www.scb.se/contentassets/3b47a55563f54026af789c096b1d8a95/matchningskarta_rmi_2026-08-19.xlsx).
+- [SCB:s RMI-sida](https://www.scb.se/AM9906), där länken till matchningskartan
+  förvaltas av SCB.
+
+Kartan är en metodkälla för matchningsbedömningen, inte ett nytt statistiskt
+mått. Den beskriver formell utbildning i förhållande till yrke och ska inte
+tolkas som en fullständig bedömning av individers kompetens.
+
+Källan kontrollerades 2026-11-27 mot SCB:s RMI-sida och Tillväxtverkets
+RMI-beskrivning. Excel-länken svarade HTTP 200 och arbetsboken innehåller
+bland annat ”Allmänt om matchning”, ”Matchningskarta”, ”Förklaring”,
+”Utbildningsgrupper” och ”Yrkesgrupper”. Filnamnet är daterat 2026-08-19.
+Länken är redaktionell och ingår inte i E3-hämtningen; kontrollera SCB:s
+RMI-sida om filadressen ändras.
