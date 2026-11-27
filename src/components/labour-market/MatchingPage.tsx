@@ -382,6 +382,45 @@ export function MatchingPage() {
                   arbetskraften; den ska inte tolkas som en bransch.
                 </p>
                 <details>
+                  <summary className="cursor-pointer underline">
+                    Hur bedömer SCB vilka utbildningar och yrken som matchar?
+                  </summary>
+                  <div className="mt-4 space-y-4">
+                    <p>
+                      SCB:s matchningskarta visar vilka utbildningar och yrken som bedöms vara
+                      helt, delvis eller inte matchade utifrån utbildningens nivå och inriktning.
+                      Den ligger till grund för matchningsbedömningen i RMI och hjälper dig att
+                      förstå vad statistiken mäter.
+                    </p>
+                    <p>
+                      Kartan beskriver matchning utifrån formell utbildning. Den visar inte all
+                      kompetens som en person kan ha fått genom exempelvis arbetslivserfarenhet.
+                    </p>
+                    <p>
+                      <a
+                        href="https://www.scb.se/contentassets/3b47a55563f54026af789c096b1d8a95/matchningskarta_rmi_2026-08-19.xlsx"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="underline"
+                      >
+                        Hämta SCB:s matchningskarta (Excel)
+                      </a>
+                      . Filnamnets datum: 19 augusti 2026.
+                    </p>
+                    <p>
+                      <a
+                        href="https://www.scb.se/AM9906"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="underline"
+                      >
+                        Se RMI och länken till matchningskartan hos SCB
+                      </a>
+                      .
+                    </p>
+                  </div>
+                </details>
+                <details>
                   <summary className="cursor-pointer underline">SCB:s originalnoter</summary>
                   {catalog.notes.map((note, i) => (
                     <p key={i} className="mt-4 whitespace-pre-line">
