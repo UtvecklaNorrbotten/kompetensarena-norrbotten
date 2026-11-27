@@ -405,7 +405,7 @@ export function MatchingPage() {
                       >
                         Hämta SCB:s matchningskarta (Excel)
                       </a>
-                      . Filnamnets datum: 19 augusti 2026.
+                      .
                     </p>
                     <p>
                       <a
