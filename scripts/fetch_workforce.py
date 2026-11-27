@@ -137,13 +137,14 @@ def main():
     catalog = {"fetched": datetime.now(timezone.utc).isoformat(), "datasets": {}, "geographies": {}, "files": {}}
     pending = {}
     for key, spec in SPECS.items():
+        spec_hash = hashlib.sha256(encode(spec)).hexdigest()
         meta = request(spec[0] + "/metadata?lang=sv")
         previous = old["datasets"].get(key)
         complete = previous and previous.get("cells", 0) > 0 and all(
             name in old.get("files", {}) and (dest / old["files"][name]["path"]).is_file()
             for name in [*[f"{key}/geo-{g}.json" for g in previous["selection"].get("Region", ["00"])],
                          *[f"{key}/period-{p}.json" for p in previous["periods"]]])
-        if complete and previous["updated"] == meta["updated"] and not args.force and not args.sample:
+        if complete and previous.get("spec_sha256") == spec_hash and previous["updated"] == meta["updated"] and not args.force and not args.sample:
             catalog["datasets"][key] = previous
             catalog["geographies"].update(old["geographies"])
             catalog["files"].update({k:v for k,v in old["files"].items() if k.startswith(key + "/")})
@@ -154,7 +155,8 @@ def main():
         else:
             info, rows, geos = collect(key, cache, args.sample)
             if not args.sample:
-                checkpoint.write_bytes(gzip.compress(encode([info, rows, geos]), mtime=0))
+                checkpoint.write_bytes(gzip.compress(encode([info, rows, geos]), compresslevel=1, mtime=0))
+        info["spec_sha256"] = spec_hash
         catalog["datasets"][key] = info
         catalog["geographies"].update(geos)
         periodrows = defaultdict(list)

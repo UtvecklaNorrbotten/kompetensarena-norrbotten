@@ -33,6 +33,7 @@ jobs:
           key: workforce-${{ hashFiles('scripts/fetch_workforce.py') }}-${{ github.run_id }}
           restore-keys: |
             workforce-${{ hashFiles('scripts/fetch_workforce.py') }}-
+            workforce-
       - name: Hämta och verifiera offentliga SCB-aggregat
         env:
           FORCE: ${{ inputs.force }}

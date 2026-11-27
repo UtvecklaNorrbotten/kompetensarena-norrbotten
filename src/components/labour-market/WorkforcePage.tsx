@@ -27,7 +27,11 @@ export function WorkforcePage() {
   const [dataset, setDataset] = useState("status-month");
   const info = catalog.datasets[dataset]!;
   const [selectedSex, setSex] = useState("1+2");
-  const sex = info.sexes.includes(selectedSex) ? selectedSex : info.sexes[0]!;
+  const sex = info.sexes.includes(selectedSex)
+    ? selectedSex
+    : info.sexes.includes("totalt")
+      ? "totalt"
+      : info.sexes[0]!;
   const [educationFamily, setEducationFamily] = useState("grupp");
   const visibleCategories = Object.entries(info.categories).filter(
     ([c]) => !info.groups || info.groups[educationFamily]?.includes(c),
