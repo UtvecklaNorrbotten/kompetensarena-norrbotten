@@ -36,3 +36,5 @@
 - Sysselsättning läser versionshanterade offentliga SCB-aggregat via `employment.functions.ts`, exporterat genom `aggregates.functions.ts`; hashade komprimerade geografi-/periodfiler i `public/data/employment` läses via ASSETS. BAS månadsdata, BAS årligt register och RAMS före/efter 2019 är separata serier. Se `docs/sysselsattning.md`; ingen läsning av råa observationer och ingen länkning över metodbrott.
 
 - Matchning läser offentliga E3-aggregat via `matching.functions.ts` och `aggregates.functions.ts`, med hashade komprimerade filer i `public/data/matching` via ASSETS. Använd SCB:s publicerade andelar; räkna inte om dem från CKM-justerade antal. Utbildningsgrupp, nivå och inriktning har skilda totaler. Se `docs/matchning.md`.
+
+- Arbetskraft läser versionshanterade publika SCB-aggregat via `workforce.functions.ts` och `aggregates.functions.ts`, med hashade geografi-/periodfiler i `public/data/workforce` via ASSETS. BAS arbetskraft, RMI U1b, U4 och anställda i yrkesregistret är olika populationer. Regionalt saknade bransch-/åldersuppgifter får inte ersättas tyst av riksvärden. Se `docs/arbetskraft.md`.

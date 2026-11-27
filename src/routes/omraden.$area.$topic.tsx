@@ -1,3 +1,4 @@
+import { WorkforcePage } from "@/components/labour-market/WorkforcePage";
 import { MatchingPage } from "@/components/labour-market/MatchingPage";
 import { EmploymentPage } from "@/components/labour-market/EmploymentPage";
 import { UnemploymentPage } from "@/components/labour-market/UnemploymentPage";
@@ -94,6 +95,7 @@ export const Route = createFileRoute("/omraden/$area/$topic")({
 function TopicPage() {
   const { area, topic } = Route.useLoaderData();
   if (area.slug === "arbetsmarknad" && topic.slug === "matchning") return <MatchingPage />;
+  if (area.slug === "arbetsmarknad" && topic.slug === "arbetskraft") return <WorkforcePage />;
   if (area.slug === "arbetsmarknad" && topic.slug === "sysselsattning") return <EmploymentPage />;
   if (area.slug === "arbetsmarknad" && topic.slug === "efterfragan-pa-arbetskraft")
     return <LabourDemandPage />;

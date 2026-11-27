@@ -28,12 +28,16 @@ export function EmploymentChart({
   rank = false,
   name,
   other = "Riket",
+  filename = "sysselsattning",
+  source = "",
 }: {
   rows: Row[];
   unit: string;
   rank?: boolean;
   name: string;
   other?: string;
+  filename?: string;
+  source?: string;
 }) {
   const [table, setTable] = useState(false);
   const hasOther = !rank && rows.some((r) => r.other != null);
@@ -54,13 +58,21 @@ export function EmploymentChart({
   }));
   const download = () => {
     const csv = [
-      [rank ? "Kategori" : "Period", name, other, "Enhet", "SCB-status"],
+      [
+        rank ? "Kategori" : "Period",
+        name,
+        other,
+        "Enhet",
+        "SCB-status",
+        ...(source ? ["Källa och urval"] : []),
+      ],
       ...rows.map((r) => [
         r.label,
         r.value == null ? "Uppgift saknas" : employmentNumber(r.value, "", decimals),
         r.other == null ? "Uppgift saknas" : employmentNumber(r.other, r.otherStatus, decimals),
         unit,
         r.status ?? "",
+        ...(source ? [source] : []),
       ]),
     ]
       .map((r) => r.map((v) => `"${String(v).replaceAll('"', '""')}"`).join(";"))
@@ -68,7 +80,7 @@ export function EmploymentChart({
     const url = URL.createObjectURL(new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" }));
     const a = document.createElement("a");
     a.href = url;
-    a.download = "sysselsattning.csv";
+    a.download = `${filename}.csv`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
@@ -164,18 +176,19 @@ export function EmploymentChart({
                       isAnimationActive={false}
                     />
                   ))}
-                {segments.length > 1 &&
-                  ["2022", "2024"]
-                    .filter((y) => rows.some((r) => r.label === y))
-                    .map((y) => (
-                      <ReferenceLine
-                        key={y}
-                        x={y}
-                        stroke="var(--ink-muted)"
-                        strokeDasharray="4 4"
-                        label={{ value: `Metod ${y}`, position: "insideTop", fontSize: 12 }}
-                      />
-                    ))}
+                {rows
+                  .filter(
+                    (r, i) => i > 0 && (r.segment ?? "all") !== (rows[i - 1]!.segment ?? "all"),
+                  )
+                  .map(({ label }) => (
+                    <ReferenceLine
+                      key={label}
+                      x={label}
+                      stroke="var(--ink-muted)"
+                      strokeDasharray="4 4"
+                      label={{ value: `Metod ${label}`, position: "insideTop", fontSize: 12 }}
+                    />
+                  ))}
               </LineChart>
             )}
           </ResponsiveContainer>
