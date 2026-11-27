@@ -64,23 +64,66 @@ Snapshotkontrollerna verifierar varje filhash, full täckning av geografi,
 utbildning, kön och år, saknade värden, måttens intervall och att periodfilerna
 är identiska med respektive geografis värden.
 
-## Fördjupningskälla: SCB:s matchningskarta
+## Matchningskartan – undersida
 
-Under ”Vad visar statistiken?” finns en valbar fördjupning om SCB:s bedömning
-av vilka utbildningar och yrken som matchar. Den är tillgänglig även om
-statistiken inte kan läsas och länkar till:
+`/omraden/arbetsmarknad/matchning/matchningskarta` visar SCB:s nationella
+kombinationer av utbildning och yrke. Länken från matchningssidan tar med
+vald utbildningsgrupp. Kartans mer detaljerade utbildningsindelning behålls:
+om en E3-grupp innehåller flera utbildningar väljs den första med synlig
+upplysning om uppdelningen; användaren väljer annan del i utbildningslistan.
+Totaler, nivåer och inriktningar överförs inte som en specifik utbildning.
 
-- [SCB:s matchningskarta (Excel)](https://www.scb.se/contentassets/3b47a55563f54026af789c096b1d8a95/matchningskarta_rmi_2026-08-19.xlsx).
-- [SCB:s RMI-sida](https://www.scb.se/AM9906), där länken till matchningskartan
-  förvaltas av SCB.
+Besökaren växlar mellan utbildning till yrken och yrke till utbildningar.
+Urvalet sparas i URL:en (`direction`, `code`, `group`). Tio resultat visas
+först; ”Visa alla” visar hela urvalet. Nollandelar finns ett ytterligare klick
+bort och saknade andelar behålls som saknade. Även ett urval med färre än tio
+resultat kan öppna nollandelarna. Hela rader färgas efter huvudkategori;
+bedömningens inriktning och nivå visas i text och kategorin finns för
+skärmläsare. Ingen kvantitativ stapel visas.
 
-Kartan är en metodkälla för matchningsbedömningen, inte ett nytt statistiskt
-mått. Den beskriver formell utbildning i förhållande till yrke och ska inte
-tolkas som en fullständig bedömning av individers kompetens.
+Sortering: helt matchad, delvis matchad, inte matchad; därefter originalandel
+fallande, svenskt namn och kod. Saknad andel sorteras sist inom sin kategori.
+Ingen egen rangordning görs mellan underkategorierna av delvis matchning.
+Andelen byts med riktningen: yrkesandel inom utbildning respektive
+utbildningsandel inom yrke. Andelarna normaliseras aldrig om; utbildningarna
+kan täcka mindre än hela yrket. Geografin är alltid hela Sverige och
+statistikår skiljs från bedömningsår. Riksandelar presenteras aldrig som lokala.
 
-Källan kontrollerades 2026-11-27 mot SCB:s RMI-sida och Tillväxtverkets
-RMI-beskrivning. Excel-länken svarade HTTP 200 och arbetsboken innehåller
-bland annat ”Allmänt om matchning”, ”Matchningskarta”, ”Förklaring”,
-”Utbildningsgrupper” och ”Yrkesgrupper”. Filnamnet är daterat 2026-08-19.
-Länken är redaktionell och ingår inte i E3-hämtningen; kontrollera SCB:s
-RMI-sida om filadressen ändras.
+### Hämtning och läsmodell
+
+`scripts/fetch_rmi_matching_map.py` hittar Excel-länken på SCB:s RMI-sida och
+hämtar filen till minnet. SHA-256 upptäcker förändringar även om adressen
+behålls. Oförändrad fil ger ingen datacommit. Vid ändring kontrolleras
+kolumndefinitioner, år, kategorier, entydiga koder, unika kombinationer,
+andelarnas intervall och full kombinationstäckning före publicering.
+Okända bedömningar eller ändrat schema stoppar publiceringen.
+
+Endast långformatets koder, namn, koppling till E3-grupp, båda andelarna,
+ämnes- och nivåbedömning samt definitioner och källmetadata sparas.
+Nollandelar bevaras eftersom bedömningen fortfarande är användbar.
+Andelar lagras i originalprecision, inte visningens avrundning.
+Excel-fil, färger, bilder och dubblerade matrisblad sparas inte.
+
+Katalog: `src/data/matching-map/catalog.json`. Matrisen är gzip-komprimerad
+med innehållshash i `public/data/matching-map`; serverfunktionen
+`matching-map.functions.ts` läser via ASSETS och returnerar bara valt yrke
+eller vald utbildning (högst en rad per motgrupp). Komponenten läser aldrig
+hela matrisen eller SCB:s API. Äldre matrisfiler tas bort vid en ny
+verifierad hämtning; Git-historiken bevarar tidigare publicerade versioner.
+
+Workflow: `etl-rmi-matching-map.yml`, onsdag 06:45 UTC och manuellt med
+valbar tvingad omhämtning. Inga paket utanför Pythons standardbibliotek,
+hemligheter eller databasändringar behövs. Valideringsfel stoppar commit;
+föregående publicerade katalog ligger kvar.
+
+Kontroller:
+
+- `python -m unittest discover -s tests -p 'test_matching_map.py'`
+- `node --import tsx tests/matching-map.test.ts`
+- `npx tsc --noEmit`
+- `npm run build`
+
+Första hämtningen 2026-11-27: 13 395 kombinationer, 95 utbildningar,
+141 yrkesgrupper, statistikår 2024 och bedömningar från Trender och
+prognoser 2023. [SCB:s RMI-sida](https://www.scb.se/AM9906) är
+beständig källänk; direktlänken till aktuell arbetsbok sparas i katalogen.

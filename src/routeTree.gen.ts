@@ -27,6 +27,7 @@ import { Route as ApiPublicJobsEtlNoChangeRouteImport } from './routes/api/publi
 import { Route as ApiPublicJobsEtlStateRouteImport } from './routes/api/public/jobs/etl-state'
 import { Route as ApiPublicJobsPublishIndicatorRouteImport } from './routes/api/public/jobs/publish-indicator'
 import { Route as ApiPublicJobsSourceStateRouteImport } from './routes/api/public/jobs/source-state'
+import { Route as OmradenArbetsmarknadMatchningMatchningskartaRouteImport } from './routes/omraden.arbetsmarknad.matchning_.matchningskarta'
 import { Route as ApiPublicJobsAfrAbortRouteImport } from './routes/api/public/jobs/afr/abort'
 import { Route as ApiPublicJobsAfrCheckRouteImport } from './routes/api/public/jobs/afr/check'
 import { Route as ApiPublicJobsAfrChunkRouteImport } from './routes/api/public/jobs/afr/chunk'
@@ -141,6 +142,12 @@ const ApiPublicJobsSourceStateRoute =
   ApiPublicJobsSourceStateRouteImport.update({
     id: '/api/public/jobs/source-state',
     path: '/api/public/jobs/source-state',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const OmradenArbetsmarknadMatchningMatchningskartaRoute =
+  OmradenArbetsmarknadMatchningMatchningskartaRouteImport.update({
+    id: '/omraden/arbetsmarknad/matchning_/matchningskarta',
+    path: '/omraden/arbetsmarknad/matchning/matchningskarta',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicJobsAfrAbortRoute = ApiPublicJobsAfrAbortRouteImport.update({
@@ -272,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
   '/api/public/jobs/source-state': typeof ApiPublicJobsSourceStateRoute
+  '/omraden/arbetsmarknad/matchning/matchningskarta': typeof OmradenArbetsmarknadMatchningMatchningskartaRoute
   '/api/public/jobs/afr/abort': typeof ApiPublicJobsAfrAbortRoute
   '/api/public/jobs/afr/check': typeof ApiPublicJobsAfrCheckRoute
   '/api/public/jobs/afr/chunk': typeof ApiPublicJobsAfrChunkRoute
@@ -312,6 +320,7 @@ export interface FileRoutesByTo {
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
   '/api/public/jobs/source-state': typeof ApiPublicJobsSourceStateRoute
+  '/omraden/arbetsmarknad/matchning/matchningskarta': typeof OmradenArbetsmarknadMatchningMatchningskartaRoute
   '/api/public/jobs/afr/abort': typeof ApiPublicJobsAfrAbortRoute
   '/api/public/jobs/afr/check': typeof ApiPublicJobsAfrCheckRoute
   '/api/public/jobs/afr/chunk': typeof ApiPublicJobsAfrChunkRoute
@@ -353,6 +362,7 @@ export interface FileRoutesById {
   '/api/public/jobs/etl-state': typeof ApiPublicJobsEtlStateRoute
   '/api/public/jobs/publish-indicator': typeof ApiPublicJobsPublishIndicatorRoute
   '/api/public/jobs/source-state': typeof ApiPublicJobsSourceStateRoute
+  '/omraden/arbetsmarknad/matchning_/matchningskarta': typeof OmradenArbetsmarknadMatchningMatchningskartaRoute
   '/api/public/jobs/afr/abort': typeof ApiPublicJobsAfrAbortRoute
   '/api/public/jobs/afr/check': typeof ApiPublicJobsAfrCheckRoute
   '/api/public/jobs/afr/chunk': typeof ApiPublicJobsAfrChunkRoute
@@ -395,6 +405,7 @@ export interface FileRouteTypes {
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
     | '/api/public/jobs/source-state'
+    | '/omraden/arbetsmarknad/matchning/matchningskarta'
     | '/api/public/jobs/afr/abort'
     | '/api/public/jobs/afr/check'
     | '/api/public/jobs/afr/chunk'
@@ -435,6 +446,7 @@ export interface FileRouteTypes {
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
     | '/api/public/jobs/source-state'
+    | '/omraden/arbetsmarknad/matchning/matchningskarta'
     | '/api/public/jobs/afr/abort'
     | '/api/public/jobs/afr/check'
     | '/api/public/jobs/afr/chunk'
@@ -475,6 +487,7 @@ export interface FileRouteTypes {
     | '/api/public/jobs/etl-state'
     | '/api/public/jobs/publish-indicator'
     | '/api/public/jobs/source-state'
+    | '/omraden/arbetsmarknad/matchning_/matchningskarta'
     | '/api/public/jobs/afr/abort'
     | '/api/public/jobs/afr/check'
     | '/api/public/jobs/afr/chunk'
@@ -516,6 +529,7 @@ export interface RootRouteChildren {
   ApiPublicJobsEtlStateRoute: typeof ApiPublicJobsEtlStateRoute
   ApiPublicJobsPublishIndicatorRoute: typeof ApiPublicJobsPublishIndicatorRoute
   ApiPublicJobsSourceStateRoute: typeof ApiPublicJobsSourceStateRoute
+  OmradenArbetsmarknadMatchningMatchningskartaRoute: typeof OmradenArbetsmarknadMatchningMatchningskartaRoute
   ApiPublicJobsAfrAbortRoute: typeof ApiPublicJobsAfrAbortRoute
   ApiPublicJobsAfrCheckRoute: typeof ApiPublicJobsAfrCheckRoute
   ApiPublicJobsAfrChunkRoute: typeof ApiPublicJobsAfrChunkRoute
@@ -664,6 +678,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/jobs/source-state'
       fullPath: '/api/public/jobs/source-state'
       preLoaderRoute: typeof ApiPublicJobsSourceStateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/omraden/arbetsmarknad/matchning_/matchningskarta': {
+      id: '/omraden/arbetsmarknad/matchning_/matchningskarta'
+      path: '/omraden/arbetsmarknad/matchning/matchningskarta'
+      fullPath: '/omraden/arbetsmarknad/matchning/matchningskarta'
+      preLoaderRoute: typeof OmradenArbetsmarknadMatchningMatchningskartaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/jobs/afr/abort': {
@@ -828,6 +849,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicJobsEtlStateRoute: ApiPublicJobsEtlStateRoute,
   ApiPublicJobsPublishIndicatorRoute: ApiPublicJobsPublishIndicatorRoute,
   ApiPublicJobsSourceStateRoute: ApiPublicJobsSourceStateRoute,
+  OmradenArbetsmarknadMatchningMatchningskartaRoute:
+    OmradenArbetsmarknadMatchningMatchningskartaRoute,
   ApiPublicJobsAfrAbortRoute: ApiPublicJobsAfrAbortRoute,
   ApiPublicJobsAfrCheckRoute: ApiPublicJobsAfrCheckRoute,
   ApiPublicJobsAfrChunkRoute: ApiPublicJobsAfrChunkRoute,

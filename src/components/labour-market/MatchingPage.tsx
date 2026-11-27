@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { Section } from "@/components/layout/Section";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { MunicipalityMap } from "@/components/geography/MunicipalityMap";
@@ -349,6 +349,26 @@ export function MatchingPage() {
                 </Figure>
               </>
             )}
+            <section className="rounded-xl border border-border bg-brand-light p-6">
+              <h2 className="text-2xl">Vilka yrken och utbildningar matchar varandra?</h2>
+              <p className="mt-4">
+                Utforska SCB:s matchningskarta och se hur vanliga kombinationerna är i hela Sverige.
+              </p>
+              <Link
+                to="/omraden/arbetsmarknad/matchning/matchningskarta"
+                search={{
+                  direction: "education",
+                  code: "",
+                  group: classification === "grupp" ? group : "",
+                }}
+                className="mt-4 inline-block underline"
+              >
+                Öppna matchningskartan
+                {classification === "grupp" && !group.startsWith("00")
+                  ? ` för ${education[group]}`
+                  : ""}
+              </Link>
+            </section>
             <section className="rounded-xl border border-border p-6">
               <h2 className="text-2xl">Vad visar statistiken?</h2>
               <div className="mt-5 space-y-4 leading-relaxed text-ink-muted">
@@ -387,10 +407,10 @@ export function MatchingPage() {
                   </summary>
                   <div className="mt-4 space-y-4">
                     <p>
-                      SCB:s matchningskarta visar vilka utbildningar och yrken som bedöms vara
-                      helt, delvis eller inte matchade utifrån utbildningens nivå och inriktning.
-                      Den ligger till grund för matchningsbedömningen i RMI och hjälper dig att
-                      förstå vad statistiken mäter.
+                      SCB:s matchningskarta visar vilka utbildningar och yrken som bedöms vara helt,
+                      delvis eller inte matchade utifrån utbildningens nivå och inriktning. Den
+                      ligger till grund för matchningsbedömningen i RMI och hjälper dig att förstå
+                      vad statistiken mäter.
                     </p>
                     <p>
                       Kartan beskriver matchning utifrån formell utbildning. Den visar inte all

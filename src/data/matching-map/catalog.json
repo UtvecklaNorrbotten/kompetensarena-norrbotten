@@ -1,0 +1,649 @@
+{
+  "year": "2024",
+  "assessmentYear": "2023",
+  "educations": {
+    "15B": {
+      "name": "Förskollärarutbildning",
+      "group": "15B",
+      "groupName": "förskollärarutbildning"
+    },
+    "15F": {
+      "name": "Grundlärarutbildning, fritidshem",
+      "group": "15F",
+      "groupName": "grundlärarutbildning, fritidshem"
+    },
+    "15G": {
+      "name": "Grundlärarutbildning, årskurs F–3 och 4–6",
+      "group": "15G",
+      "groupName": "grundlärarutbildning, årskurs F–3 och 4–6"
+    },
+    "15H": {
+      "name": "Ämneslärarutbildning, allmänna ämnen",
+      "group": "15HP",
+      "groupName": "ämneslärarutbildning"
+    },
+    "15P": {
+      "name": "Ämneslärarutbildning, praktiska/estetiska ämnen",
+      "group": "15HP",
+      "groupName": "ämneslärarutbildning"
+    },
+    "15S": {
+      "name": "Speciallärar- och specialpedagogutbildning",
+      "group": "15S",
+      "groupName": "speciallärar- och specialpedagogutbildning"
+    },
+    "15V": {
+      "name": "Yrkeslärarutbildning",
+      "group": "15V",
+      "groupName": "yrkeslärarutbildning"
+    },
+    "15X": {
+      "name": "Övrig utbildning i pedagogik – eftergymnasial",
+      "group": "15X",
+      "groupName": "övrig utbildning i pedagogik – eftergymnasial"
+    },
+    "25H": {
+      "name": "Humanistisk utbildning – eftergymnasial, minst 3 år",
+      "group": "25H",
+      "groupName": "humanistisk utbildning – eftergymnasial, minst 3 år"
+    },
+    "25K": {
+      "name": "Konstnärlig utbildning – eftergymnasial",
+      "group": "25K",
+      "groupName": "konstnärlig utbildning – eftergymnasial"
+    },
+    "25M": {
+      "name": "Medieproduktion – eftergymnasial",
+      "group": "25M",
+      "groupName": "medieproduktion – eftergymnasial"
+    },
+    "25T": {
+      "name": "Religionsvetenskaplig utbildning – eftergymn, minst 3 år",
+      "group": "25T",
+      "groupName": "religionsvetenskaplig utbildning – eftergymn, minst 3 år"
+    },
+    "25X": {
+      "name": "Övrig utbildning i humaniora och konst – eftergymnasial",
+      "group": "25X",
+      "groupName": "övrig utbildning i humaniora och konst – eftergymnasial"
+    },
+    "33H": {
+      "name": "Försäljnings– och serviceutbildning – gymnasial",
+      "group": "33H",
+      "groupName": "försäljnings– och serviceutbildning – gymnasial"
+    },
+    "35B": {
+      "name": "Biblioteks- och informationsvetenskap – eftergymnasial",
+      "group": "35B",
+      "groupName": "biblioteks- och informationsvetenskap – eftergymnasial"
+    },
+    "35EF": {
+      "name": "Företagsekonomi – eftergymnasial, minst 3 år",
+      "group": "35E",
+      "groupName": "ekonomutbildning – eftergymnasial, minst 3 år"
+    },
+    "35EN": {
+      "name": "Nationalekonomi – eftergymnasial, minst 3 år",
+      "group": "35E",
+      "groupName": "ekonomutbildning – eftergymnasial, minst 3 år"
+    },
+    "35F": {
+      "name": "Personal- och beteendevetenskap, sociologi – minst 3 år",
+      "group": "35F",
+      "groupName": "personal- och beteendevetenskap, sociologi – minst 3 år"
+    },
+    "35J": {
+      "name": "Juristutbildning",
+      "group": "35J",
+      "groupName": "juristutbildning"
+    },
+    "35M": {
+      "name": "Journalistik och medievetenskap – eftergymnasial",
+      "group": "35M",
+      "groupName": "journalistik och medievetenskap – eftergymnasial"
+    },
+    "35P": {
+      "name": "Psykologutbildning",
+      "group": "35P",
+      "groupName": "psykologutbildning"
+    },
+    "35S": {
+      "name": "Samhällsvetenskaplig utbildning – eftergymnasial, minst 3 år",
+      "group": "35S",
+      "groupName": "samhällsvetenskaplig utbildning – eftergymnasial, minst 3 år"
+    },
+    "35V": {
+      "name": "Medicinsk sekreterarutbildning",
+      "group": "35V",
+      "groupName": "medicinsk sekreterarutbildning"
+    },
+    "35X": {
+      "name": "Övrig utb. i samhällsv, juridik, handel, admin – eftergymn.",
+      "group": "35X",
+      "groupName": "övrig utb. i samhällsv, juridik, handel, admin – eftergymn."
+    },
+    "35Y": {
+      "name": "YH-utbildning i företagsekonomi, handel, administration",
+      "group": "35Y",
+      "groupName": "YH-utbildning i företagsekonomi, handel, administration"
+    },
+    "45B": {
+      "name": "Biologi och miljö – eftergymnasial, minst 3 år",
+      "group": "45B",
+      "groupName": "biologi och miljö – eftergymnasial, minst 3 år"
+    },
+    "45DH": {
+      "name": "Data och IT – eftergymnasial, minst 3 år",
+      "group": "45DH",
+      "groupName": "data och IT – eftergymnasial, minst 3 år"
+    },
+    "45DL": {
+      "name": "Data och IT – eftergymnasial, kortare än 3 år",
+      "group": "45DL",
+      "groupName": "data och IT – eftergymnasial, kortare än 3 år"
+    },
+    "45FM": {
+      "name": "Fysik, matematik, statistik – eftergymnasial, minst 3 år",
+      "group": "45FM",
+      "groupName": "fysik, matematik, statistik – eftergymnasial, minst 3 år"
+    },
+    "45G": {
+      "name": "Geovetenskap – eftergymnasial, minst 3 år",
+      "group": "45G",
+      "groupName": "geovetenskap – eftergymnasial, minst 3 år"
+    },
+    "45K": {
+      "name": "Kemi – eftergymnasial, minst 3 år",
+      "group": "45K",
+      "groupName": "kemi – eftergymnasial, minst 3 år"
+    },
+    "45Q": {
+      "name": "Övrig utb. i naturvetenskap – eftergymn, minst 3 år",
+      "group": "45Q",
+      "groupName": "övrig utb. i naturvetenskap – eftergymn, minst 3 år"
+    },
+    "45X": {
+      "name": "Övrig utb. i naturvetenskap – eftergymn, kortare än 3 år",
+      "group": "45X",
+      "groupName": "övrig utb. i naturvetenskap – eftergymn, kortare än 3 år"
+    },
+    "53A": {
+      "name": "Gymnasieingenjörsutbildning, 2–3 år",
+      "group": "53A+55Q",
+      "groupName": "gymnasieingenjörsutbildning"
+    },
+    "55H4": {
+      "name": "Gymnasieingenjörsutb, 4 år: väg och vatten, byggnad, lantmäteri",
+      "group": "53A+55Q",
+      "groupName": "gymnasieingenjörsutbildning"
+    },
+    "55I4": {
+      "name": "Gymnasieingenjörsutb, 4 år: maskin-, fordons- och farkostteknik",
+      "group": "53A+55Q",
+      "groupName": "gymnasieingenjörsutbildning"
+    },
+    "55J4": {
+      "name": "Gymnasieingenjörsutb, 4 år: teknisk fysik, elektro- och datateknik",
+      "group": "53A+55Q",
+      "groupName": "gymnasieingenjörsutbildning"
+    },
+    "55K4": {
+      "name": "Gymnasieingenjörsutb, 4 år: kemi-, bio-, material- och geoteknik",
+      "group": "53A+55Q",
+      "groupName": "gymnasieingenjörsutbildning"
+    },
+    "55L4": {
+      "name": "Gymnasieingenjörsutb, 4 år: övrig/okänd inriktning",
+      "group": "53A+55Q",
+      "groupName": "gymnasieingenjörsutbildning"
+    },
+    "53B": {
+      "name": "Byggutbildning – gymnasial",
+      "group": "53B",
+      "groupName": "byggutbildning – gymnasial"
+    },
+    "53E": {
+      "name": "El, data- och kommunikationsteknik, automation – gymnasial",
+      "group": "53E",
+      "groupName": "el, data- och kommunikationsteknik, automation – gymnasial"
+    },
+    "53F": {
+      "name": "Fordonsutbildning – gymnasial",
+      "group": "53F",
+      "groupName": "fordonsutbildning – gymnasial"
+    },
+    "53I": {
+      "name": "Industriteknisk utbildning – gymnasial",
+      "group": "53I",
+      "groupName": "industriteknisk utbildning – gymnasial"
+    },
+    "53R": {
+      "name": "VVS, energi, drift och underhåll – gymnasial",
+      "group": "53R",
+      "groupName": "VVS, energi, drift och underhåll – gymnasial"
+    },
+    "55A": {
+      "name": "Arkitektutbildning",
+      "group": "55A",
+      "groupName": "arkitektutbildning"
+    },
+    "55B": {
+      "name": "Civilingenjörsutbildning; industriell ekonomi",
+      "group": "55B",
+      "groupName": "civilingenjörsutbildning; industriell ekonomi"
+    },
+    "55C": {
+      "name": "Civilingenjörsutbildning; väg- och vatten, byggnadsteknik, lantmäteri",
+      "group": "55C",
+      "groupName": "civilingenjörsutbildning; väg- och vatten, byggnadsteknik, lantmäteri"
+    },
+    "55D": {
+      "name": "Civilingenjörsutbildning; maskinteknik, fordons- och farkostteknik",
+      "group": "55D",
+      "groupName": "civilingenjörsutbildning; maskinteknik, fordons- och farkostteknik"
+    },
+    "55E": {
+      "name": "Civilingenjörsutbildning; teknisk fysik, elektro- och datateknik",
+      "group": "55E",
+      "groupName": "civilingenjörsutbildning; teknisk fysik, elektro- och datateknik"
+    },
+    "55F": {
+      "name": "Civilingenjörsutbildning; kemi- och bioteknik, material- och geoteknik",
+      "group": "55F",
+      "groupName": "civilingenjörsutbildning; kemi- och bioteknik, material- och geoteknik"
+    },
+    "55G": {
+      "name": "Civilingenjörsutbildning; övrig/okänd inriktning",
+      "group": "55G",
+      "groupName": "civilingenjörsutbildning; övrig/okänd inriktning"
+    },
+    "55H": {
+      "name": "Högskoleingenjörsutb; väg- och vatten, byggnadsteknik, lantmäteri",
+      "group": "55H",
+      "groupName": "högskoleingenjörsutb; väg- och vatten, byggnadsteknik, lantmäteri"
+    },
+    "55I": {
+      "name": "Högskoleingenjörsutb; maskinteknik, fordons- farkostteknik, industriell ekon.",
+      "group": "55I",
+      "groupName": "högskoleingenjörsutb; maskinteknik, fordons- farkostteknik, industriell ekon."
+    },
+    "55J": {
+      "name": "Högskoleingenjörsutb; teknisk fysik, elektro- och datateknik",
+      "group": "55J",
+      "groupName": "högskoleingenjörsutb; teknisk fysik, elektro- och datateknik"
+    },
+    "55K": {
+      "name": "Högskoleingenjörsutb; kemi- och bioteknik, material- och geoteknik",
+      "group": "55K",
+      "groupName": "högskoleingenjörsutb; kemi- och bioteknik, material- och geoteknik"
+    },
+    "55L": {
+      "name": "Högskoleingenjörsutb; övrig/okänd inriktning",
+      "group": "55L",
+      "groupName": "högskoleingenjörsutb; övrig/okänd inriktning"
+    },
+    "55T": {
+      "name": "YH-utbildning i teknik och tillverkning",
+      "group": "55T",
+      "groupName": "YH-utbildning i teknik och tillverkning"
+    },
+    "55X": {
+      "name": "Övrig utbildning i teknik och tillverkning – eftergymn.",
+      "group": "55X",
+      "groupName": "övrig utbildning i teknik och tillverkning – eftergymn."
+    },
+    "63Z": {
+      "name": "Naturbruksutbildning – gymnasial",
+      "group": "63Z",
+      "groupName": "naturbruksutbildning – gymnasial"
+    },
+    "65J": {
+      "name": "Agronom- och hortonomutbildning – eftergymnasial",
+      "group": "65J",
+      "groupName": "agronom- och hortonomutbildning – eftergymnasial"
+    },
+    "65S": {
+      "name": "Skogsvetenskaplig utbildning – eftergymnasial, minst 3 år",
+      "group": "65S",
+      "groupName": "skogsvetenskaplig utbildning – eftergymnasial, minst 3 år"
+    },
+    "65V": {
+      "name": "Veterinärutbildning",
+      "group": "65V",
+      "groupName": "veterinärutbildning"
+    },
+    "65X": {
+      "name": "Övrig utb. inom lant-, skogsbruk, djursjukvård – eftergymnasial",
+      "group": "65X",
+      "groupName": "övrig utb. inom lant-, skogsbruk, djursjukvård – eftergymnasial"
+    },
+    "73B": {
+      "name": "Barn- och fritidsutbildning – gymnasial",
+      "group": "73B",
+      "groupName": "barn- och fritidsutbildning – gymnasial"
+    },
+    "73O": {
+      "name": "Vård- och omsorgsutbildning – gymnasial",
+      "group": "73OX",
+      "groupName": "vård- och omsorgsutbildning – gymnasial"
+    },
+    "73X": {
+      "name": "Övrig utb. i hälso- och sjukvård, social omsorg – gymn.",
+      "group": "73OX",
+      "groupName": "vård- och omsorgsutbildning – gymnasial"
+    },
+    "75Y": {
+      "name": "YH-utbildning i omvårdnad",
+      "group": "73OX",
+      "groupName": "vård- och omsorgsutbildning – gymnasial"
+    },
+    "73T": {
+      "name": "Tandsköterskeutbildning",
+      "group": "73T",
+      "groupName": "tandsköterskeutbildning"
+    },
+    "75A": {
+      "name": "Apotekarutbildning",
+      "group": "75A",
+      "groupName": "apotekarutbildning"
+    },
+    "75B": {
+      "name": "Arbetsterapeututbildning",
+      "group": "75B",
+      "groupName": "arbetsterapeututbildning"
+    },
+    "75D": {
+      "name": "Biomedicinsk analytikerutbildning",
+      "group": "75D",
+      "groupName": "biomedicinsk analytikerutbildning"
+    },
+    "75F": {
+      "name": "Fritidsledarutbildning – eftergymnasial",
+      "group": "75F",
+      "groupName": "fritidsledarutbildning – eftergymnasial"
+    },
+    "75H": {
+      "name": "Läkarutbildning (exkl. disputerade som saknar läkarexamen)",
+      "group": "75H",
+      "groupName": "läkarutbildning (exkl. disputerade som saknar läkarexamen)"
+    },
+    "75HS": {
+      "name": "Läkarutbildning, med specialistkompetens",
+      "group": "75HS",
+      "groupName": "läkarutbildning, med specialistkompetens"
+    },
+    "75J": {
+      "name": "Receptarieutbildning",
+      "group": "75J",
+      "groupName": "receptarieutbildning"
+    },
+    "75L": {
+      "name": "Fysioterapeututbildning",
+      "group": "75L",
+      "groupName": "fysioterapeututbildning"
+    },
+    "75M": {
+      "name": "Barnmorskeutbildning",
+      "group": "75M",
+      "groupName": "barnmorskeutbildning"
+    },
+    "75N": {
+      "name": "Sjuksköterskeutbildning, grundnivå",
+      "group": "75N",
+      "groupName": "sjuksköterskeutbildning, grundnivå"
+    },
+    "75O": {
+      "name": "Social omsorgsutbildning – eftergymnasial",
+      "group": "75O",
+      "groupName": "social omsorgsutbildning – eftergymnasial"
+    },
+    "75P": {
+      "name": "Socionomutbildning",
+      "group": "75P",
+      "groupName": "socionomutbildning"
+    },
+    "75R": {
+      "name": "Röntgensjuksköterskeutbildning",
+      "group": "75R",
+      "groupName": "röntgensjuksköterskeutbildning"
+    },
+    "75SA": {
+      "name": "Specialistsjuksköterskeutbildning; anestesi-, intensiv-, operations- och ambulanssjukvård",
+      "group": "75SA",
+      "groupName": "specialistsjuksköterskeutbildning; anestesi-, intensiv-, operations- och ambulanssjukvård"
+    },
+    "75SB": {
+      "name": "Specialistsjuksköterskeutbildning; barn och ungdom",
+      "group": "75SB",
+      "groupName": "specialistsjuksköterskeutbildning; barn och ungdom"
+    },
+    "75SD": {
+      "name": "Specialistsjuksköterskeutbildning; distriktssköterska",
+      "group": "75SD",
+      "groupName": "specialistsjuksköterskeutbildning; distriktssköterska"
+    },
+    "75SP": {
+      "name": "Specialistsjuksköterskeutbildning; psykiatrisk vård",
+      "group": "75SP",
+      "groupName": "specialistsjuksköterskeutbildning; psykiatrisk vård"
+    },
+    "75SX": {
+      "name": "Specialistsjuksköterskeutbildning; övriga inriktningar",
+      "group": "75SX",
+      "groupName": "specialistsjuksköterskeutbildning; övriga inriktningar"
+    },
+    "75T": {
+      "name": "Tandhygienistutbildning",
+      "group": "75T",
+      "groupName": "tandhygienistutbildning"
+    },
+    "75V": {
+      "name": "Tandläkarutbildning",
+      "group": "75V",
+      "groupName": "tandläkarutbildning"
+    },
+    "75X": {
+      "name": "Övrig utb. i hälso- sjukvård, social omsorg – eftergymnasial",
+      "group": "75X",
+      "groupName": "övrig utb. i hälso- sjukvård, social omsorg – eftergymnasial"
+    },
+    "83H": {
+      "name": "Hotell- och turismutbildning – gymnasial",
+      "group": "83H",
+      "groupName": "hotell- och turismutbildning – gymnasial"
+    },
+    "83R": {
+      "name": "Restaurang- och livsmedelsutbildning – gymnasial",
+      "group": "83R",
+      "groupName": "restaurang- och livsmedelsutbildning – gymnasial"
+    },
+    "83T": {
+      "name": "Transportutbildning – gymnasial",
+      "group": "83T",
+      "groupName": "transportutbildning – gymnasial"
+    },
+    "85P": {
+      "name": "Polisutbildning",
+      "group": "85P",
+      "groupName": "polisutbildning"
+    },
+    "85T": {
+      "name": "Transportutbildning – eftergymnasial",
+      "group": "85T",
+      "groupName": "transportutbildning – eftergymnasial"
+    },
+    "85X": {
+      "name": "Övrig utbildning inom tjänsteområdet – eftergymnasial",
+      "group": "85X",
+      "groupName": "övrig utbildning inom tjänsteområdet – eftergymnasial"
+    }
+  },
+  "occupations": {
+    "11000": "Politiker, verkställande direktörer och högre ämbetsmän m.fl.",
+    "12000": "Chefer inom ekonomi, personal, marknadsföring och försäljning samt annan administration m.m.",
+    "13000": "Chefer inom IT, logistik, FoU, fastighetsbolag, bygg- och ingenjörsverksamhet samt tillverkning m.m.",
+    "14000": "Chefer inom utbildning",
+    "15009": "Chefer inom hälso- och sjukvård/äldreomsorg/socialt och kurativt arbete",
+    "15409": "Övriga chefer inom samhällsservice/Chefer och ledare inom trossamfund",
+    "16000": "Chefer inom bank, finans och försäkring",
+    "17000": "Chefer inom övrig servicenäring",
+    "21119": "Fysiker och astronomer/Meteorologer",
+    "21130": "Kemister",
+    "21140": "Geologer och geofysiker m.fl.",
+    "21200": "Matematiker, aktuarier och statistiker",
+    "21319": "Cell- och molekylärbiologer m.fl./Växt- och djurbiologer",
+    "21330": "Farmakologer och biomedicinare",
+    "21340": "Specialister och rådgivare inom lantbruk m.m.",
+    "21350": "Specialister och rådgivare inom skogsbruk",
+    "21410": "Civilingenjörsyrken inom logistik och produktionsplanering",
+    "21429": "Civilingenjörsyrken inom bygg och anläggning/Lantmätare",
+    "21430": "Civilingenjörsyrken inom elektroteknik",
+    "21440": "Civilingenjörsyrken inom maskinteknik",
+    "21459": "Civilingenjörsyrken inom kemi och kemiteknik/inom gruvteknik och metallurgi",
+    "21490": "Övriga civilingenjörsyrken",
+    "21610": "Arkitekter m.fl.",
+    "21629": "Planeringsarkitekter m.fl./ Landskapsarkitekter",
+    "21700": "Designer och formgivare",
+    "21800": "Specialister inom miljö- och hälsoskydd",
+    "22100": "Läkare",
+    "22210": "Grundutbildade sjuksköterskor",
+    "22220": "Barnmorskor",
+    "22239": "Anestesi-/Ambulans-/Intensivvårds-/Operationssjuksköterskor",
+    "22240": "Distriktssköterskor",
+    "22250": "Psykiatrisjuksköterskor",
+    "22270": "Geriatriksjuksköterskor",
+    "22329": "Barnsjuksköterskor/Skolsköterskor",
+    "22349": "Företagssköterskor/Övriga specialistsjuksköterskor",
+    "22350": "Röntgensjuksköterskor",
+    "22400": "Psykologer och psykoterapeuter",
+    "22500": "Veterinärer",
+    "22600": "Tandläkare",
+    "22719": "Övriga specialister inom hälso- och sjukvård m.fl.",
+    "22720": "Sjukgymnaster",
+    "22730": "Arbetsterapeuter",
+    "22810": "Apotekare",
+    "23100": "Universitets- och högskolelärare",
+    "23200": "Lärare i yrkesämnen",
+    "23300": "Gymnasielärare",
+    "23410": "Grundskollärare",
+    "23420": "Fritidspedagoger",
+    "23430": "Förskollärare",
+    "23510": "Speciallärare och specialpedagoger m.fl.",
+    "23529": "Arbetsförmedlare/Studie- och yrkesvägledare",
+    "23590": "Övriga pedagoger med teoretisk specialistkompetens",
+    "24100": "Revisorer, finansanalytiker och fondförvaltare m.fl",
+    "24210": "Lednings- och organisationsutvecklare",
+    "24220": "Planerare och utredare m.fl.",
+    "24230": "Personal- och HR-specialister",
+    "24300": "Marknadsanalytiker och informatörer m.fl.",
+    "25100": "IT-arkitekter, systemutvecklare och testledare m.fl.",
+    "26100": "Jurister",
+    "26200": "Museiintendenter och bibliotekarier m.fl.",
+    "26400": "Författare, journalister och tolkar m.fl.",
+    "26500": "Konstnärer, musiker och skådespelare m.fl.",
+    "26600": "Socialsekreterare och kuratorer m.fl.",
+    "26700": "Präster och diakoner",
+    "31110": "Ingenjörer och tekniker inom industri, logistik och produktionsplanering",
+    "31129": "Ingenjörer och tekniker inom bygg och anläggning/GIS- och kartingenjörer",
+    "31130": "Ingenjörer och tekniker inom elektroteknik",
+    "31140": "Ingenjörer och tekniker inom maskinteknik",
+    "31159": "Ingenjörer och tekniker inom kemi och kemiteknik/inom gruvteknik och metallurgi",
+    "31190": "Övriga ingenjörer och tekniker",
+    "31500": "Piloter, fartygs- och maskinbefäl m.fl.",
+    "32119": "Tandtekniker och ortopedingenjörer m.fl./Tekniker, bilddiagnostik och medicinteknisk utrustning",
+    "32120": "Biomedicinska analytiker m.fl.",
+    "32130": "Receptarier",
+    "32150": "Laboratorieingenjörer",
+    "32400": "Djursjukskötare m.fl.",
+    "32500": "Tandhygienister",
+    "33100": "Banktjänstemän och redovisningsekonomer m.fl.",
+    "33200": "Försäkringsrådgivare, företagssäljare och inköpare m.fl.",
+    "33319": "Speditörer, transp.mäklare/Evenemangs- o reseprod./Fast.mäkl./Fast.förv./Övr förmedl",
+    "33400": "Juristsekreterare, chefssekreterare och institutionssekreterare m.fl.",
+    "33519": "Tull- och kustbevakn.tjänstmän/Skattehandläggare/Soc.försäkr.handläggare/Övr handläggare",
+    "33549": "Säkerhetsinspektörer m.fl./Brandingenjörer och byggnadsinspektörer m.fl.",
+    "34110": "Behandlingsassistenter och socialpedagoger m.fl.",
+    "34120": "Pastorer m.fl.",
+    "34219": "Idrottstränare o instruktörer m.fl./Professionella idrottsutöv/Friskvårdskons. o hälsopedag. m.fl.",
+    "34230": "Fritidsledare m.fl.",
+    "34300": "Fotografer, dekoratörer och underhållningsartister m.fl.",
+    "34400": "Trafiklärare och instruktörer",
+    "34500": "Köksmästare och souschefer",
+    "35100": "Drift-, support- och nätverkstekniker m.fl.",
+    "35200": "Bild-, ljud- och ljustekniker m.fl.",
+    "41119": "Kontorsass. o sekreterare (exkl. 4117 Med.sekr., vårdadm.)",
+    "41170": "Medicinska sekreterare, vårdadministratörer m.fl.",
+    "42000": "Kundserviceyrken",
+    "43200": "Lagerpersonal och transportledare m.fl.",
+    "44100": "Biblioteks- och arkivassistenter m.fl.",
+    "44200": "Brevbärare och postterminalarbetare",
+    "44300": "Förtroendevalda",
+    "51100": "Kabinpersonal, tågmästare och guider m.fl.",
+    "51200": "Kockar och kallskänkor",
+    "51300": "Hovmästare, servitörer och bartendrar",
+    "51409": "Skönhets- och kroppsterapeuter/Övrig servicepersonal",
+    "51500": "Städledare och fastighetsskötare m.fl.",
+    "52000": "Försäljningsyrken inom detaljhandeln m.m.",
+    "53100": "Barnskötare och elevassistenter m.fl.",
+    "53200": "Undersköterskor",
+    "53309": "Vårdbiträden/Personliga assistenter",
+    "53419": "Vårdare, boendestödjare/Skötare/Övrig vård- och omsorgsperonal",
+    "53500": "Tandsköterskor",
+    "54100": "Andra bevaknings- och säkerhetsyrken",
+    "61000": "Lantbruks- och trädgårdsyrken",
+    "62000": "Skogsarbetare, fiskodlare och fiskare",
+    "71109": "Snickare, murare och anläggningsarbetare/Arbetsledare inom bygg, anläggning och gruva",
+    "71219": "Takmontörer/Golvläggare/Isoleringsmontörer/Glastekniker",
+    "71259": "VVS-montörer m.fl./Kyl- och värmepumpstekniker m.fl.",
+    "71300": "Målare, lackerare och skorstensfejare m.fl.",
+    "72100": "Gjutare, svetsare och plåtslagare m.fl.",
+    "72200": "Smeder och verktygsmakare m.fl.",
+    "72319": "Motorfordonsmekaniker och fordonsreparatörer/Flygmekaniker m.fl.",
+    "72330": "Underhållsmekaniker och maskinreparatörer",
+    "73100": "Finmekaniker och konsthantverkare m.fl.",
+    "73200": "Prepresstekniker, tryckare och bokbindare m.fl.",
+    "74100": "Installations- och industrielektriker m.fl.",
+    "74200": "Elektronikreparatörer och kommunikationselektriker m.fl.",
+    "75200": "Ytbehandlare, trä och möbelsnickare m.fl.",
+    "75300": "Skräddare, tapetserare och läderhantverkare m.fl.",
+    "76100": "Slaktare, bagare och livsmedelsförädlare m.fl.",
+    "81100": "Malmförädlingsyrken och brunnsborrare m.fl.",
+    "81209": "Process- o maskinoperat. (exkl. 811)/Arbetsledare inom tillv.",
+    "82100": "Montörer",
+    "83100": "Lokförare och bangårdspersonal",
+    "83209": "Buss- och spårvagnsförare/Taxiförare m.fl./Bil-, motorcykel och cykelförare",
+    "83320": "Lastbilsförare m.fl.",
+    "83409": "Maskinförare/Matroser och jungmän m.fl.",
+    "91000": "Städyrken",
+    "92109": "Renhållnings- o återvinningsarb./Vaktmästare m.fl./Övriga servicearbetare m.fl.",
+    "93000": "Andra yrken inom bygg, tillverkning och godshantering",
+    "94000": "Snabbmatspersonal, köks- och restaurangbiträden m.fl.",
+    "99998": "Godkänd yrkesuppgift saknas, egenföretagare",
+    "99999": "Godkänd yrkesuppgift saknas, anställda"
+  },
+  "notes": [
+    "Förklaring till matchningskartan",
+    "Andel",
+    "Anger hur vanligt yrket är bland anställda 20-69 år med aktuell utbildning. År 2024, procent.",
+    "Bedömning",
+    "Första ordet anger hur väl utbildningens ämnesinriktning stämmer överens med yrkets ämnesinriktning (Helt, Delvis, Inte)",
+    "Andra ordet anger hur väl utbildningens nivå stämmer överens med yrkets (Rätt, För hög, För låg)",
+    "Helt matchade, delvis matchade, inte matchade",
+    "Helt matchade innebär att utbildningens och yrkets ämnesinriktning stämmer helt överens, samt att utbildningsnivån är ",
+    "rätt för det aktuella yrket.",
+    "Delvis matchade innebär antingen att ämnesinriktningen stämmer helt överens, men att utbildningsnivån är ”fel”,",
+    "eller att ämnesinriktningen stämmer delvis överens, oavsett utbildningsnivå. ",
+    "Inte matchade innebär att det inte finns någon uppenbar överensstämmelse alls mellan utbildningens och ",
+    "yrkets ämnesinriktning, oavsett utbildningsnivå.",
+    "Utbildnings- och yrkesgrupperna redovisas i separata flikar.",
+    "Källa",
+    "SCB (BAS, Yrkesregistret och RUMA (Registret över Utbildning och matchning)). Matchningsbedömningar gjorda av SCB."
+  ],
+  "source": "https://www.scb.se/AM9906",
+  "workbook": "https://www.scb.se/contentassets/3b47a55563f54026af789c096b1d8a95/matchningskarta_rmi_2026-08-19.xlsx",
+  "sourceHash": "c111cca3c6b3f33754a849832bf14fdbb945cac512dec026c8d63fac02aca878",
+  "matrixHash": "c214803ecc7f13cea6bda25da8f971f0d526b978d22f4bd6a250edb455b971e1",
+  "file": "matrix-c214803ecc7f13ce.json",
+  "rowCount": 13395,
+  "geography": "Riket"
+}

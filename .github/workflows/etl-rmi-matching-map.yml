@@ -1,0 +1,44 @@
+name: 10 · Data · SCB RMI – matchningskarta
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Läs om och validera även om filen är oförändrad
+        type: boolean
+        default: false
+  schedule:
+    - cron: "45 6 * * 3"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rmi-matching-map
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Hämta och validera SCB:s matchningskarta
+        env:
+          FORCE_REFRESH: ${{ inputs.force }}
+        run: python scripts/fetch_rmi_matching_map.py
+      - name: Kontrollera andelar, bedömningar och täckning
+        run: python -m unittest discover -s tests -p 'test_matching_map.py'
+      - name: Spara verifierad version
+        run: |
+          if [ -n "$(git status --porcelain src/data/matching-map public/data/matching-map)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add src/data/matching-map public/data/matching-map
+            git commit -m 'data: uppdatera SCB:s matchningskarta'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
